@@ -1,0 +1,31 @@
+{
+  "name": "experimental",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./driver/pluma-webdriver.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "encodeurl": "^1.0.2",
+    "express": "^4.16.4",
+    "jsdom": "^13.1.0",
+    "selenium-webdriver": "^4.0.0-alpha.1",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "axios": "^0.18.0",
+    "eslint": "^5.12.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "http-post": "^0.1.1",
+    "nodemon": "^1.18.9",
+    "request": "^2.88.0"
+  },
+  "scripts": {
+    "test": "scripts/run_test.sh",
+    "testServer": "node ./driver/pluma-webdriver.js",
+    "lint": "eslint",
+    "start": "node ./driver/pluma-webdriver.js"
+  },
+  "author": "miguel roncancio",
+  "license": "ISC"
+}
