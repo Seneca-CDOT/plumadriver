@@ -37,15 +37,13 @@ const Driver = {
 
     // delete session
     server.delete('/session/:sessionId', (req, res) => {
-      let index = -1;
       try {
-        index = sessionsManager.findSession(req.params.sessionId);
+        session = sessionsManager.findSession(req.params.sessionId);
+        sessionsManager.deleteSession(req.params.sessionId);
+        console.log(`deleted session ${req.params.sessionId}`);
+        res.send(null);
       } catch (error) {
         console.log(error);
-      }
-      if (index > -1) {
-        sessionsManager.sessions.splice(index, 1);
-        res.send(null);
       }
     });
 

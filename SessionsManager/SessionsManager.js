@@ -13,6 +13,11 @@ class SessionsManager {
       return foundSession;
     }
   }
+
+  deleteSession(sessionId) {
+    const index = this.sessions.map(session => session.id).indexOf(sessionId);
+    this.sessions.splice(index,1);
+  }
 }
 
 exports.SessionsManager = SessionsManager;
