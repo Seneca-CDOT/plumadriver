@@ -1,12 +1,13 @@
 
 const express = require('express');
+const args = require('minimist')(process.argv.slice(2));
 const cors = require('cors');
 const Session = require('../Session/Session.js');
 const { SessionsManager } = require('../SessionsManager/SessionsManager');
 
 const server = express();
 server.use(cors());
-const HTTP_PORT = process.env.PORT || 3000;
+const HTTP_PORT = process.env.PORT || args['port'];
 
 const sessionsManager = new SessionsManager();
 
