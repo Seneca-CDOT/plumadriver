@@ -8,6 +8,7 @@
     "encodeurl": "^1.0.2",
     "express": "^4.16.4",
     "jsdom": "^13.1.0",
+    "minimist": "^1.2.0",
     "selenium-webdriver": "^4.0.0-alpha.1",
     "uuid": "^3.3.2"
   },
