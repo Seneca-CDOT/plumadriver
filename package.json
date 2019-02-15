@@ -1,8 +1,8 @@
 {
-  "name": "experimental",
+  "name": "plumadriver",
   "version": "1.0.0",
   "description": "",
-  "main": "./driver/pluma-webdriver.js",
+  "main": "pluma-webdriver.js",
   "dependencies": {
     "cors": "^2.8.5",
     "encodeurl": "^1.0.2",
@@ -22,11 +22,11 @@
     "request": "^2.88.0"
   },
   "scripts": {
-    "test": "scripts/run_test.sh",
-    "testServer": "node ./driver/pluma-webdriver.js",
+    "testServer": "node pluma-webdriver.js",
     "lint": "eslint",
-    "start": "node ./driver/pluma-webdriver.js"
+    "start": "node pluma-webdriver.js"
   },
+  "bin": "bin.js",
   "author": "miguel roncancio",
   "license": "ISC"
 }
