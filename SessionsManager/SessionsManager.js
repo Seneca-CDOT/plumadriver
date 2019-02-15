@@ -2,7 +2,16 @@
 class SessionsManager {
   constructor() {
     this.sessions = [];
-    this.readinessState = this.sessions.length;
+    this.readinessState = SessionsManager.setReadinessState();
+  }
+
+  static setReadinessState() {
+    const body = {
+      ready: true,
+      message: 'ready',
+    };
+
+    return body;
   }
 
   findSession(sessionId) {
@@ -16,7 +25,11 @@ class SessionsManager {
 
   deleteSession(sessionId) {
     const index = this.sessions.map(session => session.id).indexOf(sessionId);
-    this.sessions.splice(index,1);
+    this.sessions.splice(index, 1);
+  }
+
+  getReadinessState() {
+    return this.readinessState;
   }
 }
 
