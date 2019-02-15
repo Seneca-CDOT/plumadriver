@@ -25,7 +25,8 @@ server.get('/', (req, res) => {
 
 // Status
 server.get('/status', (req, res) => {
-  res.send(sessionsManager.sessions);
+  const status = sessionsManager.getReadinessState();
+  res.json(status);
 });
 
 // New session
