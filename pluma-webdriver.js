@@ -23,6 +23,11 @@ server.get('/', (req, res) => {
   res.send(sessionsManager.sessions);
 });
 
+// Status
+server.get('/status', (req, res) => {
+  res.send(sessionsManager.sessions);
+});
+
 // New session
 server.post('/session', async (req, res) => {
   const newSession = new Session();
