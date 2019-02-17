@@ -1,14 +1,24 @@
 
+const os = require('os');
+
 class SessionsManager {
   constructor() {
     this.sessions = [];
-    this.readinessState = SessionsManager.setReadinessState();
+    this.readinessState = setReadinessState();
   }
 
-  static setReadinessState() {
+  setReadinessState() {
     const body = {
-      ready: true,
-      message: 'ready',
+      status: this.sessions.length,
+      value: {
+        message: 'PlumaDriver is ready for new sessions',
+        os: {
+          arch: os.arch(),
+          name: os.platform(),
+          version: os.release(),  
+        },
+        ready: true,
+      }      
     };
 
     return body;
