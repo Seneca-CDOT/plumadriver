@@ -4,24 +4,22 @@ const os = require('os');
 class SessionsManager {
   constructor() {
     this.sessions = [];
-    this.readinessState = setReadinessState();
-  }
-
-  setReadinessState() {
-    const body = {
+    this.readinessState = {
       status: this.sessions.length,
       value: {
         message: 'PlumaDriver is ready for new sessions',
         os: {
           arch: os.arch(),
-          name: os.platform(),
+          name: os.platform(),  
           version: os.release(),  
         },
         ready: true,
-      }      
-    };
+      }
+    }
+  }
 
-    return body;
+  setReadinessState() {
+    this.readinessState.status = this.sessions.length;
   }
 
   findSession(sessionId) {
@@ -39,6 +37,7 @@ class SessionsManager {
   }
 
   getReadinessState() {
+    this.setReadinessState();
     return this.readinessState;
   }
 }

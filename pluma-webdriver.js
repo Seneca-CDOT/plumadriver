@@ -7,7 +7,7 @@ const { SessionsManager } = require('./SessionsManager/SessionsManager');
 
 const server = express();
 server.use(cors());
-const HTTP_PORT = 3000; // needs to be changed to accept user provided port with validation and deafult port if none specified.
+const HTTP_PORT = process.env.PORT || args['port']; // needs to be changed to accept user provided port with validation and deafult port if none specified.
 
 const sessionsManager = new SessionsManager();
 
@@ -25,8 +25,8 @@ server.get('/', (req, res) => {
 
 // Status
 server.get('/status', (req, res) => {
-  const status = sessionsManager.getReadinessState();
-  res.json(status);
+  const body = sessionsManager.getReadinessState();
+   res.status(200).json(body);
 });
 
 // New session
