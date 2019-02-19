@@ -4,6 +4,7 @@
   "description": "",
   "main": "pluma-webdriver.js",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "cors": "^2.8.5",
     "encodeurl": "^1.0.2",
     "express": "^4.16.4",
