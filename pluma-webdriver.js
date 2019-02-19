@@ -2,11 +2,25 @@
 const express = require('express');
 const args = require('minimist')(process.argv.slice(2)); // for user provided port
 const cors = require('cors');
+const bodyParser = require('body-parser');
+
 const { SessionsManager } = require('./SessionsManager/SessionsManager');
+const {
+  BadRequest,
+  InternalServerError,
+  MethodnotAllowed,
+  NotFound,
+  RequestTimeout
+} = require('./Error/errors.js');
+const utility = require('./utils/utils');
 
 const server = express();
-server.use(cors());
 const HTTP_PORT = process.env.PORT || args['port']; // needs to be changed to accept user provided port with validation and deafult port if none specified.
+
+// middleware
+server.use(cors());
+server.use(bodyParser.json());
+
 
 const sessionsManager = new SessionsManager();
 
@@ -24,14 +38,18 @@ server.get('/', (req, res) => {
 
 // Status
 server.get('/status', (req, res) => {
-  const body = sessionsManager.getReadinessState();
-  res.status(200).json(body);
+  const state = sessionsManager.getReadinessState();
+  res.status(200).json(state);
 });
 
 // New session
 server.post('/session', async (req, res) => {
   try {
-    const newSession = sessionsManager.createSession();
+    const newSession = sessionsManager.createSession(req.body);
+    if (!await utility.validate.checkRequestBodyType(req, 'application/json')) {
+      const error = new BadRequest('invalid argument');
+      res.status(error.code).send('invalid argument');
+    }
     res.send(newSession);
   } catch (error) {
     console.log(error);
