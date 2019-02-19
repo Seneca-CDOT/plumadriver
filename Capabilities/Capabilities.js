@@ -1,0 +1,6 @@
+class Capabilties {
+    constructor(...args) {
+
+    }
+
+}

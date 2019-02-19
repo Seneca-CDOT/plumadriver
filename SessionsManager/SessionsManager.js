@@ -1,5 +1,6 @@
 
 const os = require('os');
+const Session = require('../Session/Session');
 
 class SessionsManager {
   constructor() {
@@ -10,12 +11,23 @@ class SessionsManager {
         message: 'PlumaDriver is ready for new sessions',
         os: {
           arch: os.arch(),
-          name: os.platform(),  
-          version: os.release(),  
+          name: os.platform(),
+          version: os.release(),
         },
         ready: true,
-      }
-    }
+      },
+    };
+  }
+
+  createSession() {
+    const newSession = new Session();
+
+    Object.defineProperty(newSession, 'sessionID', { // restrict sessionID as readonly
+      writable: false,
+    });
+
+    this.sessions.push(newSession); // creates new session from url provided
+    return newSession;
   }
 
   setReadinessState() {

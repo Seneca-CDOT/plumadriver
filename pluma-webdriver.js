@@ -2,7 +2,6 @@
 const express = require('express');
 const args = require('minimist')(process.argv.slice(2)); // for user provided port
 const cors = require('cors');
-const Session = require('./Session/Session.js');
 const { SessionsManager } = require('./SessionsManager/SessionsManager');
 
 const server = express();
@@ -26,19 +25,17 @@ server.get('/', (req, res) => {
 // Status
 server.get('/status', (req, res) => {
   const body = sessionsManager.getReadinessState();
-   res.status(200).json(body);
+  res.status(200).json(body);
 });
 
 // New session
 server.post('/session', async (req, res) => {
-  const newSession = new Session();
-
-  Object.defineProperty(newSession, 'sessionID', { // restrict sessionID as readonly
-    writable: false,
-  });
-
-  sessionsManager.sessions.push(newSession); // creates new session from url provided
-  res.send(newSession);
+  try {
+    const newSession = sessionsManager.createSession();
+    res.send(newSession);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 // delete session

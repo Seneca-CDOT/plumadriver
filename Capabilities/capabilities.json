@@ -1,0 +1,18 @@
+{
+    "capabilities": {
+       "firstMatch": [ {
+          "browserName": "chrome",
+          "goog:chromeOptions": {
+             "args": [  ],
+             "extensions": [  ]
+          }
+       } ]
+    },
+    "desiredCapabilities": {
+       "browserName": "chrome",
+       "goog:chromeOptions": {
+          "args": [  ],
+          "extensions": [  ]
+       }
+    }
+ }
