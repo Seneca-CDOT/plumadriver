@@ -1,4 +1,4 @@
-class RequestTimeOutError extends Error {
+class RequestTimeoutError extends Error {
   constructor(message) {
     super(message);
     this.name = 'RequestTimeOutError';
@@ -6,4 +6,4 @@ class RequestTimeOutError extends Error {
   }
 }
 
-module.exports = RequestTimeOutError;
+module.exports = RequestTimeoutError;
