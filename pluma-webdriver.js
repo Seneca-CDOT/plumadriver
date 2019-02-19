@@ -45,11 +45,11 @@ server.get('/status', (req, res) => {
 // New session
 server.post('/session', async (req, res) => {
   try {
-    const newSession = sessionsManager.createSession(req.body);
     if (!await utility.validate.checkRequestBodyType(req, 'application/json')) {
       const error = new BadRequest('invalid argument');
-      res.status(error.code).send('invalid argument');
+      res.status(error.code).send(error.message);
     }
+    const newSession = sessionsManager.createSession(req.body);
     res.send(newSession);
   } catch (error) {
     console.log(error);
