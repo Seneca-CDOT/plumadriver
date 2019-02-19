@@ -1,6 +1,11 @@
 
 const os = require('os');
 const Session = require('../Session/Session');
+const Capabilities = require('../Capabilities/Capabilities');
+const {
+  NotFound,
+  BadRequest,
+} = require('../Error/errors');
 
 class SessionsManager {
   constructor() {
@@ -19,7 +24,15 @@ class SessionsManager {
     };
   }
 
-  createSession() {
+  createSession(body) {
+    let capabilities = new Capabilities();
+    
+    if (!Object.prototype.hasOwnProperty.call(body, 'capabilities')) {
+      throw new BadRequest('invalid argument');
+    }
+
+    if (body.capabilities.alwaysMatch === undefined)
+      
     const newSession = new Session();
 
     Object.defineProperty(newSession, 'sessionID', { // restrict sessionID as readonly
@@ -37,7 +50,7 @@ class SessionsManager {
   findSession(sessionId) {
     const foundSession = this.sessions.find(session => session.id === sessionId);
     if (!foundSession) {
-      throw new Error(`Session ${sessionId} not found`);
+      throw new NotFound(`Session ${sessionId} not found`);
     } else {
       return foundSession;
     }
