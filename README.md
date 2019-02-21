@@ -1,17 +1,18 @@
 <h1>PlumaDriver</h1>
 
 <p>PlumaDriver is a JavaScript implementation of the W3C WebDriver standards using 
-the JSDOM library to emulate the remote end node (browser) in the communication chain of nodes between the local end (client) and remote end which hosts the server side of the <a href ="https://www.w3.org/TR/webdriver1/#protocol">W3C webdriver protocol</a>.
+the JSDOM library to emulate the remote end node (browser) in the communication chain of nodes between the local end (client) and remote end. More information on this can be found at the <a href ="https://www.w3.org/TR/webdriver1/#protocol">W3C webdriver protocol</a> website.
 More information about JSDOM can be found <a href="https://github.com/jsdom/jsdom">here</a></p>
 
 
 <h2>Classes</h2>
 
 <p><strong>NOTE: </strong> Implementations of the classes below are not finalized and currently not W3C compliant. However, work is being made in order to achieve this. The standAlone branch of this repo contains the current implementation progress of these classes in addition to additional classes not mentioned in this file.</p>
+
 <ul>
     <li>
         <h3>Browser</h3>
-        <p>Represents the remote end node in the chain of nodes. It uses a JSDOM object in
+        <p>Represents the remote end node (user agent) in the chain of nodes. It uses a JSDOM object in
         order to represent the remote endpoint node.</p>
         <h4>Properties</h4>
         <ul>
@@ -42,6 +43,7 @@ More information about JSDOM can be found <a href="https://github.com/jsdom/jsdo
     <li>
         <h3>Session</h3>
         <p>The session class is the equivalent to the single instantiation of a user agent, including all child browsers.</h4>
+        <h4>Properties</h4>
         <ul>
             <li>
                 <strong>id</strong> - a unique UUID which uniquely identifies the session.
