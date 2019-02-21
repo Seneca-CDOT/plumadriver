@@ -72,10 +72,13 @@ More information about JSDOM can be found <a href="https://github.com/jsdom/jsdo
         <h4>Methods</h4>
         <ul>
             <li>
-                <strong>findSession(sessionId)</strong> - accepts a string representing a session's UUID and searches the objects sessions array for a session object corresponding to the provided UUID. If a session object with this particular id is not found, a session not found is thrown, otherwise it returns the found session.  
+                <strong>findSession(sessionId)</strong> - accepts a string representing a session's UUID and searches the 
+                objects sessions array for a session object corresponding to the provided UUID. If a session object with this particular id is not found, 
+                a session not found is thrown, otherwise it returns the found session.  
             </li>
             <li>
-                <strong>deleteSession(sessionId)</strong> - Calls the findSession(sessionId) method with the provided session id.  Removes the returned session if found.
+                <strong>deleteSession(sessionId)</strong> - Calls the findSession(sessionId) method with the provided session id.  
+                Removes the returned session if found.
             </li>      
         </ul>
     </li>
@@ -87,13 +90,18 @@ More information about JSDOM can be found <a href="https://github.com/jsdom/jsdo
     <li>NodeJS</li>
 </ul>
 <br />
-<p>To get started, clone the repository and make sure that you have NodeJS installed. If you don't have NodeJS, you may download it <a href="https://nodejs.org/en/download">here</a>. Once inside the repository directory, open a terminal window and type in 'npm install'. This will use the node package manager (NPM) to install all the dependencies required for PlumaDriver to work. Once this step is completed, you may try out plumadriver by modifying the code inside the main function in index.js, found in the root directory of the project.
+<p>To get started, clone the repository and make sure that you have NodeJS installed. If you don't have NodeJS, you may download it 
+<a href="https://nodejs.org/en/download">here</a>. Once inside the repository directory, open a terminal window and type in 'npm install'. 
+This will use the node package manager (NPM) to install all the dependencies required for PlumaDriver to work. Once this step is completed, 
+you may try out plumadriver by modifying the code inside the main function in index.js, found in the root directory of the project.
 </p>
 
 <h3>Getting Started</h3>
 
 <p>The index.js file uses Axios, an HTTP client, in order to make requests with the
-PlumaDriver server. This file includes a few useful functions:</p>
+PlumaDriver server. To install axios along with all other project dependencies, open a terminal window
+in the repository directory and type in 'npm install'. This will use the node package manager (included in the NodeJS installation) to install all
+ dependencies in the package.json file. <br/> This file includes a few useful functions:</p>
 
 <ul>
     <li>
@@ -105,7 +113,9 @@ PlumaDriver server. This file includes a few useful functions:</p>
     <p>This function accepts a Session object and a url (string). It then uses axios to pass these parameters to the server using a POST request.</p>
     </li>
     <h4>getTitle(session)</h4>
-    <p>This function uses axios to call the /session/session/sessionId/title end-point. It accepts a session object which is then passed to the server using a GET request to obtain the title element of the DOM created by calling the navigate function. Note that the navigate() function must be called prior to getTitle() in order for the latter to work properly.</p>
+    <p>This function uses axios to call the /session/session/sessionId/title end-point. It accepts a session object which is then passed to the 
+    server using a GET request to obtain the title element of the DOM created by calling the navigate function. Note that the navigate() function must
+     be called prior to getTitle() in order for the latter to work properly.</p>
     </li>
     <h4>delete(session)</h4>
     <p>This function uses axios to call the /session/sessionId end-point using a DELETE request. It removes the provided session from the SessionManager Object</p>
