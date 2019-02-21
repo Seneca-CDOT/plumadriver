@@ -3,6 +3,7 @@ const express = require('express');
 const args = require('minimist')(process.argv.slice(2)); // for user provided port
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const logger = require('express_logger');
 
 const { SessionsManager } = require('./SessionsManager/SessionsManager');
 const {
@@ -18,9 +19,19 @@ const server = express();
 const HTTP_PORT = process.env.PORT || args['port']; // needs to be changed to accept user provided port with validation and deafult port if none specified.
 
 // middleware
+server.use(logger('detailed'));
 server.use(cors());
 server.use(bodyParser.json());
 
+server.use((err, req, res, next) => {
+  if (err instanceof SyntaxError) {
+    return res.status(400).send(JSON.stringify({
+      error: "The body of your request is not valid json!",
+    }));
+  }
+  console.error(err);
+  res.status(500).send();
+});
 
 const sessionsManager = new SessionsManager();
 
