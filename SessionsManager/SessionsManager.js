@@ -25,14 +25,22 @@ class SessionsManager {
   }
 
   createSession(body) {
-    let capabilities = new Capabilities();
-    
-    if (!Object.prototype.hasOwnProperty.call(body, 'capabilities')) {
-      throw new BadRequest('invalid argument');
+    // const capabiltiesRequest = Object.prototype.hasOwnProperty.call(body, 'capabilities');
+    // if (!capabiltiesRequest) {
+    //   throw new BadRequest('invalid argument');
+    // }
+
+    let requiredCapabilties;
+
+    if (body.alwaysMatch === undefined) {
+      requiredCapabilties = JSON.stringify({});
+    } else {
+      requiredCapabilties = body.alwaysMatch;
     }
 
-    if (body.capabilities.alwaysMatch === undefined)
-      
+
+
+
     const newSession = new Session();
 
     Object.defineProperty(newSession, 'sessionID', { // restrict sessionID as readonly
