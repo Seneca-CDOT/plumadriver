@@ -1,8 +1,50 @@
 <h1>PlumaDriver</h1>
 
 <p>PlumaDriver is a JavaScript implementation of the W3C WebDriver standards using 
-the JSDOM library to emulate the remote end node (browser) in the chain of nodes.
+the JSDOM library to emulate the remote end node (browser) in the communication chain of nodes between the local end (client) and remote end which hosts the server side of the <a href ="https://www.w3.org/TR/webdriver1/#protocol">W3C webdriver protocol</a>.
 More information about JSDOM can be found <a href="https://github.com/jsdom/jsdom">here</a></p>
+
+
+<h2>Classes</h2>
+<ul>
+    <li>
+        <h4>Browser</h4>
+        <p>Represent the remote end node in the chain of nodes. It uses a JSDOM object in
+        order to represent the remote endpoint node.</p>
+        <h5>Properties</h5>
+        <ul>
+            <li>
+                <strong>dom</strong> - The JSDOM object.
+            </li>
+            <li>
+                <strong>options</strong> - an options object which allows the user to
+                customize each instance of JSDOM.
+            </li>
+            <li>
+                <strong>webdriverActive</strong> - a boolean flag set to true when the
+                 user agent is under remote control. Initially set to false.
+            </li>        
+        </ul>
+        <h5>Methods</h5>
+        <ul>
+            <li>
+                <strong>navigateToURL(URL)</strong> - accepts a string representing a URL.
+                Currently creates a new JSDOM object from the provided url and replaces the objects dom 
+                property.  
+            </li>
+            <li>
+                <strong>getTitle()</strong> - Gets the text of the title element from the JSDOM object.
+            </li>      
+        </ul>
+    </li>
+    <li>
+    <h4></h4>
+    <p></p>
+    </li>
+    <li>
+    <h4></h4>
+    <p></p>
+    </li>
 
 <h2>Try out PlumaDriver!</h2>
 <h3>Requirements: </h3>
@@ -12,9 +54,6 @@ More information about JSDOM can be found <a href="https://github.com/jsdom/jsdo
 <br />
 <p>To get started, clone the repository and make sure that you have NodeJS installed. If you don't have NodeJS, you may download it <a href="https://nodejs.org/en/download">here</a>. Once inside the repository directory, open a terminal window and type in 'npm install'. This will use the node package manager (NPM) to install all the dependencies required for PlumaDriver to work. Once this step is completed, you may try out plumadriver by modifying the code inside the main function in index.js, found in the root directory of the project.
 </p>
-
-<h2>Classes</h2>
-
 
 <h3>Getting Started</h3>
 
@@ -28,7 +67,7 @@ PlumaDriver server. This file includes a few useful functions:</p>
     </li>
     <li>
     <h4>navigate(session, url)</h4>
-    <p>This function uses axios to call the /session/url end-point. It accepts a Session object and a url (string). It then uses axios to pass these parameters to the server using a POST request.</p>
+    <p>This function accepts a Session object and a url (string). It then uses axios to pass these parameters to the server using a POST request.</p>
     </li>
     <h4>getTitle(session)</h4>
     <p>This function uses axios to call the /session/session/sessionId/title end-point. It accepts a session object which is then passed to the server using a GET request to obtain the title element of the DOM created by calling the navigate function. Note that the navigate() function must be called prior to getTitle() in order for the latter to work properly.</p>
