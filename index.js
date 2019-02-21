@@ -41,12 +41,11 @@ async function main() {
   await getTitle(session2);
   await getTitle(session3);
   await getTitle(session4);
-  
+
   await deleteSession(session1);
   await deleteSession(session2);
   await deleteSession(session3);
   await deleteSession(session4);
-
 }
 
 main();
