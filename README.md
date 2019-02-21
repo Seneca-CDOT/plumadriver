@@ -6,12 +6,14 @@ More information about JSDOM can be found <a href="https://github.com/jsdom/jsdo
 
 
 <h2>Classes</h2>
+
+<p><strong>NOTE: </strong> Implementations of the classes below are not finalized and currently not W3C compliant. However, work is being made in order to achieve this. The standAlone branch of this repo contains the current implementation progress of these classes in addition to additional classes not mentioned in this file.</p>
 <ul>
     <li>
-        <h4>Browser</h4>
-        <p>Represent the remote end node in the chain of nodes. It uses a JSDOM object in
+        <h3>Browser</h3>
+        <p>Represents the remote end node in the chain of nodes. It uses a JSDOM object in
         order to represent the remote endpoint node.</p>
-        <h5>Properties</h5>
+        <h4>Properties</h4>
         <ul>
             <li>
                 <strong>dom</strong> - The JSDOM object.
@@ -25,7 +27,7 @@ More information about JSDOM can be found <a href="https://github.com/jsdom/jsdo
                  user agent is under remote control. Initially set to false.
             </li>        
         </ul>
-        <h5>Methods</h5>
+        <h4>Methods</h4>
         <ul>
             <li>
                 <strong>navigateToURL(URL)</strong> - accepts a string representing a URL.
@@ -38,13 +40,44 @@ More information about JSDOM can be found <a href="https://github.com/jsdom/jsdo
         </ul>
     </li>
     <li>
-    <h4></h4>
-    <p></p>
+        <h3>Session</h3>
+        <p>The session class is the equivalent to the single instantiation of a user agent, including all child browsers.</h4>
+        <ul>
+            <li>
+                <strong>id</strong> - a unique UUID which uniquely identifies the session.
+            </li>
+            <li>
+                <strong>browser</strong> - the user agent instantiated by the session.
+            </li>
+            <li>
+                <strong>webdriverActive</strong> - a boolean flag set to true when the
+                 user agent is under remote control. Initially set to false.
+            </li>        
+        </ul>
     </li>
     <li>
-    <h4></h4>
-    <p></p>
+        <h3>SessionManager</h3>
+        <p>The session manager class manages all sessions instantiated by local end.</p>
+        <h4>Properties</h4>
+        <ul>
+            <li>
+                <strong>sessions</strong> - An array containing all active sessions. 
+            </li>
+            <li>
+                <strong>readinessState</strong> - Currently the length of the sessions array indicating all active sessions.
+            </li>     
+        </ul>
+        <h4>Methods</h4>
+        <ul>
+            <li>
+                <strong>findSession(sessionId)</strong> - accepts a string representing a session's UUID and searches the objects sessions array for a session object corresponding to the provided UUID. If a session object with this particular id is not found, a session not found is thrown, otherwise it returns the found session.  
+            </li>
+            <li>
+                <strong>deleteSession(sessionId)</strong> - Calls the findSession(sessionId) method with the provided session id.  Removes the returned session if found.
+            </li>      
+        </ul>
     </li>
+</ul>
 
 <h2>Try out PlumaDriver!</h2>
 <h3>Requirements: </h3>
