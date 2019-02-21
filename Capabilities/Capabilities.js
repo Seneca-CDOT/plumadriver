@@ -1,5 +1,8 @@
+
+// TODO: create default capabilities object 
+
 class Capabilties {
-  constructor(capabilities = default) {
+  constructor(capabilities) {
     this.browserName = capabilities.browserName;
     this.browserVersion = capabilities.browserVersion;
     this.acceptInsecureCerts = capabilities.acceptInsecureCerts;
@@ -7,7 +10,7 @@ class Capabilties {
     this.proxy = capabilities.proxy;
     this.setWindowRect = capabilities.setWindowRect;
     this.timeouts = capabilities.timeouts;
-    this.unhandledPromptBehaviour = capabilities.unhandledPromptBehaviour
+    this.unhandledPromptBehaviour = capabilities.unhandledPromptBehaviour;
   }
 }
 
