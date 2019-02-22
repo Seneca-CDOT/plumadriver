@@ -1,26 +1,10 @@
 
 const axios = require('axios');
 
-// const driver = require('./driver/pluma-webdriver');
-
 async function createSession() {
-  // const response = await axios.post('http://localhost:3000/session');
-  // console.log(`created session: ${response.data.id}`);
-  // return response.data;
-
-  let response;
-  try {
-    response = await axios({
-      method: 'post',
-      url: 'http://localhost:3000/session',
-      headers: {},
-      data: {
-        foo: 'bar',
-      },
-    });
-  } catch (error) {
-    console.log(error);
-  }
+  const response = await axios.post('http://localhost:3000/session');
+  console.log(`created session: ${response.data.id}`);
+  return response.data;
 
 
   return response;
@@ -39,6 +23,7 @@ async function getTitle(session) {
 
 async function deleteSession(session) {
   await axios.delete(`http://localhost:3000/session/${session.id}`);
+  console.log(`deleted session ${session.id}`);
 }
 
 async function main() {
