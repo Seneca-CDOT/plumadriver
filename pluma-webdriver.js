@@ -3,7 +3,8 @@ const express = require('express');
 const args = require('minimist')(process.argv.slice(2)); // for user provided port
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const logger = require('express_logger');
+const winston = require('winston');
+const expressWinston = require('express-winston');
 
 const { SessionsManager } = require('./SessionsManager/SessionsManager');
 const {
@@ -19,14 +20,27 @@ const server = express();
 const HTTP_PORT = process.env.PORT || args['port']; // needs to be changed to accept user provided port with validation and deafult port if none specified.
 
 // middleware
-server.use(logger('detailed'));
 server.use(cors());
 server.use(bodyParser.json());
+server.use(expressWinston.logger({
+  transports: [
+    new winston.transports.Console(),
+  ],
+  format: winston.format.combine(
+    winston.format.colorize(),
+    winston.format.json(),
+  ),
+  meta: true,
+  msg: 'HTTP {{req.method}} {{req.url}}',
+  expressFormat: true,
+  colorize: false,
+}));
 
+// is this needed??
 server.use((err, req, res, next) => {
   if (err instanceof SyntaxError) {
     return res.status(400).send(JSON.stringify({
-      error: "The body of your request is not valid json!",
+      error: 'The body of your request is not valid json!',
     }));
   }
   console.error(err);
@@ -56,9 +70,11 @@ server.get('/status', (req, res) => {
 // New session
 server.post('/session', async (req, res) => {
   try {
-    if (!await utility.validate.checkRequestBodyType(req, 'application/json')) {
+    // check if request is a JSON object
+    if (!await utility.validate.requestBodyType(req, 'application/json')) {
       const error = new BadRequest('invalid argument');
-      res.status(error.code).send(error.message);
+      res.status(error.code);
+      throw (error);
     }
     const newSession = sessionsManager.createSession(req.body);
     res.send(newSession);
@@ -69,16 +85,12 @@ server.post('/session', async (req, res) => {
 
 // delete session
 server.delete('/session/:sessionId', (req, res) => {
-  let index = -1;
   try {
-    index = sessionsManager.findSession(req.params.sessionId);
+    sessionsManager.findSession(req.params.sessionId);
   } catch (error) {
-    console.log(error);
+    res.status(error.status).send(error.message);
   }
-  if (index > -1) {
-    sessionsManager.sessions.splice(index, 1);
-    res.send(null);
-  }
+  res.send(null);
 });
 
 // get title
