@@ -6,4 +6,8 @@ exports.validate = {
     }
     return false;
   },
+  type(testObj, type) {
+    if (testObj.constructor.name.toLowerCase() === type) return true;
+    return false;
+  },
 };
