@@ -12,7 +12,7 @@ class Session {
     this.capabilities = {
       requiredCapabilities: [],
       firstMatchCapabilties: [],
-    }
+    };
     this.processCapabilities(requestedCapabilities);
   }
 
@@ -26,10 +26,10 @@ class Session {
     }
 
     if (capabilities.alwaysMatch !== undefined ) {
-      Object.keys(defaultRequiredCapabilities).forEach((key)=> {
+      Object.keys(defaultRequiredCapabilities).forEach((key) => {
         if (Object.prototype.hasOwnProperty.call(capabilities.alwaysMatch, key)) {
           try {
-            const capability = new Capability(capabilities.alwaysMatch[key]);
+            const capability = new Capability(capabilities.alwaysMatch[key], key);
             this.capabilities.requiredCapabilities.push(capability);
           } catch (error) {
             throw error;
