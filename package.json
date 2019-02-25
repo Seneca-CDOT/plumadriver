@@ -8,13 +8,15 @@
     "cors": "^2.8.5",
     "encodeurl": "^1.0.2",
     "express": "^4.16.4",
+    "express-winston": "^3.1.0",
     "express_logger": "0.0.4",
     "jsdom": "^13.1.0",
     "minimist": "^1.2.0",
     "os": "^0.1.1",
     "pkg": "^4.3.7",
     "selenium-webdriver": "^4.0.0-alpha.1",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "axios": "^0.18.0",
