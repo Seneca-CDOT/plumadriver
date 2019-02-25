@@ -59,12 +59,14 @@ async function onHTTPStart() {
 // code for this endpoint is for testing purposes at the moment
 server.get('/', (req, res) => {
   res.send(sessionsManager.sessions);
+  // TODO:  some sort of landing page here for plumadriver
 });
 
 // Status
 server.get('/status', (req, res) => {
   const state = sessionsManager.getReadinessState();
   res.status(200).json(state);
+  // this endpoint should be more elaborate relating to readiness state.
 });
 
 // New session
@@ -73,13 +75,13 @@ server.post('/session', async (req, res) => {
     // check if request is a JSON object
     if (!await utility.validate.requestBodyType(req, 'application/json')) {
       const error = new BadRequest('invalid argument');
-      res.status(error.code);
       throw (error);
     }
     const newSession = sessionsManager.createSession(req.body);
     res.send(newSession);
   } catch (error) {
-    console.log(error);
+    res.status(error.code);
+    console.log(error); // log to winston to console
   }
 });
 
@@ -88,7 +90,8 @@ server.delete('/session/:sessionId', (req, res) => {
   try {
     sessionsManager.findSession(req.params.sessionId);
   } catch (error) {
-    res.status(error.status).send(error.message);
+    res.status(error.status).send(error.message); // fix this, error should not be sent but thrown
+    // log error to winston not console
   }
   res.send(null);
 });
@@ -100,7 +103,8 @@ server.get('/session/:sessionId/title', (req, res) => {
     const title = session.browser.getTitle();
     res.send(title);
   } catch (error) {
-    console.log(error);
+    console.log(error); 
+    // TODO: set error status
   }
 });
 
@@ -112,6 +116,7 @@ server.post('/session/:sessionId/:url', async (req, res) => {
     res.json(null);
   } catch (error) {
     console.log(error);
+    // TODO: set error status
   }
 });
 /*---------------------------------------------------------*/
