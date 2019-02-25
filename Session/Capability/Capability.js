@@ -2,8 +2,8 @@ const { BadRequest } = require('../../Error/errors');
 const util = require('../../utils/utils');
 
 class Capability {
-  constructor(capability) {
-    this.validate(capability);
+  constructor(capability, capabilityName) {
+    this.validate(capability, capabilityName);
   }
 
   validate(capability, capabilityName) {
@@ -65,7 +65,7 @@ class Capability {
 
   setProxy(proxy) {
     const _proxy = {
-      proxy,
+      proxyType,
       proxyAutoConfigUrl,
       ftpProxy,
       httpProxy,
@@ -75,13 +75,23 @@ class Capability {
       socksVersion,
     }
 
-    Object.keys(_proxy).forEach((key => {
+    Object.keys(_proxy).forEach((key) => {
       if (!Object.prototype.hasOwnProperty.call(proxy, key)) {
         throw new BadRequest('invalid argument');
       } else  {
-        
+        switch (key) {
+          case 'proxyType':
+            if ( 
+              proxy[key] !== 'pac'
+              || proxy[key] !== 'direct'
+              || proxy[key] !== 'autodetect'
+              || proxy[key] !== 'system'
+              || proxy[key] !== 'manual'
+              ) throw new BadRequest('invalid argument');
+            else 
+        }
       }
-    }))
+    })
 
   }
 }
