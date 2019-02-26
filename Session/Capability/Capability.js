@@ -1,3 +1,4 @@
+const validator = require('validator');
 const { BadRequest } = require('../../Error/errors');
 const util = require('../../utils/utils');
 
@@ -64,35 +65,49 @@ class Capability {
   }
 
   setProxy(proxy) {
-    const _proxy = {
-      proxyType,
-      proxyAutoConfigUrl,
-      ftpProxy,
-      httpProxy,
-      noProxy,
-      sslProxy,
-      socksProxy,
-      socksVersion,
-    }
+    const proxyProperties = [
+      'proxyType',
+      'proxyAutoConfig',
+      'ftpProxy',
+      'httpProxy',
+      'noProxy',
+      'sslproxy',
+      'socksProxy',
+      'socksVersion'
+    ];
 
-    Object.keys(_proxy).forEach((key) => {
+    const _proxy = {};
+
+    proxyProperties.forEach((key) => {
       if (!Object.prototype.hasOwnProperty.call(proxy, key)) {
         throw new BadRequest('invalid argument');
-      } else  {
+      } else {
         switch (key) {
           case 'proxyType':
-            if ( 
-              proxy[key] !== 'pac'
-              || proxy[key] !== 'direct'
+            if (proxy[key] === 'pac') {
+              if (!Object.prototype.hasOwnProperty.call(proxy, 'proxyAutoConfig')) {
+                throw new BadRequest('invalid argument');
+              }
+              _proxy[key] = proxy[key];
+            } else if (
+              proxy[key] !== 'direct'
               || proxy[key] !== 'autodetect'
               || proxy[key] !== 'system'
               || proxy[key] !== 'manual'
-              ) throw new BadRequest('invalid argument');
-            else 
+            ) throw new BadRequest('invalid argument');
+            else {
+              _proxy[key] = proxy[key];
+            }
+            break;
+          case 'proxyautoConfigUrl':
+          if (!validator.isURL(proxy[key])) throw new BadRequest('invalid argument');
+            break;
+          default:
+            break;
         }
       }
-    })
-
+    });
+    return this; // change
   }
 }
 
