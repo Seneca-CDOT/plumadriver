@@ -41,7 +41,7 @@ class Capability {
           break;
         case 'proxy':
           if (!util.validate.type(capability, 'object')) throw new BadRequest('invalid argument');
-          // TODO: proxy capability validation
+          this.setProxy(capability);
           break;
         case 'timeouts':
           // TODO: timeouts capability validation
@@ -64,7 +64,7 @@ class Capability {
 
   }
 
-  setProxy(proxy) {
+  setProxy(reqProxy) {
     const proxyProperties = [
       'proxyType',
       'proxyAutoConfig',
@@ -73,37 +73,55 @@ class Capability {
       'noProxy',
       'sslproxy',
       'socksProxy',
-      'socksVersion'
+      'socksVersion',
     ];
 
-    const _proxy = {};
+    const proxy = {};
 
     proxyProperties.forEach((key) => {
-      if (!Object.prototype.hasOwnProperty.call(proxy, key)) {
+      if (!Object.prototype.hasOwnProperty.call(reqProxy, key)) {
         throw new BadRequest('invalid argument');
       } else {
         switch (key) {
           case 'proxyType':
-            if (proxy[key] === 'pac') {
-              if (!Object.prototype.hasOwnProperty.call(proxy, 'proxyAutoConfig')) {
+            if (reqProxy[key] === 'pac') {
+              if (!Object.prototype.hasOwnProperty.call(reqProxy, 'proxyAutoConfig')) {
                 throw new BadRequest('invalid argument');
               }
-              _proxy[key] = proxy[key];
+              proxy[key] = reqProxy[key];
             } else if (
-              proxy[key] !== 'direct'
-              || proxy[key] !== 'autodetect'
-              || proxy[key] !== 'system'
-              || proxy[key] !== 'manual'
+              reqProxy[key] !== 'direct'
+              || reqProxy[key] !== 'autodetect'
+              || reqProxy[key] !== 'system'
+              || reqProxy[key] !== 'manual'
             ) throw new BadRequest('invalid argument');
             else {
-              _proxy[key] = proxy[key];
+              proxy[key] = reqProxy[key];
             }
             break;
           case 'proxyautoConfigUrl':
-          if (!validator.isURL(proxy[key])) throw new BadRequest('invalid argument');
+            if (!validator.isURL(reqProxy[key])) throw new BadRequest('invalid argument');
+            else proxy[key] = reqProxy[key];
+            break;
+          case 'ftpProxy':
+          case 'httpProxy':
+          case 'sslProxy':
+            // TODO: add proper validation according to W3C
+            break;
+          case 'socksProxy':
+            if (!Object.prototype.hasOwnProperty.call(reqProxy, 'socksVersion')) {
+              throw new BadRequest('invalid argument');
+            } else {
+              // TODO:  validate socksProxy property
+            }
+            break;
+          case 'socksVersion':
+            if (Number.isInteger(reqProxy[key]) && reqProxy[key] > -1 && reqProxy[key] < 256) {
+              proxy[key] = reqProxy[key];
+            } else throw new BadRequest('invalid argument');
             break;
           default:
-            break;
+            throw new BadRequest('invalid argument');
         }
       }
     });
