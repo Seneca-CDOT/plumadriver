@@ -18,7 +18,8 @@ class Session {
 
   processCapabilities(requestedCapabilities) {
     let capabilities;
-    const capabiltiesRequest = Object.prototype.hasOwnProperty.call(requestedCapabilities, 'capabilities');
+    const capabiltiesRequest = Object.prototype.hasOwnProperty
+      .call(requestedCapabilities, 'capabilities');
     if (!capabiltiesRequest) {
       throw new BadRequest('invalid argument');
     } else {
