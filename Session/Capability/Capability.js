@@ -8,49 +8,45 @@ class Capability {
   }
 
   validate(capability, capabilityName) {
-    try {
-      switch (capabilityName) {
-        case 'browserName':
-        case 'browserVersion':
-        case 'platformName':
-          if (!util.validate.type(capability, 'string')) throw new BadRequest('invalid argument');
-          this.setCapability(capability, capabilityName);
-          break;
-        case 'acceptInsecureCerts':
-          if (!util.validate.type(capability, 'boolean')) throw new BadRequest('invalid argument');
-          this.setCapability(capability, capabilityName);
-          break;
-        case 'pageLoadStrategy':
-          if (!util.validate.type(capability, 'string')) throw new BadRequest('invalid argument');
-          if (
-            capability !== 'none'
-            || capability !== 'eager'
-            || capability !== 'normal') throw new BadRequest('invalid argument');
-          this.setCapability(capability, capabilityName);
-          break;
-        case 'unhandledPromptBehaviour':
-          if (!util.validate.type(capability, 'string')) throw new BadRequest('invalid argument');
-          if (
-            capability !== 'dismiss'
-            || capability !== 'accept'
-            || capability !== 'dismiss and notify'
-            || capability !== 'accept and notify'
-            || capability !== 'ignore'
-          ) throw new BadRequest('invalid argument');
-          this.setCapability(capability, capabilityName);
-          break;
-        case 'proxy':
-          if (!util.validate.type(capability, 'object')) throw new BadRequest('invalid argument');
-          this.setProxy(capability);
-          break;
-        case 'timeouts':
-          // TODO: timeouts capability validation
-          break;
-        default:
-          break;
-      }
-    } catch (error) {
-      throw error;
+    switch (capabilityName) {
+      case 'browserName':
+      case 'browserVersion':
+      case 'platformName':
+        if (!util.validate.type(capability, 'string')) throw new BadRequest('invalid argument');
+        this.setCapability(capability, capabilityName);
+        break;
+      case 'acceptInsecureCerts':
+        if (!util.validate.type(capability, 'boolean')) throw new BadRequest('invalid argument');
+        this.setCapability(capability, capabilityName);
+        break;
+      case 'pageLoadStrategy':
+        if (!util.validate.type(capability, 'string')) throw new BadRequest('invalid argument');
+        if (
+          capability !== 'none'
+          || capability !== 'eager'
+          || capability !== 'normal') throw new BadRequest('invalid argument');
+        this.setCapability(capability, capabilityName);
+        break;
+      case 'unhandledPromptBehaviour':
+        if (!util.validate.type(capability, 'string')) throw new BadRequest('invalid argument');
+        if (
+          capability !== 'dismiss'
+          || capability !== 'accept'
+          || capability !== 'dismiss and notify'
+          || capability !== 'accept and notify'
+          || capability !== 'ignore'
+        ) throw new BadRequest('invalid argument');
+        this.setCapability(capability, capabilityName);
+        break;
+      case 'proxy':
+        if (!util.validate.type(capability, 'object')) throw new BadRequest('invalid argument');
+        this.setProxy(capability);
+        break;
+      case 'timeouts':
+        // TODO: timeouts capability validation
+        break;
+      default:
+        break;
     }
   }
 
@@ -84,7 +80,7 @@ class Capability {
       } else {
         switch (key) {
           case 'proxyType':
-            if (reqProxy[key] === 'pac') {
+            if (reqProxy[key] === 'pac') {  // this portion of code could be written more cleanly...
               if (!Object.prototype.hasOwnProperty.call(reqProxy, 'proxyAutoConfig')) {
                 throw new BadRequest('invalid argument');
               }
