@@ -1,4 +1,6 @@
 const validator = require('validator');
+const ping = require('ping');
+const isPortReachable = require('is-port-reachable');
 const { BadRequest } = require('../../Error/errors');
 const util = require('../../utils/utils');
 
@@ -116,6 +118,25 @@ class CapabilityValidator {
       }
     });
     this.proxy = proxy;
+  }
+
+  static validateHostAndPort(host, port = undefined) {
+    let validPort = false;
+    let validHost;
+
+    ping.sys.probe(host, (isAlive) => {
+      validHost = isAlive ? host : false;
+    });
+
+    if (typeof port === 'string' && port !== undefined && validator.isPort(port)) {
+      validPort = port;
+    }
+
+    if (validHost) {
+      if (port) return `${validHost}:${validPort}`;
+      return validHost;
+    }
+    return false;
   }
 }
 
