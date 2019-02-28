@@ -2,7 +2,7 @@ const validator = require('validator');
 const { BadRequest } = require('../../Error/errors');
 const util = require('../../utils/utils');
 
-class Capability {
+class CapabilityValidator {
   constructor(capability, capabilityName) {
     this.validate(capability, capabilityName);
   }
@@ -13,11 +13,11 @@ class Capability {
       case 'browserVersion':
       case 'platformName':
         if (!util.validate.type(capability, 'string')) throw new BadRequest('invalid argument');
-        this.setCapability(capability, capabilityName);
+        this[capabilityName] = capability;
         break;
       case 'acceptInsecureCerts':
         if (!util.validate.type(capability, 'boolean')) throw new BadRequest('invalid argument');
-        this.setCapability(capability, capabilityName);
+        this[capabilityName] = capability;
         break;
       case 'pageLoadStrategy':
         if (!util.validate.type(capability, 'string')) throw new BadRequest('invalid argument');
@@ -25,7 +25,7 @@ class Capability {
           capability !== 'none'
           || capability !== 'eager'
           || capability !== 'normal') throw new BadRequest('invalid argument');
-        this.setCapability(capability, capabilityName);
+        this[capabilityName] = capability;
         break;
       case 'unhandledPromptBehaviour':
         if (!util.validate.type(capability, 'string')) throw new BadRequest('invalid argument');
@@ -36,7 +36,7 @@ class Capability {
           || capability !== 'accept and notify'
           || capability !== 'ignore'
         ) throw new BadRequest('invalid argument');
-        this.setCapability(capability, capabilityName);
+        this[capabilityName] = capability;
         break;
       case 'proxy':
         if (!util.validate.type(capability, 'object')) throw new BadRequest('invalid argument');
@@ -48,12 +48,6 @@ class Capability {
       default:
         break;
     }
-  }
-
-  setCapability(capability, name) {
-    this.name = name;
-    this.type = typeof capability;
-    this.value = capability;
   }
 
   setTimeouts(timeouts) {
@@ -80,7 +74,7 @@ class Capability {
       } else {
         switch (key) {
           case 'proxyType':
-            if (reqProxy[key] === 'pac') {  // this portion of code could be written more cleanly...
+            if (reqProxy[key] === 'pac') { // this portion of code could be written more cleanly...
               if (!Object.prototype.hasOwnProperty.call(reqProxy, 'proxyAutoConfig')) {
                 throw new BadRequest('invalid argument');
               }
@@ -121,8 +115,8 @@ class Capability {
         }
       }
     });
-    return this; // change
+    this.proxy = proxy;
   }
 }
 
-module.exports = Capability;
+module.exports = CapabilityValidator;
