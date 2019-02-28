@@ -1,20 +1,32 @@
 
 const uuidv1 = require('uuid/v1');
+const os = require('os');
 const Browser = require('../browser/browser.js');
 const { BadRequest, InternalServerError } = require('../Error/errors');
-const { Capability } = require('./Capability/Capability');
+const { CapabilityValidator } = require('./CapabilityValidator/CapabilityValidator');
 
 class Session {
   constructor(requestedCapabilities) {
-    if (Session.processCapabilities(requestedCapabilities) === null) {
-      throw new InternalServerError('session not created');
+    this.initializeSessionCapabilties(requestedCapabilities);
+    this.id = uuidv1();
+    this.browser = new Browser();
+  }
+
+  initializeSessionCapabilties(request) {
+    const capabilities = Session.processCapabilities(request);
+    if (capabilities === null) throw new InternalServerError('could not create session');
+
+    // pageLoadStrategy
+    this.pageLoadStrategy = 'normal';
+    if (Object.prototype.hasOwnProperty.call(capabilities, 'pageLoadStrategy')
+      && typeof capabilities.pageLoadStrategy === 'string') {
+      this.pageLoadStrategy = capabilities.pageLoadStrategy;
+    } else {
+      capabilities.pageLoadStrategy = 'normal';
     }
-    this.id = uuidv1(); // creates RFC4122 (IEFT) UUID according to W3C standard
-    this.browser = new Browser(); // TODO create default config file, pass to constructor
-    this.capabilities = {
-      requiredCapabilities: [],
-      firstMatchCapabilties: [],
-    };
+
+
+
   }
 
   static processCapabilities(request) {
@@ -40,7 +52,7 @@ class Session {
     if (capabilities.alwaysMatch !== undefined) {
       Object.keys(defaultCapabilities).forEach((key) => {
         if (Object.prototype.hasOwnProperty.call(capabilities.alwaysMatch, key)) {
-          const validatedCapability = new Capability(capabilities.alwaysMatch[key], key);
+          const validatedCapability = new CapabilityValidator(capabilities.alwaysMatch[key], key);
           requiredCapabilities[key] = validatedCapability;
         }
       });
@@ -55,18 +67,36 @@ class Session {
       throw new BadRequest('invalid argument');
     }
 
+    /**
+     * @param {Array[Capability]} validatedFirstMatchCapabilties contains
+     * a list of all the validated firstMatch capabilties requested by the client
+     */
     const validatedFirstMatchCapabilties = [];
 
-    allMatchedCapabilities.forEach((capabilityName) => {
-      const validatedCapability = new Capability(
-        allMatchedCapabilities[capabilityName],
-        capabilityName,
-      );
-      validatedFirstMatchCapabilties.push(validatedCapability);
+    allMatchedCapabilities.forEach((indexedFirstMatchCapability) => {
+      const validatedFirstMatchCapability = {};
+      Object.keys(indexedFirstMatchCapability).forEach((key) => {
+        const validatedCapability = new CapabilityValidator(indexedFirstMatchCapability[key], key);
+        validatedFirstMatchCapability[key] = validatedCapability;
+      });
+      validatedFirstMatchCapabilties.push(validatedFirstMatchCapabilties);
     });
 
-    // attempt mergin capabilities
-    const mergedCapabilities = Capability.mergeCapabilities(requiredCapabilities, firstMatchCapabilities);
+    // attempt merging capabilities
+    const mergedCapabilities = [];
+
+    validatedFirstMatchCapabilties.forEach((firstMatch) => {
+      const merged = Session.mergeCapabilities(requiredCapabilities, firstMatch);
+      mergedCapabilities.push(merged);
+    });
+
+    let matchedCapabilities;
+    mergedCapabilities.forEach((capabilites) => {
+      matchedCapabilities = Session.matchCapabilities(capabilites);
+      if (matchedCapabilities === null) throw new InternalServerError('could not create session');
+    });
+
+    return matchedCapabilities;
   }
 
   static mergeCapabilities(primary, secondary) {
@@ -78,8 +108,50 @@ class Session {
 
     if (secondary === undefined) return result;
 
+    Object.keys(secondary).forEach((property) => {
+      if (Object.prototype.hasOwnProperty.call(primary, property)) {
+        throw new BadRequest('invalid argument');
+      }
+      result[property] = secondary[property];
+    });
 
     return result;
+  }
+
+  static matchCapabilities(capabilties) {
+    const matchedCapabilities = {
+      browserName: 'plumadriver',
+      browserVersion: 'v1.0',
+      platformName: os.platform(),
+      acceptInsecureCerts: false,
+      setWindowRect: false,
+    };
+
+    // TODO: add extension capabilities here in the future
+    let flag = true;
+    Object.keys(capabilties).forEach((property) => {
+      switch (property) {
+        case 'browserName':
+        case 'platformName':
+          if (capabilties[property] !== matchedCapabilities[property]) flag = false;
+          break;
+        case 'browserVersion':
+          // TODO: change to comparison algorith once more versions are released
+          if (capabilties[property] !== matchedCapabilities[property]) flag = false;
+          break;
+        case 'setWindowRect':
+          if (capabilties[property]) throw new BadRequest('plumadriver is headless');
+          break;
+        // TODO: add proxy matching in the future
+        default:
+          break;
+      }
+      if (flag) matchedCapabilities[property] = capabilties[property];
+    });
+
+    if (flag) return matchedCapabilities;
+
+    return null;
   }
 }
 
