@@ -7,13 +7,7 @@ const winston = require('winston');
 const expressWinston = require('express-winston');
 
 const { SessionsManager } = require('./SessionsManager/SessionsManager');
-const {
-  BadRequest,
-  InternalServerError,
-  MethodnotAllowed,
-  NotFound,
-  RequestTimeout
-} = require('./Error/errors.js');
+const { BadRequest } = require('./Error/errors.js');
 const utility = require('./utils/utils');
 
 const server = express();
@@ -103,7 +97,7 @@ server.get('/session/:sessionId/title', (req, res) => {
     const title = session.browser.getTitle();
     res.send(title);
   } catch (error) {
-    console.log(error); 
+    console.log(error);
     // TODO: set error status
   }
 });
