@@ -16,7 +16,7 @@ class Session {
     const capabilities = Session.processCapabilities(request);
     if (capabilities === null) throw new InternalServerError('could not create session');
 
-    // pageLoadStrategy
+    // initialize pageLoadStrategy
     this.pageLoadStrategy = 'normal';
     if (Object.prototype.hasOwnProperty.call(capabilities, 'pageLoadStrategy')
       && typeof capabilities.pageLoadStrategy === 'string') {
@@ -47,7 +47,7 @@ class Session {
       capabilities = request.capabilities;
     }
 
-    // alwaysMatch capabilties
+    // validate alwaysMatch capabilties
     const requiredCapabilities = {};
     if (capabilities.alwaysMatch !== undefined) {
       Object.keys(defaultCapabilities).forEach((key) => {
@@ -58,7 +58,7 @@ class Session {
       });
     }
 
-    // first match capabilities
+    // validate first match capabilities
     let allMatchedCapabilities = capabilities.firstMatch;
     if (allMatchedCapabilities === undefined) {
       allMatchedCapabilities = [{}];
@@ -66,7 +66,6 @@ class Session {
       || allMatchedCapabilities.length === 0) {
       throw new BadRequest('invalid argument');
     }
-
     /**
      * @param {Array[Capability]} validatedFirstMatchCapabilties contains
      * a list of all the validated firstMatch capabilties requested by the client
