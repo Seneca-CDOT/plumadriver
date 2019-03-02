@@ -98,19 +98,30 @@ class CapabilityValidator {
           case 'ftpProxy':
           case 'httpProxy':
           case 'sslProxy':
-            // TODO: add proper validation according to W3C
+            if (proxy.proxyType === 'manual') {
+              const proxy = CapabilityValidator.validateHost(reqProxy[key]);
+              if (proxy) proxy[key] = reqProxy[key];
+              else throw new BadRequest('invalid argument');
+
+            }
             break;
           case 'socksProxy':
-            if (!Object.prototype.hasOwnProperty.call(reqProxy, 'socksVersion')) {
-              throw new BadRequest('invalid argument');
-            } else {
-              // TODO:  validate socksProxy property
+            if (proxy.proxyType === 'manual') {
+              if (!Object.prototype.hasOwnProperty.call(reqProxy, 'socksVersion')) {
+                throw new BadRequest('invalid argument');
+              } else {
+                const proxy = CapabilityValidator.validateHost(reqProxy[key]);
+                if (proxy) proxy[key] = reqProxy[key];
+                else throw new BadRequest('invalid argument');
+              }
             }
             break;
           case 'socksVersion':
-            if (Number.isInteger(reqProxy[key]) && reqProxy[key] > -1 && reqProxy[key] < 256) {
-              proxy[key] = reqProxy[key];
-            } else throw new BadRequest('invalid argument');
+            if (proxy.proxyType === 'manual') {
+              if (Number.isInteger(reqProxy[key]) && reqProxy[key] > -1 && reqProxy[key] < 256) {
+                proxy[key] = reqProxy[key];
+              } else throw new BadRequest('invalid argument');
+            }
             break;
           default:
             throw new BadRequest('invalid argument');
@@ -120,21 +131,15 @@ class CapabilityValidator {
     this.proxy = proxy;
   }
 
-  static validateHostAndPort(host, port = undefined) {
-    let validPort = false;
+  static validateHostAndPort(host) {
     let validHost;
 
     ping.sys.probe(host, (isAlive) => {
-      validHost = isAlive ? host : false;
+      validHost = isAlive ? true : false;
     });
 
-    if (typeof port === 'string' && port !== undefined && validator.isPort(port)) {
-      validPort = port;
-    }
-
     if (validHost) {
-      if (port) return `${validHost}:${validPort}`;
-      return validHost;
+      return host;
     }
     return false;
   }
