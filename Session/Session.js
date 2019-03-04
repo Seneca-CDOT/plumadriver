@@ -6,10 +6,28 @@ const { BadRequest, InternalServerError } = require('../Error/errors');
 const { CapabilityValidator } = require('./CapabilityValidator/CapabilityValidator');
 
 class Session {
-  constructor(requestedCapabilities) {
-    this.initializeSessionCapabilties(requestedCapabilities);
+  //  TODO(Miguel) NEED TO MAKE A DECISION ABOUT KEEPING THIS DESIGN (WITH CONSTRUCTOR)
+  //   constructor(requestedCapabilities) {
+  //   this.id = uuidv1();
+  //   this.initializeSessionCapabilties(requestedCapabilities);
+  //   this.browser = new Browser();
+  //   this.requestQueue = [];
+  // }
+
+  configureSession(requestedCapabilities) {   
     this.id = uuidv1();
+    const capabilities = this.initializeSessionCapabilties(requestedCapabilities);
     this.browser = new Browser();
+    this.requestQueue = [];
+    const body = {
+      sessionId: this.id,
+      capabilites: capabilities,
+    };
+    return body;
+  }
+
+  configureBrowser() {
+    // TODO: write function that configures JSDOM based on inputs
   }
 
   initializeSessionCapabilties(request) {
@@ -25,8 +43,29 @@ class Session {
       capabilities.pageLoadStrategy = 'normal';
     }
 
+    if (Object.prototype.hasOwnProperty.call('proxy')) {
+      // TODO: set JSDOM proxy address
+    } else {
+      capabilities.proxy = {};
+    }
 
+    if (Object.prototype.hasOwnProperty.call(capabilities, 'timeouts')) {
+      if (Object.prototype.hasOwnProperty.call(capabilities.timeouts, 'implicit')) {
+        this.timeouts.implicit = capabilities.timeouts.implicit;
+      } else this.implicitWaitTimeout = 0;
 
+      if (Object.prototype.hasOwnProperty.call(capabilities.timeouts, 'script')) {
+        this.timeouts.script = capabilities.timeouts.script;
+      } else this.timeouts.script = 30000;
+    }
+
+    const configuredTimeouts = {
+      implicit: this.timeouts.implicit,
+      pageLoad: this.timeouts.pageLoad,
+      script: this.timeouts.script,
+    };
+
+    capabilities.timeouts = configuredTimeouts;
   }
 
   static processCapabilities(request) {
