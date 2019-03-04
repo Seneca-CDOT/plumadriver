@@ -10,4 +10,13 @@ exports.validate = {
     if (testObj.constructor.name.toLowerCase() === type) return true;
     return false;
   },
+  objectPropertiesAreInArray(object, array) {
+    let validProperty = true;
+
+    Object.keys(object).forEach((key) => {
+      if (!array.includes(key)) validProperty = false;
+    });
+
+    return validProperty;
+  },
 };
