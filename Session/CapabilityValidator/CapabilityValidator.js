@@ -52,7 +52,20 @@ class CapabilityValidator {
   }
 
   setTimeouts(timeouts) {
+    // valid timeouts
+    const timeoutTypes = ['script', 'pageLoad', 'implicit'];
 
+    // check object contains valid properties
+    if (!util.validate.objectPropertiesAreInArray(timeouts, timeoutTypes)) throw new BadRequest('invalid argument');
+
+    // check property values are non-zero and intgers
+    Object.keys(timeouts).forEach((key) => {
+      if (!Number.isInteger(timeouts[key]) || timeouts[key] < 0) throw new BadRequest('invalid argument');
+    });
+
+    Object.keys(timeouts).forEach((key) => {
+      this[key] = timeouts[key];
+    });
   }
 
   setProxy(reqProxy) {
