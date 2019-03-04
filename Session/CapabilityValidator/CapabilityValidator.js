@@ -1,6 +1,5 @@
 const validator = require('validator');
 const ping = require('ping');
-const isPortReachable = require('is-port-reachable');
 const { BadRequest } = require('../../Error/errors');
 const util = require('../../utils/utils');
 
@@ -70,8 +69,8 @@ class CapabilityValidator {
 
     const proxy = {};
 
-    proxyProperties.forEach((key) => {
-      if (!Object.prototype.hasOwnProperty.call(reqProxy, key)) {
+    Object.keys(reqProxy).forEach((key) => {
+      if (!proxyProperties.includes(key)) {
         throw new BadRequest('invalid argument');
       } else {
         switch (key) {
@@ -99,10 +98,9 @@ class CapabilityValidator {
           case 'httpProxy':
           case 'sslProxy':
             if (proxy.proxyType === 'manual') {
-              const proxy = CapabilityValidator.validateHost(reqProxy[key]);
-              if (proxy) proxy[key] = reqProxy[key];
+              const validProxy = CapabilityValidator.validateHost(reqProxy[key]);
+              if (validProxy) proxy[key] = reqProxy[key];
               else throw new BadRequest('invalid argument');
-
             }
             break;
           case 'socksProxy':
@@ -110,8 +108,8 @@ class CapabilityValidator {
               if (!Object.prototype.hasOwnProperty.call(reqProxy, 'socksVersion')) {
                 throw new BadRequest('invalid argument');
               } else {
-                const proxy = CapabilityValidator.validateHost(reqProxy[key]);
-                if (proxy) proxy[key] = reqProxy[key];
+                const validProxy = CapabilityValidator.validateHost(reqProxy[key]);
+                if (validProxy) proxy[key] = reqProxy[key];
                 else throw new BadRequest('invalid argument');
               }
             }
