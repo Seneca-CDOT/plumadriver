@@ -1,8 +1,8 @@
-class BadRequestError extends Error {
+const WebDriverError = require('./WebDriverError');
+
+class BadRequestError extends WebDriverError {
   constructor(message) {
-    super(message);
-    this.name = 'BadRequestError';
-    this.code = 400;
+    super(message, 400);
   }
 }
 

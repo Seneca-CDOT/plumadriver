@@ -1,8 +1,8 @@
-class InternalServerError extends Error {
+const WebDriverError = require('./WebDriverError');
+
+class InternalServerError extends WebDriverError {
   constructor(message) {
-    super(message);
-    this.name = 'InternalServerError';
-    this.code = 500;
+    super(message, 500);
   }
 }
 
