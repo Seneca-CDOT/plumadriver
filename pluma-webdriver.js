@@ -74,7 +74,7 @@ server.post('/session', async (req, res) => {
     const newSession = sessionsManager.createSession(req.body);
     res.json(newSession);
   } catch (error) {
-    res.status(error.code).send(error);
+    res.status(error.code).json(error);
     console.log(error); // log to winston to console
   }
 });
