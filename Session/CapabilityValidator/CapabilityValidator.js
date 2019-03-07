@@ -1,11 +1,10 @@
 const validator = require('validator');
 const ping = require('ping');
-const { BadRequest } = require('../../Error/errors');
 const util = require('../../utils/utils');
 
 class CapabilityValidator {
-  constructor(capability, capabilityName) {
-    this.validate(capability, capabilityName);
+  constructor() {
+    this.valid = true;
   }
 
   validate(capability, capabilityName) {
@@ -13,62 +12,60 @@ class CapabilityValidator {
       case 'browserName':
       case 'browserVersion':
       case 'platformName':
-        if (!util.validate.type(capability, 'string')) throw new BadRequest('invalid argument');
-        this[capabilityName] = capability;
+        if (!util.validate.type(capability, 'string')) this.valid = false;
         break;
       case 'acceptInsecureCerts':
-        if (!util.validate.type(capability, 'boolean')) throw new BadRequest('invalid argument');
-        this[capabilityName] = capability;
+        if (!util.validate.type(capability, 'boolean')) this.valid = false;
         break;
       case 'pageLoadStrategy':
-        if (!util.validate.type(capability, 'string')) throw new BadRequest('invalid argument');
+        if (!util.validate.type(capability, 'string')) this.valid = false;
         if (
           capability !== 'none'
           || capability !== 'eager'
-          || capability !== 'normal') throw new BadRequest('invalid argument');
-        this[capabilityName] = capability;
+          || capability !== 'normal') this.valid = false;
         break;
       case 'unhandledPromptBehaviour':
-        if (!util.validate.type(capability, 'string')) throw new BadRequest('invalid argument');
+        if (!util.validate.type(capability, 'string')) this.valid = false;
         if (
           capability !== 'dismiss'
           || capability !== 'accept'
           || capability !== 'dismiss and notify'
           || capability !== 'accept and notify'
           || capability !== 'ignore'
-        ) throw new BadRequest('invalid argument');
-        this[capabilityName] = capability;
+        ) this.valid = false;
         break;
       case 'proxy':
-        if (!util.validate.type(capability, 'object')) throw new BadRequest('invalid argument');
-        this.setProxy(capability);
+        if (!util.validate.type(capability, 'object')) this.valid = false;
+        if (!CapabilityValidator.validateProxy(capability)) this.valid = false;
         break;
       case 'timeouts':
-        // TODO: timeouts capability validation
+        if (!CapabilityValidator.validateTimeouts(capability)) this.valid = false;
         break;
       default:
+        this.valid = false;
         break;
     }
+    return this.valid;
   }
 
-  setTimeouts(timeouts) {
+  static validateTimeouts(timeouts) {
     // valid timeouts
-    const timeoutTypes = ['script', 'pageLoad', 'implicit'];
+    let validTimeouts = true;
+    if (!util.validate.type(timeouts, 'object')) validTimeouts = false;
+    else {
+      const timeoutTypes = ['script', 'pageLoad', 'implicit'];
 
-    // check object contains valid properties
-    if (!util.validate.objectPropertiesAreInArray(timeouts, timeoutTypes)) throw new BadRequest('invalid argument');
-
-    // check property values are non-zero and intgers
-    Object.keys(timeouts).forEach((key) => {
-      if (!Number.isInteger(timeouts[key]) || timeouts[key] < 0) throw new BadRequest('invalid argument');
-    });
-
-    Object.keys(timeouts).forEach((key) => {
-      this[key] = timeouts[key];
-    });
+      // check object contains valid properties
+      if (!util.validate.objectPropertiesAreInArray(timeouts, timeoutTypes)) validTimeouts = false;
+      // check property values are non-zero and intgers
+      Object.keys(timeouts).forEach((key) => {
+        if (!Number.isInteger(timeouts[key]) || timeouts[key] < 0) validTimeouts = false;
+      });
+    }
+    return validTimeouts;
   }
 
-  setProxy(reqProxy) {
+  static validateProxy(reqProxy) {
     const proxyProperties = [
       'proxyType',
       'proxyAutoConfig',
@@ -80,79 +77,68 @@ class CapabilityValidator {
       'socksVersion',
     ];
 
-    const proxy = {};
+    let validProxy = true;
 
     Object.keys(reqProxy).forEach((key) => {
       if (!proxyProperties.includes(key)) {
-        throw new BadRequest('invalid argument');
+        validProxy = false;
       } else {
         switch (key) {
           case 'proxyType':
             if (reqProxy[key] === 'pac') { // this portion of code could be written more cleanly...
               if (!Object.prototype.hasOwnProperty.call(reqProxy, 'proxyAutoConfig')) {
-                throw new BadRequest('invalid argument');
+                validProxy = false;
               }
-              proxy[key] = reqProxy[key];
             } else if (
               reqProxy[key] !== 'direct'
               || reqProxy[key] !== 'autodetect'
               || reqProxy[key] !== 'system'
               || reqProxy[key] !== 'manual'
-            ) throw new BadRequest('invalid argument');
-            else {
-              proxy[key] = reqProxy[key];
-            }
+            ) validProxy = false;
             break;
           case 'proxyautoConfigUrl':
-            if (!validator.isURL(reqProxy[key])) throw new BadRequest('invalid argument');
-            else proxy[key] = reqProxy[key];
+            if (!validator.isURL(reqProxy[key])) validProxy = false;
             break;
           case 'ftpProxy':
           case 'httpProxy':
           case 'sslProxy':
-            if (proxy.proxyType === 'manual') {
-              const validProxy = CapabilityValidator.validateHost(reqProxy[key]);
-              if (validProxy) proxy[key] = reqProxy[key];
-              else throw new BadRequest('invalid argument');
+            if (reqProxy.proxyType === 'manual') {
+              this.valid = CapabilityValidator.validateHost(reqProxy[key]);
             }
             break;
           case 'socksProxy':
-            if (proxy.proxyType === 'manual') {
+            if (reqProxy.proxyType === 'manual') {
               if (!Object.prototype.hasOwnProperty.call(reqProxy, 'socksVersion')) {
-                throw new BadRequest('invalid argument');
+                this.valid = false;
               } else {
-                const validProxy = CapabilityValidator.validateHost(reqProxy[key]);
-                if (validProxy) proxy[key] = reqProxy[key];
-                else throw new BadRequest('invalid argument');
+                const validHost = CapabilityValidator.validateHost(reqProxy[key]);
+                if (!validHost) this.valid = false;
               }
             }
             break;
           case 'socksVersion':
-            if (proxy.proxyType === 'manual') {
-              if (Number.isInteger(reqProxy[key]) && reqProxy[key] > -1 && reqProxy[key] < 256) {
-                proxy[key] = reqProxy[key];
-              } else throw new BadRequest('invalid argument');
+            if (!reqProxy.proxyType === 'manual'
+              || !(Number.isInteger(reqProxy[key]) && reqProxy[key] > -1 && reqProxy[key] < 256)) {
+              this.valid = false;
             }
             break;
           default:
-            throw new BadRequest('invalid argument');
+            this.valid = false;
         }
       }
     });
-    this.proxy = proxy;
+    return validProxy;
   }
 
   static validateHostAndPort(host) {
     let validHost;
 
     ping.sys.probe(host, (isAlive) => {
-      validHost = isAlive ? true : false;
+      if (isAlive) validHost = true;
+      else validHost = false;
     });
 
-    if (validHost) {
-      return host;
-    }
-    return false;
+    return validHost;
   }
 }
 
