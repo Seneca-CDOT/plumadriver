@@ -2,19 +2,24 @@
 const uuidv1 = require('uuid/v1');
 const os = require('os');
 const Browser = require('../browser/browser.js');
-const { BadRequest, InternalServerError } = require('../Error/errors');
-const { CapabilityValidator } = require('./CapabilityValidator/CapabilityValidator');
+const { InvalidArgument, SessionNotCreated } = require('../Error/errors');
+const CapabilityValidator = require('./CapabilityValidator/CapabilityValidator');
 
 class Session {
-  //  TODO(Miguel) NEED TO MAKE A DECISION ABOUT KEEPING THIS DESIGN (WITH CONSTRUCTOR)
-  //   constructor(requestedCapabilities) {
-  //   this.id = uuidv1();
-  //   this.initializeSessionCapabilties(requestedCapabilities);
-  //   this.browser = new Browser();
-  //   this.requestQueue = [];
-  // }
+  constructor() {
+    this.id = '';
+    this.timeouts = {
+      implicit: 0,
+      pageLoad: 30000,
+      script: 3000,
+    };
+    this.browser = new Browser();
+    this.requestQueue = [];
+    this.pageLoadStrategy = 'normal';
+    this.webDriverActive = false;
+  }
 
-  configureSession(requestedCapabilities) {   
+  configureSession(requestedCapabilities) {
     this.id = uuidv1();
     const capabilities = this.initializeSessionCapabilties(requestedCapabilities);
     this.browser = new Browser();
@@ -43,7 +48,7 @@ class Session {
       capabilities.pageLoadStrategy = 'normal';
     }
 
-    if (Object.prototype.hasOwnProperty.call('proxy')) {
+    if (Object.prototype.hasOwnProperty.call(capabilities, 'proxy')) {
       // TODO: set JSDOM proxy address
     } else {
       capabilities.proxy = {};
@@ -52,11 +57,13 @@ class Session {
     if (Object.prototype.hasOwnProperty.call(capabilities, 'timeouts')) {
       if (Object.prototype.hasOwnProperty.call(capabilities.timeouts, 'implicit')) {
         this.timeouts.implicit = capabilities.timeouts.implicit;
-      } else this.implicitWaitTimeout = 0;
-
+      }
       if (Object.prototype.hasOwnProperty.call(capabilities.timeouts, 'script')) {
         this.timeouts.script = capabilities.timeouts.script;
-      } else this.timeouts.script = 30000;
+      }
+      if (Object.prototype.hasOwnProperty.call(capabilities.timeouts, 'pageLoad')) {
+        this.timeouts.pageLoad = capabilities.timeouts.pageLoad;
+      }
     }
 
     const configuredTimeouts = {
@@ -66,22 +73,30 @@ class Session {
     };
 
     capabilities.timeouts = configuredTimeouts;
+
+    return capabilities;
   }
 
   static processCapabilities(request) {
+    const command = 'POST /session';
+    const capabilityValidator = new CapabilityValidator();
+
     const defaultCapabilities = [
       'acceptInsecureCerts',
       'browserName',
       'browserVersion',
       'platformName',
       'pageLoadStrategy',
+      'proxy',
+      'timeouts',
+      'unhandledPromptBehaviour',
     ];
 
     let capabilities;
     const capabiltiesRequest = Object.prototype.hasOwnProperty
       .call(request, 'capabilities');
     if (!capabiltiesRequest) {
-      throw new BadRequest('invalid argument');
+      throw new InvalidArgument('request does not contain "capabilities"', command);
     } else {
       capabilities = request.capabilities;
     }
@@ -89,21 +104,26 @@ class Session {
     // validate alwaysMatch capabilties
     const requiredCapabilities = {};
     if (capabilities.alwaysMatch !== undefined) {
-      Object.keys(defaultCapabilities).forEach((key) => {
+      defaultCapabilities.forEach((key) => {
         if (Object.prototype.hasOwnProperty.call(capabilities.alwaysMatch, key)) {
-          const validatedCapability = new CapabilityValidator(capabilities.alwaysMatch[key], key);
-          requiredCapabilities[key] = validatedCapability;
+          const validatedCapability = capabilityValidator
+            .validate(capabilities.alwaysMatch[key], key);
+          if (validatedCapability) requiredCapabilities[key] = capabilities.alwaysMatch[key];
+          else {
+            throw new InvalidArgument(`${key} capability is invalid`, command);
+          }
         }
       });
     }
 
     // validate first match capabilities
     let allMatchedCapabilities = capabilities.firstMatch;
+    console.log(allMatchedCapabilities);
     if (allMatchedCapabilities === undefined) {
       allMatchedCapabilities = [{}];
     } else if (allMatchedCapabilities.constructor.name.toLowerCase() !== 'array'
       || allMatchedCapabilities.length === 0) {
-      throw new BadRequest('invalid argument');
+      throw new InvalidArgument('firstMatch capabilities should be an array', command);
     }
     /**
      * @param {Array[Capability]} validatedFirstMatchCapabilties contains
@@ -114,10 +134,13 @@ class Session {
     allMatchedCapabilities.forEach((indexedFirstMatchCapability) => {
       const validatedFirstMatchCapability = {};
       Object.keys(indexedFirstMatchCapability).forEach((key) => {
-        const validatedCapability = new CapabilityValidator(indexedFirstMatchCapability[key], key);
-        validatedFirstMatchCapability[key] = validatedCapability;
+        const validatedCapability = capabilityValidator
+          .validate(indexedFirstMatchCapability[key], key);
+        if (validatedCapability) {
+          validatedFirstMatchCapability[key] = indexedFirstMatchCapability[key];
+        }
       });
-      validatedFirstMatchCapabilties.push(validatedFirstMatchCapabilties);
+      validatedFirstMatchCapabilties.push(validatedFirstMatchCapability);
     });
 
     // attempt merging capabilities
@@ -131,7 +154,7 @@ class Session {
     let matchedCapabilities;
     mergedCapabilities.forEach((capabilites) => {
       matchedCapabilities = Session.matchCapabilities(capabilites);
-      if (matchedCapabilities === null) throw new InternalServerError('could not create session');
+      if (matchedCapabilities === null) throw new SessionNotCreated('Capabilities could not be matched');
     });
 
     return matchedCapabilities;
@@ -139,7 +162,7 @@ class Session {
 
   static mergeCapabilities(primary, secondary) {
     const result = {};
-
+    console.log(secondary);
     Object.keys(primary).forEach((key) => {
       result[key] = primary[key];
     });
@@ -148,7 +171,7 @@ class Session {
 
     Object.keys(secondary).forEach((property) => {
       if (Object.prototype.hasOwnProperty.call(primary, property)) {
-        throw new BadRequest('invalid argument');
+        throw new InvalidArgument(`${property} has already been requested in alwaysMatch`, 'POST /session');
       }
       result[property] = secondary[property];
     });
@@ -178,7 +201,7 @@ class Session {
           if (capabilties[property] !== matchedCapabilities[property]) flag = false;
           break;
         case 'setWindowRect':
-          if (capabilties[property]) throw new BadRequest('plumadriver is headless');
+          if (capabilties[property]) throw new InvalidArgument('plumadriver is headless', 'POST /session');
           break;
         // TODO: add proxy matching in the future
         default:
