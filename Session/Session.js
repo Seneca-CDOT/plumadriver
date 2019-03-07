@@ -21,7 +21,7 @@ class Session {
 
   configureSession(requestedCapabilities) {
     this.id = uuidv1();
-    const capabilities = this.initializeSessionCapabilties(requestedCapabilities);
+    const capabilities = this.configureCapabilties(requestedCapabilities);
     this.browser = new Browser();
     this.requestQueue = [];
     const body = {
@@ -35,11 +35,11 @@ class Session {
     // TODO: write function that configures JSDOM based on inputs
   }
 
-  initializeSessionCapabilties(request) {
+  configureCapabilties(request) {
     const capabilities = Session.processCapabilities(request);
     if (capabilities === null) throw new InternalServerError('could not create session');
 
-    // initialize pageLoadStrategy
+    // configure pageLoadStrategy
     this.pageLoadStrategy = 'normal';
     if (Object.prototype.hasOwnProperty.call(capabilities, 'pageLoadStrategy')
       && typeof capabilities.pageLoadStrategy === 'string') {
