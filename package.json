@@ -5,6 +5,7 @@
   "main": "pluma-webdriver.js",
   "dependencies": {
     "body-parser": "^1.18.3",
+    "config": "^3.0.1",
     "cors": "^2.8.5",
     "encodeurl": "^1.0.2",
     "express": "^4.16.4",
@@ -23,14 +24,19 @@
   },
   "devDependencies": {
     "axios": "^0.18.0",
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.1",
     "eslint": "^5.12.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
     "http-post": "^0.1.1",
+    "mocha": "^6.0.2",
     "nodemon": "^1.18.9",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "should": "^13.2.3"
   },
   "scripts": {
+    "test": "mocha",
     "testServer": "node pluma-webdriver.js",
     "lint": "eslint",
     "start": "node pluma-webdriver.js"
