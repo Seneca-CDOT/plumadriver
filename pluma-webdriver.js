@@ -1,48 +1,42 @@
 
 const express = require('express');
 const args = require('minimist')(process.argv.slice(2)); // for user provided port
-const cors = require('cors');
 const bodyParser = require('body-parser');
 const winston = require('winston');
 const expressWinston = require('express-winston');
+const config = require('config');
 
 const { SessionsManager } = require('./SessionsManager/SessionsManager');
-const { BadRequest } = require('./Error/errors.js');
+const { InvalidArgument } = require('./Error/errors.js');
 const utility = require('./utils/utils');
 
 const server = express();
-const HTTP_PORT = process.env.PORT || args['port']; // needs to be changed to accept user provided port with validation and deafult port if none specified.
+const HTTP_PORT = process.env.PORT || args['port'] || 3000; // needs to be changed to accept user provided port with validation and deafult port if none specified.
 
 // middleware
-server.use(cors());
 server.use(bodyParser.json());
-server.use(expressWinston.logger({
-  transports: [
-    new winston.transports.Console(),
-  ],
-  format: winston.format.combine(
-    winston.format.colorize(),
-    winston.format.json(),
-  ),
-  meta: true,
-  msg: 'HTTP {{req.method}} {{req.url}}',
-  expressFormat: true,
-  colorize: false,
-}));
 
-// is this needed??
-server.use((err, req, res, next) => {
-  if (err instanceof SyntaxError) {
-    return res.status(400).send(JSON.stringify({
-      error: 'The body of your request is not valid json!',
-    }));
-  }
-  console.error(err);
-  res.status(500).send();
-});
+// do not log in testing environment
+if (config.util.getEnv('NODE_ENV') !== 'test') {
+  // request logging
+  server.use(expressWinston.logger({
+    transports: [
+      new winston.transports.Console(),
+    ],
+    format: winston.format.combine(
+      winston.format.colorize(),
+      winston.format.json(),
+    ),
+    meta: true,
+    msg: 'HTTP {{req.method}} {{req.url}}',
+    expressFormat: true,
+    colorize: false,
+  }));
+
+  // error logging
+}
 
 const sessionsManager = new SessionsManager();
-
 
 async function onHTTPStart() {
   console.log(`listening on port ${HTTP_PORT}`);
@@ -64,18 +58,15 @@ server.get('/status', (req, res) => {
 });
 
 // New session
-server.post('/session', async (req, res) => {
+server.post('/session', async (req, res, next) => {
   try {
-    // check if request is a JSON object
     if (!await utility.validate.requestBodyType(req, 'application/json')) {
-      const error = new BadRequest('invalid argument');
-      throw (error);
+      throw new InvalidArgument('request is not json', 'POST /session');
     }
     const newSession = sessionsManager.createSession(req.body);
     res.json(newSession);
   } catch (error) {
-    res.status(error.code).json(error);
-    console.log(error); // log to winston to console
+    next(error);
   }
 });
 
@@ -84,37 +75,55 @@ server.delete('/session/:sessionId', (req, res) => {
   try {
     sessionsManager.findSession(req.params.sessionId);
   } catch (error) {
-    res.status(error.status).send(error.message); // fix this, error should not be sent but thrown
+    res.status(error.status).send(error.message);
     // log error to winston not console
   }
   res.send(null);
 });
 
 // get title
-server.get('/session/:sessionId/title', (req, res) => {
+server.get('/session/:sessionId/title', (req, res, next) => {
   try {
     const session = sessionsManager.findSession(req.params.sessionId);
     const title = session.browser.getTitle();
     res.send(title);
   } catch (error) {
-    console.log(error);
-    // TODO: set error status
+    next(error);
   }
 });
 
 // Navigate to
-server.post('/session/:sessionId/:url', async (req, res) => {
+server.post('/session/:sessionId/:url', async (req, res, next) => {
   try {
     const session = sessionsManager.findSession(req.params.sessionId);
     await session.browser.navigateToURL(req.params.url);
     res.json(null);
   } catch (error) {
-    console.log(error);
-    // TODO: set error status
+    next(error);
   }
 });
 /*---------------------------------------------------------*/
 
+// TODO: configure errorlogger to log only useful information rather than everything in the error object
+if (config.util.getEnv('NODE_ENV') !== 'test') {
+  server.use(expressWinston.errorLogger({
+    transports: [
+      new winston.transports.Console({}),
+      new winston.transports.File({ filename: 'pluma.json', level: 'error' }),
+    ],
+    format: winston.format.combine(
+      winston.format.colorize(),
+      winston.format.json(),
+    ),
+  }));
+}
+
+
+// error handler
+server.use((err, req, res, next) => res.status(err.code).json(err));
+
 server.listen(HTTP_PORT, async () => {
   await onHTTPStart();
 });
+
+module.exports = server; // for testing
