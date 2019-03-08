@@ -95,8 +95,10 @@ class Session {
     let capabilities;
     const capabiltiesRequest = Object.prototype.hasOwnProperty
       .call(request, 'capabilities');
-    if (!capabiltiesRequest) {
-      throw new InvalidArgument('request does not contain "capabilities"', command);
+    if (!capabiltiesRequest
+      || capabiltiesRequest.constructor !== Object
+      || Object.keys(capabiltiesRequest) === 0) {
+      throw new InvalidArgument('Missing or invalid capabilities', command);
     } else {
       capabilities = request.capabilities;
     }
