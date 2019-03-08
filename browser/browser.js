@@ -4,10 +4,13 @@ const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
 
 class Browser {
-  constructor(options = {}, webDriverActive = false) {
+  constructor(options) {
     this.dom = new JSDOM();
     this.options = options; // in the future this will be replaced by a default config file
-    this.webDriverActive = webDriverActive;
+  }
+
+  configureBrowser() {
+    // TODO: configure browser based on capabilities
   }
 
   async navigateToURL(URL) {
