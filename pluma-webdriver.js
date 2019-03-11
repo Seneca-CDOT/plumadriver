@@ -11,7 +11,7 @@ const { InvalidArgument } = require('./Error/errors.js');
 const utility = require('./utils/utils');
 
 const server = express();
-const HTTP_PORT = process.env.PORT || args['port'] || 3000; // needs to be changed to accept user provided port with validation and deafult port if none specified.
+const HTTP_PORT = process.env.PORT || args.port || 3000;
 
 // middleware
 server.use(bodyParser.json());
@@ -104,7 +104,7 @@ server.post('/session/:sessionId/:url', async (req, res, next) => {
 });
 /*---------------------------------------------------------*/
 
-// TODO: configure errorlogger to log only useful information rather than everything in the error object
+// TODO: configure errorlogger to log only useful information
 if (config.util.getEnv('NODE_ENV') !== 'test') {
   server.use(expressWinston.errorLogger({
     transports: [
