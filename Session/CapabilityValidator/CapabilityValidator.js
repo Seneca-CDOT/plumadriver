@@ -41,11 +41,69 @@ class CapabilityValidator {
       case 'timeouts':
         if (!CapabilityValidator.validateTimeouts(capability)) this.valid = false;
         break;
+      case 'jsd:browserOptions':
+        if (capability.constructor !== Object) this.valid = false;
+        if (!CapabilityValidator.validatePlumaOptions(capability)) this.valid = false;
+        break;
       default:
         this.valid = false;
         break;
     }
     return this.valid;
+  }
+
+  static validatePlumaOptions(options) {
+    let validatedOptions = true;
+
+    const allowedOptions = {
+      url(url) {
+        return validator.isURL(url);
+      },
+      referrer(referrer) {
+        return validator.isURL(referrer);
+      },
+      contentType(contentType) {
+        let valid;
+        const validTypes = [
+          'text/html',
+          'application/xml',
+        ];
+
+        if (contentType.constructor === String) valid = true;
+        else valid = false;
+
+        if (validTypes.includes(contentType) || contentType.substr(contentType.length - 4 === '+xml')) {
+          valid = true;
+        } else valid = false;
+
+        return valid;
+      },
+      includeNodeLocations(value) {
+        if (value.constructor === Boolean) return true;
+        return false;
+      },
+      storageQuota(quota) {
+        return validator.isInt(quota);
+      },
+      runScripts(value) {
+        if (value.constructor !== String) return false;
+        if (value !== 'dangerously') return false;
+        return true;
+      },
+      resources(resources) {
+        if (resources.constructor !== String) return false;
+        if (resources !== 'useable') return false;
+        return true;
+      },
+    };
+
+    Object.keys(options).forEach((key) => {
+      if (!Object.keys(allowedOptions).includes(key)) validatedOptions = false;
+      if (validatedOptions) {
+        validatedOptions = allowedOptions[key](options[key]);
+      }
+    });
+    return validatedOptions;
   }
 
   static validateTimeouts(timeouts) {
