@@ -2,7 +2,12 @@
 const uuidv1 = require('uuid/v1');
 const os = require('os');
 const Browser = require('../browser/browser.js');
-const { InvalidArgument, SessionNotCreated } = require('../Error/errors');
+// errors
+const {
+  InvalidArgument,
+  SessionNotCreated,
+  InternalServerError,
+} = require('../Error/errors');
 const CapabilityValidator = require('./CapabilityValidator/CapabilityValidator');
 
 class Session {
@@ -96,8 +101,8 @@ class Session {
     const capabiltiesRequest = Object.prototype.hasOwnProperty
       .call(request, 'capabilities');
     if (!capabiltiesRequest
-      || capabiltiesRequest.constructor !== Object
-      || Object.keys(capabiltiesRequest) === 0) {
+      || request.capabilities.constructor !== Object
+      || Object.keys(request.capabilities).length === 0) {
       throw new InvalidArgument('Missing or invalid capabilities', command);
     } else {
       capabilities = request.capabilities;
@@ -120,7 +125,6 @@ class Session {
 
     // validate first match capabilities
     let allMatchedCapabilities = capabilities.firstMatch;
-    console.log(allMatchedCapabilities);
     if (allMatchedCapabilities === undefined) {
       allMatchedCapabilities = [{}];
     } else if (allMatchedCapabilities.constructor.name.toLowerCase() !== 'array'
@@ -164,7 +168,6 @@ class Session {
 
   static mergeCapabilities(primary, secondary) {
     const result = {};
-    console.log(secondary);
     Object.keys(primary).forEach((key) => {
       result[key] = primary[key];
     });
