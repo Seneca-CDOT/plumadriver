@@ -30,8 +30,9 @@ class Session {
     this.browser = new Browser();
     this.requestQueue = [];
     const body = {
+      status: 0,
       sessionId: this.id,
-      capabilites: capabilities,
+      value: capabilities,
     };
     return body;
   }
@@ -83,6 +84,7 @@ class Session {
   }
 
   static processCapabilities(request) {
+    console.log(request.capabilities.firstMatch);
     const command = 'POST /session';
     const capabilityValidator = new CapabilityValidator();
 
@@ -186,7 +188,7 @@ class Session {
 
   static matchCapabilities(capabilties) {
     const matchedCapabilities = {
-      browserName: 'plumadriver',
+      browserName: 'pluma',
       browserVersion: 'v1.0',
       platformName: os.platform(),
       acceptInsecureCerts: false,
