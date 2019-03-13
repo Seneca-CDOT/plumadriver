@@ -4,7 +4,6 @@ const args = require('minimist')(process.argv.slice(2)); // for user provided po
 const bodyParser = require('body-parser');
 const winston = require('winston');
 const expressWinston = require('express-winston');
-const config = require('config');
 
 const { SessionsManager } = require('./SessionsManager/SessionsManager');
 const { InvalidArgument } = require('./Error/errors.js');
@@ -17,11 +16,12 @@ const HTTP_PORT = process.env.PORT || args.port || 3000;
 server.use(bodyParser.json());
 
 // do not log in testing environment
-if (config.util.getEnv('NODE_ENV') !== 'test') {
+if (process.env.NODE_ENV !== 'test') {
   // request logging
   server.use(expressWinston.logger({
     transports: [
       new winston.transports.Console(),
+      new winston.transports.File({ filename: 'pluma_requests.json', level: 'info' })
     ],
     format: winston.format.combine(
       winston.format.colorize(),
@@ -105,7 +105,7 @@ server.post('/session/:sessionId/:url', async (req, res, next) => {
 /*---------------------------------------------------------*/
 
 // TODO: configure errorlogger to log only useful information
-if (config.util.getEnv('NODE_ENV') !== 'test') {
+if (process.env.NODE_ENV !== 'test') {
   server.use(expressWinston.errorLogger({
     transports: [
       new winston.transports.Console({}),
