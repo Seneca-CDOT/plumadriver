@@ -1,7 +1,11 @@
 
+const validator = require('validator');
 const os = require('os');
 const Session = require('../Session/Session');
-const { NotFound } = require('../Error/errors');
+const {
+  NotFound,
+  InvalidArgument,
+} = require('../Error/errors');
 
 class SessionsManager {
   constructor() {
@@ -41,13 +45,24 @@ class SessionsManager {
   }
 
   deleteSession(sessionId) {
-    try {
-      this.findSession(sessionId);
-    } catch (error) {
-      throw error;
-    }
+    this.findSession(sessionId); // look for session, throws error if not found.
     const index = this.sessions.map(session => session.id).indexOf(sessionId);
     this.sessions.splice(index, 1);
+  }
+
+  navigateSession(sessionId, url) {
+    if (!validator.isURL(url)) throw new InvalidArgument('invalid URL');
+    // TODO: write code to handle user prompts
+    const session = this.findSession(sessionId);
+    if (session.browser.getURL() !== url) {
+      setTimeout(() => {
+        throw new Error('timeout');
+      }, session.timeouts.pageLoad);
+
+      if (session.browser.navigateToURL(url)) clearTimeout();
+    } else {
+      session.browser.navigateToURL(url);
+    }
   }
 
   getReadinessState() {
