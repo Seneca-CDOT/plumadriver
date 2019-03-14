@@ -15,16 +15,17 @@ class Browser {
 
   async navigateToURL(URL) {
     if (URL) {
-      try {
-        this.dom = await JSDOM.fromURL(URL);
-      } catch (err) {
-        console.log(err);
-      }
+      this.dom = await JSDOM.fromURL(URL);
     }
+    return true;
   }
 
   getTitle() {
     return this.dom.window.document.title;
+  }
+
+  getURL() {
+    return this.dom.window.document.URL;
   }
 }
 
