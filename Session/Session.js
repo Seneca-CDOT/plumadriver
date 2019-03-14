@@ -84,7 +84,6 @@ class Session {
   }
 
   static processCapabilities(request) {
-    console.log(request.capabilities.firstMatch);
     const command = 'POST /session';
     const capabilityValidator = new CapabilityValidator();
 
