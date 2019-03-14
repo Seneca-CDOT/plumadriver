@@ -11,6 +11,7 @@ const utility = require('./utils/utils');
 
 const server = express();
 const HTTP_PORT = process.env.PORT || args.port || 3000;
+process.env.PORT = process.env.PORT || 'dev';
 
 // middleware
 server.use(bodyParser.json());
@@ -20,12 +21,13 @@ if (process.env.NODE_ENV !== 'test') {
   // request logging
   server.use(expressWinston.logger({
     transports: [
-      new winston.transports.Console(),
-      new winston.transports.File({ filename: 'pluma_requests.json', level: 'info' })
+      new winston.transports.Console({ level: 'info', timestamp: true }),
+      new winston.transports.File({ filename: 'pluma-requests.txt', level: 'info', timestamp: true }),
     ],
     format: winston.format.combine(
       winston.format.colorize(),
       winston.format.json(),
+      winston.format.prettyPrint(),
     ),
     meta: true,
     msg: 'HTTP {{req.method}} {{req.url}}',
@@ -71,14 +73,15 @@ server.post('/session', async (req, res, next) => {
 });
 
 // delete session
-server.delete('/session/:sessionId', (req, res) => {
+server.delete('/session/:sessionId', (req, res, next) => {
   try {
-    sessionsManager.findSession(req.params.sessionId);
+    sessionsManager.deleteSession(req.params.sessionId);
   } catch (error) {
-    res.status(error.status).send(error.message);
+    next(error);
     // log error to winston not console
   }
   res.send(null);
+  if (sessionsManager.sessions.length === 0) process.exit(0);
 });
 
 // get title
@@ -93,10 +96,10 @@ server.get('/session/:sessionId/title', (req, res, next) => {
 });
 
 // Navigate to
-server.post('/session/:sessionId/:url', async (req, res, next) => {
+server.post('/session/:sessionId/url', async (req, res, next) => {
   try {
     const session = sessionsManager.findSession(req.params.sessionId);
-    await session.browser.navigateToURL(req.params.url);
+    await session.browser.navigateToURL(req.body.url);
     res.json(null);
   } catch (error) {
     next(error);
@@ -108,12 +111,13 @@ server.post('/session/:sessionId/:url', async (req, res, next) => {
 if (process.env.NODE_ENV !== 'test') {
   server.use(expressWinston.errorLogger({
     transports: [
-      new winston.transports.Console({}),
-      new winston.transports.File({ filename: 'pluma.json', level: 'error' }),
+      new winston.transports.Console({ timestamp: true }),
+      new winston.transports.File({ filename: 'pluma-error.txt', level: 'error' }),
     ],
     format: winston.format.combine(
       winston.format.colorize(),
       winston.format.json(),
+      winston.format.prettyPrint(),
     ),
   }));
 }
