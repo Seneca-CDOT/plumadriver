@@ -78,7 +78,6 @@ server.delete('/session/:sessionId', (req, res, next) => {
     sessionsManager.deleteSession(req.params.sessionId);
   } catch (error) {
     next(error);
-    // log error to winston not console
   }
   res.send(null);
   if (sessionsManager.sessions.length === 0) process.exit(0);
@@ -95,12 +94,16 @@ server.get('/session/:sessionId/title', (req, res, next) => {
   }
 });
 
+// elements
+server.post('/session/:sessionId/elements', (req, res, next) => {
+  
+});
+
 // Navigate to
 server.post('/session/:sessionId/url', async (req, res, next) => {
   try {
-    const session = sessionsManager.findSession(req.params.sessionId);
-    await session.browser.navigateToURL(req.body.url);
-    res.json(null);
+    await sessionsManager.navigateSession(req.params.sessionId, req.body.url);
+    res.send(null);
   } catch (error) {
     next(error);
   }
@@ -129,5 +132,6 @@ server.use((err, req, res, next) => res.status(err.code).json(err));
 server.listen(HTTP_PORT, async () => {
   await onHTTPStart();
 });
+
 
 module.exports = server; // for testing
