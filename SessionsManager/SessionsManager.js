@@ -50,24 +50,44 @@ class SessionsManager {
     this.sessions.splice(index, 1);
   }
 
-  navigateSession(sessionId, url) {
+  async navigateSession(sessionId, url) {
     if (!validator.isURL(url)) throw new InvalidArgument('invalid URL');
     // TODO: write code to handle user prompts
     const session = this.findSession(sessionId);
-    if (session.browser.getURL() !== url) {
-      setTimeout(() => {
+    let timer;
+    function startTimer() {
+      timer = setTimeout(() => {
         throw new Error('timeout');
       }, session.timeouts.pageLoad);
-
-      if (session.browser.navigateToURL(url)) clearTimeout();
+    }
+    if (session.browser.getURL() !== url) {
+      startTimer();
+      if (await session.browser.navigateToURL(url)) clearTimeout(timer);
     } else {
-      session.browser.navigateToURL(url);
+      await session.browser.navigateToURL(url);
     }
   }
 
   getReadinessState() {
     this.setReadinessState();
     return this.readinessState;
+  }
+
+  getElements(sessionId, body) {
+    const session = this.findSession(sessionId);
+    let locationStratgy, selector;
+    if (!Object.prototype.hasOwnProperty.call(body, 'using')
+    || Object.prototype.hasOwnProperty.call(body, 'value')
+    ) throw new InvalidArgument('invalid parameters');
+    else {
+      locationStratgy = body.using;
+      selector = body.value;
+    }
+
+    if (session.browser.dom.serialize() === '<html><head></head><body></body></html>') {
+      throw new 
+    }
+    
   }
 }
 
