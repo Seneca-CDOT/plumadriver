@@ -1,32 +1,47 @@
 {
-  "name": "experimental",
+  "name": "plumadriver",
   "version": "1.0.0",
   "description": "",
-  "main": "./driver/pluma-webdriver.js",
+  "main": "pluma-webdriver.js",
   "dependencies": {
+    "body-parser": "^1.18.3",
+    "config": "^3.0.1",
     "cors": "^2.8.5",
     "encodeurl": "^1.0.2",
     "express": "^4.16.4",
+    "express-winston": "^3.1.0",
+    "express_logger": "0.0.4",
     "jsdom": "^13.1.0",
     "minimist": "^1.2.0",
+    "os": "^0.1.1",
+    "ping": "^0.2.2",
+    "pkg": "^4.3.7",
     "selenium-webdriver": "^4.0.0-alpha.1",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "validator": "^10.11.0",
+    "validator-js": "^0.2.1",
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "axios": "^0.18.0",
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.1",
     "eslint": "^5.12.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
     "http-post": "^0.1.1",
+    "mocha": "^6.0.2",
     "nodemon": "^1.18.9",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "should": "^13.2.3"
   },
   "scripts": {
-    "test": "scripts/run_test.sh",
-    "testServer": "node ./driver/pluma-webdriver.js",
+    "test": "mocha",
+    "testServer": "node pluma-webdriver.js",
     "lint": "eslint",
-    "start": "node ./driver/pluma-webdriver.js"
+    "start": "node pluma-webdriver.js"
   },
+  "bin": "bin.js",
   "author": "miguel roncancio",
   "license": "ISC"
 }
