@@ -7,6 +7,8 @@ More information about JSDOM can be found <a href="https://github.com/jsdom/jsdo
 
 <h2>Classes</h2>
 
+<p><strong>NOTE: </strong> Implementations of the classes below are not finalized and currently not W3C compliant. However, work is being made in order to achieve this. The standAlone branch of this repo contains the current implementation progress of these classes in addition to additional classes not mentioned in this file.</p>
+
 <ul>
     <li>
         <h3>Browser</h3>
