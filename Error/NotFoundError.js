@@ -1,8 +1,8 @@
-class NotFoundError extends Error {
+const WebDriverError = require('./WebDriverError');
+
+class NotFoundError extends WebDriverError {
   constructor(message) {
-    super(message);
-    this.name = 'NotFoundError';
-    this.code = 404;
+    super(message, 404);
   }
 }
 
