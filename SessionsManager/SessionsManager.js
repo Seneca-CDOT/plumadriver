@@ -51,7 +51,7 @@ class SessionsManager {
   }
 
   async navigateSession(sessionId, url) {
-    if (!validator.isURL(url)) throw new InvalidArgument('invalid URL');
+    if (!validator.isURL(url)) throw new InvalidArgument(`/POST /session/${sessionId}/url`);
     // TODO: write code to handle user prompts
     const session = this.findSession(sessionId);
     let timer;
@@ -71,23 +71,6 @@ class SessionsManager {
   getReadinessState() {
     this.setReadinessState();
     return this.readinessState;
-  }
-
-  getElements(sessionId, body) {
-    const session = this.findSession(sessionId);
-    let locationStratgy, selector;
-    if (!Object.prototype.hasOwnProperty.call(body, 'using')
-    || Object.prototype.hasOwnProperty.call(body, 'value')
-    ) throw new InvalidArgument('invalid parameters');
-    else {
-      locationStratgy = body.using;
-      selector = body.value;
-    }
-
-    if (session.browser.dom.serialize() === '<html><head></head><body></body></html>') {
-      throw new 
-    }
-    
   }
 }
 
