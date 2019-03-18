@@ -60,6 +60,7 @@ class Session {
       capabilities.proxy = {};
     }
 
+    // TODO: create setTimeouts function for this. use function in endpoint
     if (Object.prototype.hasOwnProperty.call(capabilities, 'timeouts')) {
       if (Object.prototype.hasOwnProperty.call(capabilities.timeouts, 'implicit')) {
         this.timeouts.implicit = capabilities.timeouts.implicit;
@@ -104,7 +105,7 @@ class Session {
     if (!capabiltiesRequest
       || request.capabilities.constructor !== Object
       || Object.keys(request.capabilities).length === 0) {
-      throw new InvalidArgument('Missing or invalid capabilities', command);
+      throw new InvalidArgument(command);
     } else {
       capabilities = request.capabilities;
     }
@@ -118,7 +119,7 @@ class Session {
             .validate(capabilities.alwaysMatch[key], key);
           if (validatedCapability) requiredCapabilities[key] = capabilities.alwaysMatch[key];
           else {
-            throw new InvalidArgument(`${key} capability is invalid`, command);
+            throw new InvalidArgument(command);
           }
         }
       });
@@ -130,7 +131,7 @@ class Session {
       allMatchedCapabilities = [{}];
     } else if (allMatchedCapabilities.constructor.name.toLowerCase() !== 'array'
       || allMatchedCapabilities.length === 0) {
-      throw new InvalidArgument('firstMatch capabilities should be an array', command);
+      throw new InvalidArgument(command);
     }
     /**
      * @param {Array[Capability]} validatedFirstMatchCapabilties contains
@@ -177,7 +178,7 @@ class Session {
 
     Object.keys(secondary).forEach((property) => {
       if (Object.prototype.hasOwnProperty.call(primary, property)) {
-        throw new InvalidArgument(`${property} has already been requested in alwaysMatch`, 'POST /session');
+        throw new InvalidArgument('POST /session');
       }
       result[property] = secondary[property];
     });
@@ -207,7 +208,7 @@ class Session {
           if (capabilties[property] !== matchedCapabilities[property]) flag = false;
           break;
         case 'setWindowRect':
-          if (capabilties[property]) throw new InvalidArgument('plumadriver is headless', 'POST /session');
+          if (capabilties[property]) throw new InvalidArgument('POST /session');
           break;
         // TODO: add proxy matching in the future
         default:
@@ -219,6 +220,48 @@ class Session {
     if (flag) return matchedCapabilities;
 
     return null;
+  }
+
+  elementRetrieval(startNode, strategy, selector) {
+    // TODO: start timers
+    let elements;
+    const result = [];
+    try {
+      switch (strategy) {
+        case 'css selector':
+          elements = startNode.querySelectorAll(selector);
+          break;
+        case 'link text':
+          // TODO: implement w3c standard for link text strategy
+          break;
+        case 'partial link text':
+          // TODO: implement w3c standard for partial link text strategy
+          break;
+        case 'tag name':
+          elements = startNode.getElementsByTagName(selector);
+          break;
+        case 'xpath':
+          // TODO: implement w3c standard for xpath strategy
+          break;
+        default:
+          break;
+      }
+    } catch (error) {
+      if (error instanceof DOMException
+        || error instanceof SyntaxError
+        || error instanceof XPathException
+      ) throw new Error('invalid selector'); // TODO: add invalidSelector error class
+      else throw new UnknownError(); // TODO: add unknown error class
+    }
+
+    console.log(elements);
+
+    Object.keys(elements).forEach((element) => {
+      console.log(elements[element]);
+      result.push(JSON.stringify(elements[element]));
+    });
+
+    return result;
   }
 }
 
