@@ -6,7 +6,10 @@ const winston = require('winston');
 const expressWinston = require('express-winston');
 
 const { SessionsManager } = require('./SessionsManager/SessionsManager');
-const { InvalidArgument } = require('./Error/errors.js');
+const {
+  InvalidArgument,
+  NoSuchElement,
+} = require('./Error/errors.js');
 const utility = require('./utils/utils');
 
 const server = express();
@@ -25,7 +28,6 @@ if (process.env.NODE_ENV !== 'test') {
       new winston.transports.File({ filename: 'pluma-requests.txt', level: 'info', timestamp: true }),
     ],
     format: winston.format.combine(
-      winston.format.colorize(),
       winston.format.json(),
       winston.format.prettyPrint(),
     ),
@@ -63,7 +65,20 @@ server.get('/status', (req, res) => {
 server.post('/session', async (req, res, next) => {
   try {
     if (!await utility.validate.requestBodyType(req, 'application/json')) {
-      throw new InvalidArgument('request is not json', 'POST /session');
+      throw new InvalidArgument('POST /session');
+    }
+    const newSession = sessionsManager.createSession(req.body);
+    res.json(newSession);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// set timeouts
+server.post('/session/:sessionId/timeouts', async (req, res, next) => {
+  try {
+    if (!await utility.validate.requestBodyType(req, 'application/json')) {
+      throw new InvalidArgument('POST /session');
     }
     const newSession = sessionsManager.createSession(req.body);
     res.json(newSession);
@@ -94,10 +109,21 @@ server.get('/session/:sessionId/title', (req, res, next) => {
   }
 });
 
-// elements
+// find elements
 server.post('/session/:sessionId/elements', (req, res, next) => {
-  
+  console.log(req.body);
+  const strategy = req.body.using;
+  const selector = req.body.value;
+  if (!strategy || !selector) throw new InvalidArgument(`POST /session/${req.params.sessionId}/elements`);
+  const session = sessionsManager.findSession(req.params.sessionId);
+  const startNode = session.browser.dom.window.document;
+  if (!startNode) throw new NoSuchElement();
+  const result = session.elementRetrieval(startNode, strategy, selector);
+  console.log(result);
+  res.json(result);
 });
+
+
 
 // Navigate to
 server.post('/session/:sessionId/url', async (req, res, next) => {
@@ -118,7 +144,6 @@ if (process.env.NODE_ENV !== 'test') {
       new winston.transports.File({ filename: 'pluma-error.txt', level: 'error' }),
     ],
     format: winston.format.combine(
-      winston.format.colorize(),
       winston.format.json(),
       winston.format.prettyPrint(),
     ),
