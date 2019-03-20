@@ -36,8 +36,6 @@ if (process.env.NODE_ENV !== 'test') {
     expressFormat: true,
     colorize: false,
   }));
-
-  // error logging
 }
 
 const sessionsManager = new SessionsManager();
@@ -111,19 +109,32 @@ server.get('/session/:sessionId/title', (req, res, next) => {
 
 // find elements
 server.post('/session/:sessionId/elements', (req, res, next) => {
-  console.log(req.body);
   const strategy = req.body.using;
   const selector = req.body.value;
+  const response = {
+    sessionId: req.params.sessionId,
+    status: 0,
+  };
+
   if (!strategy || !selector) throw new InvalidArgument(`POST /session/${req.params.sessionId}/elements`);
+
   const session = sessionsManager.findSession(req.params.sessionId);
   const startNode = session.browser.dom.window.document;
+
   if (!startNode) throw new NoSuchElement();
+
   const result = session.elementRetrieval(startNode, strategy, selector);
-  console.log(result);
-  res.json(result);
+  response.value = result;
+  res.json(response);
 });
 
-
+// get element text
+server.get('/session/:sessionId/element/:elementId/text', (req, res, next) => {
+  const session = sessionsManager.findSession(req.params.sessionId);
+  const element = session.browser.getKnownElement(req.params.elementId);
+  const text = element.getText();
+  res.send(text);
+});
 
 // Navigate to
 server.post('/session/:sessionId/url', async (req, res, next) => {

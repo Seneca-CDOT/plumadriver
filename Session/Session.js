@@ -2,6 +2,7 @@
 const uuidv1 = require('uuid/v1');
 const os = require('os');
 const Browser = require('../browser/browser.js');
+const WebElement = require('../WebElement/WebElement.js');
 // errors
 const {
   InvalidArgument,
@@ -29,6 +30,7 @@ class Session {
     const capabilities = this.configureCapabilties(requestedCapabilities);
     this.browser = new Browser();
     this.requestQueue = [];
+    // TODO:  this formatting is for the server response and should be in the server code, not here.  CHANGE!!!!!
     const body = {
       status: 0,
       sessionId: this.id,
@@ -254,13 +256,12 @@ class Session {
       else throw new UnknownError(); // TODO: add unknown error class
     }
 
-    console.log(elements);
-
+    let foundElement;
     Object.keys(elements).forEach((element) => {
-      console.log(elements[element]);
-      result.push(JSON.stringify(elements[element]));
+      foundElement = new WebElement(elements[element]);
+      result.push(foundElement);
+      this.browser.knownElements.push(foundElement);
     });
-
     return result;
   }
 }
