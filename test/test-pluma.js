@@ -72,7 +72,6 @@ describe('3: POST /session with invalid capabilties', () => {
           res.body.value.should.have.property('stacktrace');
           res.body.value.should.have.property('message');
           res.body.value.error.should.equal('invalid argument');
-          res.body.value.stacktrace.should.include('browserName capability is invalid');
           done();
         });
     }));
@@ -101,7 +100,6 @@ describe('4: POST /session with invalid firstMatch capabilities', () => {
           res.body.value.should.have.property('stacktrace');
           res.body.value.should.have.property('message');
           res.body.value.error.should.equal('invalid argument');
-          res.body.value.stacktrace.should.include('firstMatch capabilities should be an array');
           done();
         });
     });

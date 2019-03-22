@@ -102,7 +102,13 @@ if (process.env.NODE_ENV !== 'test') {
 
 
 // error handler
-server.use((err, req, res, next) => res.status(err.code).json(err));
+server.use((err, req, res, next) => {
+  let error;
+  if (err instanceof SyntaxError) error = new InvalidArgument();
+
+  if (error === undefined) res.status(err.code).json(err);
+  else res.status(error.code).json(error);
+});
 
 server.listen(HTTP_PORT, async () => {
   await onHTTPStart();

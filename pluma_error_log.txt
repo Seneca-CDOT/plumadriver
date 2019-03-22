@@ -1,0 +1,1345 @@
+{ level: 'error',
+  message: 'middlewareError',
+  meta:
+   { error:
+      { Error: The arguments passed to POST /session are either invalid or malformed
+          at router.post (/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js:26:13)
+        value:
+         { stacktrace:
+            'Error: The arguments passed to POST /session are either invalid or malformed\n    at router.post (/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js:26:13)',
+           error: 'invalid argument',
+           message:
+            'The arguments passed to POST /session are either invalid or malformed' } },
+     level: 'error',
+     message:
+      'uncaughtException: The arguments passed to POST /session are either invalid or malformed\nError: The arguments passed to POST /session are either invalid or malformed\n    at router.post (/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js:26:13)',
+     stack:
+      'Error: The arguments passed to POST /session are either invalid or malformed\n    at router.post (/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js:26:13)',
+     exception: true,
+     date: 'Fri Mar 22 2019 17:27:49 GMT-0400 (Eastern Daylight Time)',
+     process:
+      { pid: 922,
+        uid: 1000,
+        gid: 1000,
+        cwd: '/home/miguel/Desktop/plumadriver/plumadriver',
+        execPath: '/usr/bin/node',
+        version: 'v10.15.0',
+        argv:
+         [ '/usr/bin/node',
+           '/home/miguel/Desktop/plumadriver/plumadriver/pluma-webdriver.js' ],
+        memoryUsage:
+         { rss: 86626304,
+           heapTotal: 32280576,
+           heapUsed: 26141400,
+           external: 83439 } },
+     os:
+      { loadavg: [ 1.43408203125, 1.01416015625, 1.12255859375 ],
+        uptime: 197231 },
+     trace:
+      [ { column: 13,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js',
+          function: 'router.post',
+          line: 26,
+          method: 'post',
+          native: false } ],
+     req:
+      { url: '/session/',
+        headers:
+         { 'cache-control': 'no-cache',
+           'postman-token': '843e8b95-aa31-4ace-94a9-402683d23577',
+           'content-type': 'text/plain',
+           'user-agent': 'PostmanRuntime/7.6.0',
+           accept: '*/*',
+           host: 'localhost:3000',
+           'accept-encoding': 'gzip, deflate',
+           'content-length': '17',
+           connection: 'keep-alive' },
+        method: 'POST',
+        httpVersion: '1.1',
+        originalUrl: '/session/',
+        query: {} } } }
+{ level: 'error',
+  message: 'middlewareError',
+  meta:
+   { error:
+      { Error: The arguments passed to POST /session are either invalid or malformed
+          at Function.processCapabilities (/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js:113:13)
+          at Session.configureCapabilties (/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js:51:34)
+          at Session.configureSession (/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js:34:31)
+          at SessionsManager.createSession (/home/miguel/Desktop/plumadriver/plumadriver/SessionsManager/SessionsManager.js:29:26)
+          at router.post (/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js:28:40)
+          at Layer.handle [as handle_request] (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/layer.js:95:5)
+          at next (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/route.js:137:13)
+          at Route.dispatch (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/route.js:112:3)
+          at Layer.handle [as handle_request] (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/layer.js:95:5)
+          at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/index.js:281:22
+        value:
+         { stacktrace:
+            'Error: The arguments passed to POST /session are either invalid or malformed\n    at Function.processCapabilities (/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js:113:13)\n    at Session.configureCapabilties (/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js:51:34)\n    at Session.configureSession (/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js:34:31)\n    at SessionsManager.createSession (/home/miguel/Desktop/plumadriver/plumadriver/SessionsManager/SessionsManager.js:29:26)\n    at router.post (/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js:28:40)\n    at Layer.handle [as handle_request] (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/route.js:137:13)\n    at Route.dispatch (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/route.js:112:3)\n    at Layer.handle [as handle_request] (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/layer.js:95:5)\n    at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/index.js:281:22',
+           error: 'invalid argument',
+           message:
+            'The arguments passed to POST /session are either invalid or malformed' } },
+     level: 'error',
+     message:
+      'uncaughtException: The arguments passed to POST /session are either invalid or malformed\nError: The arguments passed to POST /session are either invalid or malformed\n    at Function.processCapabilities (/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js:113:13)\n    at Session.configureCapabilties (/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js:51:34)\n    at Session.configureSession (/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js:34:31)\n    at SessionsManager.createSession (/home/miguel/Desktop/plumadriver/plumadriver/SessionsManager/SessionsManager.js:29:26)\n    at router.post (/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js:28:40)\n    at Layer.handle [as handle_request] (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/route.js:137:13)\n    at Route.dispatch (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/route.js:112:3)\n    at Layer.handle [as handle_request] (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/layer.js:95:5)\n    at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/index.js:281:22',
+     stack:
+      'Error: The arguments passed to POST /session are either invalid or malformed\n    at Function.processCapabilities (/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js:113:13)\n    at Session.configureCapabilties (/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js:51:34)\n    at Session.configureSession (/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js:34:31)\n    at SessionsManager.createSession (/home/miguel/Desktop/plumadriver/plumadriver/SessionsManager/SessionsManager.js:29:26)\n    at router.post (/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js:28:40)\n    at Layer.handle [as handle_request] (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/route.js:137:13)\n    at Route.dispatch (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/route.js:112:3)\n    at Layer.handle [as handle_request] (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/layer.js:95:5)\n    at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/index.js:281:22',
+     exception: true,
+     date: 'Fri Mar 22 2019 17:28:54 GMT-0400 (Eastern Daylight Time)',
+     process:
+      { pid: 1074,
+        uid: 1000,
+        gid: 1000,
+        cwd: '/home/miguel/Desktop/plumadriver/plumadriver',
+        execPath: '/usr/bin/node',
+        version: 'v10.15.0',
+        argv:
+         [ '/usr/bin/node',
+           '/home/miguel/Desktop/plumadriver/plumadriver/pluma-webdriver.js' ],
+        memoryUsage:
+         { rss: 88088576,
+           heapTotal: 67407872,
+           heapUsed: 28026832,
+           external: 99546 } },
+     os:
+      { loadavg: [ 2.248046875, 1.318359375, 1.22119140625 ],
+        uptime: 197295 },
+     trace:
+      [ { column: 13,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js',
+          function: 'Function.processCapabilities',
+          line: 113,
+          method: 'processCapabilities',
+          native: false },
+        { column: 34,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js',
+          function: 'Session.configureCapabilties',
+          line: 51,
+          method: 'configureCapabilties',
+          native: false },
+        { column: 31,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js',
+          function: 'Session.configureSession',
+          line: 34,
+          method: 'configureSession',
+          native: false },
+        { column: 26,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/SessionsManager/SessionsManager.js',
+          function: 'SessionsManager.createSession',
+          line: 29,
+          method: 'createSession',
+          native: false },
+        { column: 40,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js',
+          function: 'router.post',
+          line: 28,
+          method: 'post',
+          native: false },
+        { column: 5,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/layer.js',
+          function: 'Layer.handle [as handle_request]',
+          line: 95,
+          method: 'handle [as handle_request]',
+          native: false },
+        { column: 13,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/route.js',
+          function: 'next',
+          line: 137,
+          method: null,
+          native: false },
+        { column: 3,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/route.js',
+          function: 'Route.dispatch',
+          line: 112,
+          method: 'dispatch',
+          native: false },
+        { column: 5,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/layer.js',
+          function: 'Layer.handle [as handle_request]',
+          line: 95,
+          method: 'handle [as handle_request]',
+          native: false },
+        { column: 22,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/index.js',
+          function: null,
+          line: 281,
+          method: null,
+          native: false } ],
+     req:
+      { url: '/session/',
+        headers:
+         { 'cache-control': 'no-cache',
+           'postman-token': '10e21401-b82e-4d9d-82ab-722a695b1c86',
+           'content-type': 'text/plain',
+           'user-agent': 'PostmanRuntime/7.6.0',
+           accept: '*/*',
+           host: 'localhost:3000',
+           'accept-encoding': 'gzip, deflate',
+           'content-length': '17',
+           connection: 'keep-alive' },
+        method: 'POST',
+        httpVersion: '1.1',
+        originalUrl: '/session/',
+        query: {} } } }
+{ level: 'error',
+  message: 'middlewareError',
+  meta:
+   { error:
+      { Error: The arguments passed to POST /session are either invalid or malformed
+          at router.post (/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js:26:13)
+        value:
+         { stacktrace:
+            'Error: The arguments passed to POST /session are either invalid or malformed\n    at router.post (/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js:26:13)',
+           error: 'invalid argument',
+           message:
+            'The arguments passed to POST /session are either invalid or malformed' } },
+     level: 'error',
+     message:
+      'uncaughtException: The arguments passed to POST /session are either invalid or malformed\nError: The arguments passed to POST /session are either invalid or malformed\n    at router.post (/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js:26:13)',
+     stack:
+      'Error: The arguments passed to POST /session are either invalid or malformed\n    at router.post (/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js:26:13)',
+     exception: true,
+     date: 'Fri Mar 22 2019 17:35:45 GMT-0400 (Eastern Daylight Time)',
+     process:
+      { pid: 1477,
+        uid: 1000,
+        gid: 1000,
+        cwd: '/home/miguel/Desktop/plumadriver/plumadriver',
+        execPath: '/usr/bin/node',
+        version: 'v10.15.0',
+        argv:
+         [ '/usr/bin/node',
+           '/home/miguel/Desktop/plumadriver/plumadriver/pluma-webdriver.js' ],
+        memoryUsage:
+         { rss: 88231936,
+           heapTotal: 67932160,
+           heapUsed: 27159208,
+           external: 155040 } },
+     os:
+      { loadavg: [ 1.732421875, 1.7470703125, 1.46142578125 ],
+        uptime: 197707 },
+     trace:
+      [ { column: 13,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js',
+          function: 'router.post',
+          line: 26,
+          method: 'post',
+          native: false } ],
+     req:
+      { url: '/session/',
+        headers:
+         { 'cache-control': 'no-cache',
+           'postman-token': 'd21b0dec-2b91-4597-b9ef-ce826a408e26',
+           'content-type': 'text/plain',
+           'user-agent': 'PostmanRuntime/7.6.0',
+           accept: '*/*',
+           host: 'localhost:3000',
+           'accept-encoding': 'gzip, deflate',
+           'content-length': '17',
+           connection: 'keep-alive' },
+        method: 'POST',
+        httpVersion: '1.1',
+        originalUrl: '/session/',
+        query: {} } } }
+{ level: 'error',
+  message: 'middlewareError',
+  meta:
+   { error:
+      { Error: The arguments passed to POST /session are either invalid or malformed
+          at Function.processCapabilities (/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js:113:13)
+          at Session.configureCapabilties (/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js:51:34)
+          at Session.configureSession (/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js:34:31)
+          at SessionsManager.createSession (/home/miguel/Desktop/plumadriver/plumadriver/SessionsManager/SessionsManager.js:29:26)
+          at router.post (/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js:28:40)
+          at Layer.handle [as handle_request] (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/layer.js:95:5)
+          at next (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/route.js:137:13)
+          at Route.dispatch (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/route.js:112:3)
+          at Layer.handle [as handle_request] (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/layer.js:95:5)
+          at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/index.js:281:22
+        value:
+         { stacktrace:
+            'Error: The arguments passed to POST /session are either invalid or malformed\n    at Function.processCapabilities (/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js:113:13)\n    at Session.configureCapabilties (/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js:51:34)\n    at Session.configureSession (/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js:34:31)\n    at SessionsManager.createSession (/home/miguel/Desktop/plumadriver/plumadriver/SessionsManager/SessionsManager.js:29:26)\n    at router.post (/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js:28:40)\n    at Layer.handle [as handle_request] (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/route.js:137:13)\n    at Route.dispatch (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/route.js:112:3)\n    at Layer.handle [as handle_request] (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/layer.js:95:5)\n    at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/index.js:281:22',
+           error: 'invalid argument',
+           message:
+            'The arguments passed to POST /session are either invalid or malformed' } },
+     level: 'error',
+     message:
+      'uncaughtException: The arguments passed to POST /session are either invalid or malformed\nError: The arguments passed to POST /session are either invalid or malformed\n    at Function.processCapabilities (/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js:113:13)\n    at Session.configureCapabilties (/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js:51:34)\n    at Session.configureSession (/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js:34:31)\n    at SessionsManager.createSession (/home/miguel/Desktop/plumadriver/plumadriver/SessionsManager/SessionsManager.js:29:26)\n    at router.post (/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js:28:40)\n    at Layer.handle [as handle_request] (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/route.js:137:13)\n    at Route.dispatch (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/route.js:112:3)\n    at Layer.handle [as handle_request] (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/layer.js:95:5)\n    at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/index.js:281:22',
+     stack:
+      'Error: The arguments passed to POST /session are either invalid or malformed\n    at Function.processCapabilities (/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js:113:13)\n    at Session.configureCapabilties (/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js:51:34)\n    at Session.configureSession (/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js:34:31)\n    at SessionsManager.createSession (/home/miguel/Desktop/plumadriver/plumadriver/SessionsManager/SessionsManager.js:29:26)\n    at router.post (/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js:28:40)\n    at Layer.handle [as handle_request] (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/route.js:137:13)\n    at Route.dispatch (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/route.js:112:3)\n    at Layer.handle [as handle_request] (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/layer.js:95:5)\n    at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/index.js:281:22',
+     exception: true,
+     date: 'Fri Mar 22 2019 17:36:25 GMT-0400 (Eastern Daylight Time)',
+     process:
+      { pid: 1541,
+        uid: 1000,
+        gid: 1000,
+        cwd: '/home/miguel/Desktop/plumadriver/plumadriver',
+        execPath: '/usr/bin/node',
+        version: 'v10.15.0',
+        argv:
+         [ '/usr/bin/node',
+           '/home/miguel/Desktop/plumadriver/plumadriver/pluma-webdriver.js' ],
+        memoryUsage:
+         { rss: 88080384,
+           heapTotal: 67932160,
+           heapUsed: 27969024,
+           external: 163515 } },
+     os:
+      { loadavg: [ 2.22216796875, 1.84814453125, 1.50537109375 ],
+        uptime: 197747 },
+     trace:
+      [ { column: 13,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js',
+          function: 'Function.processCapabilities',
+          line: 113,
+          method: 'processCapabilities',
+          native: false },
+        { column: 34,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js',
+          function: 'Session.configureCapabilties',
+          line: 51,
+          method: 'configureCapabilties',
+          native: false },
+        { column: 31,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/Session/Session.js',
+          function: 'Session.configureSession',
+          line: 34,
+          method: 'configureSession',
+          native: false },
+        { column: 26,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/SessionsManager/SessionsManager.js',
+          function: 'SessionsManager.createSession',
+          line: 29,
+          method: 'createSession',
+          native: false },
+        { column: 40,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js',
+          function: 'router.post',
+          line: 28,
+          method: 'post',
+          native: false },
+        { column: 5,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/layer.js',
+          function: 'Layer.handle [as handle_request]',
+          line: 95,
+          method: 'handle [as handle_request]',
+          native: false },
+        { column: 13,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/route.js',
+          function: 'next',
+          line: 137,
+          method: null,
+          native: false },
+        { column: 3,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/route.js',
+          function: 'Route.dispatch',
+          line: 112,
+          method: 'dispatch',
+          native: false },
+        { column: 5,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/layer.js',
+          function: 'Layer.handle [as handle_request]',
+          line: 95,
+          method: 'handle [as handle_request]',
+          native: false },
+        { column: 22,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/express/lib/router/index.js',
+          function: null,
+          line: 281,
+          method: null,
+          native: false } ],
+     req:
+      { url: '/session/',
+        headers:
+         { 'cache-control': 'no-cache',
+           'postman-token': '115db0ed-b1af-4d7d-92c1-737a0b9cfe6c',
+           'content-type': 'text/plain',
+           'user-agent': 'PostmanRuntime/7.6.0',
+           accept: '*/*',
+           host: 'localhost:3000',
+           'accept-encoding': 'gzip, deflate',
+           'content-length': '17',
+           connection: 'keep-alive' },
+        method: 'POST',
+        httpVersion: '1.1',
+        originalUrl: '/session/',
+        query: {} } } }
+{ level: 'error',
+  message: 'middlewareError',
+  meta:
+   { error:
+      { SyntaxError: Unexpected token h in JSON at position 0
+          at JSON.parse (<anonymous>)
+          at createStrictSyntaxError (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:158:10)
+          at parse (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:83:15)
+          at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js:121:18
+          at invokeCallback (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:224:16)
+          at done (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:213:7)
+          at IncomingMessage.onEnd (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:273:7)
+          at IncomingMessage.emit (events.js:182:13)
+          at endReadableNT (_stream_readable.js:1094:12)
+          at process._tickCallback (internal/process/next_tick.js:63:19)
+        expose: true,
+        statusCode: 400,
+        status: 400,
+        body: 'hahahahahahhahaha',
+        type: 'entity.parse.failed' },
+     level: 'error',
+     message:
+      'uncaughtException: Unexpected token h in JSON at position 0\nSyntaxError: Unexpected token h in JSON at position 0\n    at JSON.parse (<anonymous>)\n    at createStrictSyntaxError (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:158:10)\n    at parse (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:83:15)\n    at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js:121:18\n    at invokeCallback (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:224:16)\n    at done (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:213:7)\n    at IncomingMessage.onEnd (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:273:7)\n    at IncomingMessage.emit (events.js:182:13)\n    at endReadableNT (_stream_readable.js:1094:12)\n    at process._tickCallback (internal/process/next_tick.js:63:19)',
+     stack:
+      'SyntaxError: Unexpected token h in JSON at position 0\n    at JSON.parse (<anonymous>)\n    at createStrictSyntaxError (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:158:10)\n    at parse (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:83:15)\n    at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js:121:18\n    at invokeCallback (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:224:16)\n    at done (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:213:7)\n    at IncomingMessage.onEnd (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:273:7)\n    at IncomingMessage.emit (events.js:182:13)\n    at endReadableNT (_stream_readable.js:1094:12)\n    at process._tickCallback (internal/process/next_tick.js:63:19)',
+     exception: true,
+     date: 'Fri Mar 22 2019 17:38:44 GMT-0400 (Eastern Daylight Time)',
+     process:
+      { pid: 1646,
+        uid: 1000,
+        gid: 1000,
+        cwd: '/home/miguel/Desktop/plumadriver/plumadriver',
+        execPath: '/usr/bin/node',
+        version: 'v10.15.0',
+        argv:
+         [ '/usr/bin/node',
+           '/home/miguel/Desktop/plumadriver/plumadriver/pluma-webdriver.js' ],
+        memoryUsage:
+         { rss: 86790144,
+           heapTotal: 32280576,
+           heapUsed: 26871232,
+           external: 169854 } },
+     os:
+      { loadavg: [ 1.20361328125, 1.51171875, 1.42431640625 ],
+        uptime: 197885 },
+     trace:
+      [ { column: null,
+          file: null,
+          function: 'JSON.parse',
+          line: null,
+          method: 'parse',
+          native: false },
+        { column: 10,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js',
+          function: 'createStrictSyntaxError',
+          line: 158,
+          method: null,
+          native: false },
+        { column: 15,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js',
+          function: 'parse',
+          line: 83,
+          method: null,
+          native: false },
+        { column: 18,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js',
+          function: null,
+          line: 121,
+          method: null,
+          native: false },
+        { column: 16,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js',
+          function: 'invokeCallback',
+          line: 224,
+          method: null,
+          native: false },
+        { column: 7,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js',
+          function: 'done',
+          line: 213,
+          method: null,
+          native: false },
+        { column: 7,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js',
+          function: 'IncomingMessage.onEnd',
+          line: 273,
+          method: 'onEnd',
+          native: false },
+        { column: 13,
+          file: 'events.js',
+          function: 'IncomingMessage.emit',
+          line: 182,
+          method: 'emit',
+          native: false },
+        { column: 12,
+          file: '_stream_readable.js',
+          function: 'endReadableNT',
+          line: 1094,
+          method: null,
+          native: false },
+        { column: 19,
+          file: 'internal/process/next_tick.js',
+          function: 'process._tickCallback',
+          line: 63,
+          method: '_tickCallback',
+          native: false } ],
+     req:
+      { url: '/session/',
+        headers:
+         { 'content-type': 'application/json',
+           'cache-control': 'no-cache',
+           'postman-token': '2b8d3e09-dbd7-4a9f-842a-8cf880ea2e38',
+           'user-agent': 'PostmanRuntime/7.6.0',
+           accept: '*/*',
+           host: 'localhost:3000',
+           'accept-encoding': 'gzip, deflate',
+           'content-length': '17',
+           connection: 'keep-alive' },
+        method: 'POST',
+        httpVersion: '1.1',
+        originalUrl: '/session/',
+        query: {} } } }
+{ level: 'error',
+  message: 'middlewareError',
+  meta:
+   { error:
+      { SyntaxError: Unexpected token h in JSON at position 0
+          at JSON.parse (<anonymous>)
+          at createStrictSyntaxError (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:158:10)
+          at parse (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:83:15)
+          at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js:121:18
+          at invokeCallback (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:224:16)
+          at done (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:213:7)
+          at IncomingMessage.onEnd (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:273:7)
+          at IncomingMessage.emit (events.js:182:13)
+          at endReadableNT (_stream_readable.js:1094:12)
+          at process._tickCallback (internal/process/next_tick.js:63:19)
+        expose: true,
+        statusCode: 400,
+        status: 400,
+        body: 'hahahahahahhahaha',
+        type: 'entity.parse.failed' },
+     level: 'error',
+     message:
+      'uncaughtException: Unexpected token h in JSON at position 0\nSyntaxError: Unexpected token h in JSON at position 0\n    at JSON.parse (<anonymous>)\n    at createStrictSyntaxError (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:158:10)\n    at parse (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:83:15)\n    at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js:121:18\n    at invokeCallback (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:224:16)\n    at done (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:213:7)\n    at IncomingMessage.onEnd (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:273:7)\n    at IncomingMessage.emit (events.js:182:13)\n    at endReadableNT (_stream_readable.js:1094:12)\n    at process._tickCallback (internal/process/next_tick.js:63:19)',
+     stack:
+      'SyntaxError: Unexpected token h in JSON at position 0\n    at JSON.parse (<anonymous>)\n    at createStrictSyntaxError (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:158:10)\n    at parse (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:83:15)\n    at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js:121:18\n    at invokeCallback (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:224:16)\n    at done (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:213:7)\n    at IncomingMessage.onEnd (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:273:7)\n    at IncomingMessage.emit (events.js:182:13)\n    at endReadableNT (_stream_readable.js:1094:12)\n    at process._tickCallback (internal/process/next_tick.js:63:19)',
+     exception: true,
+     date: 'Fri Mar 22 2019 17:38:50 GMT-0400 (Eastern Daylight Time)',
+     process:
+      { pid: 1646,
+        uid: 1000,
+        gid: 1000,
+        cwd: '/home/miguel/Desktop/plumadriver/plumadriver',
+        execPath: '/usr/bin/node',
+        version: 'v10.15.0',
+        argv:
+         [ '/usr/bin/node',
+           '/home/miguel/Desktop/plumadriver/plumadriver/pluma-webdriver.js' ],
+        memoryUsage:
+         { rss: 87638016,
+           heapTotal: 32280576,
+           heapUsed: 27260480,
+           external: 176637 } },
+     os:
+      { loadavg: [ 1.34765625, 1.53662109375, 1.43310546875 ],
+        uptime: 197892 },
+     trace:
+      [ { column: null,
+          file: null,
+          function: 'JSON.parse',
+          line: null,
+          method: 'parse',
+          native: false },
+        { column: 10,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js',
+          function: 'createStrictSyntaxError',
+          line: 158,
+          method: null,
+          native: false },
+        { column: 15,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js',
+          function: 'parse',
+          line: 83,
+          method: null,
+          native: false },
+        { column: 18,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js',
+          function: null,
+          line: 121,
+          method: null,
+          native: false },
+        { column: 16,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js',
+          function: 'invokeCallback',
+          line: 224,
+          method: null,
+          native: false },
+        { column: 7,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js',
+          function: 'done',
+          line: 213,
+          method: null,
+          native: false },
+        { column: 7,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js',
+          function: 'IncomingMessage.onEnd',
+          line: 273,
+          method: 'onEnd',
+          native: false },
+        { column: 13,
+          file: 'events.js',
+          function: 'IncomingMessage.emit',
+          line: 182,
+          method: 'emit',
+          native: false },
+        { column: 12,
+          file: '_stream_readable.js',
+          function: 'endReadableNT',
+          line: 1094,
+          method: null,
+          native: false },
+        { column: 19,
+          file: 'internal/process/next_tick.js',
+          function: 'process._tickCallback',
+          line: 63,
+          method: '_tickCallback',
+          native: false } ],
+     req:
+      { url: '/session/',
+        headers:
+         { 'content-type': 'application/json',
+           'cache-control': 'no-cache',
+           'postman-token': 'f946d2aa-c4f8-4e72-b284-f02d17164e67',
+           'user-agent': 'PostmanRuntime/7.6.0',
+           accept: '*/*',
+           host: 'localhost:3000',
+           'accept-encoding': 'gzip, deflate',
+           'content-length': '17',
+           connection: 'keep-alive' },
+        method: 'POST',
+        httpVersion: '1.1',
+        originalUrl: '/session/',
+        query: {} } } }
+{ level: 'error',
+  message: 'middlewareError',
+  meta:
+   { error:
+      { SyntaxError: Unexpected token h in JSON at position 0
+          at JSON.parse (<anonymous>)
+          at createStrictSyntaxError (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:158:10)
+          at parse (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:83:15)
+          at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js:121:18
+          at invokeCallback (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:224:16)
+          at done (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:213:7)
+          at IncomingMessage.onEnd (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:273:7)
+          at IncomingMessage.emit (events.js:182:13)
+          at endReadableNT (_stream_readable.js:1094:12)
+          at process._tickCallback (internal/process/next_tick.js:63:19)
+        expose: true,
+        statusCode: 400,
+        status: 400,
+        body: 'hahahahahahhahaha',
+        type: 'entity.parse.failed' },
+     level: 'error',
+     message:
+      'uncaughtException: Unexpected token h in JSON at position 0\nSyntaxError: Unexpected token h in JSON at position 0\n    at JSON.parse (<anonymous>)\n    at createStrictSyntaxError (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:158:10)\n    at parse (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:83:15)\n    at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js:121:18\n    at invokeCallback (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:224:16)\n    at done (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:213:7)\n    at IncomingMessage.onEnd (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:273:7)\n    at IncomingMessage.emit (events.js:182:13)\n    at endReadableNT (_stream_readable.js:1094:12)\n    at process._tickCallback (internal/process/next_tick.js:63:19)',
+     stack:
+      'SyntaxError: Unexpected token h in JSON at position 0\n    at JSON.parse (<anonymous>)\n    at createStrictSyntaxError (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:158:10)\n    at parse (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:83:15)\n    at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js:121:18\n    at invokeCallback (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:224:16)\n    at done (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:213:7)\n    at IncomingMessage.onEnd (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:273:7)\n    at IncomingMessage.emit (events.js:182:13)\n    at endReadableNT (_stream_readable.js:1094:12)\n    at process._tickCallback (internal/process/next_tick.js:63:19)',
+     exception: true,
+     date: 'Fri Mar 22 2019 17:39:46 GMT-0400 (Eastern Daylight Time)',
+     process:
+      { pid: 1725,
+        uid: 1000,
+        gid: 1000,
+        cwd: '/home/miguel/Desktop/plumadriver/plumadriver',
+        execPath: '/usr/bin/node',
+        version: 'v10.15.0',
+        argv:
+         [ '/usr/bin/node',
+           '/home/miguel/Desktop/plumadriver/plumadriver/pluma-webdriver.js' ],
+        memoryUsage:
+         { rss: 87904256,
+           heapTotal: 67932160,
+           heapUsed: 27881864,
+           external: 186238 } },
+     os:
+      { loadavg: [ 2.0078125, 1.6796875, 1.48876953125 ],
+        uptime: 197947 },
+     trace:
+      [ { column: null,
+          file: null,
+          function: 'JSON.parse',
+          line: null,
+          method: 'parse',
+          native: false },
+        { column: 10,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js',
+          function: 'createStrictSyntaxError',
+          line: 158,
+          method: null,
+          native: false },
+        { column: 15,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js',
+          function: 'parse',
+          line: 83,
+          method: null,
+          native: false },
+        { column: 18,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js',
+          function: null,
+          line: 121,
+          method: null,
+          native: false },
+        { column: 16,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js',
+          function: 'invokeCallback',
+          line: 224,
+          method: null,
+          native: false },
+        { column: 7,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js',
+          function: 'done',
+          line: 213,
+          method: null,
+          native: false },
+        { column: 7,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js',
+          function: 'IncomingMessage.onEnd',
+          line: 273,
+          method: 'onEnd',
+          native: false },
+        { column: 13,
+          file: 'events.js',
+          function: 'IncomingMessage.emit',
+          line: 182,
+          method: 'emit',
+          native: false },
+        { column: 12,
+          file: '_stream_readable.js',
+          function: 'endReadableNT',
+          line: 1094,
+          method: null,
+          native: false },
+        { column: 19,
+          file: 'internal/process/next_tick.js',
+          function: 'process._tickCallback',
+          line: 63,
+          method: '_tickCallback',
+          native: false } ],
+     req:
+      { url: '/session/',
+        headers:
+         { 'content-type': 'application/json',
+           'cache-control': 'no-cache',
+           'postman-token': '3d415f79-be30-4fdf-89ee-9ffd8e6be5f3',
+           'user-agent': 'PostmanRuntime/7.6.0',
+           accept: '*/*',
+           host: 'localhost:3000',
+           'accept-encoding': 'gzip, deflate',
+           'content-length': '17',
+           connection: 'keep-alive' },
+        method: 'POST',
+        httpVersion: '1.1',
+        originalUrl: '/session/',
+        query: {} } } }
+{ level: 'error',
+  message: 'middlewareError',
+  meta:
+   { error:
+      { SyntaxError: Unexpected token h in JSON at position 0
+          at JSON.parse (<anonymous>)
+          at createStrictSyntaxError (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:158:10)
+          at parse (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:83:15)
+          at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js:121:18
+          at invokeCallback (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:224:16)
+          at done (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:213:7)
+          at IncomingMessage.onEnd (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:273:7)
+          at IncomingMessage.emit (events.js:182:13)
+          at endReadableNT (_stream_readable.js:1094:12)
+          at process._tickCallback (internal/process/next_tick.js:63:19)
+        expose: true,
+        statusCode: 400,
+        status: 400,
+        body: 'hahahahahahhahaha',
+        type: 'entity.parse.failed' },
+     level: 'error',
+     message:
+      'uncaughtException: Unexpected token h in JSON at position 0\nSyntaxError: Unexpected token h in JSON at position 0\n    at JSON.parse (<anonymous>)\n    at createStrictSyntaxError (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:158:10)\n    at parse (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:83:15)\n    at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js:121:18\n    at invokeCallback (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:224:16)\n    at done (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:213:7)\n    at IncomingMessage.onEnd (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:273:7)\n    at IncomingMessage.emit (events.js:182:13)\n    at endReadableNT (_stream_readable.js:1094:12)\n    at process._tickCallback (internal/process/next_tick.js:63:19)',
+     stack:
+      'SyntaxError: Unexpected token h in JSON at position 0\n    at JSON.parse (<anonymous>)\n    at createStrictSyntaxError (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:158:10)\n    at parse (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:83:15)\n    at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js:121:18\n    at invokeCallback (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:224:16)\n    at done (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:213:7)\n    at IncomingMessage.onEnd (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:273:7)\n    at IncomingMessage.emit (events.js:182:13)\n    at endReadableNT (_stream_readable.js:1094:12)\n    at process._tickCallback (internal/process/next_tick.js:63:19)',
+     exception: true,
+     date: 'Fri Mar 22 2019 17:40:27 GMT-0400 (Eastern Daylight Time)',
+     process:
+      { pid: 1774,
+        uid: 1000,
+        gid: 1000,
+        cwd: '/home/miguel/Desktop/plumadriver/plumadriver',
+        execPath: '/usr/bin/node',
+        version: 'v10.15.0',
+        argv:
+         [ '/usr/bin/node',
+           '/home/miguel/Desktop/plumadriver/plumadriver/pluma-webdriver.js' ],
+        memoryUsage:
+         { rss: 87617536,
+           heapTotal: 67407872,
+           heapUsed: 27884704,
+           external: 198477 } },
+     os:
+      { loadavg: [ 1.845703125, 1.6748046875, 1.49462890625 ],
+        uptime: 197989 },
+     trace:
+      [ { column: null,
+          file: null,
+          function: 'JSON.parse',
+          line: null,
+          method: 'parse',
+          native: false },
+        { column: 10,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js',
+          function: 'createStrictSyntaxError',
+          line: 158,
+          method: null,
+          native: false },
+        { column: 15,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js',
+          function: 'parse',
+          line: 83,
+          method: null,
+          native: false },
+        { column: 18,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js',
+          function: null,
+          line: 121,
+          method: null,
+          native: false },
+        { column: 16,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js',
+          function: 'invokeCallback',
+          line: 224,
+          method: null,
+          native: false },
+        { column: 7,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js',
+          function: 'done',
+          line: 213,
+          method: null,
+          native: false },
+        { column: 7,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js',
+          function: 'IncomingMessage.onEnd',
+          line: 273,
+          method: 'onEnd',
+          native: false },
+        { column: 13,
+          file: 'events.js',
+          function: 'IncomingMessage.emit',
+          line: 182,
+          method: 'emit',
+          native: false },
+        { column: 12,
+          file: '_stream_readable.js',
+          function: 'endReadableNT',
+          line: 1094,
+          method: null,
+          native: false },
+        { column: 19,
+          file: 'internal/process/next_tick.js',
+          function: 'process._tickCallback',
+          line: 63,
+          method: '_tickCallback',
+          native: false } ],
+     req:
+      { url: '/session/',
+        headers:
+         { 'content-type': 'application/json',
+           'cache-control': 'no-cache',
+           'postman-token': '4d63a2b9-3715-461d-9bc9-e98d9298cdd9',
+           'user-agent': 'PostmanRuntime/7.6.0',
+           accept: '*/*',
+           host: 'localhost:3000',
+           'accept-encoding': 'gzip, deflate',
+           'content-length': '17',
+           connection: 'keep-alive' },
+        method: 'POST',
+        httpVersion: '1.1',
+        originalUrl: '/session/',
+        query: {} } } }
+{ level: 'error',
+  message: 'middlewareError',
+  meta:
+   { error:
+      { SyntaxError: Unexpected token h in JSON at position 0
+          at JSON.parse (<anonymous>)
+          at createStrictSyntaxError (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:158:10)
+          at parse (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:83:15)
+          at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js:121:18
+          at invokeCallback (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:224:16)
+          at done (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:213:7)
+          at IncomingMessage.onEnd (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:273:7)
+          at IncomingMessage.emit (events.js:182:13)
+          at endReadableNT (_stream_readable.js:1094:12)
+          at process._tickCallback (internal/process/next_tick.js:63:19)
+        expose: true,
+        statusCode: 400,
+        status: 400,
+        body: 'hahahahahahhahaha',
+        type: 'entity.parse.failed' },
+     level: 'error',
+     message:
+      'uncaughtException: Unexpected token h in JSON at position 0\nSyntaxError: Unexpected token h in JSON at position 0\n    at JSON.parse (<anonymous>)\n    at createStrictSyntaxError (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:158:10)\n    at parse (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:83:15)\n    at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js:121:18\n    at invokeCallback (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:224:16)\n    at done (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:213:7)\n    at IncomingMessage.onEnd (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:273:7)\n    at IncomingMessage.emit (events.js:182:13)\n    at endReadableNT (_stream_readable.js:1094:12)\n    at process._tickCallback (internal/process/next_tick.js:63:19)',
+     stack:
+      'SyntaxError: Unexpected token h in JSON at position 0\n    at JSON.parse (<anonymous>)\n    at createStrictSyntaxError (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:158:10)\n    at parse (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:83:15)\n    at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js:121:18\n    at invokeCallback (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:224:16)\n    at done (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:213:7)\n    at IncomingMessage.onEnd (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:273:7)\n    at IncomingMessage.emit (events.js:182:13)\n    at endReadableNT (_stream_readable.js:1094:12)\n    at process._tickCallback (internal/process/next_tick.js:63:19)',
+     exception: true,
+     date: 'Fri Mar 22 2019 17:42:31 GMT-0400 (Eastern Daylight Time)',
+     process:
+      { pid: 1901,
+        uid: 1000,
+        gid: 1000,
+        cwd: '/home/miguel/Desktop/plumadriver/plumadriver',
+        execPath: '/usr/bin/node',
+        version: 'v10.15.0',
+        argv:
+         [ '/usr/bin/node',
+           '/home/miguel/Desktop/plumadriver/plumadriver/pluma-webdriver.js' ],
+        memoryUsage:
+         { rss: 87216128,
+           heapTotal: 67407872,
+           heapUsed: 27854592,
+           external: 190410 } },
+     os:
+      { loadavg: [ 2.44775390625, 1.8447265625, 1.5732421875 ],
+        uptime: 198113 },
+     trace:
+      [ { column: null,
+          file: null,
+          function: 'JSON.parse',
+          line: null,
+          method: 'parse',
+          native: false },
+        { column: 10,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js',
+          function: 'createStrictSyntaxError',
+          line: 158,
+          method: null,
+          native: false },
+        { column: 15,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js',
+          function: 'parse',
+          line: 83,
+          method: null,
+          native: false },
+        { column: 18,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js',
+          function: null,
+          line: 121,
+          method: null,
+          native: false },
+        { column: 16,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js',
+          function: 'invokeCallback',
+          line: 224,
+          method: null,
+          native: false },
+        { column: 7,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js',
+          function: 'done',
+          line: 213,
+          method: null,
+          native: false },
+        { column: 7,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js',
+          function: 'IncomingMessage.onEnd',
+          line: 273,
+          method: 'onEnd',
+          native: false },
+        { column: 13,
+          file: 'events.js',
+          function: 'IncomingMessage.emit',
+          line: 182,
+          method: 'emit',
+          native: false },
+        { column: 12,
+          file: '_stream_readable.js',
+          function: 'endReadableNT',
+          line: 1094,
+          method: null,
+          native: false },
+        { column: 19,
+          file: 'internal/process/next_tick.js',
+          function: 'process._tickCallback',
+          line: 63,
+          method: '_tickCallback',
+          native: false } ],
+     req:
+      { url: '/session/',
+        headers:
+         { 'content-type': 'application/json',
+           'cache-control': 'no-cache',
+           'postman-token': '12ee7e6e-4e69-4a1d-82a5-5de9fcdbb5b4',
+           'user-agent': 'PostmanRuntime/7.6.0',
+           accept: '*/*',
+           host: 'localhost:3000',
+           'accept-encoding': 'gzip, deflate',
+           'content-length': '17',
+           connection: 'keep-alive' },
+        method: 'POST',
+        httpVersion: '1.1',
+        originalUrl: '/session/',
+        query: {} } } }
+{ level: 'error',
+  message: 'middlewareError',
+  meta:
+   { error:
+      { SyntaxError: Unexpected token h in JSON at position 0
+          at JSON.parse (<anonymous>)
+          at createStrictSyntaxError (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:158:10)
+          at parse (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:83:15)
+          at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js:121:18
+          at invokeCallback (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:224:16)
+          at done (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:213:7)
+          at IncomingMessage.onEnd (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:273:7)
+          at IncomingMessage.emit (events.js:182:13)
+          at endReadableNT (_stream_readable.js:1094:12)
+          at process._tickCallback (internal/process/next_tick.js:63:19)
+        expose: true,
+        statusCode: 400,
+        status: 400,
+        body: 'hahahahahahhahaha',
+        type: 'entity.parse.failed' },
+     level: 'error',
+     message:
+      'uncaughtException: Unexpected token h in JSON at position 0\nSyntaxError: Unexpected token h in JSON at position 0\n    at JSON.parse (<anonymous>)\n    at createStrictSyntaxError (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:158:10)\n    at parse (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:83:15)\n    at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js:121:18\n    at invokeCallback (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:224:16)\n    at done (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:213:7)\n    at IncomingMessage.onEnd (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:273:7)\n    at IncomingMessage.emit (events.js:182:13)\n    at endReadableNT (_stream_readable.js:1094:12)\n    at process._tickCallback (internal/process/next_tick.js:63:19)',
+     stack:
+      'SyntaxError: Unexpected token h in JSON at position 0\n    at JSON.parse (<anonymous>)\n    at createStrictSyntaxError (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:158:10)\n    at parse (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:83:15)\n    at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js:121:18\n    at invokeCallback (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:224:16)\n    at done (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:213:7)\n    at IncomingMessage.onEnd (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:273:7)\n    at IncomingMessage.emit (events.js:182:13)\n    at endReadableNT (_stream_readable.js:1094:12)\n    at process._tickCallback (internal/process/next_tick.js:63:19)',
+     exception: true,
+     date: 'Fri Mar 22 2019 17:45:29 GMT-0400 (Eastern Daylight Time)',
+     process:
+      { pid: 2161,
+        uid: 1000,
+        gid: 1000,
+        cwd: '/home/miguel/Desktop/plumadriver/plumadriver',
+        execPath: '/usr/bin/node',
+        version: 'v10.15.0',
+        argv:
+         [ '/usr/bin/node',
+           '/home/miguel/Desktop/plumadriver/plumadriver/pluma-webdriver.js' ],
+        memoryUsage:
+         { rss: 87957504,
+           heapTotal: 67407872,
+           heapUsed: 27875904,
+           external: 202649 } },
+     os:
+      { loadavg: [ 2.8095703125, 2.2978515625, 1.802734375 ],
+        uptime: 198291 },
+     trace:
+      [ { column: null,
+          file: null,
+          function: 'JSON.parse',
+          line: null,
+          method: 'parse',
+          native: false },
+        { column: 10,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js',
+          function: 'createStrictSyntaxError',
+          line: 158,
+          method: null,
+          native: false },
+        { column: 15,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js',
+          function: 'parse',
+          line: 83,
+          method: null,
+          native: false },
+        { column: 18,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js',
+          function: null,
+          line: 121,
+          method: null,
+          native: false },
+        { column: 16,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js',
+          function: 'invokeCallback',
+          line: 224,
+          method: null,
+          native: false },
+        { column: 7,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js',
+          function: 'done',
+          line: 213,
+          method: null,
+          native: false },
+        { column: 7,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js',
+          function: 'IncomingMessage.onEnd',
+          line: 273,
+          method: 'onEnd',
+          native: false },
+        { column: 13,
+          file: 'events.js',
+          function: 'IncomingMessage.emit',
+          line: 182,
+          method: 'emit',
+          native: false },
+        { column: 12,
+          file: '_stream_readable.js',
+          function: 'endReadableNT',
+          line: 1094,
+          method: null,
+          native: false },
+        { column: 19,
+          file: 'internal/process/next_tick.js',
+          function: 'process._tickCallback',
+          line: 63,
+          method: '_tickCallback',
+          native: false } ],
+     req:
+      { url: '/session/',
+        headers:
+         { 'content-type': 'application/json',
+           'cache-control': 'no-cache',
+           'postman-token': 'e018a64e-23f0-4188-81b4-fa440b993ff9',
+           'user-agent': 'PostmanRuntime/7.6.0',
+           accept: '*/*',
+           host: 'localhost:3000',
+           'accept-encoding': 'gzip, deflate',
+           'content-length': '17',
+           connection: 'keep-alive' },
+        method: 'POST',
+        httpVersion: '1.1',
+        originalUrl: '/session/',
+        query: {} } } }
+{ level: 'error',
+  message: 'middlewareError',
+  meta:
+   { error:
+      { SyntaxError: Unexpected token h in JSON at position 0
+          at JSON.parse (<anonymous>)
+          at createStrictSyntaxError (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:158:10)
+          at parse (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:83:15)
+          at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js:121:18
+          at invokeCallback (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:224:16)
+          at done (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:213:7)
+          at IncomingMessage.onEnd (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:273:7)
+          at IncomingMessage.emit (events.js:182:13)
+          at endReadableNT (_stream_readable.js:1094:12)
+          at process._tickCallback (internal/process/next_tick.js:63:19)
+        expose: true,
+        statusCode: 400,
+        status: 400,
+        body: 'hahahahahahhahaha',
+        type: 'entity.parse.failed' },
+     level: 'error',
+     message:
+      'uncaughtException: Unexpected token h in JSON at position 0\nSyntaxError: Unexpected token h in JSON at position 0\n    at JSON.parse (<anonymous>)\n    at createStrictSyntaxError (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:158:10)\n    at parse (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:83:15)\n    at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js:121:18\n    at invokeCallback (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:224:16)\n    at done (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:213:7)\n    at IncomingMessage.onEnd (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:273:7)\n    at IncomingMessage.emit (events.js:182:13)\n    at endReadableNT (_stream_readable.js:1094:12)\n    at process._tickCallback (internal/process/next_tick.js:63:19)',
+     stack:
+      'SyntaxError: Unexpected token h in JSON at position 0\n    at JSON.parse (<anonymous>)\n    at createStrictSyntaxError (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:158:10)\n    at parse (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js:83:15)\n    at /home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js:121:18\n    at invokeCallback (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:224:16)\n    at done (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:213:7)\n    at IncomingMessage.onEnd (/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js:273:7)\n    at IncomingMessage.emit (events.js:182:13)\n    at endReadableNT (_stream_readable.js:1094:12)\n    at process._tickCallback (internal/process/next_tick.js:63:19)',
+     exception: true,
+     date: 'Fri Mar 22 2019 17:47:46 GMT-0400 (Eastern Daylight Time)',
+     process:
+      { pid: 2290,
+        uid: 1000,
+        gid: 1000,
+        cwd: '/home/miguel/Desktop/plumadriver/plumadriver',
+        execPath: '/usr/bin/node',
+        version: 'v10.15.0',
+        argv:
+         [ '/usr/bin/node',
+           '/home/miguel/Desktop/plumadriver/plumadriver/pluma-webdriver.js' ],
+        memoryUsage:
+         { rss: 87777280,
+           heapTotal: 67407872,
+           heapUsed: 27852264,
+           external: 169854 } },
+     os:
+      { loadavg: [ 2.32861328125, 2.34765625, 1.89892578125 ],
+        uptime: 198428 },
+     trace:
+      [ { column: null,
+          file: null,
+          function: 'JSON.parse',
+          line: null,
+          method: 'parse',
+          native: false },
+        { column: 10,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js',
+          function: 'createStrictSyntaxError',
+          line: 158,
+          method: null,
+          native: false },
+        { column: 15,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/types/json.js',
+          function: 'parse',
+          line: 83,
+          method: null,
+          native: false },
+        { column: 18,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/body-parser/lib/read.js',
+          function: null,
+          line: 121,
+          method: null,
+          native: false },
+        { column: 16,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js',
+          function: 'invokeCallback',
+          line: 224,
+          method: null,
+          native: false },
+        { column: 7,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js',
+          function: 'done',
+          line: 213,
+          method: null,
+          native: false },
+        { column: 7,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/node_modules/raw-body/index.js',
+          function: 'IncomingMessage.onEnd',
+          line: 273,
+          method: 'onEnd',
+          native: false },
+        { column: 13,
+          file: 'events.js',
+          function: 'IncomingMessage.emit',
+          line: 182,
+          method: 'emit',
+          native: false },
+        { column: 12,
+          file: '_stream_readable.js',
+          function: 'endReadableNT',
+          line: 1094,
+          method: null,
+          native: false },
+        { column: 19,
+          file: 'internal/process/next_tick.js',
+          function: 'process._tickCallback',
+          line: 63,
+          method: '_tickCallback',
+          native: false } ],
+     req:
+      { url: '/session/',
+        headers:
+         { 'content-type': 'application/json',
+           'cache-control': 'no-cache',
+           'postman-token': '59c6f83d-d666-4447-a65a-ada1d4a799a2',
+           'user-agent': 'PostmanRuntime/7.6.0',
+           accept: '*/*',
+           host: 'localhost:3000',
+           'accept-encoding': 'gzip, deflate',
+           'content-length': '17',
+           connection: 'keep-alive' },
+        method: 'POST',
+        httpVersion: '1.1',
+        originalUrl: '/session/',
+        query: {} } } }
+{ level: 'error',
+  message: 'middlewareError',
+  meta:
+   { error:
+      { Error: The arguments passed to POST /session are either invalid or malformed
+          at router.post (/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js:26:13)
+        value:
+         { stacktrace:
+            'Error: The arguments passed to POST /session are either invalid or malformed\n    at router.post (/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js:26:13)',
+           error: 'invalid argument',
+           message:
+            'The arguments passed to POST /session are either invalid or malformed' } },
+     level: 'error',
+     message:
+      'uncaughtException: The arguments passed to POST /session are either invalid or malformed\nError: The arguments passed to POST /session are either invalid or malformed\n    at router.post (/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js:26:13)',
+     stack:
+      'Error: The arguments passed to POST /session are either invalid or malformed\n    at router.post (/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js:26:13)',
+     exception: true,
+     date: 'Fri Mar 22 2019 17:48:03 GMT-0400 (Eastern Daylight Time)',
+     process:
+      { pid: 2290,
+        uid: 1000,
+        gid: 1000,
+        cwd: '/home/miguel/Desktop/plumadriver/plumadriver',
+        execPath: '/usr/bin/node',
+        version: 'v10.15.0',
+        argv:
+         [ '/usr/bin/node',
+           '/home/miguel/Desktop/plumadriver/plumadriver/pluma-webdriver.js' ],
+        memoryUsage:
+         { rss: 89612288,
+           heapTotal: 34377728,
+           heapUsed: 26683528,
+           external: 83439 } },
+     os:
+      { loadavg: [ 2.65625, 2.41357421875, 1.9287109375 ],
+        uptime: 198444 },
+     trace:
+      [ { column: 13,
+          file:
+           '/home/miguel/Desktop/plumadriver/plumadriver/routes/index.js',
+          function: 'router.post',
+          line: 26,
+          method: 'post',
+          native: false } ],
+     req:
+      { url: '/session/',
+        headers:
+         { 'cache-control': 'no-cache',
+           'postman-token': '3a028c1f-9f5b-4b2f-8f26-8430a4a75e40',
+           'content-type': 'text/plain',
+           'user-agent': 'PostmanRuntime/7.6.0',
+           accept: '*/*',
+           host: 'localhost:3000',
+           'accept-encoding': 'gzip, deflate',
+           'content-length': '17',
+           connection: 'keep-alive' },
+        method: 'POST',
+        httpVersion: '1.1',
+        originalUrl: '/session/',
+        query: {} } } }

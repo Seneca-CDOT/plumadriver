@@ -25,6 +25,10 @@ class Session {
     this.webDriverActive = false;
   }
 
+  setTimeouts() {
+    
+  }
+
   configureSession(requestedCapabilities) {
     this.id = uuidv1();
     const capabilities = this.configureCapabilties(requestedCapabilities);
