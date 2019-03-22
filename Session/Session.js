@@ -101,16 +101,15 @@ class Session {
       'unhandledPromptBehaviour',
     ];
 
-    let capabilities;
     const capabiltiesRequest = Object.prototype.hasOwnProperty
       .call(request, 'capabilities');
     if (!capabiltiesRequest
       || request.capabilities.constructor !== Object
       || Object.keys(request.capabilities).length === 0) {
       throw new InvalidArgument(command);
-    } else {
-      capabilities = request.capabilities;
     }
+    const { capabilities } = request;
+
 
     // validate alwaysMatch capabilties
     const requiredCapabilities = {};
