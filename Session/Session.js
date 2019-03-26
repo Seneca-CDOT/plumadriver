@@ -27,26 +27,17 @@ class Session {
 
   setTimeouts(timeouts) {
     const capabilityValidator = new CapabilityValidator();
-
     let valid = true;
 
-    valid = capabilityValidator.validate(timeouts, 'timeouts');
-    if (!valid) throw new InvalidArgument();
+    Object.keys(timeouts).forEach((key) => {
+      valid = capabilityValidator.validateTimeouts(key, timeouts[key]);
+      if (!valid) throw new InvalidArgument();
+    });
 
 
     Object.keys(timeouts).forEach((validTimeout) => {
       this.timeouts[validTimeout] = timeouts[validTimeout];
     });
-
-    // if (Object.prototype.hasOwnProperty.call(capabilities.timeouts, 'implicit')) {
-    //   this.timeouts.implicit = capabilities.timeouts.implicit;
-    // }
-    // if (Object.prototype.hasOwnProperty.call(capabilities.timeouts, 'script')) {
-    //   this.timeouts.script = capabilities.timeouts.script;
-    // }
-    // if (Object.prototype.hasOwnProperty.call(capabilities.timeouts, 'pageLoad')) {
-    //   this.timeouts.pageLoad = capabilities.timeouts.pageLoad;
-    // }
   }
 
   configureSession(requestedCapabilities) {
@@ -248,39 +239,42 @@ class Session {
 
   elementRetrieval(startNode, strategy, selector) {
     // TODO: start timers
+    const endTime = new Date(new Date().getTime + this.timeouts.implicit);
     let elements;
     const result = [];
-    try {
-      switch (strategy) {
-        case 'css selector':
-          elements = startNode.querySelectorAll(selector);
-          break;
-        case 'link text':
-          // TODO: implement w3c standard for link text strategy
-          break;
-        case 'partial link text':
-          // TODO: implement w3c standard for partial link text strategy
-          break;
-        case 'tag name':
-          elements = startNode.getElementsByTagName(selector);
-          break;
-        case 'xpath':
-          // TODO: implement w3c standard for xpath strategy
-          break;
-        default:
-          break;
-      }
-    } catch (error) {
-      if (error instanceof DOMException
-        || error instanceof SyntaxError
-        || error instanceof XPathException
-      ) throw new Error('invalid selector'); // TODO: add invalidSelector error class
-      else throw new UnknownError(); // TODO: add unknown error class
-    }
 
-    let foundElement;
+    do {
+      try {
+        switch (strategy) {
+          case 'css selector':
+            elements = startNode.querySelectorAll(selector);
+            break;
+          case 'link text':
+            // TODO: implement w3c standard for link text strategy
+            break;
+          case 'partial link text':
+            // TODO: implement w3c standard for partial link text strategy
+            break;
+          case 'tag name':
+            elements = startNode.getElementsByTagName(selector);
+            break;
+          case 'xpath':
+            // TODO: implement w3c standard for xpath strategy
+            break;
+          default:
+            break;
+        }
+      } catch (error) {
+        if (error instanceof DOMException
+          || error instanceof SyntaxError
+          || error instanceof XPathException
+        ) throw new Error('invalid selector'); // TODO: add invalidSelector error class
+        else throw new UnknownError(); // TODO: add unknown error class
+      }
+    } while (endTime > new Date() && elements.length < 1);
+
     Object.keys(elements).forEach((element) => {
-      foundElement = new WebElement(elements[element]);
+      const foundElement = new WebElement(elements[element]);
       result.push(foundElement);
       this.browser.knownElements.push(foundElement);
     });
