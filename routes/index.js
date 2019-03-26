@@ -8,7 +8,6 @@ const navigate = require('./navigate');
 // errors
 const { InvalidArgument } = require('../Error/errors.js');
 
-
 const utility = require('../utils/utils');
 
 router.use('/session/:sessionId', (req, res, next) => {
@@ -49,7 +48,8 @@ router.get('/session/:sessionId/title', (req, res, next) => {
   const sessionsManager = req.app.get('sessionsManager');
   const session = sessionsManager.findSession(req.params.sessionId);
   const title = session.browser.getTitle();
-  res.send(title);
+  const response = { value: title };
+  res.send(response);
 });
 
 // element routes
