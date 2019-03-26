@@ -9,30 +9,29 @@ const {
 
 // find elements
 element.post('/', (req, res, next) => {
+  // endpoint currently ignores browsing contexts
+
   let single = false;
+
   // conditional checks whether the url is .../elements or /element
   // response differs but process is the same
-  if (req.originalUrl.indexOf(req.originalUrl.length - 1) !== 's') {
+  if (req.originalUrl.charAt(req.originalUrl.length - 1) !== 's') {
     single = true;
   }
-
+  const response = {};
   const strategy = req.body.using;
   const selector = req.body.value;
-  const response = {
-    sessionId: req.sessionId,
-    status: 0,
-  };
-  const sessionsManager = req.app.get('sessionsManager');
-  const session = sessionsManager.findSession(req.sessionId);
-  const startNode = session.browser.dom.window.document;
+  const startNode = req.session.browser.dom.window.document;
 
   if (!strategy || !selector) throw new InvalidArgument(`POST /session/${req.sessionId}/elements`);
 
   if (!startNode) throw new NoSuchElement();
 
-  const result = session.elementRetrieval(startNode, strategy, selector);
+  const result = req.session.elementRetrieval(startNode, strategy, selector);
   if (result.length === 0) throw new NoSuchElement();
+  console.log(result);
   response.value = single ? result[0] : result;
+  console.log(response.value);
   res.json(response);
 });
 
