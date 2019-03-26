@@ -28,7 +28,8 @@ class SessionsManager {
     const session = new Session();
     const body = session.configureSession(requestBody);
     this.sessions.push(session);
-    return body;
+    const response = { value: body };
+    return response;
   }
 
   setReadinessState() {
