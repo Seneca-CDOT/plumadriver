@@ -25,20 +25,39 @@ class Session {
     this.webDriverActive = false;
   }
 
-  setTimeouts() {
-    
+  setTimeouts(timeouts) {
+    const capabilityValidator = new CapabilityValidator();
+
+    let valid = true;
+
+    valid = capabilityValidator.validate(timeouts, 'timeouts');
+    if (!valid) throw new InvalidArgument();
+
+
+    Object.keys(timeouts).forEach((validTimeout) => {
+      this.timeouts[validTimeout] = timeouts[validTimeout];
+    });
+
+    // if (Object.prototype.hasOwnProperty.call(capabilities.timeouts, 'implicit')) {
+    //   this.timeouts.implicit = capabilities.timeouts.implicit;
+    // }
+    // if (Object.prototype.hasOwnProperty.call(capabilities.timeouts, 'script')) {
+    //   this.timeouts.script = capabilities.timeouts.script;
+    // }
+    // if (Object.prototype.hasOwnProperty.call(capabilities.timeouts, 'pageLoad')) {
+    //   this.timeouts.pageLoad = capabilities.timeouts.pageLoad;
+    // }
   }
 
   configureSession(requestedCapabilities) {
     this.id = uuidv1();
-    const capabilities = this.configureCapabilties(requestedCapabilities);
+    const configuredCapabilities = this.configureCapabilties(requestedCapabilities);
     this.browser = new Browser();
     this.requestQueue = [];
     // TODO:  this formatting is for the server response and should be in the server code, not here.  CHANGE!!!!!
     const body = {
-      status: 0,
       sessionId: this.id,
-      value: capabilities,
+      capabilities: configuredCapabilities,
     };
     return body;
   }
