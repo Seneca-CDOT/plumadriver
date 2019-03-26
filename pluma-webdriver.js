@@ -66,18 +66,6 @@ server.get('/status', (req, res) => {
   // this endpoint should be more elaborate relating to readiness state.
 });
 
-// set timeouts
-server.post('/session/:sessionId/timeouts', async (req, res, next) => {
-  try {
-    if (!await utility.validate.requestBodyType(req, 'application/json')) {
-      throw new InvalidArgument('POST /session');
-    }
-    const newSession = sessionsManager.createSession(req.body);
-    res.json(newSession);
-  } catch (error) {
-    next(error);
-  }
-});
 
 /*---------------------------------------------------------*/
 
