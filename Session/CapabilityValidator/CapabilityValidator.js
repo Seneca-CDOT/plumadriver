@@ -107,18 +107,18 @@ class CapabilityValidator {
   }
 
   static validateTimeouts(timeouts) {
-    // valid timeouts
     let validTimeouts = true;
+    const timeoutTypes = ['script', 'pageLoad', 'implicit'];
     if (!util.validate.type(timeouts, 'object')) validTimeouts = false;
     else {
-      const timeoutTypes = ['script', 'pageLoad', 'implicit'];
-
       // check object contains valid properties
       if (!util.validate.objectPropertiesAreInArray(timeouts, timeoutTypes)) validTimeouts = false;
       // check property values are non-zero and intgers
-      Object.keys(timeouts).forEach((key) => {
-        if (!Number.isInteger(timeouts[key]) || timeouts[key] < 0) validTimeouts = false;
-      });
+      if (validTimeouts) {
+        Object.keys(timeouts).forEach((key) => {
+          if (!Number.isInteger(timeouts[key]) || timeouts[key] < 0) validTimeouts = false;
+        });
+      }
     }
     return validTimeouts;
   }
