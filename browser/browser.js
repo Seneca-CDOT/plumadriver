@@ -1,4 +1,5 @@
 
+
 const jsdom = require('jsdom');
 
 const { JSDOM } = jsdom;
@@ -37,6 +38,10 @@ class Browser {
       if (element[ELEMENT] === id) foundElement = element;
     });
     return foundElement;
+  }
+
+  close() {
+    this.dom.window.close();
   }
 }
 
