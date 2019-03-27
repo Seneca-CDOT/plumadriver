@@ -1,5 +1,6 @@
 
 const uuidv1 = require('uuid/v1');
+const validator = require('validator');
 const os = require('os');
 const Browser = require('../browser/browser.js');
 const WebElement = require('../WebElement/WebElement.js');
@@ -25,6 +26,23 @@ class Session {
     this.webDriverActive = false;
   }
 
+  async navigateTo(url) {
+    if (!validator.isURL(url)) throw new InvalidArgument(`/POST /session/${this.id}/url`);
+    // TODO: write code to handle user prompts
+    let timer;
+    const startTimer = () => {
+      timer = setTimeout(() => {
+        throw new Error('timeout');
+      }, this.timeouts.pageLoad);
+    };
+    if (this.browser.getURL() !== url) {
+      startTimer();
+      if (await this.browser.navigateToURL(url)) clearTimeout(timer);
+    } else {
+      await this.browser.navigateToURL(url);
+    }
+  }
+
   setTimeouts(timeouts) {
     const capabilityValidator = new CapabilityValidator();
     let valid = true;
@@ -38,6 +56,10 @@ class Session {
     Object.keys(timeouts).forEach((validTimeout) => {
       this.timeouts[validTimeout] = timeouts[validTimeout];
     });
+  }
+
+  getTimeouts() {
+    return this.timeouts;
   }
 
   configureSession(requestedCapabilities) {

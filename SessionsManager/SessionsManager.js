@@ -1,9 +1,8 @@
 
-const validator = require('validator');
 const os = require('os');
 const Session = require('../Session/Session');
 const {
-  NotFound,
+  NotFoundError,
   InvalidArgument,
 } = require('../Error/errors');
 
@@ -39,7 +38,7 @@ class SessionsManager {
   findSession(sessionId) {
     const foundSession = this.sessions.find(session => session.id === sessionId);
     if (!foundSession) {
-      throw new NotFound(`Session ${sessionId} not found`);
+      throw new NotFoundError(`Session ${sessionId} not found`);
     } else {
       return foundSession;
     }
@@ -51,23 +50,25 @@ class SessionsManager {
     this.sessions.splice(index, 1);
   }
 
-  async navigateSession(sessionId, url) {
-    if (!validator.isURL(url)) throw new InvalidArgument(`/POST /session/${sessionId}/url`);
-    // TODO: write code to handle user prompts
-    const session = this.findSession(sessionId);
-    let timer;
-    function startTimer() {
-      timer = setTimeout(() => {
-        throw new Error('timeout');
-      }, session.timeouts.pageLoad);
-    }
-    if (session.browser.getURL() !== url) {
-      startTimer();
-      if (await session.browser.navigateToURL(url)) clearTimeout(timer);
-    } else {
-      await session.browser.navigateToURL(url);
-    }
-  }
+  // TODO: this function should be inside the session class not session manager
+
+  // async navigateSession(sessionId, url) {
+  //   if (!validator.isURL(url)) throw new InvalidArgument(`/POST /session/${sessionId}/url`);
+  //   // TODO: write code to handle user prompts
+  //   const session = this.findSession(sessionId);
+  //   let timer;
+  //   function startTimer() {
+  //     timer = setTimeout(() => {
+  //       throw new Error('timeout');
+  //     }, session.timeouts.pageLoad);
+  //   }
+  //   if (session.browser.getURL() !== url) {
+  //     startTimer();
+  //     if (await session.browser.navigateToURL(url)) clearTimeout(timer);
+  //   } else {
+  //     await session.browser.navigateToURL(url);
+  //   }
+  // }
 
   getReadinessState() {
     this.setReadinessState();
