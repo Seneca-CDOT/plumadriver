@@ -5,6 +5,8 @@ const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
 const ELEMENT = 'element-6066-11e4-a52e-4f735466cecf';
 
+const { NoSuchElement } = require('../Error/errors');
+
 class Browser {
   constructor(options) {
     this.dom = new JSDOM();
@@ -37,6 +39,7 @@ class Browser {
     this.knownElements.forEach((element) => {
       if (element[ELEMENT] === id) foundElement = element;
     });
+    if (!foundElement) throw new NoSuchElement();
     return foundElement;
   }
 
