@@ -11,7 +11,7 @@
     "express": "^4.16.4",
     "express-winston": "^3.1.0",
     "express_logger": "0.0.4",
-    "jsdom": "^13.1.0",
+    "jsdom": "^13.2.0",
     "minimist": "^1.2.0",
     "os": "^0.1.1",
     "ping": "^0.2.2",
