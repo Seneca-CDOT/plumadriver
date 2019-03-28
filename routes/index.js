@@ -1,7 +1,7 @@
 
 // routers
 const router = require('express').Router();
-const element = require('./element');
+const elements = require('./elements/elements');
 const timeouts = require('./timeouts');
 const navigate = require('./navigate');
 
@@ -13,7 +13,7 @@ const utility = require('../utils/utils');
 router.use('/session/:sessionId', (req, res, next) => {
   const sessionsManager = req.app.get('sessionsManager');
   req.sessionId = req.params.sessionId;
-  req.session = sessionsManager.findSession(req.params.sessionId);
+  req.session = sessionsManager.findSession(req.sessionId);
   next();
 });
 
@@ -35,6 +35,7 @@ router.post('/session', async (req, res, next) => {
 router.delete('/session/:sessionId', (req, res, next) => {
   const sessionsManager = req.app.get('sessionsManager');
   try {
+    req.session.browser.close();
     sessionsManager.deleteSession(req.params.sessionId);
     res.send(null);
   } catch (error) {
@@ -52,9 +53,8 @@ router.get('/session/:sessionId/title', (req, res, next) => {
   res.send(response);
 });
 
-// element routes
-router.use('/session/:sessionId/element', element);
-router.use('/session/:sessionId/elements', element);
+// element(s) routes
+router.use(`/session/:sessionId${['/element', '/elements']}`, elements);
 
 // timeout routes
 router.use('/session/:sessionId/timeouts', timeouts);
