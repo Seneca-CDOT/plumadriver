@@ -260,31 +260,53 @@ class Session {
   }
 
   elementRetrieval(startNode, strategy, selector) {
-    // TODO: start timers
     const endTime = new Date(new Date().getTime + this.timeouts.implicit);
     let elements;
     const result = [];
+
+    const locationStrategies = {
+      cssSelector() {
+        return startNode.querySelectorAll(selector);
+      },
+      linkTextSelector(partial = false) {
+        const linkElements = startNode.querySelectorAll('a');
+        const strategyResult = [];
+
+        linkElements.forEach((element) => {
+          const renderedText = element.innerHTML;
+          if (!partial && renderedText.trim() === selector) strategyResult.push(element);
+          else if (partial && renderedText.includes(selector)) strategyResult.push(element);
+        });
+        return result;
+      },
+      tagName() {
+        return startNode.getElementsByTagName(selector);
+      },
+      XPathSelector() {
+        // TODO: figure out how to do this...
+      },
+    };
 
     do {
       try {
         switch (strategy) {
           case 'css selector':
-            elements = startNode.querySelectorAll(selector);
+            elements = locationStrategies.cssSelector();
             break;
           case 'link text':
-            // TODO: implement w3c standard for link text strategy
+            elements = locationStrategies.linkTextSelector();
             break;
           case 'partial link text':
-            // TODO: implement w3c standard for partial link text strategy
+            elements = locationStrategies.linkTextSelector(true);
             break;
           case 'tag name':
-            elements = startNode.getElementsByTagName(selector);
+            elements = locationStrategies.tagName();
             break;
           case 'xpath':
             // TODO: implement w3c standard for xpath strategy
             break;
           default:
-            break;
+            throw new InvalidArgument();
         }
       } catch (error) {
         if (error instanceof DOMException
@@ -295,8 +317,8 @@ class Session {
       }
     } while (endTime > new Date() && elements.length < 1);
 
-    Object.keys(elements).forEach((element) => {
-      const foundElement = new WebElement(elements[element]);
+    elements.forEach((element) => {
+      const foundElement = new WebElement(element);
       result.push(foundElement);
       this.browser.knownElements.push(foundElement);
     });
