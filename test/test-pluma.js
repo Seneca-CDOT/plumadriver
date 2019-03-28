@@ -104,3 +104,34 @@ describe('4: POST /session with invalid firstMatch capabilities', () => {
         });
     });
 });
+
+// test currently not functional
+describe('5: POST /session/:sessionId/url', () => {
+  it('it should navigate to the specified website and return null', 
+  (done) => {
+    let sessionId;
+    const capabilities = {
+      capabilities: {
+        alwaysMatch: {
+          browserName: 'plumadriver',
+        },
+        firstMatch: {},
+      },
+    };
+    chai.request(driver)
+      .post('/session')
+      .send(capabilities)
+      .end((err, res) => {
+        sessionId = res.body.value.sessionId;
+        console.log(sessionId);
+      });
+      console.log(sessionId);
+    chai.request(driver)  
+      .post(`/session/${sessionId}/url`)
+      .send({url: "http://example.com"})
+      .end((err, res) => {
+        console.log(err);
+        res.should.have.status(200);
+      })
+  })
+})
