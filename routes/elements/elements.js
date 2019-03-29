@@ -17,7 +17,7 @@ elements.post('/', (req, res, next) => {
   // conditional checks whether the url is .../elements or /element
   // response differs but process is the same
   // TODO:  THIS NEEDS TO BE A MORE ROBUST CHECK!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  if (req.originalUrl.charAt(req.originalUrl.length - 1) !== 's') {
+  if (req.originalUrl.slice(req.originalUrl.lastIndexOf('/') + 1) === 'element') {
     single = true;
   }
   const response = {};

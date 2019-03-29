@@ -54,7 +54,8 @@ router.get('/session/:sessionId/title', (req, res, next) => {
 });
 
 // element(s) routes
-router.use(`/session/:sessionId${['/element', '/elements']}`, elements);
+router.use(`/session/:sessionId/element`, elements);
+router.use(`/session/:sessionId/elements`, elements);
 
 // timeout routes
 router.use('/session/:sessionId/timeouts', timeouts);
