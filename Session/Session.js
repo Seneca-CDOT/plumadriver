@@ -18,12 +18,13 @@ class Session {
     this.timeouts = {
       implicit: 0,
       pageLoad: 30000,
-      script: 3000,
+      script: 30000,
     };
     this.browser = new Browser();
     this.requestQueue = [];
     this.pageLoadStrategy = 'normal';
-    this.webDriverActive = false;
+    this.webDriverActive = true;
+    this.acceptInsecureCerts = false;
   }
 
   async navigateTo(url) {
@@ -98,26 +99,13 @@ class Session {
       capabilities.proxy = {};
     }
 
+
+    this.setTimeouts();
     // TODO: create setTimeouts function for this. use function in endpoint
     if (Object.prototype.hasOwnProperty.call(capabilities, 'timeouts')) {
-      if (Object.prototype.hasOwnProperty.call(capabilities.timeouts, 'implicit')) {
-        this.timeouts.implicit = capabilities.timeouts.implicit;
-      }
-      if (Object.prototype.hasOwnProperty.call(capabilities.timeouts, 'script')) {
-        this.timeouts.script = capabilities.timeouts.script;
-      }
-      if (Object.prototype.hasOwnProperty.call(capabilities.timeouts, 'pageLoad')) {
-        this.timeouts.pageLoad = capabilities.timeouts.pageLoad;
-      }
+        this.setTimeouts(capabilities.timeouts);
     }
-
-    const configuredTimeouts = {
-      implicit: this.timeouts.implicit,
-      pageLoad: this.timeouts.pageLoad,
-      script: this.timeouts.script,
-    };
-
-    capabilities.timeouts = configuredTimeouts;
+    capabilities.timeouts = this.timeouts;
 
     return capabilities;
   }
