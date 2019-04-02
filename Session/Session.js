@@ -1,7 +1,10 @@
 
 const uuidv1 = require('uuid/v1');
+const validator = require('validator');
 const os = require('os');
 const Browser = require('../browser/browser.js');
+const WebElement = require('../WebElement/WebElement.js');
+const sleep = require('system-sleep');
 // errors
 const {
   InvalidArgument,
@@ -16,23 +19,130 @@ class Session {
     this.timeouts = {
       implicit: 0,
       pageLoad: 30000,
-      script: 3000,
+      script: 30000,
     };
     this.browser = new Browser();
     this.requestQueue = [];
     this.pageLoadStrategy = 'normal';
-    this.webDriverActive = false;
+    this.webDriverActive = true;
+    this.acceptInsecureCerts = false;
+  }
+
+  process(request) {
+    // wait in line
+    while (request.id !== this.requestQueue[0].id) sleep(100);
+
+    const currentRequest = this.requestQueue[0];
+    const { command, parameters, urlVariables } = currentRequest;
+    let response;
+
+    const processCommand = {
+      navigate() {
+
+      },
+      elementRetrieval() {
+
+      },
+      nestedElementRetrieval() {
+
+      },
+      setTimeouts() {
+
+      },
+      getTimeouts() {
+
+      },
+      async foo() {
+        console.log(`INSIDE FOO()`);
+        return new Promise((resolve) => setTimeout(() => {
+          resolve('FINISHED FOO');
+        }, 10000));
+      },
+      bar() {
+        return 'FINISHED BAR';
+      },
+    };
+
+
+
+    return new Promise(async (resolve) => {
+      switch (command) {
+        case 'DELETE':
+          await this.browser.close();
+          break;
+        case 'NAVIGATE':
+          break;
+        case 'GET TITLE':
+          response = this.browser.getTitle();
+          break;
+        case 'ELEMENT RETRIEVAL':
+          break;
+        case 'GET ELEMENT TEXT':
+          break;
+        case 'NESTED ELEMENT RETRIEVAL':
+          break;
+        case 'SET TIMEOUTS':
+          break;
+        case 'GET TIMEOUTS':
+          break;
+        case 'FOO':
+          response = await processCommand.foo();
+          break;
+        case 'BAR':
+          response = processCommand.bar();
+          break;
+        default:
+          break;
+      }
+      resolve(response);
+    });
+  }
+
+  async navigateTo(url) {
+    if (!validator.isURL(url)) throw new InvalidArgument(`/POST /session/${this.id}/url`);
+    // TODO: write code to handle user prompts
+    let timer;
+    const startTimer = () => {
+      timer = setTimeout(() => {
+        throw new Error('timeout');
+      }, this.timeouts.pageLoad);
+    };
+    if (this.browser.getURL() !== url) {
+      startTimer();
+      if (await this.browser.navigateToURL(url)) clearTimeout(timer);
+    } else {
+      await this.browser.navigateToURL(url);
+    }
+  }
+
+  setTimeouts(timeouts) {
+    const capabilityValidator = new CapabilityValidator();
+    let valid = true;
+
+    Object.keys(timeouts).forEach((key) => {
+      valid = capabilityValidator.validateTimeouts(key, timeouts[key]);
+      if (!valid) throw new InvalidArgument();
+    });
+
+
+    Object.keys(timeouts).forEach((validTimeout) => {
+      this.timeouts[validTimeout] = timeouts[validTimeout];
+    });
+  }
+
+  getTimeouts() {
+    return this.timeouts;
   }
 
   configureSession(requestedCapabilities) {
     this.id = uuidv1();
-    const capabilities = this.configureCapabilties(requestedCapabilities);
+    const configuredCapabilities = this.configureCapabilties(requestedCapabilities);
     this.browser = new Browser();
     this.requestQueue = [];
+    // TODO:  this formatting is for the server response and should be in the server code, not here.  CHANGE!!!!!
     const body = {
-      status: 0,
       sessionId: this.id,
-      value: capabilities,
+      capabilities: configuredCapabilities,
     };
     return body;
   }
@@ -60,26 +170,13 @@ class Session {
       capabilities.proxy = {};
     }
 
+
+    this.setTimeouts();
     // TODO: create setTimeouts function for this. use function in endpoint
     if (Object.prototype.hasOwnProperty.call(capabilities, 'timeouts')) {
-      if (Object.prototype.hasOwnProperty.call(capabilities.timeouts, 'implicit')) {
-        this.timeouts.implicit = capabilities.timeouts.implicit;
-      }
-      if (Object.prototype.hasOwnProperty.call(capabilities.timeouts, 'script')) {
-        this.timeouts.script = capabilities.timeouts.script;
-      }
-      if (Object.prototype.hasOwnProperty.call(capabilities.timeouts, 'pageLoad')) {
-        this.timeouts.pageLoad = capabilities.timeouts.pageLoad;
-      }
+        this.setTimeouts(capabilities.timeouts);
     }
-
-    const configuredTimeouts = {
-      implicit: this.timeouts.implicit,
-      pageLoad: this.timeouts.pageLoad,
-      script: this.timeouts.script,
-    };
-
-    capabilities.timeouts = configuredTimeouts;
+    capabilities.timeouts = this.timeouts;
 
     return capabilities;
   }
@@ -99,16 +196,15 @@ class Session {
       'unhandledPromptBehaviour',
     ];
 
-    let capabilities;
     const capabiltiesRequest = Object.prototype.hasOwnProperty
       .call(request, 'capabilities');
     if (!capabiltiesRequest
       || request.capabilities.constructor !== Object
       || Object.keys(request.capabilities).length === 0) {
       throw new InvalidArgument(command);
-    } else {
-      capabilities = request.capabilities;
     }
+    const { capabilities } = request;
+
 
     // validate alwaysMatch capabilties
     const requiredCapabilities = {};
@@ -223,44 +319,68 @@ class Session {
   }
 
   elementRetrieval(startNode, strategy, selector) {
-    // TODO: start timers
+    const endTime = new Date(new Date().getTime + this.timeouts.implicit);
     let elements;
     const result = [];
-    try {
-      switch (strategy) {
-        case 'css selector':
-          elements = startNode.querySelectorAll(selector);
-          break;
-        case 'link text':
-          // TODO: implement w3c standard for link text strategy
-          break;
-        case 'partial link text':
-          // TODO: implement w3c standard for partial link text strategy
-          break;
-        case 'tag name':
-          elements = startNode.getElementsByTagName(selector);
-          break;
-        case 'xpath':
-          // TODO: implement w3c standard for xpath strategy
-          break;
-        default:
-          break;
+
+    const locationStrategies = {
+      cssSelector() {
+        return startNode.querySelectorAll(selector);
+      },
+      linkTextSelector(partial = false) {
+        const linkElements = startNode.querySelectorAll('a');
+        const strategyResult = [];
+
+        linkElements.forEach((element) => {
+          const renderedText = element.innerHTML;
+          if (!partial && renderedText.trim() === selector) strategyResult.push(element);
+          else if (partial && renderedText.includes(selector)) strategyResult.push(element);
+        });
+        return result;
+      },
+      tagName() {
+        return startNode.getElementsByTagName(selector);
+      },
+      XPathSelector() {
+        // TODO: figure out how to do this...
+      },
+    };
+
+    do {
+      try {
+        switch (strategy) {
+          case 'css selector':
+            elements = locationStrategies.cssSelector();
+            break;
+          case 'link text':
+            elements = locationStrategies.linkTextSelector();
+            break;
+          case 'partial link text':
+            elements = locationStrategies.linkTextSelector(true);
+            break;
+          case 'tag name':
+            elements = locationStrategies.tagName();
+            break;
+          case 'xpath':
+            // TODO: implement w3c standard for xpath strategy
+            break;
+          default:
+            throw new InvalidArgument();
+        }
+      } catch (error) {
+        if (error instanceof DOMException
+          || error instanceof SyntaxError
+          || error instanceof XPathException
+        ) throw new Error('invalid selector'); // TODO: add invalidSelector error class
+        else throw new UnknownError(); // TODO: add unknown error class
       }
-    } catch (error) {
-      if (error instanceof DOMException
-        || error instanceof SyntaxError
-        || error instanceof XPathException
-      ) throw new Error('invalid selector'); // TODO: add invalidSelector error class
-      else throw new UnknownError(); // TODO: add unknown error class
-    }
+    } while (endTime > new Date() && elements.length < 1);
 
-    console.log(elements);
-
-    Object.keys(elements).forEach((element) => {
-      console.log(elements[element]);
-      result.push(JSON.stringify(elements[element]));
+    elements.forEach((element) => {
+      const foundElement = new WebElement(element);
+      result.push(foundElement);
+      this.browser.knownElements.push(foundElement);
     });
-
     return result;
   }
 }

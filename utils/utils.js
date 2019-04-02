@@ -11,12 +11,14 @@ exports.validate = {
     return false;
   },
   objectPropertiesAreInArray(object, array) {
-    let validProperty = true;
+    let validObject = true;
 
     Object.keys(object).forEach((key) => {
-      if (!array.includes(key)) validProperty = false;
+      if (!array.includes(key)) validObject = false;
     });
 
-    return validProperty;
+    if (validObject && Object.keys(object).length > array.length) validObject = false;
+
+    return validObject;
   },
 };

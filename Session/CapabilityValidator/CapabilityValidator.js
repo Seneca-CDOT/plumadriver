@@ -39,7 +39,10 @@ class CapabilityValidator {
         if (!CapabilityValidator.validateProxy(capability)) this.valid = false;
         break;
       case 'timeouts':
-        if (!CapabilityValidator.validateTimeouts(capability)) this.valid = false;
+        if (!util.validate.type(capability, 'object')) this.valid = false;
+        Object.keys(capability).forEach((key) => {
+          if (this.valid && !this.validateTimeouts(key, capability[key])) this.valid = false;
+        });
         break;
       case 'jsd:browserOptions':
         if (capability.constructor !== Object) this.valid = false;
@@ -106,21 +109,15 @@ class CapabilityValidator {
     return validatedOptions;
   }
 
-  static validateTimeouts(timeouts) {
-    // valid timeouts
-    let validTimeouts = true;
-    if (!util.validate.type(timeouts, 'object')) validTimeouts = false;
-    else {
-      const timeoutTypes = ['script', 'pageLoad', 'implicit'];
-
-      // check object contains valid properties
-      if (!util.validate.objectPropertiesAreInArray(timeouts, timeoutTypes)) validTimeouts = false;
-      // check property values are non-zero and intgers
-      Object.keys(timeouts).forEach((key) => {
-        if (!Number.isInteger(timeouts[key]) || timeouts[key] < 0) validTimeouts = false;
-      });
+  validateTimeouts(key, value) {
+    const timeoutTypes = ['script', 'pageLoad', 'implicit'];
+    // check object contains valid properties
+    if (!timeoutTypes.includes(key)) this.valid = false;
+    // check property values are non-zero and intgers
+    if (this.valid) {
+      if (!Number.isInteger(value) || value < 0) this.valid = false;
     }
-    return validTimeouts;
+    return this.valid;
   }
 
   static validateProxy(reqProxy) {
