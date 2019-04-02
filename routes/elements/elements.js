@@ -1,6 +1,7 @@
 
 const elements = require('express').Router();
 const fromElement = require('./fromElement');
+const { COMMANDS } = require('../../commands/commands');
 
 // errors
 const {
@@ -9,29 +10,21 @@ const {
 } = require('../../Error/errors.js');
 
 // find element(s)
-elements.post('/', (req, res, next) => {
+elements.post('/', async (req, res, next) => {
   // endpoint currently ignores browsing contexts
 
   let single = false;
 
-  // conditional checks whether the url is .../elements or /element
-  // response differs but process is the same
-  // TODO:  THIS NEEDS TO BE A MORE ROBUST CHECK!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   if (req.originalUrl.slice(req.originalUrl.lastIndexOf('/') + 1) === 'element') {
     single = true;
   }
+
+  req.sessionRequest.command = single
+    ? COMMANDS.FIND_ELEMENT
+    : COMMANDS.FIND_ELEMENTS;
+
+  const result = await req.session.process(req.sessionRequest);
   const response = {};
-  const strategy = req.body.using;
-  const selector = req.body.value;
-  const startNode = req.session.browser.dom.window.document;
-  // TODO: check if element is connected (shadow-root) https://dom.spec.whatwg.org/#connected
-  // check W3C endpoint spec for details
-
-  if (!strategy || !selector) throw new InvalidArgument(`POST /session/${req.sessionId}/elements`);
-
-  if (!startNode) throw new NoSuchElement();
-
-  const result = req.session.elementRetrieval(startNode, strategy, selector);
   if (result.length === 0) throw new NoSuchElement();
   response.value = single ? result[0] : result;
   res.json(response);
