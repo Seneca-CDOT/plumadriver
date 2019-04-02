@@ -1,5 +1,7 @@
 const navigate = require('express').Router();
 
+const COMMANDS = require('../commands/commands');
+
 // navigate
 navigate.post('/', async (req, res, next) => {
   try {

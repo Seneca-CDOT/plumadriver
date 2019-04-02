@@ -1,5 +1,8 @@
 
 const element = require('express').Router();
+
+const { COMMANDS } = require('../../commands/commands');
+
 // errors
 const {
   InvalidArgument,
@@ -11,7 +14,7 @@ element.get('/text', (req, res, next) => {
   const { session } = req;
   const knownElement = session.browser.getKnownElement(req.element);
   const text = knownElement.getText();
-  const response = { value: text }
+  const response = { value: text };
   res.json(response);
 });
 

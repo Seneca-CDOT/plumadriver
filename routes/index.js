@@ -7,6 +7,7 @@ const elements = require('./elements/elements');
 const timeouts = require('./timeouts');
 const navigate = require('./navigate');
 const Request = require('../Request/Request');
+const { COMMANDS } = require('../commands/commands');
 
 // errors
 const { InvalidArgument } = require('../Error/errors.js');
@@ -41,7 +42,7 @@ router.delete('/session/:sessionId', (req, res, next) => {
   // is try catch needed here???
   const sessionsManager = req.app.get('sessionsManager');
   try {
-    req.sessionRequest.command = 'DELETE';
+    req.sessionRequest.command = COMMANDS.DELETE_SESSION;
     req.session.requestQueue.push(req.sessionRequest);
     sessionsManager.deleteSession(req.session, req.sessionRequest);
     res.send(null);
@@ -53,7 +54,7 @@ router.delete('/session/:sessionId', (req, res, next) => {
 
 // get title
 router.get('/session/:sessionId/title', async (req, res, next) => {
-  req.sessionRequest.command = 'GET TITLE';
+  req.sessionRequest.command = COMMANDS.GET_TITLE;
   req.session.requestQueue.push(req.sessionRequest);
   const title = await req.session.process(req.sessionRequest);
   const response = { value: title };
@@ -70,4 +71,4 @@ router.use('/session/:sessionId/timeouts', timeouts);
 // navigation routes
 router.use('/session/:sessionId/url', navigate);
 
-module.exports = router;
+module.exports = { router };
