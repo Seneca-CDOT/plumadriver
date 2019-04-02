@@ -12,7 +12,6 @@ const {
 // find element(s)
 elements.post('/', async (req, res, next) => {
   // endpoint currently ignores browsing contexts
-
   let single = false;
 
   if (req.originalUrl.slice(req.originalUrl.lastIndexOf('/') + 1) === 'element') {

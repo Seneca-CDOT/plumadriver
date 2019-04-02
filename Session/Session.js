@@ -59,9 +59,17 @@ class Session {
           );
           break;
         case COMMANDS.GET_ELEMENT_TEXT:
+          response = this.browser
+            .getKnownElement(urlVariables.elementId)
+            .getText();
           break;
         case COMMANDS.FIND_ELEMENTS_FROM_ELEMENT:
         case COMMANDS.FIND_ELEMENT_FROM_ELEMENT:
+          response = this.elementRetrieval(
+            this.browser.getKnownElement(urlVariables.elementId),
+            parameters.using,
+            parameters.value,
+          );
           break;
         case COMMANDS.SET_TIMEOUTS:
           break;
@@ -75,7 +83,7 @@ class Session {
   }
 
   async navigateTo(url) {
-    if (!validator.isURL(url)) throw new InvalidArgument(`/POST /session/${this.id}/url`);
+    if (!validator.isURL(url)) throw new InvalidArgument(`COMMAND: ${this.requestQueue[0].command}`);
     // TODO: write code to handle user prompts
     let timer;
     const startTimer = () => {
@@ -301,7 +309,7 @@ class Session {
     let elements;
     const result = [];
 
-    if (!strategy || !selector) throw new InvalidArgument(`POST /session/${this.id}/elements`);
+    if (!strategy || !selector) throw new InvalidArgument(`COMMAND: ${this.requestQueue[0].command}`);
     if (!startNode) throw new NoSuchElement();
 
     const locationStrategies = {

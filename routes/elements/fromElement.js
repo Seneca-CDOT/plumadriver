@@ -1,5 +1,6 @@
 
 const element = require('express').Router();
+const Request = require('../../Request/Request');
 
 const { COMMANDS } = require('../../commands/commands');
 
@@ -11,9 +12,9 @@ const {
 
 // get element text
 element.get('/text', (req, res, next) => {
-  const { session } = req;
-  const knownElement = session.browser.getKnownElement(req.element);
-  const text = knownElement.getText();
+  req.sessionRequest.command = COMMANDS.GET_ELEMENT_TEXT;
+  req.session.requestQueue.push(req.sessionRequest);
+  const text = req.session.process(req.sessionRequest);
   const response = { value: text };
   res.json(response);
 });
@@ -25,15 +26,12 @@ element.post(['/element', '/elements'], (req, res, next) => {
   if (req.originalUrl.slice(req.originalUrl.lastIndexOf('/') + 1) === 'element') {
     single = true;
   }
+  req.sessionRequest.command = single
+    ? COMMANDS.FIND_ELEMENT_FROM_ELEMENT
+    : COMMANDS.FIND_ELEMENTS_FROM_ELEMENT;
 
-  const strategy = req.body.using;
-  const selector = req.body.value;
   const response = {};
-  if (!selector) throw new InvalidArgument();
-  // TODO: check if element is connected (shadow-root) https://dom.spec.whatwg.org/#connected
-  // check W3C endpoint spec for details
-  const startNode = req.session.browser.getKnownElement(req.element).element;
-  const result = req.session.elementRetrieval(startNode, strategy, selector);
+  const result = req.session.process(req.sessionRequest);
   if (result === undefined
     || result === null
     || result.length === 0) throw new NoSuchElement();
