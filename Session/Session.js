@@ -174,7 +174,7 @@ class Session {
     this.setTimeouts();
     // TODO: create setTimeouts function for this. use function in endpoint
     if (Object.prototype.hasOwnProperty.call(capabilities, 'timeouts')) {
-        this.setTimeouts(capabilities.timeouts);
+      this.setTimeouts(capabilities.timeouts);
     }
     capabilities.timeouts = this.timeouts;
 
