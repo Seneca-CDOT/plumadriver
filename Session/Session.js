@@ -2,15 +2,19 @@
 const uuidv1 = require('uuid/v1');
 const validator = require('validator');
 const os = require('os');
+const sleep = require('system-sleep');
 const Browser = require('../browser/browser.js');
 const WebElement = require('../WebElement/WebElement.js');
-const sleep = require('system-sleep');
+const { COMMANDS } = require('../commands/commands');
+
 // errors
 const {
   InvalidArgument,
   SessionNotCreated,
   InternalServerError,
+  NoSuchElement,
 } = require('../Error/errors');
+
 const CapabilityValidator = require('./CapabilityValidator/CapabilityValidator');
 
 class Session {
@@ -36,60 +40,32 @@ class Session {
     const { command, parameters, urlVariables } = currentRequest;
     let response;
 
-    const processCommand = {
-      navigate() {
-
-      },
-      elementRetrieval() {
-
-      },
-      nestedElementRetrieval() {
-
-      },
-      setTimeouts() {
-
-      },
-      getTimeouts() {
-
-      },
-      async foo() {
-        console.log(`INSIDE FOO()`);
-        return new Promise((resolve) => setTimeout(() => {
-          resolve('FINISHED FOO');
-        }, 10000));
-      },
-      bar() {
-        return 'FINISHED BAR';
-      },
-    };
-
-
-
     return new Promise(async (resolve) => {
       switch (command) {
-        case 'DELETE':
+        case COMMANDS.DELETE_SESSION:
           await this.browser.close();
           break;
-        case 'NAVIGATE':
+        case COMMANDS.NAVIGATE_TO:
           break;
-        case 'GET TITLE':
+        case COMMANDS.GET_TITLE:
           response = this.browser.getTitle();
           break;
-        case 'ELEMENT RETRIEVAL':
+        case COMMANDS.FIND_ELEMENT:
+        case COMMANDS.FIND_ELEMENTS:
+          response = this.elementRetrieval(
+            this.browser.dom.window.document, // start node
+            parameters.using, // strategy
+            parameters.value, // selector
+          );
           break;
-        case 'GET ELEMENT TEXT':
+        case COMMANDS.GET_ELEMENT_TEXT:
           break;
-        case 'NESTED ELEMENT RETRIEVAL':
+        case COMMANDS.FIND_ELEMENTS_FROM_ELEMENT:
+        case COMMANDS.FIND_ELEMENT_FROM_ELEMENT:
           break;
-        case 'SET TIMEOUTS':
+        case COMMANDS.SET_TIMEOUTS:
           break;
-        case 'GET TIMEOUTS':
-          break;
-        case 'FOO':
-          response = await processCommand.foo();
-          break;
-        case 'BAR':
-          response = processCommand.bar();
+        case COMMANDS.GET_TIMEOUTS:
           break;
         default:
           break;
@@ -319,9 +295,14 @@ class Session {
   }
 
   elementRetrieval(startNode, strategy, selector) {
+    // TODO: check if element is connected (shadow-root) https://dom.spec.whatwg.org/#connected
+    // check W3C endpoint spec for details
     const endTime = new Date(new Date().getTime + this.timeouts.implicit);
     let elements;
     const result = [];
+
+    if (!strategy || !selector) throw new InvalidArgument(`POST /session/${this.id}/elements`);
+    if (!startNode) throw new NoSuchElement();
 
     const locationStrategies = {
       cssSelector() {
