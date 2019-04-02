@@ -44,9 +44,9 @@ class SessionsManager {
     }
   }
 
-  deleteSession(sessionId) {
-    this.findSession(sessionId); // look for session, throws error if not found.
-    const index = this.sessions.map(session => session.id).indexOf(sessionId);
+  async deleteSession(currentSession, request) {
+    const index = this.sessions.map(session => session.id).indexOf(currentSession.id);
+    await currentSession.process(request);
     this.sessions.splice(index, 1);
   }
 

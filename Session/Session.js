@@ -4,6 +4,7 @@ const validator = require('validator');
 const os = require('os');
 const Browser = require('../browser/browser.js');
 const WebElement = require('../WebElement/WebElement.js');
+const sleep = require('system-sleep');
 // errors
 const {
   InvalidArgument,
@@ -24,6 +25,76 @@ class Session {
     this.requestQueue = [];
     this.pageLoadStrategy = 'normal';
     this.webDriverActive = false;
+  }
+
+  process(request) {
+    // wait in line
+    while (request.id !== this.requestQueue[0].id) sleep(100);
+
+    const currentRequest = this.requestQueue[0];
+    const { command, parameters, urlVariables } = currentRequest;
+    let response;
+
+    const processCommand = {
+      navigate() {
+
+      },
+      elementRetrieval() {
+
+      },
+      nestedElementRetrieval() {
+
+      },
+      setTimeouts() {
+
+      },
+      getTimeouts() {
+
+      },
+      async foo() {
+        console.log(`INSIDE FOO()`);
+        return new Promise((resolve) => setTimeout(() => {
+          resolve('FINISHED FOO');
+        }, 10000));
+      },
+      bar() {
+        return 'FINISHED BAR';
+      },
+    };
+
+
+
+    return new Promise(async (resolve) => {
+      switch (command) {
+        case 'DELETE':
+          await this.browser.close();
+          break;
+        case 'NAVIGATE':
+          break;
+        case 'GET TITLE':
+          response = this.browser.getTitle();
+          break;
+        case 'ELEMENT RETRIEVAL':
+          break;
+        case 'GET ELEMENT TEXT':
+          break;
+        case 'NESTED ELEMENT RETRIEVAL':
+          break;
+        case 'SET TIMEOUTS':
+          break;
+        case 'GET TIMEOUTS':
+          break;
+        case 'FOO':
+          response = await processCommand.foo();
+          break;
+        case 'BAR':
+          response = processCommand.bar();
+          break;
+        default:
+          break;
+      }
+      resolve(response);
+    });
   }
 
   async navigateTo(url) {
