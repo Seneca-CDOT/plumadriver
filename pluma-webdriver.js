@@ -7,7 +7,6 @@ const expressWinston = require('express-winston');
 
 const { SessionsManager } = require('./SessionsManager/SessionsManager');
 const { InvalidArgument } = require('./Error/errors.js');
-const utility = require('./utils/utils');
 const { router } = require('./routes');
 
 

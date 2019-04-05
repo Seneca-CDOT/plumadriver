@@ -2,7 +2,8 @@
 const uuidv1 = require('uuid/v1');
 const validator = require('validator');
 const os = require('os');
-const sleep = require('system-sleep');
+const { Mutex } = require('async-mutex');
+
 const Browser = require('../browser/browser.js');
 const WebElement = require('../WebElement/WebElement.js');
 const { COMMANDS } = require('../commands/commands');
@@ -26,19 +27,15 @@ class Session {
       script: 30000,
     };
     this.browser = new Browser();
-    this.requestQueue = [];
     this.pageLoadStrategy = 'normal';
     this.webDriverActive = true;
     this.acceptInsecureCerts = false;
+    this.mutex = new Mutex();
   }
 
-  process(request) {
-    // wait in line
-    while (request.id !== this.requestQueue[0].id) sleep(100);
-
-    const currentRequest = this.requestQueue[0];
-    const { command, parameters, urlVariables } = currentRequest;
-    let response;
+  async process(request) {
+    const { command, parameters, urlVariables } = request;
+    let response = null;
 
     return new Promise(async (resolve) => {
       switch (command) {
@@ -46,6 +43,10 @@ class Session {
           await this.browser.close();
           break;
         case COMMANDS.NAVIGATE_TO:
+          await this.navigateTo(parameters);
+          break;
+        case COMMANDS.GET_CURRENT_URL:
+          response = this.browser.getURL();
           break;
         case COMMANDS.GET_TITLE:
           response = this.browser.getTitle();
@@ -75,6 +76,16 @@ class Session {
           break;
         case COMMANDS.GET_TIMEOUTS:
           break;
+        // case 'FOO':
+        //   setTimeout(() => {
+        //     resolve('FINISHED FOO');
+        //   }, 10000);
+        //   break;
+        // case 'BAR':
+        //   setTimeout(() => {
+        //     resolve('FINISHED BAR');
+        //   }, 5000);
+        //   break;
         default:
           break;
       }
@@ -82,8 +93,9 @@ class Session {
     });
   }
 
-  async navigateTo(url) {
-    if (!validator.isURL(url)) throw new InvalidArgument(`COMMAND: ${this.requestQueue[0].command}`);
+  async navigateTo(parameters) {
+    const { url } = parameters;
+    if (!validator.isURL(url)) throw new InvalidArgument();
     // TODO: write code to handle user prompts
     let timer;
     const startTimer = () => {
@@ -102,7 +114,6 @@ class Session {
   setTimeouts(timeouts) {
     const capabilityValidator = new CapabilityValidator();
     let valid = true;
-
     Object.keys(timeouts).forEach((key) => {
       valid = capabilityValidator.validateTimeouts(key, timeouts[key]);
       if (!valid) throw new InvalidArgument();
@@ -122,17 +133,12 @@ class Session {
     this.id = uuidv1();
     const configuredCapabilities = this.configureCapabilties(requestedCapabilities);
     this.browser = new Browser();
-    this.requestQueue = [];
-    // TODO:  this formatting is for the server response and should be in the server code, not here.  CHANGE!!!!!
+    // TODO:  this formatting is for the server response and should be in the server code, not here.
     const body = {
       sessionId: this.id,
       capabilities: configuredCapabilities,
     };
     return body;
-  }
-
-  configureBrowser() {
-    // TODO: write function that configures JSDOM based on inputs
   }
 
   configureCapabilties(request) {
@@ -154,9 +160,6 @@ class Session {
       capabilities.proxy = {};
     }
 
-
-    this.setTimeouts();
-    // TODO: create setTimeouts function for this. use function in endpoint
     if (Object.prototype.hasOwnProperty.call(capabilities, 'timeouts')) {
       this.setTimeouts(capabilities.timeouts);
     }
@@ -309,7 +312,7 @@ class Session {
     let elements;
     const result = [];
 
-    if (!strategy || !selector) throw new InvalidArgument(`COMMAND: ${this.requestQueue[0].command}`);
+    if (!strategy || !selector) throw new InvalidArgument();
     if (!startNode) throw new NoSuchElement();
 
     const locationStrategies = {

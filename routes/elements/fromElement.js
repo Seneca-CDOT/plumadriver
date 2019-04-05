@@ -1,43 +1,52 @@
 
 const element = require('express').Router();
-const Request = require('../../Request/Request');
-
 const { COMMANDS } = require('../../commands/commands');
 
 // errors
 const {
-  InvalidArgument,
   NoSuchElement,
 } = require('../../Error/errors.js');
 
 // get element text
 element.get('/text', (req, res, next) => {
-  req.sessionRequest.command = COMMANDS.GET_ELEMENT_TEXT;
-  req.session.requestQueue.push(req.sessionRequest);
-  const text = req.session.process(req.sessionRequest);
-  const response = { value: text };
-  res.json(response);
+  const release = req.session.mutex.acquire();
+  try {
+    req.sessionRequest.command = COMMANDS.GET_ELEMENT_TEXT;
+    const text = req.session.process(req.sessionRequest);
+    const response = { value: text };
+    res.json(response);
+  } catch (err) {
+    next(err);
+  } finally {
+    release();
+  }
 });
 
 // find element(s) from element
 element.post(['/element', '/elements'], (req, res, next) => {
   let single = false;
+  const release = req.session.mutex.acquire();
+  try {
+    if (req.originalUrl.slice(req.originalUrl.lastIndexOf('/') + 1) === 'element') {
+      single = true;
+    }
+    req.sessionRequest.command = single
+      ? COMMANDS.FIND_ELEMENT_FROM_ELEMENT
+      : COMMANDS.FIND_ELEMENTS_FROM_ELEMENT;
 
-  if (req.originalUrl.slice(req.originalUrl.lastIndexOf('/') + 1) === 'element') {
-    single = true;
+    const response = {};
+    const result = req.session.process(req.sessionRequest);
+    if (result === undefined
+      || result === null
+      || result.length === 0) throw new NoSuchElement();
+
+    response.value = single ? result[0] : result;
+    res.json(response);
+  } catch (err) {
+    next(err);
+  } finally {
+    release();
   }
-  req.sessionRequest.command = single
-    ? COMMANDS.FIND_ELEMENT_FROM_ELEMENT
-    : COMMANDS.FIND_ELEMENTS_FROM_ELEMENT;
-
-  const response = {};
-  const result = req.session.process(req.sessionRequest);
-  if (result === undefined
-    || result === null
-    || result.length === 0) throw new NoSuchElement();
-
-  response.value = single ? result[0] : result;
-  res.json(response);
 });
 
 // get element tag name
