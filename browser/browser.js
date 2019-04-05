@@ -14,10 +14,6 @@ class Browser {
     this.knownElements = [];
   }
 
-  configureBrowser() {
-    // TODO: configure browser based on capabilities
-  }
-
   async navigateToURL(URL) {
     if (URL) {
       this.dom = await JSDOM.fromURL(URL);
@@ -31,6 +27,10 @@ class Browser {
 
   getURL() {
     return this.dom.window.document.URL;
+  }
+
+  getCookies() {
+    return this.dom.window.document.cookie;
   }
 
   // TODO: function contains basic functionality, check standard and make compliant
