@@ -76,6 +76,9 @@ class Session {
           break;
         case COMMANDS.GET_TIMEOUTS:
           break;
+        case COMMANDS.GET_ALL_COOKIES:
+          response = this.browser.getCookies();
+          break;
         // case 'FOO':
         //   setTimeout(() => {
         //     resolve('FINISHED FOO');
