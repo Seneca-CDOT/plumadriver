@@ -2,16 +2,12 @@
 const cookies = require('express').Router();
 const { COMMANDS } = require('../commands/commands');
 
-// errors
-const {
-  NoSuchElement,
-} = require('../Error/errors.js');
 
 // add cookie
-cookies.post('/', (req, res, next) => {
-  const release = req.session.mutex.acquire();
+cookies.post('/', async (req, res, next) => {
+  const release = await req.session.mutex.acquire();
   try {
-
+    // TODO: implement endpoint
   } catch (err) {
     next(err);
   } finally {
@@ -20,10 +16,14 @@ cookies.post('/', (req, res, next) => {
 });
 
 // get all cookies
-cookies.get('/', (req, res, next) => {
-  const release = req.session.mutex.acquire();
+cookies.get('/', async (req, res, next) => {
+  const release = await req.session.mutex.acquire();
+  const response = {};
   try {
-
+    req.sessionRequest.command = COMMANDS.GET_ALL_COOKIES;
+    const foundCookies = await req.session.process(req.sessionRequest);
+    response.value = foundCookies;
+    res.json(response);
   } catch (err) {
     next(err);
   } finally {
@@ -32,10 +32,10 @@ cookies.get('/', (req, res, next) => {
 });
 
 // get named cookie
-cookies.post('/:name', (req, res, next) => {
-  const release = req.session.mutex.acquire();
+cookies.post('/:name', async (req, res, next) => {
+  const release = await req.session.mutex.acquire();
   try {
-
+    // TODO: implement endpoint
   } catch (err) {
     next(err);
   } finally {
@@ -44,10 +44,10 @@ cookies.post('/:name', (req, res, next) => {
 });
 
 // delete cookie
-cookies.delete('/:name', (req, res, next) => {
-  const release = req.session.mutex.acquire();
+cookies.delete('/:name', async (req, res, next) => {
+  const release = await req.session.mutex.acquire();
   try {
-
+    // TODO: implement endpoint
   } catch (err) {
     next(err);
   } finally {
@@ -56,10 +56,10 @@ cookies.delete('/:name', (req, res, next) => {
 });
 
 // delete all cookies
-cookies.delete('/', (req, res, next) => {
-  const release = req.session.mutex.acquire();
+cookies.delete('/', async (req, res, next) => {
+  const release = await req.session.mutex.acquire();
   try {
-
+    // TODO: implement endpoint
   } catch (err) {
     next(err);
   } finally {

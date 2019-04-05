@@ -1,6 +1,7 @@
 
 
 const jsdom = require('jsdom');
+const tough = require('jsdom').toughCookie;
 
 const { JSDOM } = jsdom;
 const ELEMENT = 'element-6066-11e4-a52e-4f735466cecf';
@@ -30,7 +31,32 @@ class Browser {
   }
 
   getCookies() {
-    return this.dom.window.document.cookie;
+    let cookies;
+
+    this.dom.cookieJar.store.getAllCookies((err, foundCookies) => {
+      if (err) throw err;
+      cookies = foundCookies;
+    });
+
+    console.log(cookies[0]);
+
+    // cookies.forEach((cookieObject) => {
+    //   Object.defineProperty(cookieObject, 'name', {
+    //     value: cookieObject.key,
+    //     writable: false,
+    //     enumerable: true,
+    //   });
+
+    //   Object.defineProperty(cookieObject, 'expiry', {
+    //     value: cookieObject.expires,
+    //     writable: false,
+    //     enumerable: true,
+    //   });
+    //   delete cookieObject.key;
+    //   delete cookieObject.expires;
+    // });
+
+    return cookies;
   }
 
   // TODO: function contains basic functionality, check standard and make compliant
