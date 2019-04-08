@@ -79,16 +79,9 @@ class Session {
         case COMMANDS.GET_ALL_COOKIES:
           response = this.browser.getCookies();
           break;
-        // case 'FOO':
-        //   setTimeout(() => {
-        //     resolve('FINISHED FOO');
-        //   }, 10000);
-        //   break;
-        // case 'BAR':
-        //   setTimeout(() => {
-        //     resolve('FINISHED BAR');
-        //   }, 5000);
-        //   break;
+        case COMMANDS.ADD_COOKIE:
+          response = this.browser.addCookie(parameters.cookie);
+          break;
         default:
           break;
       }

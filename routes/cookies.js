@@ -7,7 +7,9 @@ const { COMMANDS } = require('../commands/commands');
 cookies.post('/', async (req, res, next) => {
   const release = await req.session.mutex.acquire();
   try {
-    // TODO: implement endpoint
+    req.sessionRequest.command = COMMANDS.ADD_COOKIE;
+    const response = await req.session.process(req.sessionRequest);
+    res.send(response); // returns SUCCESS: null for this endpoint
   } catch (err) {
     next(err);
   } finally {
