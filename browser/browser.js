@@ -31,30 +31,23 @@ class Browser {
   }
 
   getCookies() {
-    let cookies;
+    const cookies = [];
 
-    this.dom.cookieJar.store.getAllCookies((err, foundCookies) => {
+    this.dom.cookieJar.serialize((err, serializedJar) => {
       if (err) throw err;
-      cookies = foundCookies;
+      serializedJar.cookies.forEach((cookie) => {
+        const currentCookie = {};
+        Object.keys(cookie).forEach((key) => {
+          if (key === 'key') currentCookie.name = cookie[key];
+          else if (key === 'expires') {
+            const seconds = new Date(currentCookie[key]).getTime() / 1000;
+            currentCookie.expiry = seconds;
+          } else currentCookie[key] = cookie[key];
+        });
+        cookies.push(currentCookie);
+      });
     });
 
-    console.log(cookies[0]);
-
-    // cookies.forEach((cookieObject) => {
-    //   Object.defineProperty(cookieObject, 'name', {
-    //     value: cookieObject.key,
-    //     writable: false,
-    //     enumerable: true,
-    //   });
-
-    //   Object.defineProperty(cookieObject, 'expiry', {
-    //     value: cookieObject.expires,
-    //     writable: false,
-    //     enumerable: true,
-    //   });
-    //   delete cookieObject.key;
-    //   delete cookieObject.expires;
-    // });
 
     return cookies;
   }
