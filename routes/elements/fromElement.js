@@ -8,11 +8,11 @@ const {
 } = require('../../Error/errors.js');
 
 // get element text
-element.get('/text', (req, res, next) => {
-  const release = req.session.mutex.acquire();
+element.get('/text', async (req, res, next) => {
+  const release = await req.session.mutex.acquire();
   try {
     req.sessionRequest.command = COMMANDS.GET_ELEMENT_TEXT;
-    const text = req.session.process(req.sessionRequest);
+    const text = await req.session.process(req.sessionRequest);
     const response = { value: text };
     res.json(response);
   } catch (err) {
@@ -23,9 +23,9 @@ element.get('/text', (req, res, next) => {
 });
 
 // find element(s) from element
-element.post(['/element', '/elements'], (req, res, next) => {
+element.post(['/element', '/elements'], async (req, res, next) => {
   let single = false;
-  const release = req.session.mutex.acquire();
+  const release = await req.session.mutex.acquire();
   try {
     if (req.originalUrl.slice(req.originalUrl.lastIndexOf('/') + 1) === 'element') {
       single = true;
@@ -35,7 +35,7 @@ element.post(['/element', '/elements'], (req, res, next) => {
       : COMMANDS.FIND_ELEMENTS_FROM_ELEMENT;
 
     const response = {};
-    const result = req.session.process(req.sessionRequest);
+    const result = await req.session.process(req.sessionRequest);
     if (result === undefined
       || result === null
       || result.length === 0) throw new NoSuchElement();

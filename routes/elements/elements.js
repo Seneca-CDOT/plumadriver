@@ -11,7 +11,7 @@ const {
 // find element(s)
 elements.post('/', async (req, res, next) => {
   // endpoint currently ignores browsing contexts
-  const release = req.session.mutex.acquire();
+  const release = await req.session.mutex.acquire();
   let single = false;
 
   if (req.originalUrl.slice(req.originalUrl.lastIndexOf('/') + 1) === 'element') {
@@ -34,7 +34,7 @@ elements.post('/', async (req, res, next) => {
 });
 
 elements.use('/:elementId', (req, res, next) => {
-  req.element = req.params.elementId;
+  req.sessionRequest.urlVariables.elementId = req.params.elementId;
   next();
 }, fromElement);
 
