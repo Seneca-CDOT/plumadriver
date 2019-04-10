@@ -1,6 +1,4 @@
 
-const uuidv1 = require('uuid/v1');
-
 // routers
 const router = require('express').Router();
 const elements = require('./elements/elements');
@@ -20,7 +18,7 @@ router.use('/session/:sessionId', (req, res, next) => {
   const sessionsManager = req.app.get('sessionsManager');
   req.sessionId = req.params.sessionId;
   req.session = sessionsManager.findSession(req.sessionId);
-  req.sessionRequest = new Request(req.params, req.body, null, uuidv1());
+  req.sessionRequest = new Request(req.params, req.body, null);
   next();
 });
 

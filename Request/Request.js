@@ -1,10 +1,9 @@
 
 class Request {
-  constructor(urlVariables, parameters, command, id) {
+  constructor(urlVariables, parameters, command) {
     this.urlVariables = urlVariables;
     this.parameters = parameters;
     this.command = command;
-    this.id = id;
   }
 }
 
