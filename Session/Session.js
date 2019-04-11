@@ -96,7 +96,7 @@ class Session {
     let timer;
     const startTimer = () => {
       timer = setTimeout(() => {
-        throw new Error('timeout');
+        throw new Error('timeout'); // TODO: create timeout error class
       }, this.timeouts.pageLoad);
     };
     if (this.browser.getURL() !== url) {
@@ -128,7 +128,17 @@ class Session {
   configureSession(requestedCapabilities) {
     this.id = uuidv1();
     const configuredCapabilities = this.configureCapabilties(requestedCapabilities);
-    this.browser = new Browser();
+
+    const browserConfig = configuredCapabilities['plm:options'];
+    if (configuredCapabilities.acceptInsecureCerts) {
+      browserConfig.strictSSL = configuredCapabilities.acceptInsecureCerts;
+    }
+
+    if (configuredCapabilities.unhandledPromptBehavior) {
+      browserConfig.unhandledPromptBehavior = configuredCapabilities.unhandledPromptBehavior;
+    }
+    this.browser = new Browser(browserConfig);
+
     // TODO:  this formatting is for the server response and should be in the server code, not here.
     const body = {
       sessionId: this.id,
