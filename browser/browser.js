@@ -1,5 +1,5 @@
 
-const jsdom = require('jsdom');
+const { jsdom, ResourceLoader } = require('jsdom');
 const tough = require('jsdom').toughCookie;
 
 const { Cookie } = tough;
@@ -11,9 +11,82 @@ const { InvalidArgument, NoSuchElement } = require('../Error/errors');
 
 class Browser {
   constructor(options) {
-    this.dom = new JSDOM();
-    this.options = options; // in the future this will be replaced by a default config file
+    this.options = Browser.configureJSDOMOptions(options);
+    this.dom = Browser.configureBrowser(this.options);
     this.knownElements = [];
+  }
+
+  static configureBrowser(options) {
+    const remoteEndPoint = new JSDOM(' ', {
+      resources: options.resourceLoader,
+      runScripts: options.runScripts,
+      beforeParse: options.beforeParse,
+    });
+  }
+
+  static configureJSDOMOptions(options) {
+    // TODO: configure proxy options if provided
+    const {
+      unhandledPromptBehavior,
+      strictSSL,
+      runScripts,
+    } = options;
+
+    const resourceLoader = new ResourceLoader({
+      strictSSL: true,
+    });
+
+    resourceLoader.strictSSL = strictSSL ? strictSSL : true;
+
+    const JSDOMOptions = {
+      resources: resourceLoader,
+      includeNodeLocations: true,
+      contentType: 'text/html',
+    };
+
+    JSDOMOptions.runScripts = runScripts ? 'dangerously' : '';
+
+    let beforeParse;
+    if (unhandledPromptBehavior && runScripts) {
+      switch (unhandledPromptBehavior) {
+        case 'accept':
+          beforeParse = (window) => {
+            window.confirm = () => true;
+            window.alert = () => true;
+            window.prompt = () => true;
+          };
+          break;
+        case 'dismiss':
+          beforeParse = (window) => {
+            window.confirm = () => false;
+            window.alert = () => false;
+            window.prompt = () => false;
+          };
+          break;
+        case 'dismiss and notify':
+          beforeParse = (window) => {
+            window.confirm = (message) => { console.log(message); return false; };
+            window.alert = (message) => { console.log(message); return false; };
+            window.prompt = (message) => { console.log(message); return false; };
+          };
+          break;
+        case 'accept and notify':
+          beforeParse = (window) => {
+            window.confirm = (message) => { console.log(message); return true; };
+            window.alert = (message) => { console.log(message); return true; };
+            window.prompt = (message) => { console.log(message); return true; };
+          };
+          break;
+        case 'ignore':
+          break;
+        default:
+          break;
+      }
+    }
+
+    JSDOMOptions.beforeParse = beforeParse;
+
+    return JSDOMOptions;
   }
 
   async navigateToURL(URL) {
