@@ -22,6 +22,8 @@ class Browser {
       runScripts: options.runScripts,
       beforeParse: options.beforeParse,
     });
+
+    return remoteEndPoint;
   }
 
   static configureJSDOMOptions(options) {
