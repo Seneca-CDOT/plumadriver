@@ -1,44 +1,60 @@
 
-const { jsdom, ResourceLoader } = require('jsdom');
+const { JSDOM, ResourceLoader } = require('jsdom');
 const tough = require('jsdom').toughCookie;
 
 const { Cookie } = tough;
 
-const { JSDOM } = jsdom;
 const ELEMENT = 'element-6066-11e4-a52e-4f735466cecf';
 
 const { InvalidArgument, NoSuchElement } = require('../Error/errors');
 
 class Browser {
-  constructor(options) {
-    this.options = Browser.configureJSDOMOptions(options);
-    this.dom = Browser.configureBrowser(this.options);
+  constructor(capabilties) {
+    this.options = Browser.configureJSDOMOptions(capabilties);
+    this.configureBrowser(this.options);
     this.knownElements = [];
   }
 
-  static configureBrowser(options) {
-    const remoteEndPoint = new JSDOM(' ', {
-      resources: options.resourceLoader,
-      runScripts: options.runScripts,
-      beforeParse: options.beforeParse,
-    });
 
-    return remoteEndPoint;
+  async configureBrowser(options, url = null) {
+    if (url !== null) {
+      await JSDOM.fromURL(url, {
+        resources: options.resourceLoader,
+        runScripts: options.runScripts,
+        beforeParse: options.beforeParse,
+      }).then((dom) => {
+        return new Promise((resolve) => {
+          dom.window.addEventListener('load', () => {
+            resolve(dom);
+          });
+        });
+      }).then((dom) => {
+        this.dom = dom;
+      });
+    } else {
+      this.dom = await new JSDOM(' ', {
+        resources: options.resourceLoader,
+        runScripts: options.runScripts,
+        beforeParse: options.beforeParse,
+      });
+    }
   }
 
-  static configureJSDOMOptions(options) {
+  static configureJSDOMOptions(capabilities) {
     // TODO: configure proxy options if provided
-    const {
-      unhandledPromptBehavior,
-      strictSSL,
-      runScripts,
-    } = options;
+
+    const options = {
+      runScripts: capabilities.runScripts ? 'dangerously' : null,
+      unhandledPromptBehavior: capabilities.unhandledPromptBehavior ? capabilities.unhandledPromptBehavior : 'dismiss',
+      strictSSL: capabilities.acceptInsecureCerts instanceof Boolean
+        ? capabilities.strictSSL
+        : true,
+    };
 
     const resourceLoader = new ResourceLoader({
-      strictSSL: true,
+      strictSSL: options.strictSSL,
     });
 
-    resourceLoader.strictSSL = strictSSL ? strictSSL : true;
 
     const JSDOMOptions = {
       resources: resourceLoader,
@@ -46,11 +62,11 @@ class Browser {
       contentType: 'text/html',
     };
 
-    JSDOMOptions.runScripts = runScripts ? 'dangerously' : '';
+    if (options.runScripts !== null) JSDOMOptions.runScripts = options.runScripts;
 
     let beforeParse;
-    if (unhandledPromptBehavior && runScripts) {
-      switch (unhandledPromptBehavior) {
+    if (options.unhandledPromptBehavior && options.runScripts) {
+      switch (options.unhandledPromptBehavior) {
         case 'accept':
           beforeParse = (window) => {
             window.confirm = () => true;
@@ -85,15 +101,13 @@ class Browser {
           break;
       }
     }
-
-    JSDOMOptions.beforeParse = beforeParse;
-
+    if (beforeParse) JSDOMOptions.beforeParse = beforeParse;
     return JSDOMOptions;
   }
 
   async navigateToURL(URL) {
     if (URL) {
-      this.dom = await JSDOM.fromURL(URL);
+      await this.configureBrowser(this.options, URL);
     }
     return true;
   }

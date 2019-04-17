@@ -26,7 +26,6 @@ class Session {
       pageLoad: 30000,
       script: 30000,
     };
-    this.browser = new Browser();
     this.pageLoadStrategy = 'normal';
     this.webDriverActive = true;
     this.acceptInsecureCerts = false;
@@ -129,7 +128,7 @@ class Session {
     this.id = uuidv1();
     const configuredCapabilities = this.configureCapabilties(requestedCapabilities);
 
-    const browserConfig = configuredCapabilities['plm:options'];
+    const browserConfig = configuredCapabilities['plm:plumaOptions'];
     if (configuredCapabilities.acceptInsecureCerts) {
       browserConfig.strictSSL = configuredCapabilities.acceptInsecureCerts;
     }
