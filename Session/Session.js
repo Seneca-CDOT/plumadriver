@@ -16,19 +16,20 @@ const {
   NoSuchElement,
 } = require('../Error/errors');
 
-const CapabilityValidator = require('./CapabilityValidator/CapabilityValidator');
+const CapabilityValidator = require('../CapabilityValidator/CapabilityValidator');
 
 class Session {
-  constructor() {
-    this.id = '';
+  constructor(requestBody) {
+    this.id = uuidv1();
+    this.pageLoadStrategy = 'normal';
+    this.webDriverActive = true;
+    this.acceptInsecureCerts = false;
     this.timeouts = {
       implicit: 0,
       pageLoad: 30000,
       script: 30000,
     };
-    this.pageLoadStrategy = 'normal';
-    this.webDriverActive = true;
-    this.acceptInsecureCerts = false;
+    this.configureSession(requestBody);
     this.mutex = new Mutex();
   }
 
@@ -137,13 +138,6 @@ class Session {
       browserConfig.unhandledPromptBehavior = configuredCapabilities.unhandledPromptBehavior;
     }
     this.browser = new Browser(browserConfig);
-
-    // TODO:  this formatting is for the server response and should be in the server code, not here.
-    const body = {
-      sessionId: this.id,
-      capabilities: configuredCapabilities,
-    };
-    return body;
   }
 
   configureCapabilties(request) {

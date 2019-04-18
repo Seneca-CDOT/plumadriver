@@ -40,12 +40,16 @@ class Browser {
     }
   }
 
+  static validateBrowserOptions() {
+
+  }
+
   static configureJSDOMOptions(capabilities) {
     // TODO: configure proxy options if provided
 
     const options = {
       runScripts: capabilities.runScripts ? 'dangerously' : null,
-      unhandledPromptBehavior: capabilities.unhandledPromptBehavior ? capabilities.unhandledPromptBehavior : 'dismiss',
+      unhandledPromptBehavior: capabilities.unhandledPromptBehavior ? capabilities.unhandledPromptBehavior : 'dismiss and notify',
       strictSSL: capabilities.acceptInsecureCerts instanceof Boolean
         ? capabilities.strictSSL
         : true,
@@ -64,36 +68,28 @@ class Browser {
 
     if (options.runScripts !== null) JSDOMOptions.runScripts = options.runScripts;
 
+    function beforeParseFactory(callback) {
+      return ((window) => {
+        window.confirm = callback;
+        window.alert = callback;
+        window.prompt = callback;
+      });
+    }
+
     let beforeParse;
     if (options.unhandledPromptBehavior && options.runScripts) {
       switch (options.unhandledPromptBehavior) {
         case 'accept':
-          beforeParse = (window) => {
-            window.confirm = () => true;
-            window.alert = () => true;
-            window.prompt = () => true;
-          };
+          beforeParse = beforeParseFactory(() => true);
           break;
         case 'dismiss':
-          beforeParse = (window) => {
-            window.confirm = () => false;
-            window.alert = () => false;
-            window.prompt = () => false;
-          };
+          beforeParse = beforeParseFactory(() => false);
           break;
         case 'dismiss and notify':
-          beforeParse = (window) => {
-            window.confirm = (message) => { console.log(message); return false; };
-            window.alert = (message) => { console.log(message); return false; };
-            window.prompt = (message) => { console.log(message); return false; };
-          };
+          beforeParse = beforeParseFactory((message) => { console.log(message); return true; });
           break;
         case 'accept and notify':
-          beforeParse = (window) => {
-            window.confirm = (message) => { console.log(message); return true; };
-            window.alert = (message) => { console.log(message); return true; };
-            window.prompt = (message) => { console.log(message); return true; };
-          };
+          beforeParse = beforeParseFactory((message) => { console.log(message); return true; });
           break;
         case 'ignore':
           break;

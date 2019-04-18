@@ -1,6 +1,6 @@
 const validator = require('validator');
 const ping = require('ping');
-const util = require('../../utils/utils');
+const util = require('../utils/utils');
 
 class CapabilityValidator {
   constructor() {
