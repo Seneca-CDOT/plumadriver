@@ -82,11 +82,70 @@ class Session {
         case COMMANDS.ADD_COOKIE:
           response = this.browser.addCookie(parameters.cookie);
           break;
+        case COMMANDS.GET_ELEMENT_TAG_NAME:
+          response = this.browser
+            .getKnownElement(urlVariables.elementId)
+            .getTagName();
+          break;
+        case COMMANDS.GET_ELEMENT_ATTRIBUTE:
+          response = this.browser
+            .getKnownElement(urlVariables.elementId)
+            .getElementAttribute(urlVariables.attributeName);
+          console.log(response);
+          break;
+        case COMMANDS.EXECUTE_SCRIPT:
+          response = this.executeScript(parameters.script, parameters.args);
+          break;
         default:
           break;
       }
       resolve(response);
     });
+  }
+
+  executeScript(script, args) {
+
+    const executeFunctionBody = () => {
+      const { window } = this.browser.dom.window;
+
+    }
+
+    // try to extract script arguments from request
+    if (script === undefined
+      || script === null
+      || args === undefined
+      || args === null
+      || args.constructor !== Array
+      || typeof script !== 'string') throw new InvalidArgument();
+
+    const promise = new Promise((reject, resolve) => {
+      const func = new Function(script);
+      try {
+        const r = func();
+        resolve(r);
+      } catch (err) {
+        reject(err);
+      }
+    });
+
+    let timer;
+    const startTimer = () => {
+      timer = setTimeout(() => {
+        throw new Error('timeout');
+      }, this.timeouts.script);
+    };
+
+    startTimer();
+    let result;
+    promise.then((data) => {
+      result = data;
+      clearTimeout(timer);
+    });
+
+    // this still needs to be completed.... no functionality at the moment
+
+
+    this;
   }
 
   async navigateTo(parameters) {

@@ -50,13 +50,36 @@ element.post(['/element', '/elements'], async (req, res, next) => {
 });
 
 // get element tag name
-element.get('/name', (req, res, next) => {
-
+element.get('/name', async (req, res, next) => {
+  const release = await req.session.mutex.acquire();
+  req.sessionRequest.command = COMMANDS.GET_ELEMENT_TAG_NAME;
+  try {
+    const result = await req.session.process(req.sessionRequest);
+    const response = { value: result };
+    res.json(response);
+  } catch (err) {
+    next(err);
+  } finally {
+    release();
+  }
 });
 
 // get element attribute name
-element.get('/attribute/:name', (req, res, next) => {
+element.get('/attribute/:name', async (req, res, next) => {
+  const release = await req.session.mutex.acquire();
+  req.sessionRequest.command = COMMANDS.GET_ELEMENT_ATTRIBUTE;
+  req.sessionRequest.urlVariables.attributeName = req.params.name;
 
+  try {
+    const result = req.session.process(req.sessionRequest);
+    const response = { value: result };
+    console.log(response);
+    res.json(response);
+  } catch (err) {
+    next(err);
+  } finally {
+    release();
+  }
 });
 
 // send keys to element

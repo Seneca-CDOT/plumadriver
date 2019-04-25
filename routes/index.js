@@ -69,6 +69,23 @@ router.get('/session/:sessionId/title', async (req, res, next) => {
   }
 });
 
+// this still needs to be completed, no functionality at the moment
+router.post('/session/:sessionId/execute/sync', async (req, res, next) => {
+  let response = null;
+  console.log('INSIDE GET ELEMENT ATTRIBUTE NAME ENDPOINT');
+  console.log(req.body);
+  const release = await req.session.mutex.acquire();
+  try {
+    req.sessionRequest.command = COMMANDS.EXECUTE_SCRIPT;
+    const result = req.session.process(req.sessionRequest);
+
+  } catch(err) {
+
+  } finally {
+    release();
+  }
+});
+
 // element(s) routes
 router.use('/session/:sessionId/element', elements);
 router.use('/session/:sessionId/elements', elements);
