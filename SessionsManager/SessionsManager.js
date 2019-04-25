@@ -23,11 +23,28 @@ class SessionsManager {
   }
 
   createSession(requestBody) {
-    const session = new Session();
-    const body = session.configureSession(requestBody);
+    const session = new Session(requestBody);
     this.sessions.push(session);
-    const response = { value: body };
-    return response;
+    const sessionConfig = {
+      value: {
+        sessionId: session.id,
+        capabilities: {
+          browserName: 'pluma',
+          browserVersion: 'v1.0',
+          platformName: os.platform(),
+          acceptInsecureCerts: session.acceptInsecureCerts,
+          setWindowRect: false,
+          pageLoadStrategy: session.pageLoadStrategy,
+          'plm:plumaOptions': {
+            runScripts: session.browser.options.runScripts,
+          },
+          unhandledPromtBehaviour: session.browser.unhandledPromtBehaviour,
+          proxy: session.proxy ? session.proxy : {},
+          timeouts: session.timeouts,
+        },
+      },
+    };
+    return sessionConfig;
   }
 
   setReadinessState() {
