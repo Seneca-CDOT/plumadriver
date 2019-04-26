@@ -38,7 +38,7 @@ From the command line:
 1. Clone this repository
 2. `cd plumadriver`
 3. `npm install`
-4. For Linux:  
+4. For Linux:    
     `pkg . --target latest-linux `  
    For Windows:  
     `pkg . --target latest-win`  
@@ -49,12 +49,11 @@ From the command line:
 
 Plumadriver can be used by running the executable created above and making requests with any HTTP client or by using the Selenium WebDriver Java client extension for plumadriver available [here](#).Note that this extension was created for this project and is not part of the official selenium build.  
 
-### Funtionality with the Selenium Webdriver API
+The plumadriver executable will attempt to start the server on port 3000 by default. The server can be started on a user specified port by passing the `--port=<user_specified_port>` argument to the `plumadriver` executable. 
+
+### Functionality with the Selenium Webdriver API
 
 In order to use the Selenium plumadriver extension, include the pluma.jar file in your project's libraries.
 
 The executable path must be set prior to running your code. This is the path to the executable created in the **Building Plumadriver** section above. The path can be set using:  
-`System.setProperty("webdriver.pluma.driver","<path_to_executable>");`  
-
-To log requests made to the server:  
-``
+`System.setProperty("webdriver.pluma.driver","<path_to_executable>");`
