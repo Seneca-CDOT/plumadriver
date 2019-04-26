@@ -6,7 +6,7 @@ More information about JSDOM can be found <a href="https://github.com/jsdom/jsdo
 The project is still in the development stage.
 
 ## Objective
-The goal of this project is to provide an automation tool for jsdom in order to load test web applications without the overhead of modern web browsers. An extension to [Selenium WebDriver](https://github.com/SeleniumHQ/selenium) is being developed alongside plumadriver 
+The goal of this project is to provide an automation tool for jsdom in order to load test web applications without the overhead of modern web browsers. An extension to [Selenium WebDriver](https://github.com/SeleniumHQ/selenium) is being developed alongside plumadriver. Note that this extension was created for this project and is not part of the official Selenium WebDriver build.
 
 ## Implemented Endpoints
 
@@ -28,10 +28,6 @@ The goal of this project is to provide an automation tool for jsdom in order to 
 - [x] **Add Cookie:** POST 	/session/{session id}/cookie
 
 
-## Using Plumadriver
-Plumadriver can be used with any HTTP client or the Selenium WebDriver extension for plumadriver. Note that this extension was created for this project and is not part of the official selenium build.
-
-
 ## Building Plumadriver
 
 ### Requirements:
@@ -42,9 +38,23 @@ From the command line:
 1. Clone this repository
 2. `cd plumadriver`
 3. `npm install`
-4. For Linux: 
-    `pkg . --target latest-linux `
-   For Windows: 
-    `pkg . --target latest-win`
-   For Mac: 
-    `pkg . --target latest-macos`
+4. For Linux:  
+    `pkg . --target latest-linux `  
+   For Windows:  
+    `pkg . --target latest-win`  
+   For Mac:  
+    `pkg . --target latest-macos`  
+
+## Using Plumadriver
+
+Plumadriver can be used by running the executable created above and making requests with any HTTP client or by using the Selenium WebDriver Java client extension for plumadriver available [here](#).Note that this extension was created for this project and is not part of the official selenium build.  
+
+### Funtionality with the Selenium Webdriver API
+
+In order to use the Selenium plumadriver extension, include the pluma.jar file in your project's libraries.
+
+The executable path must be set prior to running your code. This is the path to the executable created in the **Building Plumadriver** section above. The path can be set using:  
+`System.setProperty("webdriver.pluma.driver","<path_to_executable>");`  
+
+To log requests made to the server:  
+``
