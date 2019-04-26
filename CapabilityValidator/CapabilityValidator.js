@@ -1,6 +1,6 @@
 const validator = require('validator');
 const ping = require('ping');
-const util = require('../../utils/utils');
+const util = require('../utils/utils');
 
 class CapabilityValidator {
   constructor() {
@@ -18,20 +18,20 @@ class CapabilityValidator {
         if (!util.validate.type(capability, 'boolean')) this.valid = false;
         break;
       case 'pageLoadStrategy':
-        if (!util.validate.type(capability, 'string')) this.valid = false;
+        if (typeof capability !== 'string') this.valid = false;
         if (
           capability !== 'none'
-          || capability !== 'eager'
-          || capability !== 'normal') this.valid = false;
+          && capability !== 'eager'
+          && capability !== 'normal') this.valid = false;
         break;
-      case 'unhandledPromptBehaviour':
-        if (!util.validate.type(capability, 'string')) this.valid = false;
+      case 'unhandledPromptBehavior':
+        if (typeof capability !== 'string') this.valid = false;
         if (
           capability !== 'dismiss'
-          || capability !== 'accept'
-          || capability !== 'dismiss and notify'
-          || capability !== 'accept and notify'
-          || capability !== 'ignore'
+          && capability !== 'accept'
+          && capability !== 'dismiss and notify'
+          && capability !== 'accept and notify'
+          && capability !== 'ignore'
         ) this.valid = false;
         break;
       case 'proxy':
@@ -44,7 +44,7 @@ class CapabilityValidator {
           if (this.valid && !this.validateTimeouts(key, capability[key])) this.valid = false;
         });
         break;
-      case 'jsd:browserOptions':
+      case 'plm:plumaOptions':
         if (capability.constructor !== Object) this.valid = false;
         if (!CapabilityValidator.validatePlumaOptions(capability)) this.valid = false;
         break;
@@ -75,7 +75,7 @@ class CapabilityValidator {
         if (contentType.constructor === String) valid = true;
         else valid = false;
 
-        if (validTypes.includes(contentType) || contentType.substr(contentType.length - 4 === '+xml')) {
+        if (validTypes.includes(contentType) || contentType.substr(contentType.length - 4) === '+xml') {
           valid = true;
         } else valid = false;
 
@@ -89,9 +89,7 @@ class CapabilityValidator {
         return validator.isInt(quota);
       },
       runScripts(value) {
-        if (value.constructor !== String) return false;
-        if (value !== 'dangerously') return false;
-        return true;
+        return (value.constructor === Boolean);
       },
       resources(resources) {
         if (resources.constructor !== String) return false;

@@ -20,6 +20,55 @@ class WebElement {
   getText() {
     return this.element.innerHTML;
   }
+
+  getTagName() {
+    return this.element.tagName;
+  }
+
+  getElementAttribute(name) {
+    const booleanAtrtibutes = [
+      'async',
+      'autocomplete',
+      'autofocus',
+      'autoplay',
+      'border',
+      'challenge',
+      'checked',
+      'compact',
+      'contenteditable',
+      'controls',
+      'default',
+      'defer',
+      'disabled',
+      'formNoValidate',
+      'frameborder',
+      'hidden',
+      'indeterminate',
+      'ismap',
+      'loop',
+      'multiple',
+      'muted',
+      'nohref',
+      'noresize',
+      'noshade',
+      'novalidate',
+      'nowrap',
+      'open',
+      'readonly',
+      'required',
+      'reversed',
+      'scoped',
+      'scrolling',
+      'seamless',
+      'selected',
+      'sortable',
+      'spellcheck',
+      'translate',
+    ]
+
+    if (booleanAtrtibutes.includes(name)) return this.element.hasAttribute(name).toString(); 
+    return this.element.getAttribute(name);
+  }
 }
 
 module.exports = WebElement;

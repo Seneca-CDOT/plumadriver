@@ -2,94 +2,99 @@
 const uuidv1 = require('uuid/v1');
 const validator = require('validator');
 const os = require('os');
+const { Mutex } = require('async-mutex');
+
 const Browser = require('../browser/browser.js');
 const WebElement = require('../WebElement/WebElement.js');
-const sleep = require('system-sleep');
+const { COMMANDS } = require('../commands/commands');
+
 // errors
 const {
   InvalidArgument,
   SessionNotCreated,
   InternalServerError,
+  NoSuchElement,
 } = require('../Error/errors');
-const CapabilityValidator = require('./CapabilityValidator/CapabilityValidator');
+
+const CapabilityValidator = require('../CapabilityValidator/CapabilityValidator');
 
 class Session {
-  constructor() {
-    this.id = '';
+  constructor(requestBody) {
+    this.id = uuidv1();
+    this.pageLoadStrategy = 'normal';
+    this.webDriverActive = true;
+    this.acceptInsecureCerts = false;
     this.timeouts = {
       implicit: 0,
       pageLoad: 30000,
       script: 30000,
     };
-    this.browser = new Browser();
-    this.requestQueue = [];
-    this.pageLoadStrategy = 'normal';
-    this.webDriverActive = true;
-    this.acceptInsecureCerts = false;
+    this.configureSession(requestBody);
+    this.mutex = new Mutex();
   }
 
-  process(request) {
-    // wait in line
-    while (request.id !== this.requestQueue[0].id) sleep(100);
-
-    const currentRequest = this.requestQueue[0];
-    const { command, parameters, urlVariables } = currentRequest;
-    let response;
-
-    const processCommand = {
-      navigate() {
-
-      },
-      elementRetrieval() {
-
-      },
-      nestedElementRetrieval() {
-
-      },
-      setTimeouts() {
-
-      },
-      getTimeouts() {
-
-      },
-      async foo() {
-        console.log(`INSIDE FOO()`);
-        return new Promise((resolve) => setTimeout(() => {
-          resolve('FINISHED FOO');
-        }, 10000));
-      },
-      bar() {
-        return 'FINISHED BAR';
-      },
-    };
-
-
+  async process(request) {
+    const { command, parameters, urlVariables } = request;
+    let response = null;
 
     return new Promise(async (resolve) => {
       switch (command) {
-        case 'DELETE':
+        case COMMANDS.DELETE_SESSION:
           await this.browser.close();
           break;
-        case 'NAVIGATE':
+        case COMMANDS.NAVIGATE_TO:
+          await this.navigateTo(parameters);
           break;
-        case 'GET TITLE':
+        case COMMANDS.GET_CURRENT_URL:
+          response = this.browser.getURL();
+          break;
+        case COMMANDS.GET_TITLE:
           response = this.browser.getTitle();
           break;
-        case 'ELEMENT RETRIEVAL':
+        case COMMANDS.FIND_ELEMENT:
+        case COMMANDS.FIND_ELEMENTS:
+          response = this.elementRetrieval(
+            this.browser.dom.window.document, // start node
+            parameters.using, // strategy
+            parameters.value, // selector
+          );
           break;
-        case 'GET ELEMENT TEXT':
+        case COMMANDS.GET_ELEMENT_TEXT:
+          response = this.browser
+            .getKnownElement(urlVariables.elementId)
+            .getText();
           break;
-        case 'NESTED ELEMENT RETRIEVAL':
+        case COMMANDS.FIND_ELEMENTS_FROM_ELEMENT:
+        case COMMANDS.FIND_ELEMENT_FROM_ELEMENT:
+          response = this.elementRetrieval(
+            this.browser.getKnownElement(urlVariables.elementId),
+            parameters.using,
+            parameters.value,
+          );
           break;
-        case 'SET TIMEOUTS':
+        case COMMANDS.SET_TIMEOUTS:
           break;
-        case 'GET TIMEOUTS':
+        case COMMANDS.GET_TIMEOUTS:
           break;
-        case 'FOO':
-          response = await processCommand.foo();
+        case COMMANDS.GET_ALL_COOKIES:
+          response = this.browser.getCookies();
           break;
-        case 'BAR':
-          response = processCommand.bar();
+        case COMMANDS.ADD_COOKIE:
+          response = this.browser.addCookie(parameters.cookie);
+          break;
+        case COMMANDS.GET_ELEMENT_TAG_NAME:
+          response = this.browser
+            .getKnownElement(urlVariables.elementId)
+            .getTagName();
+          break;
+        case COMMANDS.GET_ELEMENT_ATTRIBUTE:
+          response = this.browser
+            .getKnownElement(urlVariables.elementId)
+            .getElementAttribute(urlVariables.attributeName);
+          console.log(response);
+          break;
+        case COMMANDS.EXECUTE_SCRIPT:
+          response = this.executeScript(parameters.script, parameters.args);
           break;
         default:
           break;
@@ -98,13 +103,59 @@ class Session {
     });
   }
 
-  async navigateTo(url) {
-    if (!validator.isURL(url)) throw new InvalidArgument(`/POST /session/${this.id}/url`);
-    // TODO: write code to handle user prompts
+  executeScript(script, args) {
+
+    const executeFunctionBody = () => {
+      const { window } = this.browser.dom.window;
+
+    }
+
+    // try to extract script arguments from request
+    if (script === undefined
+      || script === null
+      || args === undefined
+      || args === null
+      || args.constructor !== Array
+      || typeof script !== 'string') throw new InvalidArgument();
+
+    const promise = new Promise((reject, resolve) => {
+      const func = new Function(script);
+      try {
+        const r = func();
+        resolve(r);
+      } catch (err) {
+        reject(err);
+      }
+    });
+
     let timer;
     const startTimer = () => {
       timer = setTimeout(() => {
         throw new Error('timeout');
+      }, this.timeouts.script);
+    };
+
+    startTimer();
+    let result;
+    promise.then((data) => {
+      result = data;
+      clearTimeout(timer);
+    });
+
+    // this still needs to be completed.... no functionality at the moment
+
+
+    this;
+  }
+
+  async navigateTo(parameters) {
+    const { url } = parameters;
+    if (!validator.isURL(url)) throw new InvalidArgument();
+    // TODO: write code to handle user prompts
+    let timer;
+    const startTimer = () => {
+      timer = setTimeout(() => {
+        throw new Error('timeout'); // TODO: create timeout error class
       }, this.timeouts.pageLoad);
     };
     if (this.browser.getURL() !== url) {
@@ -118,7 +169,6 @@ class Session {
   setTimeouts(timeouts) {
     const capabilityValidator = new CapabilityValidator();
     let valid = true;
-
     Object.keys(timeouts).forEach((key) => {
       valid = capabilityValidator.validateTimeouts(key, timeouts[key]);
       if (!valid) throw new InvalidArgument();
@@ -137,18 +187,16 @@ class Session {
   configureSession(requestedCapabilities) {
     this.id = uuidv1();
     const configuredCapabilities = this.configureCapabilties(requestedCapabilities);
-    this.browser = new Browser();
-    this.requestQueue = [];
-    // TODO:  this formatting is for the server response and should be in the server code, not here.  CHANGE!!!!!
-    const body = {
-      sessionId: this.id,
-      capabilities: configuredCapabilities,
-    };
-    return body;
-  }
 
-  configureBrowser() {
-    // TODO: write function that configures JSDOM based on inputs
+    const browserConfig = configuredCapabilities['plm:plumaOptions'];
+    if (configuredCapabilities.acceptInsecureCerts) {
+      browserConfig.strictSSL = configuredCapabilities.acceptInsecureCerts;
+    }
+
+    if (configuredCapabilities.unhandledPromptBehavior) {
+      browserConfig.unhandledPromptBehavior = configuredCapabilities.unhandledPromptBehavior;
+    }
+    this.browser = new Browser(browserConfig);
   }
 
   configureCapabilties(request) {
@@ -170,11 +218,8 @@ class Session {
       capabilities.proxy = {};
     }
 
-
-    this.setTimeouts();
-    // TODO: create setTimeouts function for this. use function in endpoint
     if (Object.prototype.hasOwnProperty.call(capabilities, 'timeouts')) {
-        this.setTimeouts(capabilities.timeouts);
+      this.setTimeouts(capabilities.timeouts);
     }
     capabilities.timeouts = this.timeouts;
 
@@ -319,9 +364,14 @@ class Session {
   }
 
   elementRetrieval(startNode, strategy, selector) {
+    // TODO: check if element is connected (shadow-root) https://dom.spec.whatwg.org/#connected
+    // check W3C endpoint spec for details
     const endTime = new Date(new Date().getTime + this.timeouts.implicit);
     let elements;
     const result = [];
+
+    if (!strategy || !selector) throw new InvalidArgument();
+    if (!startNode) throw new NoSuchElement();
 
     const locationStrategies = {
       cssSelector() {

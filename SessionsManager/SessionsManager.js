@@ -3,7 +3,6 @@ const os = require('os');
 const Session = require('../Session/Session');
 const {
   NotFoundError,
-  InvalidArgument,
 } = require('../Error/errors');
 
 class SessionsManager {
@@ -24,11 +23,28 @@ class SessionsManager {
   }
 
   createSession(requestBody) {
-    const session = new Session();
-    const body = session.configureSession(requestBody);
+    const session = new Session(requestBody);
     this.sessions.push(session);
-    const response = { value: body };
-    return response;
+    const sessionConfig = {
+      value: {
+        sessionId: session.id,
+        capabilities: {
+          browserName: 'pluma',
+          browserVersion: 'v1.0',
+          platformName: os.platform(),
+          acceptInsecureCerts: session.acceptInsecureCerts,
+          setWindowRect: false,
+          pageLoadStrategy: session.pageLoadStrategy,
+          'plm:plumaOptions': {
+            runScripts: session.browser.options.runScripts,
+          },
+          unhandledPromtBehaviour: session.browser.unhandledPromtBehaviour,
+          proxy: session.proxy ? session.proxy : {},
+          timeouts: session.timeouts,
+        },
+      },
+    };
+    return sessionConfig;
   }
 
   setReadinessState() {
@@ -49,26 +65,6 @@ class SessionsManager {
     await currentSession.process(request);
     this.sessions.splice(index, 1);
   }
-
-  // TODO: this function should be inside the session class not session manager
-
-  // async navigateSession(sessionId, url) {
-  //   if (!validator.isURL(url)) throw new InvalidArgument(`/POST /session/${sessionId}/url`);
-  //   // TODO: write code to handle user prompts
-  //   const session = this.findSession(sessionId);
-  //   let timer;
-  //   function startTimer() {
-  //     timer = setTimeout(() => {
-  //       throw new Error('timeout');
-  //     }, session.timeouts.pageLoad);
-  //   }
-  //   if (session.browser.getURL() !== url) {
-  //     startTimer();
-  //     if (await session.browser.navigateToURL(url)) clearTimeout(timer);
-  //   } else {
-  //     await session.browser.navigateToURL(url);
-  //   }
-  // }
 
   getReadinessState() {
     this.setReadinessState();

@@ -1,52 +1,85 @@
 
 const element = require('express').Router();
+const { COMMANDS } = require('../../commands/commands');
+
 // errors
 const {
-  InvalidArgument,
   NoSuchElement,
 } = require('../../Error/errors.js');
 
 // get element text
-element.get('/text', (req, res, next) => {
-  const { session } = req;
-  const knownElement = session.browser.getKnownElement(req.element);
-  const text = knownElement.getText();
-  const response = { value: text }
-  res.json(response);
+element.get('/text', async (req, res, next) => {
+  const release = await req.session.mutex.acquire();
+  try {
+    req.sessionRequest.command = COMMANDS.GET_ELEMENT_TEXT;
+    const text = await req.session.process(req.sessionRequest);
+    const response = { value: text };
+    res.json(response);
+  } catch (err) {
+    next(err);
+  } finally {
+    release();
+  }
 });
 
 // find element(s) from element
-element.post(['/element', '/elements'], (req, res, next) => {
+element.post(['/element', '/elements'], async (req, res, next) => {
   let single = false;
+  const release = await req.session.mutex.acquire();
+  try {
+    if (req.originalUrl.slice(req.originalUrl.lastIndexOf('/') + 1) === 'element') {
+      single = true;
+    }
+    req.sessionRequest.command = single
+      ? COMMANDS.FIND_ELEMENT_FROM_ELEMENT
+      : COMMANDS.FIND_ELEMENTS_FROM_ELEMENT;
 
-  if (req.originalUrl.slice(req.originalUrl.lastIndexOf('/') + 1) === 'element') {
-    single = true;
+    const response = {};
+    const result = await req.session.process(req.sessionRequest);
+    if (result === undefined
+      || result === null
+      || result.length === 0) throw new NoSuchElement();
+
+    response.value = single ? result[0] : result;
+    res.json(response);
+  } catch (err) {
+    next(err);
+  } finally {
+    release();
   }
-
-  const strategy = req.body.using;
-  const selector = req.body.value;
-  const response = {};
-  if (!selector) throw new InvalidArgument();
-  // TODO: check if element is connected (shadow-root) https://dom.spec.whatwg.org/#connected
-  // check W3C endpoint spec for details
-  const startNode = req.session.browser.getKnownElement(req.element).element;
-  const result = req.session.elementRetrieval(startNode, strategy, selector);
-  if (result === undefined
-    || result === null
-    || result.length === 0) throw new NoSuchElement();
-
-  response.value = single ? result[0] : result;
-  res.json(response);
 });
 
 // get element tag name
-element.get('/name', (req, res, next) => {
-
+element.get('/name', async (req, res, next) => {
+  const release = await req.session.mutex.acquire();
+  req.sessionRequest.command = COMMANDS.GET_ELEMENT_TAG_NAME;
+  try {
+    const result = await req.session.process(req.sessionRequest);
+    const response = { value: result };
+    res.json(response);
+  } catch (err) {
+    next(err);
+  } finally {
+    release();
+  }
 });
 
 // get element attribute name
-element.get('/attribute/:name', (req, res, next) => {
+element.get('/attribute/:name', async (req, res, next) => {
+  const release = await req.session.mutex.acquire();
+  req.sessionRequest.command = COMMANDS.GET_ELEMENT_ATTRIBUTE;
+  req.sessionRequest.urlVariables.attributeName = req.params.name;
 
+  try {
+    const result = req.session.process(req.sessionRequest);
+    const response = { value: result };
+    console.log(response);
+    res.json(response);
+  } catch (err) {
+    next(err);
+  } finally {
+    release();
+  }
 });
 
 // send keys to element
