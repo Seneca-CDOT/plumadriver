@@ -29,19 +29,19 @@ The goal of this project is to provide an automation tool for jsdom in order to 
 
 As JSDOM is not intended to be an implementation of a full rendering browser, rather it emulates enough of a web browser to be useful for testing and webscraping applications. Jsdom's limitations are reflected upon the following endpoints that are not implemented as they pertain more to a full rendering browser:
 
--[ ] **Accept Alert** POST 	/session/{session id}/alert/accept 	
--[ ] **Get Alert Text** GET 	/session/{session id}/alert/text 	
--[ ] **Send Alert Text** POST 	/session/{session id}/alert/text 	
--[ ] **Take Screenshot** GET 	/session/{session id}/screenshot
--[ ] **Take Element Screenshot** GET 	/session/{session id}/element/{element id}/screenshot
--[ ] **Back** POST 	/session/{session id}/back
--[ ] **Forward** POST 	/session/{session id}/forward
--[ ] **Refresh** POST 	/session/{session id}/refresh
--[ ] **Switch To Window** POST 	/session/{session id}/window
--[ ] **New Window** POST 	/session/{session id}/window/new
--[ ] **Maximize Window** POST 	/session/{session id}/window/maximize
--[ ] **Minimize Window** POST 	/session/{session id}/window/minimize
--[ ] **Fullscreen Window** POST 	/session/{session id}/window/fullscreen
+- [ ] **Accept Alert** POST 	/session/{session id}/alert/accept 	
+- [ ] **Get Alert Text** GET 	/session/{session id}/alert/text 	
+- [ ] **Send Alert Text** POST 	/session/{session id}/alert/text 	
+- [ ] **Take Screenshot** GET 	/session/{session id}/screenshot
+- [ ] **Take Element Screenshot** GET 	/session/{session id}/element/{element id}/screenshot
+- [ ] **Back** POST 	/session/{session id}/back
+- [ ] **Forward** POST 	/session/{session id}/forward
+- [ ] **Refresh** POST 	/session/{session id}/refresh
+- [ ] **Switch To Window** POST 	/session/{session id}/window
+- [ ] **New Window** POST 	/session/{session id}/window/new
+- [ ] **Maximize Window** POST 	/session/{session id}/window/maximize
+- [ ] **Minimize Window** POST 	/session/{session id}/window/minimize
+- [ ] **Fullscreen Window** POST 	/session/{session id}/window/fullscreen
 
 
 ## Building Plumadriver
