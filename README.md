@@ -6,7 +6,7 @@ More information about JSDOM can be found <a href="https://github.com/jsdom/jsdo
 The project is still in the development stage.
 
 ## Objective
-The goal of this project is to provide an automation tool for jsdom in order to load test web applications without the overhead of modern web browsers. An extension to [Selenium WebDriver](https://github.com/SeleniumHQ/selenium) is being developed alongside plumadriver. Note that this extension was created for this project and is not part of the official Selenium WebDriver build.
+The goal of this project is to provide an automation tool for jsdom in order to load test web applications without the overhead of modern web browsers. An extension to [Selenium WebDriver](https://github.com/SeleniumHQ/selenium) is being developed alongside plumadriver. Note that this extension was created for this project and is not part of the official Selenium WebDriver build. It is important to keep in mind that jsdom is not intended to be a full rendering browser but rather emulate enough of a browser to be useful for testing and webscraping applications. As a result, standard-specified endpoints which require browser rendering capabilities will not be implemented.
 
 ## Endpoints
 
@@ -27,7 +27,7 @@ The goal of this project is to provide an automation tool for jsdom in order to 
 - [x] **Get All Cookies:** GET 	/session/{session id}/cookie
 - [x] **Add Cookie:** POST 	/session/{session id}/cookie
 
-As JSDOM is not intended to be an implementation of a full rendering browser, rather it emulates enough of a web browser to be useful for testing and webscraping applications. Jsdom's limitations are reflected upon the following endpoints that are not implemented as they pertain more to a full rendering browser:
+The following endpoints require browser rendering capabilities and will therefore not be implemented for plumadriver. 
 
 - [ ] **Accept Alert** POST 	/session/{session id}/alert/accept 	
 - [ ] **Get Alert Text** GET 	/session/{session id}/alert/text 	
@@ -73,3 +73,22 @@ In order to use the Selenium plumadriver extension, include the pluma.jar file i
 
 The executable path must be set prior to running your code. This is the path to the executable created in the **Building Plumadriver** section above. The path can be set using:  
 `System.setProperty("webdriver.pluma.driver","<path_to_executable>");`
+
+## Project Structure
+
+### SessionManager
+The SessionManager object manages all sessions instantiated by the client.
+
+- #### Properties:
+  - **sessions:** A list of active Session Objects currently being managed
+  - **readinessState:** An object containing:
+    - **status:** property indicating the number of sessions being managed
+    - **value:**  property containing platform specific information, a boolean **ready** indicating that the driver is ready to accept new connections
+    
+- #### Methods:
+  - **createSession(requestBody)** - takes the HTTP request body as an arugment. It instantiates a Session object by calling its constructor with requestBody as an argument which performs further validation. If no error is thrown by the Session object constructor, the newly created session is added to the SessionManager object's **sessions** list. A sessionConfig object is created and returned detailing the session's supported capabilties.
+  
+  - **findSession(sessionID)** - accepts a uuid v1 string identifying a session which it uses to find a specific session within its **sessions** list. Throws an **InvalidSessionId** error if the session id is not in the list of active sessions.
+ 
+  - **deleteSession(currentSession, request)** - accepts the current Session Object and a string (request) indicating the command to be processed by the Session Object's [process](#) method. Finds the index of the current Session Object and removes it from the active sessions list once the Session's process method has completed execution. 
+  - **getReadinessState** - updates the SessionManager's readiness state **status** property before returning the readinesss state.
