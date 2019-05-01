@@ -105,4 +105,22 @@ The SessionManager object manages all sessions instantiated by the client.
    - **browser** - a [Browser](#) object. The remote end-point node which contains the jsdom object.
     
 - #### Methods:
- 
+  - **process(request)** - accepts a string which identifies a command to be executed. Returns a promise  which is resolved once the request logic has completed execution.
+  
+  - **navigateTo({url})** - destructs the argument object to obtain a url string. Starts a pageLoad timer, passes the validated url to the browser object and tries to fetch the resource before the timer runs out. Throws an InvalidArgument error if passed an invalid url or a Timeout error if it fails to fetch the resource before the specified pageload timeout.
+  
+  - **setTimeouts(timeouts)** - accepts and validates an object with pageLoad, script and/or implicit timeout properties. Sets the session's corresponding timeout values if valid. Throws an InvalidArgument error otherwise.
+  
+  - **getTimeouts()** - returns the active session's configured timeouts object.
+  
+  - **configureSession(requestedCapabilties)** - Method called by the Session constructor. Accepts the HTTP request body forwards it to the [**configureCapabilties**](#) method which configures the Session objects capabilties. It uses the configured capabilities object to extract jsdom specific capabilties and instantiates a broswer object.
+  
+  - **configureCapabilities(requestedCapabilties)** - accepts the HTTP request body and forwards it to [**processCapabilities**](#) which returns an object with validated capabilties or null otherwise. Uses the validated capabilties object to configure the Session object's capabilties.
+  
+  - **processCapabilties(requestedCapabilties)** - accepts the HTTP request body and uses a CapabilityValidator object to validate firstMatch and alwaysMatch requested capabilties. Calls [**mergeCapabilties**](#) to merge validated firstMatch and alwaysMatch then proceeds to call [**matchCapabilties**](#) which matches supported capabilties, returns validated and matched capabilities.
+  
+  - **mergeCapabilties(primary, secondary)** - returns the result of merging alwaysMatch capabilities (primary) and firstMatch capabilties (secondary).
+  
+  - **matchCapabilities(capabilties)** - accepts a validated and merged capabilties object. Returns an object with the matched, supported capabilties.
+  
+  - **elementRetrieval(startNode, strategy, selector)** -  accepts and uses a known [WebElement](#) (startNode), a [strategy](https://w3c.github.io/webdriver/#dfn-strategy) (string) and a selector to find elements within the DOM created by the Browser object.
