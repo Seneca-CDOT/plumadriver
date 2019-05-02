@@ -3,6 +3,7 @@ const uuidv1 = require('uuid/v1');
 const validator = require('validator');
 const os = require('os');
 const { Mutex } = require('async-mutex');
+const request = require('request');
 
 const Browser = require('../browser/browser.js');
 const WebElement = require('../WebElement/WebElement.js');
@@ -22,8 +23,7 @@ class Session {
   constructor(requestBody) {
     this.id = uuidv1();
     this.pageLoadStrategy = 'normal';
-    this.webDriverActive = true;
-    this.acceptInsecureCerts = false;
+    this.secureTLS = true;
     this.timeouts = {
       implicit: 0,
       pageLoad: 30000,
@@ -33,8 +33,8 @@ class Session {
     this.mutex = new Mutex();
   }
 
-  async process(request) {
-    const { command, parameters, urlVariables } = request;
+  // delegates request
+  async process({ command, parameters, urlVariables }) {
     let response = null;
 
     return new Promise(async (resolve) => {
@@ -103,69 +103,44 @@ class Session {
     });
   }
 
-  executeScript(script, args) {
-
-    const executeFunctionBody = () => {
-      const { window } = this.browser.dom.window;
-
-    }
-
-    // try to extract script arguments from request
-    if (script === undefined
-      || script === null
-      || args === undefined
-      || args === null
-      || args.constructor !== Array
-      || typeof script !== 'string') throw new InvalidArgument();
-
-    const promise = new Promise((reject, resolve) => {
-      const func = new Function(script);
-      try {
-        const r = func();
-        resolve(r);
-      } catch (err) {
-        reject(err);
-      }
-    });
-
-    let timer;
-    const startTimer = () => {
-      timer = setTimeout(() => {
-        throw new Error('timeout');
-      }, this.timeouts.script);
-    };
-
-    startTimer();
-    let result;
-    promise.then((data) => {
-      result = data;
-      clearTimeout(timer);
-    });
-
-    // this still needs to be completed.... no functionality at the moment
-
-
-    this;
-  }
-
-  async navigateTo(parameters) {
-    const { url } = parameters;
+  async navigateTo({ url }) {
     if (!validator.isURL(url)) throw new InvalidArgument();
-    // TODO: write code to handle user prompts
+
+    // pageload timer
     let timer;
     const startTimer = () => {
       timer = setTimeout(() => {
         throw new Error('timeout'); // TODO: create timeout error class
       }, this.timeouts.pageLoad);
     };
+
+    // TODO: need to check if URL is special
     if (this.browser.getURL() !== url) {
       startTimer();
-      if (await this.browser.navigateToURL(url)) clearTimeout(timer);
-    } else {
+      // W3C post navigation checks must be performed before navigation for jsdom
+      // because jsdom does not check response  and status codes and will deem
+      // them a correct response .
+      // This takes a long time because it makes the request twice once with
+      // request and a second time with jsdom
+      await (() => {
+        return new Promise((resolve, reject) => {
+          request(url, async (err, response) => {
+            if (!err && response.statusCode === 200) {
+              resolve();
+            } else if (response.statusCode === 500) {
+              clearTimeout(timer); // clear timer before throwing
+              throw new Error('UnknownError'); // TODO create unknown error class, see W3C error codes
+            }
+          });
+        });
+      })();
+
       await this.browser.navigateToURL(url);
+      clearTimeout(timer);
     }
   }
 
+  // sets and validates the timeouts object
   setTimeouts(timeouts) {
     const capabilityValidator = new CapabilityValidator();
     let valid = true;
@@ -184,10 +159,14 @@ class Session {
     return this.timeouts;
   }
 
+  // configures session properties
   configureSession(requestedCapabilities) {
     this.id = uuidv1();
+
+    // configure Session object capabilties
     const configuredCapabilities = this.configureCapabilties(requestedCapabilities);
 
+    // extract browser specific data
     const browserConfig = configuredCapabilities['plm:plumaOptions'];
     if (configuredCapabilities.acceptInsecureCerts) {
       browserConfig.strictSSL = configuredCapabilities.acceptInsecureCerts;
@@ -196,11 +175,13 @@ class Session {
     if (configuredCapabilities.unhandledPromptBehavior) {
       browserConfig.unhandledPromptBehavior = configuredCapabilities.unhandledPromptBehavior;
     }
+
     this.browser = new Browser(browserConfig);
   }
 
-  configureCapabilties(request) {
-    const capabilities = Session.processCapabilities(request);
+  // configures session object capabilties
+  configureCapabilties(requestedCapabilities) {
+    const capabilities = Session.processCapabilities(requestedCapabilities);
     if (capabilities === null) throw new InternalServerError('could not create session');
 
     // configure pageLoadStrategy
@@ -226,7 +207,8 @@ class Session {
     return capabilities;
   }
 
-  static processCapabilities(request) {
+  // validates, merges and matches capabilties
+  static processCapabilities({ capabilities }) {
     const command = 'POST /session';
     const capabilityValidator = new CapabilityValidator();
 
@@ -241,15 +223,11 @@ class Session {
       'unhandledPromptBehaviour',
     ];
 
-    const capabiltiesRequest = Object.prototype.hasOwnProperty
-      .call(request, 'capabilities');
-    if (!capabiltiesRequest
-      || request.capabilities.constructor !== Object
-      || Object.keys(request.capabilities).length === 0) {
+    if (!capabilities
+      || capabilities.constructor !== Object
+      || Object.keys(capabilities).length === 0) {
       throw new InvalidArgument(command);
     }
-    const { capabilities } = request;
-
 
     // validate alwaysMatch capabilties
     const requiredCapabilities = {};
@@ -309,6 +287,8 @@ class Session {
     return matchedCapabilities;
   }
 
+
+  // merges capabilities in both
   static mergeCapabilities(primary, secondary) {
     const result = {};
     Object.keys(primary).forEach((key) => {
@@ -327,6 +307,7 @@ class Session {
     return result;
   }
 
+  // matches supported capabilities
   static matchCapabilities(capabilties) {
     const matchedCapabilities = {
       browserName: 'pluma',
