@@ -124,3 +124,23 @@ The SessionManager object manages all sessions instantiated by the client.
   - **matchCapabilities(capabilties)** - accepts a validated and merged capabilties object. Returns an object with the matched, supported capabilties.
   
   - **elementRetrieval(startNode, strategy, selector)** -  accepts and uses a known [WebElement](#) (startNode), a [strategy](https://w3c.github.io/webdriver/#dfn-strategy) (string) and a selector to find elements within the DOM created by the Browser object.
+
+
+### Browser
+
+  - #### Properties
+    - **options** Object which stores browser config options, mainly jsdom specific.
+    - **dom** The JSDOM object. The remote end-node. 
+    - **knownElements** A list which stores known [**WebElements**](#)
+    
+  - #### Methods
+    - **configureBrowser(options, url)** creates and configures JSDOM object based on the options object and string url provided. Creates an empty JSDOM object if no url is provided.
+    
+    - **configureJSDOMOptions(capabilities)** - configures JSDOM specific options. Returns a JSDOM options object used by configureBrowser
+    
+    - **getTitle()** Returns the jsdom DOM object's title property
+    
+    - **getURL()** Returns the jdom DOM object's url property
+    
+    - **addCookie(cookie)** Accepts and validates a cookie string. Creates a [tough cookie](https://github.com/salesforce/tough-cookie) and stores it in the jsdom object's cookie jar
+    
