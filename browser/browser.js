@@ -25,8 +25,8 @@ class Browser {
         runScripts: options.runScripts,
         beforeParse: options.beforeParse,
       }).then((dom) => {
-        /* promise resolves once the load event has fired allowing window.onload events to execute
-        before the DOM object can be manipulated*/
+        /*  promise resolves once the load event has fired allowing window.onload events to execute
+        before the DOM object can be manipulated  */
         return new Promise((resolve) => {
           dom.window.addEventListener('load', () => {
             resolve(dom);
@@ -119,7 +119,6 @@ class Browser {
   }
 
   addCookie(cookie) {
-
     // object validates cookie properties
     const validateCookie = {
       name(name) {
@@ -158,7 +157,7 @@ class Browser {
       && scheme !== 'https'
       && scheme !== 'ftp') throw new InvalidArgument();
 
-    // validates cookie   
+    // validates cookie
     Object.keys(validateCookie).forEach((key) => {
       if (Object.prototype.hasOwnProperty.call(cookie, key)) {
         if (!validateCookie[key](cookie[key])) throw new InvalidArgument();
