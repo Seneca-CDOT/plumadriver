@@ -40,7 +40,7 @@ router.post('/session', async (req, res, next) => {
 // delete session
 router.delete('/session/:sessionId', async (req, res, next) => {
   const sessionsManager = req.app.get('sessionsManager');
-  const release = req.session.mutex.acquire();
+  const release = await req.session.mutex.acquire();
   try {
     req.sessionRequest.command = COMMANDS.DELETE_SESSION;
     await sessionsManager.deleteSession(req.session, req.sessionRequest);
@@ -71,19 +71,19 @@ router.get('/session/:sessionId/title', async (req, res, next) => {
 
 // this still needs to be completed, no functionality at the moment
 router.post('/session/:sessionId/execute/sync', async (req, res, next) => {
-  let response = null;
-  console.log('INSIDE GET ELEMENT ATTRIBUTE NAME ENDPOINT');
   console.log(req.body);
-  const release = await req.session.mutex.acquire();
-  try {
-    req.sessionRequest.command = COMMANDS.EXECUTE_SCRIPT;
-    const result = req.session.process(req.sessionRequest);
 
-  } catch(err) {
+  // let response = null;
+  // const release = await req.session.mutex.acquire();
+  // try {
+  //   req.sessionRequest.command = COMMANDS.EXECUTE_SCRIPT;
+  //   const result = req.session.process(req.sessionRequest);
 
-  } finally {
-    release();
-  }
+  // } catch (err) {
+
+  // } finally {
+  //   release();
+  // }
 });
 
 // element(s) routes
