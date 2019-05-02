@@ -32,7 +32,7 @@ class SessionsManager {
           browserName: 'pluma',
           browserVersion: 'v1.0',
           platformName: os.platform(),
-          acceptInsecureCerts: session.acceptInsecureCerts,
+          acceptInsecureCerts: session.secureTLS,
           setWindowRect: false,
           pageLoadStrategy: session.pageLoadStrategy,
           'plm:plumaOptions': {
@@ -47,9 +47,6 @@ class SessionsManager {
     return sessionConfig;
   }
 
-  setReadinessState() {
-    this.readinessState.status = this.sessions.length;
-  }
 
   findSession(sessionId) {
     const foundSession = this.sessions.find(session => session.id === sessionId);
@@ -67,7 +64,7 @@ class SessionsManager {
   }
 
   getReadinessState() {
-    this.setReadinessState();
+    this.readinessState.status = this.sessions.length;
     return this.readinessState;
   }
 }
