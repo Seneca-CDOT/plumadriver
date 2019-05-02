@@ -21,6 +21,7 @@
     "uuid": "^3.3.2",
     "validator": "^10.11.0",
     "validator-js": "^0.2.1",
+    "vm2": "^3.8.0",
     "winston": "^3.2.1"
   },
   "devDependencies": {
@@ -31,7 +32,7 @@
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
     "http-post": "^0.1.1",
-    "mocha": "^6.1.2",
+    "mocha": "^6.1.4",
     "nodemon": "^1.18.9",
     "request": "^2.88.0",
     "should": "^13.2.3"
