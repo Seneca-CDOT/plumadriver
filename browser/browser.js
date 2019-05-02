@@ -4,6 +4,7 @@ const tough = require('jsdom').toughCookie;
 
 const { Cookie } = tough;
 
+// identifies a web element
 const ELEMENT = 'element-6066-11e4-a52e-4f735466cecf';
 
 const { InvalidArgument, NoSuchElement } = require('../Error/errors');
@@ -16,6 +17,7 @@ class Browser {
   }
 
 
+  // creates JSDOM object from provided options and (optional) url
   async configureBrowser(options, url = null) {
     if (url !== null) {
       await JSDOM.fromURL(url, {
@@ -23,6 +25,8 @@ class Browser {
         runScripts: options.runScripts,
         beforeParse: options.beforeParse,
       }).then((dom) => {
+        /* promise resolves once the load event has fired allowing window.onload events to execute
+        before the DOM object can be manipulated*/
         return new Promise((resolve) => {
           dom.window.addEventListener('load', () => {
             resolve(dom);
@@ -38,10 +42,8 @@ class Browser {
         beforeParse: options.beforeParse,
       });
     }
-  }
-
-  static validateBrowserOptions() {
-
+    // webdriver-active property (W3C)
+    this.dom.window.navigator.webdriver = true;
   }
 
   static configureJSDOMOptions(capabilities) {
@@ -117,6 +119,8 @@ class Browser {
   }
 
   addCookie(cookie) {
+
+    // object validates cookie properties
     const validateCookie = {
       name(name) {
         return (name !== null && name !== undefined);
@@ -138,17 +142,23 @@ class Browser {
       },
     };
 
+    // check for null or undefined
     if (cookie === null || cookie === undefined) throw new InvalidArgument();
+
+    // assert cookie has name and value properties
     if (!Object.prototype.hasOwnProperty.call(cookie, 'name')
       || !Object.prototype.hasOwnProperty.call(cookie, 'value')
     ) throw new InvalidArgument();
 
+    // get the scheme of the provided cookie
     const scheme = this.getURL().substr(0, this.getURL().indexOf(':'));
 
+    // validate extracted scheme
     if (scheme !== 'http'
       && scheme !== 'https'
       && scheme !== 'ftp') throw new InvalidArgument();
 
+    // validates cookie   
     Object.keys(validateCookie).forEach((key) => {
       if (Object.prototype.hasOwnProperty.call(cookie, key)) {
         if (!validateCookie[key](cookie[key])) throw new InvalidArgument();
@@ -157,12 +167,14 @@ class Browser {
 
     const validCookie = {};
 
+    // stores validated cookie properties in validCookie
     Object.keys(cookie).forEach((key) => {
       if (key === 'name') validCookie.key = cookie[key];
       else if (key === 'expiry') validCookie.expires = cookie[key];
       else validCookie[key] = cookie[key];
     });
 
+    // create tough cookie and store in jsdom cookie jar
     try {
       this.dom.cookieJar.store.putCookie(new Cookie(validCookie), err => err);
     } catch (err) {
@@ -171,6 +183,7 @@ class Browser {
     return null;
   }
 
+  // returns the cookies inside the jsdom object
   getCookies() {
     const cookies = [];
 
@@ -179,8 +192,11 @@ class Browser {
       serializedJar.cookies.forEach((cookie) => {
         const currentCookie = {};
         Object.keys(cookie).forEach((key) => {
+          // renames 'key' property to 'name' for W3C compliance and selenium functionality
           if (key === 'key') currentCookie.name = cookie[key];
           else if (key === 'expires') {
+            // sets the expiry time in seconds form epoch time
+            // renames property for selenium functionality
             const seconds = new Date(currentCookie[key]).getTime() / 1000;
             currentCookie.expiry = seconds;
           } else currentCookie[key] = cookie[key];
@@ -193,7 +209,7 @@ class Browser {
     return cookies;
   }
 
-  // TODO: function contains basic functionality, check standard and make compliant
+  // finds a known element in the known element list, throws no such error if element not found
   getKnownElement(id) {
     let foundElement = null;
     this.knownElements.forEach((element) => {
@@ -203,6 +219,7 @@ class Browser {
     return foundElement;
   }
 
+  // calls the jsdom close method terminating all timers created within jsdom scripts
   close() {
     this.dom.window.close();
   }
