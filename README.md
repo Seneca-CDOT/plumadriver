@@ -102,7 +102,7 @@ The SessionManager object manages all sessions instantiated by the client.
    - **secureTLS** - boolean property indicating whether untrusted or self-signed TLS certificates should be trusted for the duration of the Session object. A false value indicates that certificate or TLS errors should be suppressed. 
    - **timeouts** -  property which contains the sessions implicit, pageload and script timeouts. Unless otherwise specified, these default to 0 ms, 30000 ms and 30000 ms, respectively.
    - **mutex** - a [Mutex] object which serves as the Session object's [request queue](https://www.w3.org/TR/webdriver/#dfn-request-queue). This is used to queue requests currently awaiting processing. Ensures that requests made to the session occur in a First In First Out order.
-   - **browser** - a [Browser](#) object. The remote end-point node which contains the jsdom object.
+   - **browser** - a [Browser](https://github.com/Seneca-CDOT/plumadriver/blob/master/README.md#browser) object. The remote end-point node which contains the jsdom object.
     
 - #### Methods:
   - **process(request)** - accepts a string which identifies a command to be executed. Returns a promise  which is resolved once the request logic has completed execution.
