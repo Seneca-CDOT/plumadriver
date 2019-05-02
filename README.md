@@ -80,7 +80,7 @@ The executable path must be set prior to running your code. This is the path to 
 The SessionManager object manages all sessions instantiated by the client.
 
 - #### Properties:
-  - **sessions:** A list of active Session Objects currently being managed
+  - **sessions:** A list of active [Session](https://github.com/Seneca-CDOT/plumadriver/blob/master/README.md#session) Objects currently being managed
   - **readinessState:** An object containing:
     - **status:** property indicating the number of sessions being managed
     - **value:**  property containing platform specific information, a boolean **ready** indicating that the driver is ready to accept new connections
