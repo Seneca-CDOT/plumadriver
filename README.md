@@ -61,13 +61,15 @@ From the command line:
    For Windows:  
     `pkg . --target latest-win`  
    For Mac:  
-    `pkg . --target latest-macos`  
+    `pkg . --target latest-macos`
+    
+ The executable should appear in the project root directory.
 
 ## Using Plumadriver
 
-Plumadriver can be used by running the executable created above and making requests with any HTTP client or by using the Selenium WebDriver Java client extension for plumadriver available [here](#).Note that this extension was created for this project and is not part of the official selenium build.  
+Plumadriver can be used by running the executable created above and making requests with any HTTP client. However, we recommend using Selenium as it makes the process significantly easier. The Selenium WebDriver Java client extension for plumadriver available [here](https://github.com/Seneca-CDOT/plumadriver/tree/master/selenium/Java). Note that this extension was created for this project and is not part of the official selenium build.  
 
-The plumadriver executable will attempt to start the server on port 3000 by default. The server can be started on a user specified port by passing the `--port=<user_specified_port>` argument to the `plumadriver` executable. 
+The plumadriver executable will attempt to start the server on port 3000 by default. The server can be started on a user specified port by passing the `--port=<user_specified_port>` argument to the `plumadriver` executable.
 
 ### Functionality with the Selenium Webdriver API
 
@@ -75,6 +77,20 @@ As previously mentioned, a selenium Java API extension for plumadriver is curren
 
 The executable path must be set prior to running your code. This is the path to the executable created in the **Building Plumadriver** section above. The path can be set using:  
 `System.setProperty("webdriver.pluma.driver","<path_to_executable>");`
+
+### Sample Test
+```java
+// Add plumadriver executable path
+System.setProperty("webdriver.pluma.driver","<path_to_executable>");
+
+Webdriver driver = new PlumaDriver();
+driver.get("http://www.example.com");
+WebElement e = driver.findelement(By.tagName("p"));
+String text = e.getText();
+System.out.println(text);
+driver.quit();
+```
+
 
 ## Project Structure
 
