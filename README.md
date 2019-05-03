@@ -5,6 +5,8 @@ the JSDOM library to emulate the remote end node (browser) in the communication 
 More information about JSDOM can be found <a href="https://github.com/jsdom/jsdom">here.</a>
 The project is still in the development stage.
 
+**NOTE:** This project is still in the development stage. You are welcome to use plumadriver, however, keep in mind that there are still unimplemented features and bugs to be fixed. If you would like to suggest a feature to implement or an issue that needs to be address, please create an issue and the team will address it as soon as possible.
+
 ## Objective
 The goal of this project is to provide an automation tool for jsdom in order to load test web applications without the overhead of modern web browsers. An extension to [Selenium WebDriver](https://github.com/SeleniumHQ/selenium) is being developed alongside plumadriver. Note that this extension was created for this project and is not part of the official Selenium WebDriver build. It is important to keep in mind that jsdom is not intended to be a full rendering browser but rather emulate enough of a browser to be useful for testing and webscraping applications. As a result, standard-specified endpoints which require browser rendering capabilities will not be implemented.
 
@@ -69,7 +71,7 @@ The plumadriver executable will attempt to start the server on port 3000 by defa
 
 ### Functionality with the Selenium Webdriver API
 
-In order to use the Selenium plumadriver extension, include the pluma.jar file in your project's libraries.
+As previously mentioned, a selenium Java API extension for plumadriver is currently under development. As a result, no pull request has been made to the selenium commnunity and therefore plumadriver is not part of the supported drivers included in the official Selenium build. In the meanwhile, you can work with selenium and plumadriver by adding the pluma.jar file to your project libraries in addition to the official selenium build. The pluma.jar file can be found under the /selenium/java directory of this repo.
 
 The executable path must be set prior to running your code. This is the path to the executable created in the **Building Plumadriver** section above. The path can be set using:  
 `System.setProperty("webdriver.pluma.driver","<path_to_executable>");`
