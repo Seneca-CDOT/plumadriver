@@ -97,18 +97,28 @@ driver.quit();
 
 The PlumaDriver class will create a server instance at creation and destroy it when the quit() method is called. This means that for every instance of this class a separate server will be created resulting in a significant amount of resource usage. To reduce the resource consumption, the following options are available:
 
-- PlumaDriverService:
+PlumaDriverService:
 ```java
 PlumaDriverService service = new PlumaDriverService() {
  .usingDriverExecuteable(new File("path/to/plumadriver/"))
  .usingAnyFreePort()
  .build();
- 
- WebDriver pluma = new RemoteWebDriver(service.getUrl(), 
 
 service.start();
-```
 
+ WebDriver pluma = new RemoteWebDriver(service.getUrl(), new PlumaOptions());
+```
+Starting the Plumadriver server directly from the terminal and connecting it to the Remote WebDriver:
+
+Terminal:
+```bash
+./plumadriver --port=4040
+```
+Java:  
+```java
+WebDriver pluma = new RemoteWebDriver("http://127.0.0.1:4040", new PlumaOptions());
+pluma.get("http://www.example.com");
+```
 
 ## Project Structure
 
