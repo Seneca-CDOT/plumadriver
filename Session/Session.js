@@ -1,13 +1,15 @@
-
 const uuidv1 = require('uuid/v1');
 const validator = require('validator');
 const os = require('os');
 const { Mutex } = require('async-mutex');
 const request = require('request');
+const { VM } = require('vm2');
 
 const Browser = require('../browser/browser.js');
 const WebElement = require('../WebElement/WebElement.js');
 const { COMMANDS } = require('../commands/commands');
+
+const ELEMENT = 'element-6066-11e4-a52e-4f735466cecf';
 
 // errors
 const {
@@ -60,9 +62,7 @@ class Session {
           );
           break;
         case COMMANDS.GET_ELEMENT_TEXT:
-          response = this.browser
-            .getKnownElement(urlVariables.elementId)
-            .getText();
+          response = this.browser.getKnownElement(urlVariables.elementId).getText();
           break;
         case COMMANDS.FIND_ELEMENTS_FROM_ELEMENT:
         case COMMANDS.FIND_ELEMENT_FROM_ELEMENT:
@@ -83,18 +83,15 @@ class Session {
           response = this.browser.addCookie(parameters.cookie);
           break;
         case COMMANDS.GET_ELEMENT_TAG_NAME:
-          response = this.browser
-            .getKnownElement(urlVariables.elementId)
-            .getTagName();
+          response = this.browser.getKnownElement(urlVariables.elementId).getTagName();
           break;
         case COMMANDS.GET_ELEMENT_ATTRIBUTE:
           response = this.browser
             .getKnownElement(urlVariables.elementId)
             .getElementAttribute(urlVariables.attributeName);
-          console.log(response);
           break;
         case COMMANDS.EXECUTE_SCRIPT:
-          response = this.executeScript(parameters.script, parameters.args);
+          response = await this.executeScript(parameters.script, parameters.args);
           break;
         default:
           break;
@@ -122,18 +119,16 @@ class Session {
       // them a correct response .
       // This takes a long time because it makes the request twice once with
       // request and a second time with jsdom
-      await (() => {
-        return new Promise((resolve, reject) => {
-          request(url, async (err, response) => {
-            if (!err && response.statusCode === 200) {
-              resolve();
-            } else if (response.statusCode === 500) {
-              clearTimeout(timer); // clear timer before throwing
-              throw new Error('UnknownError'); // TODO create unknown error class, see W3C error codes
-            }
-          });
+      await (() => new Promise((resolve, reject) => {
+        request(url, async (err, response) => {
+          if (!err && response.statusCode === 200) {
+            resolve();
+          } else {
+            clearTimeout(timer); // clear timer before throwing
+            throw new Error('UnknownError'); // TODO create unknown error class, see W3C error codes
+          }
         });
-      })();
+      }))();
 
       await this.browser.navigateToURL(url);
       clearTimeout(timer);
@@ -148,7 +143,6 @@ class Session {
       valid = capabilityValidator.validateTimeouts(key, timeouts[key]);
       if (!valid) throw new InvalidArgument();
     });
-
 
     Object.keys(timeouts).forEach((validTimeout) => {
       this.timeouts[validTimeout] = timeouts[validTimeout];
@@ -186,8 +180,10 @@ class Session {
 
     // configure pageLoadStrategy
     this.pageLoadStrategy = 'normal';
-    if (Object.prototype.hasOwnProperty.call(capabilities, 'pageLoadStrategy')
-      && typeof capabilities.pageLoadStrategy === 'string') {
+    if (
+      Object.prototype.hasOwnProperty.call(capabilities, 'pageLoadStrategy')
+      && typeof capabilities.pageLoadStrategy === 'string'
+    ) {
       this.pageLoadStrategy = capabilities.pageLoadStrategy;
     } else {
       capabilities.pageLoadStrategy = 'normal';
@@ -223,9 +219,11 @@ class Session {
       'unhandledPromptBehaviour',
     ];
 
-    if (!capabilities
+    if (
+      !capabilities
       || capabilities.constructor !== Object
-      || Object.keys(capabilities).length === 0) {
+      || Object.keys(capabilities).length === 0
+    ) {
       throw new InvalidArgument(command);
     }
 
@@ -234,8 +232,10 @@ class Session {
     if (capabilities.alwaysMatch !== undefined) {
       defaultCapabilities.forEach((key) => {
         if (Object.prototype.hasOwnProperty.call(capabilities.alwaysMatch, key)) {
-          const validatedCapability = capabilityValidator
-            .validate(capabilities.alwaysMatch[key], key);
+          const validatedCapability = capabilityValidator.validate(
+            capabilities.alwaysMatch[key],
+            key,
+          );
           if (validatedCapability) requiredCapabilities[key] = capabilities.alwaysMatch[key];
           else {
             throw new InvalidArgument(command);
@@ -248,8 +248,10 @@ class Session {
     let allMatchedCapabilities = capabilities.firstMatch;
     if (allMatchedCapabilities === undefined) {
       allMatchedCapabilities = [{}];
-    } else if (allMatchedCapabilities.constructor.name.toLowerCase() !== 'array'
-      || allMatchedCapabilities.length === 0) {
+    } else if (
+      allMatchedCapabilities.constructor.name.toLowerCase() !== 'array'
+      || allMatchedCapabilities.length === 0
+    ) {
       throw new InvalidArgument(command);
     }
     /**
@@ -261,8 +263,10 @@ class Session {
     allMatchedCapabilities.forEach((indexedFirstMatchCapability) => {
       const validatedFirstMatchCapability = {};
       Object.keys(indexedFirstMatchCapability).forEach((key) => {
-        const validatedCapability = capabilityValidator
-          .validate(indexedFirstMatchCapability[key], key);
+        const validatedCapability = capabilityValidator.validate(
+          indexedFirstMatchCapability[key],
+          key,
+        );
         if (validatedCapability) {
           validatedFirstMatchCapability[key] = indexedFirstMatchCapability[key];
         }
@@ -286,7 +290,6 @@ class Session {
 
     return matchedCapabilities;
   }
-
 
   // merges capabilities in both
   static mergeCapabilities(primary, secondary) {
@@ -399,10 +402,12 @@ class Session {
             throw new InvalidArgument();
         }
       } catch (error) {
-        if (error instanceof DOMException
+        if (
+          error instanceof DOMException
           || error instanceof SyntaxError
           || error instanceof XPathException
-        ) throw new Error('invalid selector'); // TODO: add invalidSelector error class
+        ) throw new Error('invalid selector');
+        // TODO: add invalidSelector error class
         else throw new UnknownError(); // TODO: add unknown error class
       }
     } while (endTime > new Date() && elements.length < 1);
@@ -413,6 +418,40 @@ class Session {
       this.browser.knownElements.push(foundElement);
     });
     return result;
+  }
+
+  executeScript(script, args) {
+    const argumentList = [];
+
+    args.forEach((arg) => {
+      if (arg[ELEMENT] !== undefined && arg[ELEMENT] !== null) {
+        const element = this.browser.getKnownElement(arg[ELEMENT]);
+        argumentList.push(element.element);
+      } else {
+        argumentList.push(arg);
+      }
+    });
+
+    const scriptFunc = new Function('arguments', script);
+
+    const vm = new VM({
+      timeout: this.timeouts.script,
+      sandbox: {
+        window: this.browser.dom.window,
+        document: this.browser.dom.window.document,
+        func: scriptFunc,
+        arguments: argumentList,
+      },
+    });
+    let value;
+    return new Promise((resolve, reject) => {
+      try {
+        value = vm.run('func(arguments);');
+        resolve(value);
+      } catch (err) {
+        reject(err);
+      }
+    });
   }
 }
 

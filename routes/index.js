@@ -1,4 +1,3 @@
-
 // routers
 const router = require('express').Router();
 const elements = require('./elements/elements');
@@ -27,7 +26,7 @@ router.post('/session', async (req, res, next) => {
   const sessionsManager = req.app.get('sessionsManager');
   try {
     // not sure if this conditional is needed here, body-parser checks for this anyway
-    if (!await utility.validate.requestBodyType(req, 'application/json')) {
+    if (!(await utility.validate.requestBodyType(req, 'application/json'))) {
       throw new InvalidArgument('POST /session');
     }
     const newSession = sessionsManager.createSession(req.body);
@@ -69,21 +68,19 @@ router.get('/session/:sessionId/title', async (req, res, next) => {
   }
 });
 
-// this still needs to be completed, no functionality at the moment
 router.post('/session/:sessionId/execute/sync', async (req, res, next) => {
-  console.log(req.body);
-
-  // let response = null;
-  // const release = await req.session.mutex.acquire();
-  // try {
-  //   req.sessionRequest.command = COMMANDS.EXECUTE_SCRIPT;
-  //   const result = req.session.process(req.sessionRequest);
-
-  // } catch (err) {
-
-  // } finally {
-  //   release();
-  // }
+  let response = null;
+  const release = await req.session.mutex.acquire();
+  try {
+    req.sessionRequest.command = COMMANDS.EXECUTE_SCRIPT;
+    const result = await req.session.process(req.sessionRequest);
+    response = { value: result };
+    res.json(response);
+  } catch (err) {
+    next(err);
+  } finally {
+    release();
+  }
 });
 
 // element(s) routes
