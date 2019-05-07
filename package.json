@@ -17,12 +17,13 @@
     "os": "^0.1.1",
     "ping": "^0.2.2",
     "pkg": "^4.3.7",
+    "request": "^2.88.0",
     "selenium-webdriver": "^4.0.0-alpha.1",
     "uuid": "^3.3.2",
     "validator": "^10.11.0",
     "validator-js": "^0.2.1",
-    "winston": "^3.2.1",
-    "request": "^2.88.0"
+    "vm2": "^3.8.1",
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "axios": "^0.18.0",
@@ -44,5 +45,8 @@
   },
   "bin": "bin.js",
   "author": "miguel roncancio",
-  "license": "ISC"
+  "license": "ISC",
+  "pkg": {
+    "assets": "./node_modules/vm2"
+  }
 }
