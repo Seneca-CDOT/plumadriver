@@ -64,9 +64,9 @@ class WebElement {
       'sortable',
       'spellcheck',
       'translate',
-    ]
+    ];
 
-    if (booleanAtrtibutes.includes(name)) return this.element.hasAttribute(name).toString(); 
+    if (booleanAtrtibutes.includes(name)) return this.element.hasAttribute(name).toString();
     return this.element.getAttribute(name);
   }
 }
