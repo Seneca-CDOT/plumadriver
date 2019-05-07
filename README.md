@@ -2,7 +2,7 @@
 
 PlumaDriver is a JavaScript implementation of the W3C WebDriver standards using 
 the JSDOM library to emulate the remote end node (browser) in the communication chain of nodes between the local end (client) and remote end. More information on this can be found at the [W3C webdriver protocol](https://www.w3.org/TR/webdriver1/#protocol) website.
-More information about JSDOM can be found <a href="https://github.com/jsdom/jsdom">here.</a>
+More information about JSDOM can be found [here](https://github.com/jsdom/jsdom).</a>
 The project is still in the development stage.
 
 **NOTE:** This project is still in the development stage. You are welcome to use plumadriver, however, keep in mind that there are still unimplemented features and bugs to be fixed. If you would like to suggest a feature to implement or an issue that needs to be address, please create an issue and the team will address it as soon as possible.
@@ -50,6 +50,7 @@ The following endpoints require browser rendering capabilities and will therefor
 
 ### Requirements:
  - Latest version of NodeJS
+ - npm pkg  module `npm install pkg -g`
 
 From the command line: 
 
@@ -67,30 +68,57 @@ From the command line:
 
 ## Using Plumadriver
 
-Plumadriver can be used by running the executable created above and making requests with any HTTP client. However, we recommend using Selenium as it makes the process significantly easier. The Selenium WebDriver Java client extension for plumadriver available [here](https://github.com/Seneca-CDOT/plumadriver/tree/master/selenium/Java). Note that this extension was created for this project and is not part of the official selenium build.  
+Plumadriver is an executable that Selenium WebDriver uses to control [jsdom](https://github.com/jsdom/jsdom) .If you are not familiar with Selenium WebDriver, you can read more about it [here](https://www.seleniumhq.org/projects/webdriver/). The Selenium WebDriver Java client extension for plumadriver is available [here](https://github.com/Seneca-CDOT/plumadriver/tree/master/selenium/Java). Note that this extension was created for this project and is not part of the official Selenium build.  
 
-The plumadriver executable will attempt to start the server on port 3000 by default. The server can be started on a user specified port by passing the `--port=<user_specified_port>` argument to the `plumadriver` executable.
+Plumadriver can also be started from the command line without webdriver. The plumadriver executable will attempt to start the server on port 3000 by default. The server can be started on a user specified port by passing the `--port=<user_specified_port>` flag to the `plumadriver` executable.
 
-### Functionality with the Selenium Webdriver API
+### Functionality with the Selenium Webdriver Java API
 
-As previously mentioned, a selenium Java API extension for plumadriver is currently under development. As a result, no pull request has been made to the selenium commnunity and therefore plumadriver is not part of the supported drivers included in the official Selenium build. In the meanwhile, you can work with selenium and plumadriver by adding the pluma.jar file to your project libraries in addition to the official selenium build. The pluma.jar file can be found under the /selenium/java directory of this repo.
+As previously mentioned, a selenium Java API extension for plumadriver is currently under development. As a result, no pull request has been made to the Selenium commnunity and therefore plumadriver is not part of the supported drivers included in the official Selenium build. In the meanwhile, you can work with selenium and plumadriver by adding the pluma.jar file to your project libraries in addition to the official selenium build. The pluma.jar file can be found under the /selenium/java directory of this repo.
 
 The executable path must be set prior to running your code. This is the path to the executable created in the **Building Plumadriver** section above. The path can be set using:  
 `System.setProperty("webdriver.pluma.driver","<path_to_executable>");`
 
 ### Sample Test
 ```java
-// Add plumadriver executable path
+// Set plumadriver executable path
 System.setProperty("webdriver.pluma.driver","<path_to_executable>");
 
+// Create a driver Instance 
 Webdriver driver = new PlumaDriver();
-driver.get("http://www.example.com");
+
+driver.get("http://www.example.com"); // navigate to 
 WebElement e = driver.findelement(By.tagName("p"));
 String text = e.getText();
 System.out.println(text);
 driver.quit();
 ```
+### Plumadriver lifetime
 
+The PlumaDriver class will create a server instance at creation and destroy it when the quit() method is called. This means that for every instance of this class a separate server will be created resulting in a significant amount of resource usage. To reduce the resource consumption, the following options are available:
+
+PlumaDriverService:
+```java
+PlumaDriverService service = new PlumaDriverService() {
+ .usingDriverExecuteable(new File("path/to/plumadriver/"))
+ .usingAnyFreePort()
+ .build();
+
+service.start();
+
+ WebDriver pluma = new RemoteWebDriver(service.getUrl(), new PlumaOptions());
+```
+Starting the Plumadriver server directly from the terminal and connecting it to the Remote WebDriver:
+
+Terminal:
+```bash
+./plumadriver --port=4040
+```
+Java:  
+```java
+WebDriver pluma = new RemoteWebDriver("http://127.0.0.1:4040", new PlumaOptions());
+pluma.get("http://www.example.com");
+```
 
 ## Project Structure
 
