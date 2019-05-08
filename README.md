@@ -28,6 +28,8 @@ The goal of this project is to provide an automation tool for jsdom in order to 
 - [x] **Get Element Tag Name:** POST 	/session/{session id}/element/{element id}/{name}
 - [x] **Get All Cookies:** GET 	/session/{session id}/cookie
 - [x] **Add Cookie:** POST 	/session/{session id}/cookie
+- [x] **Execute Script:** POST 	/session/{session id}/execute/sync
+- [x] **Get Element Attribute:** POST 	/session/{session id}/element/{element id}/attribute/{name}
 
 The following endpoints require browser rendering capabilities and will therefore not be implemented for plumadriver. 
 
