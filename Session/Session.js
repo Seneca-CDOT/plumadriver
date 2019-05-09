@@ -39,64 +39,68 @@ class Session {
   async process({ command, parameters, urlVariables }) {
     let response = null;
 
-    return new Promise(async (resolve) => {
-      switch (command) {
-        case COMMANDS.DELETE_SESSION:
-          await this.browser.close();
-          break;
-        case COMMANDS.NAVIGATE_TO:
-          await this.navigateTo(parameters);
-          break;
-        case COMMANDS.GET_CURRENT_URL:
-          response = this.browser.getURL();
-          break;
-        case COMMANDS.GET_TITLE:
-          response = this.browser.getTitle();
-          break;
-        case COMMANDS.FIND_ELEMENT:
-        case COMMANDS.FIND_ELEMENTS:
-          response = this.elementRetrieval(
-            this.browser.dom.window.document, // start node
-            parameters.using, // strategy
-            parameters.value, // selector
-          );
-          break;
-        case COMMANDS.GET_ELEMENT_TEXT:
-          response = this.browser.getKnownElement(urlVariables.elementId).getText();
-          break;
-        case COMMANDS.FIND_ELEMENTS_FROM_ELEMENT:
-        case COMMANDS.FIND_ELEMENT_FROM_ELEMENT:
-          response = this.elementRetrieval(
-            this.browser.getKnownElement(urlVariables.elementId),
-            parameters.using,
-            parameters.value,
-          );
-          break;
-        case COMMANDS.SET_TIMEOUTS:
-          break;
-        case COMMANDS.GET_TIMEOUTS:
-          break;
-        case COMMANDS.GET_ALL_COOKIES:
-          response = this.browser.getCookies();
-          break;
-        case COMMANDS.ADD_COOKIE:
-          response = this.browser.addCookie(parameters.cookie);
-          break;
-        case COMMANDS.GET_ELEMENT_TAG_NAME:
-          response = this.browser.getKnownElement(urlVariables.elementId).getTagName();
-          break;
-        case COMMANDS.GET_ELEMENT_ATTRIBUTE:
-          response = this.browser
-            .getKnownElement(urlVariables.elementId)
-            .getElementAttribute(urlVariables.attributeName);
-          break;
-        case COMMANDS.EXECUTE_SCRIPT:
-          response = await this.executeScript(parameters.script, parameters.args);
-          break;
-        default:
-          break;
+    return new Promise(async (resolve, reject) => {
+      try {
+        switch (command) {
+          case COMMANDS.DELETE_SESSION:
+            await this.browser.close();
+            break;
+          case COMMANDS.NAVIGATE_TO:
+            await this.navigateTo(parameters);
+            break;
+          case COMMANDS.GET_CURRENT_URL:
+            response = this.browser.getURL();
+            break;
+          case COMMANDS.GET_TITLE:
+            response = this.browser.getTitle();
+            break;
+          case COMMANDS.FIND_ELEMENT:
+          case COMMANDS.FIND_ELEMENTS:
+            response = this.elementRetrieval(
+              this.browser.dom.window.document, // start node
+              parameters.using, // strategy
+              parameters.value, // selector
+            );
+            break;
+          case COMMANDS.GET_ELEMENT_TEXT:
+            response = this.browser.getKnownElement(urlVariables.elementId).getText();
+            break;
+          case COMMANDS.FIND_ELEMENTS_FROM_ELEMENT:
+          case COMMANDS.FIND_ELEMENT_FROM_ELEMENT:
+            response = this.elementRetrieval(
+              this.browser.getKnownElement(urlVariables.elementId),
+              parameters.using,
+              parameters.value,
+            );
+            break;
+          case COMMANDS.SET_TIMEOUTS:
+            break;
+          case COMMANDS.GET_TIMEOUTS:
+            break;
+          case COMMANDS.GET_ALL_COOKIES:
+            response = this.browser.getCookies();
+            break;
+          case COMMANDS.ADD_COOKIE:
+            response = this.browser.addCookie(parameters.cookie);
+            break;
+          case COMMANDS.GET_ELEMENT_TAG_NAME:
+            response = this.browser.getKnownElement(urlVariables.elementId).getTagName();
+            break;
+          case COMMANDS.GET_ELEMENT_ATTRIBUTE:
+            response = this.browser
+              .getKnownElement(urlVariables.elementId)
+              .getElementAttribute(urlVariables.attributeName);
+            break;
+          case COMMANDS.EXECUTE_SCRIPT:
+            response = await this.executeScript(parameters.script, parameters.args);
+            break;
+          default:
+            break;
+        }
+        resolve(response);
+      } catch (err) {
+        reject(err);
       }
-      resolve(response);
     });
   }
 
@@ -125,7 +129,7 @@ class Session {
             resolve();
           } else {
             clearTimeout(timer); // clear timer before throwing
-            throw new Error('UnknownError'); // TODO create unknown error class, see W3C error codes
+            reject(err); // TODO create unknown error class, see W3C error codes
           }
         });
       }))();
@@ -432,6 +436,7 @@ class Session {
       }
     });
 
+    // eslint-disable-next-line no-new-func
     const scriptFunc = new Function('arguments', script);
 
     const vm = new VM({
