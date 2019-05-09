@@ -13,40 +13,57 @@ class CapabilityValidator {
       case 'browserVersion':
       case 'platformName':
         if (!util.validate.type(capability, 'string')) this.valid = false;
+        else this.valid = true;
         break;
       case 'acceptInsecureCerts':
         if (!util.validate.type(capability, 'boolean')) this.valid = false;
+        else this.valid = true;
         break;
       case 'pageLoadStrategy':
         if (typeof capability !== 'string') this.valid = false;
+        else this.valid = true;
+
         if (
-          capability !== 'none'
+          this.valid
+          && capability !== 'none'
           && capability !== 'eager'
-          && capability !== 'normal') this.valid = false;
+          && capability !== 'normal'
+        ) this.valid = false;
+
         break;
       case 'unhandledPromptBehavior':
         if (typeof capability !== 'string') this.valid = false;
+        else this.valid = true;
+
         if (
-          capability !== 'dismiss'
+          this.valid
+          && capability !== 'dismiss'
           && capability !== 'accept'
           && capability !== 'dismiss and notify'
           && capability !== 'accept and notify'
           && capability !== 'ignore'
         ) this.valid = false;
+
         break;
       case 'proxy':
         if (!util.validate.type(capability, 'object')) this.valid = false;
-        if (!CapabilityValidator.validateProxy(capability)) this.valid = false;
+        else this.valid = true;
+
+        if (this.valid && !CapabilityValidator.validateProxy(capability)) this.valid = false;
         break;
       case 'timeouts':
         if (!util.validate.type(capability, 'object')) this.valid = false;
+        else this.valid = true;
+
         Object.keys(capability).forEach((key) => {
           if (this.valid && !this.validateTimeouts(key, capability[key])) this.valid = false;
         });
         break;
       case 'plm:plumaOptions':
         if (capability.constructor !== Object) this.valid = false;
-        if (!CapabilityValidator.validatePlumaOptions(capability)) this.valid = false;
+        else this.valid = true;
+
+        if (this.valid && !CapabilityValidator.validatePlumaOptions(capability)) this.valid = false;
         break;
       default:
         this.valid = false;
@@ -67,15 +84,15 @@ class CapabilityValidator {
       },
       contentType(contentType) {
         let valid;
-        const validTypes = [
-          'text/html',
-          'application/xml',
-        ];
+        const validTypes = ['text/html', 'application/xml'];
 
         if (contentType.constructor === String) valid = true;
         else valid = false;
 
-        if (validTypes.includes(contentType) || contentType.substr(contentType.length - 4) === '+xml') {
+        if (
+          validTypes.includes(contentType)
+          || contentType.substr(contentType.length - 4) === '+xml'
+        ) {
           valid = true;
         } else valid = false;
 
@@ -89,7 +106,7 @@ class CapabilityValidator {
         return validator.isInt(quota);
       },
       runScripts(value) {
-        return (value.constructor === Boolean);
+        return value.constructor === Boolean;
       },
       resources(resources) {
         if (resources.constructor !== String) return false;
@@ -111,6 +128,8 @@ class CapabilityValidator {
     const timeoutTypes = ['script', 'pageLoad', 'implicit'];
     // check object contains valid properties
     if (!timeoutTypes.includes(key)) this.valid = false;
+    else this.valid = true;
+
     // check property values are non-zero and intgers
     if (this.valid) {
       if (!Number.isInteger(value) || value < 0) this.valid = false;
@@ -138,7 +157,8 @@ class CapabilityValidator {
       } else {
         switch (key) {
           case 'proxyType':
-            if (reqProxy[key] === 'pac') { // this portion of code could be written more cleanly...
+            if (reqProxy[key] === 'pac') {
+              // this portion of code could be written more cleanly...
               if (!Object.prototype.hasOwnProperty.call(reqProxy, 'proxyAutoConfig')) {
                 validProxy = false;
               }
@@ -170,8 +190,10 @@ class CapabilityValidator {
             }
             break;
           case 'socksVersion':
-            if (!reqProxy.proxyType === 'manual'
-              || !(Number.isInteger(reqProxy[key]) && reqProxy[key] > -1 && reqProxy[key] < 256)) {
+            if (
+              !reqProxy.proxyType === 'manual'
+              || !(Number.isInteger(reqProxy[key]) && reqProxy[key] > -1 && reqProxy[key] < 256)
+            ) {
               this.valid = false;
             }
             break;
