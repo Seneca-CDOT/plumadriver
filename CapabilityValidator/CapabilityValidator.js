@@ -1,5 +1,4 @@
 const validator = require('validator');
-const ping = require('ping');
 const util = require('../utils/utils');
 
 class CapabilityValidator {
@@ -12,12 +11,10 @@ class CapabilityValidator {
       case 'browserName':
       case 'browserVersion':
       case 'platformName':
-        if (!util.validate.type(capability, 'string')) this.valid = false;
-        else this.valid = true;
+        this.valid = util.validate.type(capability, 'string');
         break;
       case 'acceptInsecureCerts':
-        if (!util.validate.type(capability, 'boolean')) this.valid = false;
-        else this.valid = true;
+        this.valid = util.validate.type(capability, 'boolean');
         break;
       case 'pageLoadStrategy':
         if (typeof capability !== 'string') this.valid = false;
@@ -49,7 +46,7 @@ class CapabilityValidator {
         if (!util.validate.type(capability, 'object')) this.valid = false;
         else this.valid = true;
 
-        if (this.valid && !CapabilityValidator.validateProxy(capability)) this.valid = false;
+        if (!this.valid || !CapabilityValidator.validateProxy(capability)) this.valid = false;
         break;
       case 'timeouts':
         if (!util.validate.type(capability, 'object')) this.valid = false;
@@ -126,94 +123,92 @@ class CapabilityValidator {
 
   validateTimeouts(key, value) {
     const timeoutTypes = ['script', 'pageLoad', 'implicit'];
-    // check object contains valid properties
-    if (!timeoutTypes.includes(key)) this.valid = false;
-    else this.valid = true;
-
-    // check property values are non-zero and intgers
-    if (this.valid) {
-      if (!Number.isInteger(value) || value < 0) this.valid = false;
-    }
+    this.valid = timeoutTypes.includes(key);
+    this.valid = this.valid
+      ? (Number.isInteger(value) && value > 0)
+      : this.valid;
     return this.valid;
   }
 
   static validateProxy(reqProxy) {
     const proxyProperties = [
       'proxyType',
-      'proxyAutoConfig',
+      'proxyAutoConfigUrl',
       'ftpProxy',
       'httpProxy',
       'noProxy',
-      'sslproxy',
+      'sslProxy',
       'socksProxy',
       'socksVersion',
     ];
 
     let validProxy = true;
 
-    Object.keys(reqProxy).forEach((key) => {
-      if (!proxyProperties.includes(key)) {
-        validProxy = false;
-      } else {
-        switch (key) {
-          case 'proxyType':
-            if (reqProxy[key] === 'pac') {
-              // this portion of code could be written more cleanly...
-              if (!Object.prototype.hasOwnProperty.call(reqProxy, 'proxyAutoConfig')) {
+    validProxy = !util.validate.isEmpty(reqProxy);
+
+    if (validProxy) {
+      Object.keys(reqProxy).forEach((key) => {
+        if (validProxy) {
+          if (!proxyProperties.includes(key)) {
+            validProxy = false;
+          } else {
+            switch (key) {
+              case 'proxyType':
+                if (reqProxy[key] === 'pac') {
+                  validProxy = Object.prototype.hasOwnProperty.call(reqProxy, 'proxyAutoConfigUrl');
+                } else if (
+                  reqProxy[key] !== 'direct'
+                  && reqProxy[key] !== 'autodetect'
+                  && reqProxy[key] !== 'system'
+                  && reqProxy[key] !== 'manual'
+                ) validProxy = false;
+                break;
+              case 'proxyAutoConfigUrl':
+                validProxy = validProxy
+                  ? validator.isURL(reqProxy[key])
+                  : validProxy;
+                break;
+              case 'ftpProxy':
+              case 'httpProxy':
+              case 'sslProxy':
+                validProxy = (reqProxy.proxyType === 'manual');
+                validProxy = validProxy
+                  ? validator.isURL(reqProxy[key])
+                  : validProxy;
+
+                break;
+              case 'socksProxy':
+                validProxy = (reqProxy.proxyType === 'manual');
+                validProxy = validProxy
+                  ? Object.prototype.hasOwnProperty.call(reqProxy, 'socksVersion')
+                  : validProxy;
+
+                validProxy = validProxy
+                  ? validator.isURL(reqProxy[key])
+                  : validProxy;
+                break;
+              case 'socksVersion':
+                validProxy = (reqProxy.proxyType === 'manual');
+                validProxy = validProxy
+                  ? (Number.isInteger(reqProxy[key]) && reqProxy[key] > -1 && reqProxy[key] < 256)
+                  : validProxy;
+                break;
+              case 'noProxy':
+                validProxy = util.validate.type(reqProxy[key], 'array');
+                if (validProxy) {
+                  reqProxy[key].forEach((url) => {
+                    if (validProxy) validProxy = validator.isURL(url);
+                  });
+                }
+                break;
+              default:
                 validProxy = false;
-              }
-            } else if (
-              reqProxy[key] !== 'direct'
-              || reqProxy[key] !== 'autodetect'
-              || reqProxy[key] !== 'system'
-              || reqProxy[key] !== 'manual'
-            ) validProxy = false;
-            break;
-          case 'proxyautoConfigUrl':
-            if (!validator.isURL(reqProxy[key])) validProxy = false;
-            break;
-          case 'ftpProxy':
-          case 'httpProxy':
-          case 'sslProxy':
-            if (reqProxy.proxyType === 'manual') {
-              this.valid = CapabilityValidator.validateHost(reqProxy[key]);
             }
-            break;
-          case 'socksProxy':
-            if (reqProxy.proxyType === 'manual') {
-              if (!Object.prototype.hasOwnProperty.call(reqProxy, 'socksVersion')) {
-                this.valid = false;
-              } else {
-                const validHost = CapabilityValidator.validateHost(reqProxy[key]);
-                if (!validHost) this.valid = false;
-              }
-            }
-            break;
-          case 'socksVersion':
-            if (
-              !reqProxy.proxyType === 'manual'
-              || !(Number.isInteger(reqProxy[key]) && reqProxy[key] > -1 && reqProxy[key] < 256)
-            ) {
-              this.valid = false;
-            }
-            break;
-          default:
-            this.valid = false;
+          }
         }
-      }
-    });
+      });
+    }
     return validProxy;
-  }
-
-  static validateHostAndPort(host) {
-    let validHost;
-
-    ping.sys.probe(host, (isAlive) => {
-      if (isAlive) validHost = true;
-      else validHost = false;
-    });
-
-    return validHost;
   }
 }
 
