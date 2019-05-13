@@ -13,8 +13,8 @@
     "jsdom": "^13.2.0",
     "minimist": "^1.2.0",
     "os": "^0.1.1",
-    "ping": "^0.2.2",
     "pkg": "^4.3.7",
+    "request": "^2.88.0",
     "selenium-webdriver": "^4.0.0-alpha.1",
     "uuid": "^3.3.2",
     "validator": "^10.11.0",
@@ -35,7 +35,7 @@
     "should": "^13.2.3"
   },
   "scripts": {
-    "test": "mocha --grep \"index.js\"",
+    "test": "mocha --exit",
     "lint": "eslint",
     "start": "node pluma-webdriver.js"
   },
