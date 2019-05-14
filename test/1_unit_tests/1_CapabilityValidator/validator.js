@@ -1,6 +1,7 @@
 const CapabilityValidator = require('../../../CapabilityValidator/CapabilityValidator');
 const chai = require('chai');
 const { expect } = chai;
+const validator = require('validator');
 
 const testingData = [
     'asdfasdfasd'
@@ -17,6 +18,10 @@ const testingData = [
     ,'dismiss and notify'
     ,'accept and notify'
     ,'ignore'
+    ,'http://example.com'
+    ,'text/html'
+    ,'application/xml'
+    ,'useable'
 ];
 
 const runTestAgainstTestData = (func) => {
@@ -25,13 +30,13 @@ const runTestAgainstTestData = (func) => {
     });
 }
 
-const validator = new CapabilityValidator();
+const capabilityValidator = new CapabilityValidator();
 
 
 describe('Testing CapabilityValidator class', function () {
 
     beforeEach(function(){
-        validator.valid = true;
+        capabilityValidator.valid = true;
     });
 
     describe('Testing browserName, browserVersion & platformName validation', function() {
@@ -42,9 +47,9 @@ describe('Testing CapabilityValidator class', function () {
             it(`${capability} should only accept string values`,() => {
                 runTestAgainstTestData((data)=>{
                     if(data.constructor.name.toLowerCase() === 'string')
-                        expect(validator.validate(data, capability)).to.be.true;
+                        expect(capabilityValidator.validate(data, capability)).to.be.true;
                     else
-                        expect(validator.validate(data, capability)).to.be.false;
+                        expect(capabilityValidator.validate(data, capability)).to.be.false;
                 });
             });
         });   
@@ -54,9 +59,9 @@ describe('Testing CapabilityValidator class', function () {
         it('should only accept boolean values', function(){
             runTestAgainstTestData((data)=>{
                 if (data.constructor.name.toLowerCase() === 'boolean')
-                    expect(validator.validate(data, 'acceptInsecureCerts')).to.be.true;
+                    expect(capabilityValidator.validate(data, 'acceptInsecureCerts')).to.be.true;
                 else
-                    expect(validator.validate(data, 'acceptInsecureCerts')).to.be.false;
+                    expect(capabilityValidator.validate(data, 'acceptInsecureCerts')).to.be.false;
             });
         });
     });
@@ -65,13 +70,13 @@ describe('Testing CapabilityValidator class', function () {
         runTestAgainstTestData((data) => {
             if(['normal','eager', 'none'].includes(data)) {
                 it(`should accept ${data}`, function() {
-                    expect(validator.validate(data, 'pageLoadStrategy')).to.be.true;
+                    expect(capabilityValidator.validate(data, 'pageLoadStrategy')).to.be.true;
                     
                 });
                 
             } else {
                 it(`should reject ${data}`, function() {
-                    expect(validator.validate(data, 'pageLoadStrategy')).to.be.false;  
+                    expect(capabilityValidator.validate(data, 'pageLoadStrategy')).to.be.false;  
                 });
             }
         });
@@ -88,11 +93,11 @@ describe('Testing CapabilityValidator class', function () {
                 'ignore'].includes(data)
             ) {
                 it(`should accept ${data}`, function () {
-                    expect(validator.validate(data, 'unhandledPromptBehavior')).to.be.true;
+                    expect(capabilityValidator.validate(data, 'unhandledPromptBehavior')).to.be.true;
                 });
             } else {
                 it(`should reject ${data}`, function () {
-                    expect (validator.validate(data, 'unhandledPromptBehavior')).to.be.false;
+                    expect (capabilityValidator.validate(data, 'unhandledPromptBehavior')).to.be.false;
                 });
             }
         });
@@ -180,7 +185,7 @@ describe('Testing CapabilityValidator class', function () {
 
         runTestAgainstTestData((data) => {
             it(`should reject ${data}`, function(){
-                expect(validator.validate(data, 'proxy')).to.be.false;
+                expect(capabilityValidator.validate(data, 'proxy')).to.be.false;
             });
         });
         
@@ -188,7 +193,7 @@ describe('Testing CapabilityValidator class', function () {
         proxyTypes.forEach((obj) => {
             acceptReject = obj.expectValid ? 'accept' : 'reject';
             it(`should ${acceptReject} ${obj.name}`, function () {
-                expect(validator.validate(obj.value, 'proxy')).to.be[obj.expectValid.toString()];
+                expect(capabilityValidator.validate(obj.value, 'proxy')).to.be[obj.expectValid.toString()];
             });
         });
     });
@@ -244,7 +249,7 @@ describe('Testing CapabilityValidator class', function () {
                     \ value: ${test.value[property].toString()},
                     \ type: ${test.value[property].constructor.name}`,
                  function(){
-                    const pass = validator.validateTimeouts(property, test.value[property]);
+                    const pass = capabilityValidator.validateTimeouts(property, test.value[property]);
                     expect (pass).to.be[test.expectValid.toString()];
                 });
             });
@@ -252,9 +257,64 @@ describe('Testing CapabilityValidator class', function () {
     });
 
     describe('Testing PlumaOptions validation', function(){
-        const plumaOptionsTestData = {
+        const testData = [
+            'http://example.com',
+            true,
+            123456,
+            () => {},
+            'text/html',
+            'useable',
+            'application/xml',
+        ];
 
-        }
+        const options = [
+            'url', 
+            'referrer', 
+            'contentType',
+            'includeNodeLocations',
+            'storageQuota',
+            'runScripts',
+            'resources',
+        ];
+
+        options.forEach((option)=>{
+            testData.forEach((data)=>{
+                const valid = capabilityValidator.validate({[option]: data}, 'plm:plumaOptions');
+                let expectValid = false;
+                switch(option) {
+                    case 'url':
+                    case 'referrer':
+                        try {
+                            expectValid = validator.isURL(data);
+                        } catch (err) {
+                            expectValid = false;
+                        }
+                        break;
+                    case 'contentType':
+                        expectValid = (data === 'text/html' || data === 'application/xml');
+                        break;
+                    case 'includeNodeLocations':
+                    case 'runScripts':
+                        expectValid = (data.constructor === Boolean);
+                        break;
+                    case 'storageQuota':
+                        expectValid = Number.isInteger(data);
+                        break;
+                    case 'resources':
+                        expectValid = (data === 'useable');
+                        break;
+                    default:
+                        break;
+                }
+                const acceptReject = expectValid
+                    ? 'accept'
+                    : 'reject';
+                
+                it(`should ${acceptReject} ${option} with value ${data}`, function() {
+                    expect(valid).to.be[expectValid.toString()];
+                });
+            });
+        });
     });
 });
 
