@@ -100,7 +100,7 @@ class CapabilityValidator {
         return false;
       },
       storageQuota(quota) {
-        return validator.isInt(quota);
+        return Number.isInteger(quota);
       },
       runScripts(value) {
         return value.constructor === Boolean;
@@ -115,7 +115,11 @@ class CapabilityValidator {
     Object.keys(options).forEach((key) => {
       if (!Object.keys(allowedOptions).includes(key)) validatedOptions = false;
       if (validatedOptions) {
-        validatedOptions = allowedOptions[key](options[key]);
+        try {
+          validatedOptions = allowedOptions[key](options[key]);
+        } catch (err) {
+          validatedOptions = false;
+        }
       }
     });
     return validatedOptions;
