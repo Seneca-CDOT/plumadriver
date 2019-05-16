@@ -1,3 +1,8 @@
+const fs = require('fs');
+
+const {
+  InvalidArgument,
+} = require('../Error/errors');
 
 exports.validate = {
   requestBodyType(incomingMessage, type) {
@@ -23,5 +28,16 @@ exports.validate = {
   },
   isEmpty(obj) {
     return (Object.keys(obj).length === 0);
+  },
+};
+
+exports.fileSystem = {
+  pathExists(path) {
+    return new Promise((res, rej) => {
+      fs.access(path, fs.F_OK, (err) => {
+        if (err) rej(new InvalidArgument());
+      });
+      res(true);
+    });
   },
 };
