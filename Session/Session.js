@@ -94,6 +94,9 @@ class Session {
           case COMMANDS.EXECUTE_SCRIPT:
             response = await this.executeScript(parameters.script, parameters.args);
             break;
+          case COMMANDS.ELEMENT_SEND_KEYS:
+            await this.sendKeysToElement(parameters.text, urlVariables.elementId);
+            break;
           default:
             break;
         }
@@ -102,6 +105,19 @@ class Session {
         reject(err);
       }
     });
+  }
+
+  sendKeysToElement(text, elementId) {
+    if (text === undefined) throw new InvalidArgument();
+    const webElement = this.browser.getKnownElement(elementId);
+    const { element } = webElement;
+    if (!webElement.isInteractable() && element.) throw new Error('element not interactable');
+    if (this.browser.activeElement !== element) element.focus();
+
+    switch (element) {
+
+    }
+    
   }
 
   async navigateTo({ url }) {

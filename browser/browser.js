@@ -14,6 +14,7 @@ class Browser {
     this.options = Browser.configureJSDOMOptions(capabilties);
     this.configureBrowser(this.options);
     this.knownElements = [];
+    this.activeElement = this.dom.window.document.activeElement;
   }
 
 
@@ -44,6 +45,7 @@ class Browser {
     }
     // webdriver-active property (W3C)
     this.dom.window.navigator.webdriver = true;
+    this.activeElement = this.dom.window.document.activeElement;
   }
 
   static configureJSDOMOptions(capabilities) {
