@@ -4,11 +4,20 @@ const os = require('os');
 const { Mutex } = require('async-mutex');
 const request = require('request');
 const { VM } = require('vm2');
+const { JSDOM } = require('jsdom');
 
 const Browser = require('../browser/browser.js');
 const WebElement = require('../WebElement/WebElement.js');
 const { COMMANDS } = require('../commands/commands');
 
+// custom
+const { addFileList } = require('../jsdom_extensions/addFileList');
+const utils = require('../utils/utils');
+
+// DOM specific
+const { Event } = (new JSDOM()).window;
+
+// W3C
 const ELEMENT = 'element-6066-11e4-a52e-4f735466cecf';
 
 // errors
@@ -108,16 +117,52 @@ class Session {
   }
 
   sendKeysToElement(text, elementId) {
-    if (text === undefined) throw new InvalidArgument();
-    const webElement = this.browser.getKnownElement(elementId);
-    const { element } = webElement;
-    if (!webElement.isInteractable() && element.) throw new Error('element not interactable');
-    if (this.browser.activeElement !== element) element.focus();
+    return new Promise((resolve, reject) => {
+      const webElement = this.browser.getKnownElement(elementId);
+      const { element } = webElement;
+      let files = [];
 
-    switch (element) {
+      if (text === undefined) reject(new InvalidArgument());
 
-    }
-    
+      if (!webElement.isInteractable() || element.getElementAttribute('contenteditable') !== 'true') {
+        reject(new InvalidArgument('Element is not interactable')); // TODO: create new error class
+      }
+
+      if (this.browser.activeElement !== element) element.focus();
+
+      if (element.name.toLowerCase() === 'input') {
+        if (text.constructor.name.toLowerCase() !== 'string') reject(new InvalidArgument());
+        // file input
+        if (element.getElementAttribute('type') === 'file') {
+          files = text.split('\n');
+          if (files.length === 0) throw new InvalidArgument();
+          if (
+            files.length === 0
+            || (!element.hasAttribute('multiple') && files.length !== 1)
+          ) throw new InvalidArgument();
+
+          files.forEach(async (file) => {
+            await utils.fileSystem.pathExists(file);
+          });
+          addFileList(element, files);
+          element.dispatchEvent(new Event('input'));
+          element.dispatchEvent(new Event('change'));
+        } else {
+          if (
+            !element.value
+            || element.getElementAttribute('readonly')
+          ) throw new Error('element not interactable'); // TODO: create error class
+          // TODO: add check to see if element is mutable, reject with element not interactable
+          element.value = text;
+        }
+        resolve(null);
+      } else {
+        // TODO: text needs to be encoded before it is inserted into the element
+        // innerHTML, especially important since js code can be inserted in here and executed
+        element.innerHTML += text;
+        resolve(null);
+      }
+    });
   }
 
   async navigateTo({ url }) {
