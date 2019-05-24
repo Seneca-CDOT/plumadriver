@@ -15,7 +15,7 @@ const { addFileList } = require('../jsdom_extensions/addFileList');
 const utils = require('../utils/utils');
 
 // DOM specific
-const { Event } = (new JSDOM()).window;
+const { Event } = new JSDOM().window;
 
 // W3C
 const ELEMENT = 'element-6066-11e4-a52e-4f735466cecf';
@@ -122,24 +122,22 @@ class Session {
       const { element } = webElement;
       let files = [];
 
+
       if (text === undefined) reject(new InvalidArgument());
 
-      if (!webElement.isInteractable() || element.getElementAttribute('contenteditable') !== 'true') {
+      if (!webElement.isInteractable() && element.getAttribute('contenteditable') !== 'true') {
         reject(new InvalidArgument('Element is not interactable')); // TODO: create new error class
       }
 
       if (this.browser.activeElement !== element) element.focus();
 
-      if (element.name.toLowerCase() === 'input') {
+      if (element.tagName.toLowerCase() === 'input') {
         if (text.constructor.name.toLowerCase() !== 'string') reject(new InvalidArgument());
         // file input
-        if (element.getElementAttribute('type') === 'file') {
+        if (element.getAttribute('type') === 'file') {
           files = text.split('\n');
           if (files.length === 0) throw new InvalidArgument();
-          if (
-            files.length === 0
-            || (!element.hasAttribute('multiple') && files.length !== 1)
-          ) throw new InvalidArgument();
+          if (files.length === 0 || (!element.hasAttribute('multiple') && files.length !== 1)) throw new InvalidArgument();
 
           files.forEach(async (file) => {
             await utils.fileSystem.pathExists(file);
@@ -147,14 +145,20 @@ class Session {
           addFileList(element, files);
           element.dispatchEvent(new Event('input'));
           element.dispatchEvent(new Event('change'));
+        } else if (element.getAttribute('type') === 'text') {
+          element.value += text;
+          element.dispatchEvent(new Event('input'));
+          element.dispatchEvent(new Event('change'));
         } else {
           if (
-            !element.value
-            || element.getElementAttribute('readonly')
+            !Object.prototype.hasOwnProperty.call(element, 'value')
+            || element.getAttribute('readonly')
           ) throw new Error('element not interactable'); // TODO: create error class
           // TODO: add check to see if element is mutable, reject with element not interactable
           element.value = text;
         }
+        element.dispatchEvent(new Event('input'));
+        element.dispatchEvent(new Event('change'));
         resolve(null);
       } else {
         // TODO: text needs to be encoded before it is inserted into the element
