@@ -1,14 +1,11 @@
 # PlumaDriver
 
-PlumaDriver is a JavaScript implementation of the W3C WebDriver standards using 
-the JSDOM library to emulate the remote end node (browser) in the communication chain of nodes between the local end (client) and remote end. More information on this can be found at the [W3C webdriver protocol](https://www.w3.org/TR/webdriver1/#protocol) website.
-More information about JSDOM can be found [here](https://github.com/jsdom/jsdom).</a>
-The project is still in the development stage.
+PlumaDriver is a JavaScript implementation of the W3C WebDriver standard for the jsdom library. More information on this can be found at the [W3C webdriver protocol](https://www.w3.org/TR/webdriver1/#protocol) website. More information about jsdom can be found [here](https://github.com/jsdom/jsdom).
 
-**NOTE:** This project is still in the development stage. You are welcome to use plumadriver, however, keep in mind that there are still unimplemented features and bugs to be fixed. If you would like to suggest a feature to implement or an issue that needs to be address, please create an issue and the team will address it as soon as possible.
+**NOTE:** This project is still in the development stage. You are welcome to use plumadriver, however, keep in mind that there are still unimplemented features and bugs to be fixed. If you would like to suggest a feature to implement or an issue that needs to be addressed, please create an issue and the team will address it as soon as possible.
 
 ## Objective
-The goal of this project is to provide an automation tool for jsdom in order to load test web applications without the overhead of modern web browsers. An extension to [Selenium WebDriver](https://github.com/SeleniumHQ/selenium) is being developed alongside plumadriver. Note that this extension was created for this project and is not part of the official Selenium WebDriver build. It is important to keep in mind that jsdom is not intended to be a full rendering browser but rather emulate enough of a browser to be useful for testing and webscraping applications. As a result, standard-specified endpoints which require browser rendering capabilities will not be implemented.
+The goal of this project is to provide an automation tool for jsdom in order to load test web applications without the overhead of modern web browsers. Plumadriver can be used with the [Selenium client](https://www.seleniumhq.org/), however, at the time of writing there is only a Java language binding. Additional language bindings will be developed in the future. Note that this selenium extension was created for this project and is not part of the official Selenium WebDriver build. It is important to keep in mind that jsdom is not intended to be a full rendering browser but rather emulate enough of a browser to be useful for testing and webscraping applications. As a result, standard-specified endpoints which require browser rendering capabilities will not be implemented.
 
 ## Endpoints
 
@@ -51,7 +48,7 @@ The following endpoints require browser rendering capabilities and will therefor
 ## Building Plumadriver
 
 ### Requirements:
- - Latest version of NodeJS
+ - Latest stable version of NodeJS
  - npm pkg  module `npm install pkg -g`
 
 From the command line: 
@@ -68,16 +65,13 @@ From the command line:
     
  The executable should appear in the project root directory.
 
+## Getting Started
+To get started with plumadriver, you will need to either download or build the plumadriver executable. The most current build can be downloaded [here](). If you would rather build plumadriver from the source, follow the instructions in the [Building PlumaDriver]() section.
+
+Currently, plumadriver can only be used with the Java language binding for the Selenium client. If you are not familiar with Selenium WebDriver, you can read more about it [here](https://www.seleniumhq.org/projects/webdriver/). The Java language binding for the Selenium client can be found [here](https://github.com/Seneca-CDOT/plumadriver/tree/master/selenium/Java). Because of the experimental state of this project, a pull request has not been made to the Selenium commnunity and therefore plumadriver is not part of the supported drivers included in the official Selenium build. In the meanwhile, you can work with selenium and plumadriver by adding the pluma.jar file to your project libraries in addition to the [official selenium build](https://www.seleniumhq.org/download/). The pluma.jar file can be found under the /selenium/java directory of this repo.
+
+
 ## Using Plumadriver
-
-Plumadriver is an executable that Selenium WebDriver uses to control [jsdom](https://github.com/jsdom/jsdom) .If you are not familiar with Selenium WebDriver, you can read more about it [here](https://www.seleniumhq.org/projects/webdriver/). The Selenium WebDriver Java client extension for plumadriver is available [here](https://github.com/Seneca-CDOT/plumadriver/tree/master/selenium/Java). Note that this extension was created for this project and is not part of the official Selenium build.  
-
-Plumadriver can also be started from the command line without webdriver. The plumadriver executable will attempt to start the server on port 3000 by default. The server can be started on a user specified port by passing the `--port=<user_specified_port>` flag to the `plumadriver` executable.
-
-### Functionality with the Selenium Webdriver Java API
-
-As previously mentioned, a selenium Java API extension for plumadriver is currently under development. As a result, no pull request has been made to the Selenium commnunity and therefore plumadriver is not part of the supported drivers included in the official Selenium build. In the meanwhile, you can work with selenium and plumadriver by adding the pluma.jar file to your project libraries in addition to the official selenium build. The pluma.jar file can be found under the /selenium/java directory of this repo.
-
 The executable path must be set prior to running your code. This is the path to the executable created in the **Building Plumadriver** section above. The path can be set using:  
 `System.setProperty("webdriver.pluma.driver","<path_to_executable>");`
 
