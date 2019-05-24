@@ -73,7 +73,6 @@ element.get('/attribute/:name', async (req, res, next) => {
   try {
     const result = await req.session.process(req.sessionRequest);
     const response = { value: result };
-    console.log(response);
     res.json(response);
   } catch (err) {
     next(err);
