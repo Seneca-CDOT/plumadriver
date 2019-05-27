@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Plumadriver Test Page</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900"
+      rel="stylesheet"
+    />
+    <script>
+      window.onload = () => {
+        // console.log('ONLOAD SHOULD EXECUTE THIRD');
+        // let element = document.body.querySelector('#test');
+        // if (window.confirm('Click OK or CANCEL')) {
+        //   element.innerHTML = 'OK CLICKED';
+        // } else {
+        //   element.innerHTML = 'CANCEL CLICKED';
+        // }
+        // document.body.appendChild(element);
+      };
+      console.log('THIS SHOULD EXECUTE FIRST');
+    </script>
+  </head>
+
+  <body>
+    <div class="main-heading">
+      <h1>Plumadriver Test Page</h1>
+    </div>
+
+    <main>
+      <div class="text">
+        <p id="myText">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit
+          suscipit beatae cum nostrum esse fugiat saepe ipsa facere culpa? Enim
+          animi, sapiente ratione sit consequuntur quae vitae repellat tenetur
+          atque. Lorem ipsum dolor sit amet consectetur adipisicing elit.
+          Reprehenderit suscipit beatae cum nostrum esse fugiat saepe ipsa
+          facere culpa? Enim animi, sapiente ratione sit consequuntur quae vitae
+          repellat tenetur atque.Lorem ipsum dolor sit amet consectetur
+          adipisicing elit. Reprehenderit suscipit beatae cum nostrum esse
+          fugiat saepe ipsa facere culpa? Enim animi, sapiente ratione sit
+          consequuntur quae vitae repellat tenetur atque.
+        </p>
+      </div>
+
+      <div class="form">
+        <form
+          id="test_form"
+          method="post"
+          action="https://httpbin.org/post"
+          onsubmit="return true"
+        >
+          <div class="input-block">
+            <label for="text-input">First Name</label>
+            <input type="text" id="firstName" name="firstName" />
+          </div>
+
+          <div class="input-block">
+            <label for="text-input">Last Name</label>
+            <input type="text" id="lastName" />
+          </div>
+
+          <div class="input-block">
+            <label for="email-input">Email</label>
+            <input type="email" id="email" name="lastName" />
+          </div>
+
+          <div class="input-block">
+            <label for="file input"></label>
+            <input type="file" id="file-input" name="file" />
+          </div>
+
+          <div class="input-block">
+            <label for="radio-input">radio input</label>
+            <input
+              type="radio"
+              id="radio-input"
+              value="radio button clicked"
+              name="radioButton"
+            />
+          </div>
+
+          <div class="input-block">
+            <label for="color input">color input</label>
+            <input type="color" id="color-input" name="color" />
+          </div>
+
+          <input type="submit" id="submit-button" value="Submit" />
+        </form>
+      </div>
+    </main>
+
+    <script class="script-body-end"></script>
+  </body>
+</html>
