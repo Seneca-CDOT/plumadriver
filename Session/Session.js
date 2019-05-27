@@ -77,7 +77,7 @@ class Session {
           case COMMANDS.FIND_ELEMENTS_FROM_ELEMENT:
           case COMMANDS.FIND_ELEMENT_FROM_ELEMENT:
             response = this.elementRetrieval(
-              this.browser.getKnownElement(urlVariables.elementId),
+              this.browser.getKnownElement(urlVariables.elementId).element,
               parameters.using,
               parameters.value,
             );
@@ -122,7 +122,6 @@ class Session {
       const { element } = webElement;
       let files = [];
 
-
       if (text === undefined) reject(new InvalidArgument());
 
       if (!webElement.isInteractable() && element.getAttribute('contenteditable') !== 'true') {
@@ -145,7 +144,10 @@ class Session {
           addFileList(element, files);
           element.dispatchEvent(new Event('input'));
           element.dispatchEvent(new Event('change'));
-        } else if (element.getAttribute('type') === 'text') {
+        } else if (
+          element.getAttribute('type') === 'text'
+          || element.getAttribute('type') === 'email'
+        ) {
           element.value += text;
           element.dispatchEvent(new Event('input'));
           element.dispatchEvent(new Event('change'));
@@ -471,13 +473,14 @@ class Session {
             throw new InvalidArgument();
         }
       } catch (error) {
-        if (
-          error instanceof DOMException
-          || error instanceof SyntaxError
-          || error instanceof XPathException
-        ) throw new Error('invalid selector');
-        // TODO: add invalidSelector error class
-        else throw new UnknownError(); // TODO: add unknown error class
+        // if (
+        //   error instanceof DOMException
+        //   || error instanceof SyntaxError
+        //   || error instanceof XPathException
+        // ) throw new Error('invalid selector');
+        // // TODO: add invalidSelector error class
+        // else throw new UnknownError(); // TODO: add unknown error class
+        console.log(error);
       }
     } while (endTime > new Date() && elements.length < 1);
 
