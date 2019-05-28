@@ -92,7 +92,7 @@ class Browser {
         case 'dismiss and notify':
           beforeParse = beforeParseFactory((message) => {
             console.log(message);
-            return true;
+            return false;
           });
           break;
         case 'accept and notify':
