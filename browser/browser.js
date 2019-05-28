@@ -18,9 +18,10 @@ class Browser {
   // creates JSDOM object from provided options and (optional) url
   async configureBrowser(options, url = null) {
     let dom;
+
     if (url !== null) {
       dom = await JSDOM.fromURL(url, {
-        resources: options.resourceLoader,
+        resources: options.resources,
         runScripts: options.runScripts,
         beforeParse: options.beforeParse,
       });
@@ -36,7 +37,7 @@ class Browser {
       this.dom = await loadEvent();
     } else {
       this.dom = await new JSDOM(' ', {
-        resources: options.resourceLoader,
+        resources: options.resources,
         runScripts: options.runScripts,
         beforeParse: options.beforeParse,
       });
@@ -56,11 +57,11 @@ class Browser {
         ? capabilities.unhandledPromptBehavior
         : 'dismiss and notify',
       strictSSL:
-        capabilities.acceptInsecureCerts instanceof Boolean ? capabilities.strictSSL : true,
+        capabilities.strictSSL === false ? capabilities.strictSSL : true,
     };
-
     const resourceLoader = new ResourceLoader({
       strictSSL: options.strictSSL,
+      proxy: '',
     });
 
     const JSDOMOptions = {

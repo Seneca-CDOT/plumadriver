@@ -151,6 +151,9 @@ class Session {
           element.value += text;
           element.dispatchEvent(new Event('input'));
           element.dispatchEvent(new Event('change'));
+        } else if (element.getAttribute('type') === 'color') {
+          if (!validator.isHexColor(text)) throw new InvalidArgument('not a hex colour');
+          element.value = text;
         } else {
           if (
             !Object.prototype.hasOwnProperty.call(element, 'value')
@@ -172,6 +175,7 @@ class Session {
   }
 
   async navigateTo({ url }) {
+    console.log('SESSION NAVIGATE TO');
     if (!validator.isURL(url)) throw new InvalidArgument();
 
     // pageload timer
@@ -190,8 +194,14 @@ class Session {
       // them a correct response .
       // This takes a long time because it makes the request twice once with
       // request and a second time with jsdom
+
+      const options = {
+        url,
+        // eslint-disable-next-line no-underscore-dangle
+        strictSSL: this.browser.options.resources._strictSSL,
+      };
       await (() => new Promise((resolve, reject) => {
-        request(url, async (err, response) => {
+        request(options, async (err, response) => {
           if (!err && response.statusCode === 200) {
             resolve();
           } else {
@@ -200,7 +210,6 @@ class Session {
           }
         });
       }))();
-
       await this.browser.navigateToURL(url);
       clearTimeout(timer);
     }
@@ -234,7 +243,7 @@ class Session {
     // extract browser specific data
     const browserConfig = configuredCapabilities['plm:plumaOptions'];
     if (configuredCapabilities.acceptInsecureCerts) {
-      browserConfig.strictSSL = configuredCapabilities.acceptInsecureCerts;
+      browserConfig.strictSSL = !configuredCapabilities.acceptInsecureCerts;
     }
 
     if (configuredCapabilities.unhandledPromptBehavior) {
