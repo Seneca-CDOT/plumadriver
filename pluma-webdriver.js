@@ -90,8 +90,7 @@ if (process.env.NODE_ENV !== 'test') {
 server.use((err, req, res, next) => {
   let error;
   if (err instanceof SyntaxError) error = new InvalidArgument('Syntax Error');
-
-  if (error === undefined) res.status(err.code).json(err);
+  if (error === undefined) res.status(500).json(err);
   else res.status(error.code).json(error);
 });
 
