@@ -1,4 +1,5 @@
 node_modules/
 /plumadriver-*
+/plumadriver
 /pluma_*.txt
 /.prettier*
