@@ -1,0 +1,45 @@
+import { StringUnion } from '../utils/utils';
+
+// Allowed Element boolean attribute values 
+export const ElementBooleanAttribute = StringUnion(
+   'async'
+  , 'autocomplete'
+  , 'autofocus'
+  , 'autoplay'
+  , 'border'
+  , 'challenge'
+  , 'checked'
+  , 'compact'
+  , 'contenteditable'
+  , 'controls'
+  , 'default'
+  , 'defer'
+  , 'disabled'
+  , 'formNoValidate'
+  , 'frameborder'
+  , 'hidden'
+  , 'indeterminate'
+  , 'ismap'
+  , 'loop'
+  , 'multiple'
+  , 'muted'
+  , 'nohref'
+  , 'noresize'
+  , 'noshade'
+  , 'novalidate'
+  , 'nowrap'
+  , 'open'
+  , 'readonly'
+  , 'required'
+  , 'reversed'
+  , 'scoped'
+  , 'scrolling'
+  , 'seamless'
+  , 'selected'
+  , 'sortable'
+  , 'spellcheck'
+  , 'translate'
+);
+
+// webelement identifier
+export const ELEMENT = 'element-6066-11e4-a52e-4f735466cecf';

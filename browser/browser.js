@@ -1,5 +1,6 @@
 const { JSDOM, ResourceLoader } = require('jsdom');
 const tough = require('jsdom').toughCookie;
+const { BrowserOptions } = require('../typescript/Browser/BrowserOptions');
 
 const { Cookie } = tough;
 
@@ -10,7 +11,12 @@ const { InvalidArgument, NoSuchElement } = require('../Error/errors');
 
 class Browser {
   constructor(capabilties) {
-    this.options = Browser.configureJSDOMOptions(capabilties);
+    capabilties.runScripts = 'dangerously';
+    console.log('RECEIVED CAPABILITIES');
+    console.log(capabilties);
+    this.options = new BrowserOptions(capabilties);
+    console.log('VALIDATED BROWSER OPTIONS');
+    console.log(this.options);
     this.configureBrowser(this.options);
     this.knownElements = [];
   }
@@ -48,68 +54,68 @@ class Browser {
     this.activeElement = this.dom.window.document.activeElement;
   }
 
-  static configureJSDOMOptions(capabilities) {
-    // TODO: configure proxy options if provided
+  // static configureJSDOMOptions(capabilities) {
+  //   // TODO: configure proxy options if provided
 
-    const options = {
-      runScripts: capabilities.runScripts ? 'dangerously' : null,
-      unhandledPromptBehavior: capabilities.unhandledPromptBehavior
-        ? capabilities.unhandledPromptBehavior
-        : 'dismiss and notify',
-      strictSSL:
-        capabilities.strictSSL === false ? capabilities.strictSSL : true,
-    };
-    const resourceLoader = new ResourceLoader({
-      strictSSL: options.strictSSL,
-      proxy: '',
-    });
+  //   const options = {
+  //     runScripts: capabilities.runScripts ? 'dangerously' : null,
+  //     unhandledPromptBehavior: capabilities.unhandledPromptBehavior
+  //       ? capabilities.unhandledPromptBehavior
+  //       : 'dismiss and notify',
+  //     strictSSL:
+  //       capabilities.strictSSL === false ? capabilities.strictSSL : true,
+  //   };
+  //   const resourceLoader = new ResourceLoader({
+  //     strictSSL: options.strictSSL,
+  //     proxy: '',
+  //   });
 
-    const JSDOMOptions = {
-      resources: resourceLoader,
-      includeNodeLocations: true,
-      contentType: 'text/html',
-    };
+  //   const JSDOMOptions = {
+  //     resources: resourceLoader,
+  //     includeNodeLocations: true,
+  //     contentType: 'text/html',
+  //   };
 
-    if (options.runScripts !== null) JSDOMOptions.runScripts = options.runScripts;
+  //   if (options.runScripts !== null) JSDOMOptions.runScripts = options.runScripts;
 
-    function beforeParseFactory(callback) {
-      return (window) => {
-        window.confirm = callback;
-        window.alert = callback;
-        window.prompt = callback;
-      };
-    }
+  //   function beforeParseFactory(callback) {
+  //     return (window) => {
+  //       window.confirm = callback;
+  //       window.alert = callback;
+  //       window.prompt = callback;
+  //     };
+  //   }
 
-    let beforeParse;
-    if (options.unhandledPromptBehavior && options.runScripts) {
-      switch (options.unhandledPromptBehavior) {
-        case 'accept':
-          beforeParse = beforeParseFactory(() => true);
-          break;
-        case 'dismiss':
-          beforeParse = beforeParseFactory(() => false);
-          break;
-        case 'dismiss and notify':
-          beforeParse = beforeParseFactory((message) => {
-            console.log(message);
-            return false;
-          });
-          break;
-        case 'accept and notify':
-          beforeParse = beforeParseFactory((message) => {
-            console.log(message);
-            return true;
-          });
-          break;
-        case 'ignore':
-          break;
-        default:
-          break;
-      }
-    }
-    if (beforeParse) JSDOMOptions.beforeParse = beforeParse;
-    return JSDOMOptions;
-  }
+  //   let beforeParse;
+  //   if (options.unhandledPromptBehavior && options.runScripts) {
+  //     switch (options.unhandledPromptBehavior) {
+  //       case 'accept':
+  //         beforeParse = beforeParseFactory(() => true);
+  //         break;
+  //       case 'dismiss':
+  //         beforeParse = beforeParseFactory(() => false);
+  //         break;
+  //       case 'dismiss and notify':
+  //         beforeParse = beforeParseFactory((message) => {
+  //           console.log(message);
+  //           return false;
+  //         });
+  //         break;
+  //       case 'accept and notify':
+  //         beforeParse = beforeParseFactory((message) => {
+  //           console.log(message);
+  //           return true;
+  //         });
+  //         break;
+  //       case 'ignore':
+  //         break;
+  //       default:
+  //         break;
+  //     }
+  //   }
+  //   if (beforeParse) JSDOMOptions.beforeParse = beforeParse;
+  //   return JSDOMOptions;
+  // }
 
   async navigateToURL(URL) {
     if (URL) {

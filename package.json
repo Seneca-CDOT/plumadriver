@@ -25,6 +25,8 @@
     "winston": "^3.2.1"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^1.9.0",
+    "@typescript-eslint/parser": "^1.9.0",
     "chai": "^4.2.0",
     "chai-http": "^4.2.1",
     "eslint": "^5.16.0",
@@ -35,7 +37,8 @@
     "mocha": "^6.1.4",
     "node-sass": "^4.12.0",
     "nodemon": "^1.18.9",
-    "should": "^13.2.3"
+    "should": "^13.2.3",
+    "tslint-eslint-rules": "^5.4.0"
   },
   "scripts": {
     "test": "mocha --exit",
@@ -47,6 +50,12 @@
   "author": "miguel roncancio",
   "license": "ISC",
   "pkg": {
-    "assets": "./node_modules/vm2"
+    "assets": [
+      "./node_modules/vm2",
+      "./node_modules/@types",
+      "./node_modules/typescript/lib/*.d.ts",
+      "./typescript/**/*.ts",
+      "./tsconfig.json"
+    ]
   }
 }
