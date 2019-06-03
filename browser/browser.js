@@ -149,7 +149,6 @@ class Browser {
         if (cookieDomain.indexOf('.') === 0) { // begins with '.'
           let cookieDomainRegEx = cookieDomain.substring(1).replace(/\./, '\\.');
           cookieDomainRegEx = new RegExp(`${cookieDomainRegEx}$`);
-          console.log('COOKIE DOMAIN REGEX', cookieDomainRegEx);
 
           if (currentDomain.search(cookieDomainRegEx) > -1) return true;
 
@@ -191,13 +190,9 @@ class Browser {
       if (Object.prototype.hasOwnProperty.call(cookie, key)) {
         if (key === 'domain') {
           if (!validateCookie[key](cookie[key], this.getURL())) {
-            console.log('CURRENT VALUES:');
-            console.log('COOKIE:', cookie, '\nKEY:', key, '\nVALUE:', cookie[key]);
             throw new InvalidArgument();
           }
         } else if (!validateCookie[key](cookie[key])) {
-          console.log('CURRENT VALUES:');
-          console.log('COOKIE:', cookie, '\nKEY:', key, '\nVALUE:', cookie[key]);
           throw new InvalidArgument();
         }
       }
