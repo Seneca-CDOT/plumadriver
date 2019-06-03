@@ -1,4 +1,3 @@
-
 const { JSDOM, ResourceLoader } = require('jsdom');
 const tough = require('jsdom').toughCookie;
 
@@ -16,7 +15,6 @@ class Browser {
     this.knownElements = [];
   }
 
-
   // creates JSDOM object from provided options and (optional) url
   async configureBrowser(options, url = null) {
     if (url !== null) {
@@ -24,17 +22,19 @@ class Browser {
         resources: options.resourceLoader,
         runScripts: options.runScripts,
         beforeParse: options.beforeParse,
-      }).then((dom) => {
-        /*  promise resolves once the load event has fired allowing window.onload events to execute
-        before the DOM object can be manipulated  */
-        return new Promise((resolve) => {
-          dom.window.addEventListener('load', () => {
-            resolve(dom);
-          });
+      })
+        .then(
+          dom => new Promise((resolve) => {
+            dom.window.addEventListener('load', () => {
+              /*  promise resolves once the load event has fired allowing window.onload
+              events to execute before the DOM object can be manipulated  */
+              resolve(dom);
+            });
+          }),
+        )
+        .then((dom) => {
+          this.dom = dom;
         });
-      }).then((dom) => {
-        this.dom = dom;
-      });
     } else {
       this.dom = await new JSDOM(' ', {
         resources: options.resourceLoader,
@@ -51,16 +51,16 @@ class Browser {
 
     const options = {
       runScripts: capabilities.runScripts ? 'dangerously' : null,
-      unhandledPromptBehavior: capabilities.unhandledPromptBehavior ? capabilities.unhandledPromptBehavior : 'dismiss and notify',
-      strictSSL: capabilities.acceptInsecureCerts instanceof Boolean
-        ? capabilities.strictSSL
-        : true,
+      unhandledPromptBehavior: capabilities.unhandledPromptBehavior
+        ? capabilities.unhandledPromptBehavior
+        : 'dismiss and notify',
+      strictSSL:
+        capabilities.acceptInsecureCerts instanceof Boolean ? capabilities.strictSSL : true,
     };
 
     const resourceLoader = new ResourceLoader({
       strictSSL: options.strictSSL,
     });
-
 
     const JSDOMOptions = {
       resources: resourceLoader,
@@ -71,11 +71,11 @@ class Browser {
     if (options.runScripts !== null) JSDOMOptions.runScripts = options.runScripts;
 
     function beforeParseFactory(callback) {
-      return ((window) => {
+      return (window) => {
         window.confirm = callback;
         window.alert = callback;
         window.prompt = callback;
-      });
+      };
     }
 
     let beforeParse;
@@ -88,10 +88,16 @@ class Browser {
           beforeParse = beforeParseFactory(() => false);
           break;
         case 'dismiss and notify':
-          beforeParse = beforeParseFactory((message) => { console.log(message); return true; });
+          beforeParse = beforeParseFactory((message) => {
+            console.log(message);
+            return true;
+          });
           break;
         case 'accept and notify':
-          beforeParse = beforeParseFactory((message) => { console.log(message); return true; });
+          beforeParse = beforeParseFactory((message) => {
+            console.log(message);
+            return true;
+          });
           break;
         case 'ignore':
           break;
@@ -119,25 +125,49 @@ class Browser {
   }
 
   addCookie(cookie) {
+    const { URL } = this.dom.window;
     // object validates cookie properties
     const validateCookie = {
       name(name) {
-        return (name !== null && name !== undefined);
+        return name !== null && name !== undefined;
       },
       value(cookieValue) {
         return this.name(cookieValue);
       },
-      domain(passedDomain, currentDomain) {
-        return (passedDomain === currentDomain);
+      domain(cookieDomain, currentURL) {
+        // strip current URL of path and protocol
+        let currentDomain = new URL(currentURL).hostname;
+
+        // strip currentDomain of subdomains
+        const www = /^www\./;
+
+        // remove leading www
+        if (currentDomain.search(www) > -1) currentDomain = currentDomain.replace(www, '');
+
+        if (currentDomain === cookieDomain) return true; // replace with success
+
+        if (cookieDomain.indexOf('.') === 0) { // begins with '.'
+          let cookieDomainRegEx = cookieDomain.substring(1).replace(/\./, '\\.');
+          cookieDomainRegEx = new RegExp(`${cookieDomainRegEx}$`);
+          console.log('COOKIE DOMAIN REGEX', cookieDomainRegEx);
+
+          if (currentDomain.search(cookieDomainRegEx) > -1) return true;
+
+          const cleanCookieDomain = cookieDomain.substring(1);
+          if (cleanCookieDomain === currentDomain) return true;
+
+          return false;
+        }
+        return false;
       },
       secure(value) {
-        return (typeof value === 'boolean');
+        return typeof value === 'boolean';
       },
       httpOnly(httpOnly) {
         return this.secure(httpOnly);
       },
       expiry(expiry) {
-        return (Number.isInteger(expiry));
+        return Number.isInteger(expiry);
       },
     };
 
@@ -145,22 +175,31 @@ class Browser {
     if (cookie === null || cookie === undefined) throw new InvalidArgument();
 
     // assert cookie has name and value properties
-    if (!Object.prototype.hasOwnProperty.call(cookie, 'name')
+    if (
+      !Object.prototype.hasOwnProperty.call(cookie, 'name')
       || !Object.prototype.hasOwnProperty.call(cookie, 'value')
     ) throw new InvalidArgument();
 
-    // get the scheme of the provided cookie
+    // get the url scheme, determine if it is not a network scheme
     const scheme = this.getURL().substr(0, this.getURL().indexOf(':'));
 
     // validate extracted scheme
-    if (scheme !== 'http'
-      && scheme !== 'https'
-      && scheme !== 'ftp') throw new InvalidArgument();
+    if (scheme !== 'http' && scheme !== 'https' && scheme !== 'ftp') throw new InvalidArgument();
 
     // validates cookie
     Object.keys(validateCookie).forEach((key) => {
       if (Object.prototype.hasOwnProperty.call(cookie, key)) {
-        if (!validateCookie[key](cookie[key])) throw new InvalidArgument();
+        if (key === 'domain') {
+          if (!validateCookie[key](cookie[key], this.getURL())) {
+            console.log('CURRENT VALUES:');
+            console.log('COOKIE:', cookie, '\nKEY:', key, '\nVALUE:', cookie[key]);
+            throw new InvalidArgument();
+          }
+        } else if (!validateCookie[key](cookie[key])) {
+          console.log('CURRENT VALUES:');
+          console.log('COOKIE:', cookie, '\nKEY:', key, '\nVALUE:', cookie[key]);
+          throw new InvalidArgument();
+        }
       }
     });
 
@@ -203,7 +242,6 @@ class Browser {
         cookies.push(currentCookie);
       });
     });
-
 
     return cookies;
   }
