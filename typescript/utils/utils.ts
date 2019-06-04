@@ -1,3 +1,6 @@
+import * as PlumaTypes from '../Types/types';
+import { JSDOM } from 'jsdom';
+
 export const StringUnion = <UnionType extends string>(...values: UnionType[]) => {
     Object.freeze(values);
     const valueSet: Set<string> = new Set(values);
@@ -18,3 +21,68 @@ export const StringUnion = <UnionType extends string>(...values: UnionType[]) =>
     const unionNamespace = {guard, check, values};
     return Object.freeze(unionNamespace as typeof unionNamespace & {type: UnionType});
   };
+
+export const isCookie = (cookie:any) : cookie is PlumaTypes.Cookie => {
+  if (!cookie.name || !cookie.value) return false;
+  return true;
+}
+
+export const validateCookie = {
+  name(name) {
+    return name !== null && name !== undefined;
+  },
+  value(cookieValue) {
+    return this.name(cookieValue);
+  },
+  domain(cookieDomain, currentURL) {
+    // strip current URL of path and protocol
+    let currentDomain = new URL(currentURL).hostname;
+
+    // remove leading www if any
+    if (currentDomain.search(/^www\./) > -1) currentDomain = currentDomain.replace(/^www\./, '');
+
+    if (currentDomain === cookieDomain) return true;
+
+    if (cookieDomain.indexOf('.') === 0) { // begins with '.'
+      let cookieDomainRegEx = cookieDomain.substring(1).replace(/\./, '\\.');
+      cookieDomainRegEx = new RegExp(`${cookieDomainRegEx}$`);
+
+      if (currentDomain.search(cookieDomainRegEx) > -1) return true;
+      if (cookieDomain.substring(1) === currentDomain) return true;
+      return false;
+    }
+    return false;
+  },
+  secure(value) {
+    return typeof value === 'boolean';
+  },
+  httpOnly(httpOnly) {
+    return this.secure(httpOnly);
+  },
+  expiry(expiry) {
+    return Number.isInteger(expiry);
+  },
+}
+
+export const UnhandledPromptBehaviourValues = StringUnion(
+  'accept',
+  'dismiss',
+  'dismiss and notify',
+  'accept and notify',
+  'ignore'
+);
+
+
+
+export const RunScriptsValues = StringUnion(
+  'dangerously', 'outside-only', ''
+);
+  
+export const isBrowserOptions = (obj:any): obj is PlumaTypes.BrowserOptions => {
+  if (
+    obj.runScripts === undefined
+    || (obj.strictSSL === undefined)
+    || obj.unhandledPromptBehaviour === undefined
+  ) return false;
+  return true;
+}
