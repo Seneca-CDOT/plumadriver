@@ -3,9 +3,14 @@ import {
   RunScripts,
   UnhandledPromptBehaviour,
   BeforeParse,
-  BrowserOptions,
+  BrowserOptions
 } from '../Types/types';
 
+import * as Utils from '../utils/utils';
+
+/**
+ * Stores jsdom configuration based on user defined BrowserOptions object for future use
+ */
 export class BrowserConfig {
   readonly runScripts: RunScripts = '';
 
@@ -18,15 +23,16 @@ export class BrowserConfig {
   readonly beforeParse: BeforeParse;
 
   constructor(options: BrowserOptions) {
-
     this.resourceLoader = new ResourceLoader({
       strictSSL: this.strictSSL,
     });
 
-   Object.keys(options).forEach((option) => {
-    this[option] = options[option];
-   });
+    if (!Utils.isBrowserOptions(options))
+      throw new Error('Invalid jsdom options');
 
+    Object.keys(options).forEach((option) => {
+      this[option] = options[option];
+    });
 
     switch (options.unhandledPromptBehaviour) {
       case 'accept':
@@ -56,9 +62,9 @@ export class BrowserConfig {
 
   static beforeParseFactory(func: BeforeParse) {
     return (window) => {
-      window.confirm = func;
-      window.alert = func;
-      window.prompt = func;
+      ['confirm', 'alert', 'prompt'].forEach((method) => {
+        window[method] = func;
+      });
     };
   }
 }
