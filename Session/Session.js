@@ -200,7 +200,7 @@ class Session {
         // eslint-disable-next-line no-underscore-dangle
         strictSSL: this.browser.options.resources._strictSSL,
       };
-      await (() => new Promise((resolve, reject) => {
+      await new Promise((resolve, reject) => {
         request(options, async (err, response) => {
           if (!err && response.statusCode === 200) {
             resolve();
@@ -209,7 +209,7 @@ class Session {
             reject(err); // TODO create unknown error class, see W3C error codes
           }
         });
-      }))();
+      });
       await this.browser.navigateToURL(url);
       clearTimeout(timer);
     }
