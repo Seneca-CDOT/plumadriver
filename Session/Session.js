@@ -117,7 +117,7 @@ class Session {
   }
 
   sendKeysToElement(text, elementId) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const webElement = this.browser.getKnownElement(elementId);
       const { element } = webElement;
       let files = [];
@@ -136,11 +136,9 @@ class Session {
         if (element.getAttribute('type') === 'file') {
           files = text.split('\n');
           if (files.length === 0) throw new InvalidArgument();
-          if (!element.hasAttribute('multiple') && files.length <= 1) throw new InvalidArgument();
+          if (!element.hasAttribute('multiple') && files.length !== 1) throw new InvalidArgument();
 
-          files.forEach(async (file) => {
-            await utils.fileSystem.pathExists(file);
-          });
+          await Promise.all(files.map(file => utils.fileSystem.pathExists(file)));
 
           addFileList(element, files);
           element.dispatchEvent(new Event('input'));
