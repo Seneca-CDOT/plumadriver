@@ -3,20 +3,23 @@ const path = require('path');
 const mime = require('mime-types');
 
 const { JSDOM } = require('jsdom');
-const { File, FileList } = (new JSDOM()).window;
 
-function createFile(filePath) {
+const { File, FileList } = new JSDOM().window;
+
+const createFile = async (filePath) => {
   const { mtimeMs: lastModified } = fs.statSync(filePath);
 
-  return new File(
-    [fs.readFileSync(filePath)],
-    path.basename(filePath),
-    {
+  const file = await new Promise((resolve, reject) => {
+    let f = null;
+    f = new File([fs.readFile(filePath)], path.basename(filePath), {
       lastModified,
       type: mime.lookup(filePath) || '',
-    },
-  );
-}
+    });
+
+    if (f) resolve(f);
+  });
+  return file;
+};
 
 function addFileList(input, filePaths) {
   if (typeof filePaths === 'string') filePaths = [filePaths];
