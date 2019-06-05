@@ -136,11 +136,12 @@ class Session {
         if (element.getAttribute('type') === 'file') {
           files = text.split('\n');
           if (files.length === 0) throw new InvalidArgument();
-          if (files.length === 0 || (!element.hasAttribute('multiple') && files.length !== 1)) throw new InvalidArgument();
+          if (!element.hasAttribute('multiple') && files.length <= 1) throw new InvalidArgument();
 
           files.forEach(async (file) => {
             await utils.fileSystem.pathExists(file);
           });
+
           addFileList(element, files);
           element.dispatchEvent(new Event('input'));
           element.dispatchEvent(new Event('change'));
