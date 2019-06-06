@@ -147,6 +147,7 @@ class Browser {
       },
       domain(cookieDomain, currentURL) {
         // strip current URL of path and protocol
+        console.log(currentURL);
         let currentDomain = new URL(currentURL).hostname;
 
         // strip currentDomain of subdomains
@@ -157,7 +158,8 @@ class Browser {
 
         if (currentDomain === cookieDomain) return true; // replace with success
 
-        if (cookieDomain.indexOf('.') === 0) { // begins with '.'
+        if (cookieDomain.indexOf('.') === 0) {
+          // begins with '.'
           let cookieDomainRegEx = cookieDomain.substring(1).replace(/\./, '\\.');
           cookieDomainRegEx = new RegExp(`${cookieDomainRegEx}$`);
 
@@ -199,7 +201,9 @@ class Browser {
     // validates cookie
     Object.keys(validateCookie).forEach((key) => {
       if (Object.prototype.hasOwnProperty.call(cookie, key)) {
-        if (!validateCookie[key](cookie[key])) throw new InvalidArgument();
+        if (key === 'domain') {
+          if (!validateCookie[key](cookie[key], this.getURL())) throw new InvalidArgument('ADD COOKIE');
+        } else if (!validateCookie[key](cookie[key])) throw new InvalidArgument('ADD COOKIE');
       }
     });
 
