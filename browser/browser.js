@@ -16,7 +16,9 @@ class Browser {
   }
 
   // creates JSDOM object from provided options and (optional) url
-  async configureBrowser(options, url = null) {
+  async configureBrowser(options, url = null, pathType = 'url') {
+    let dom;
+
     if (url !== null) {
       await JSDOM.fromURL(url, {
         resources: options.resourceLoader,
@@ -37,13 +39,15 @@ class Browser {
         });
     } else {
       this.dom = await new JSDOM(' ', {
-        resources: options.resourceLoader,
+        resources: options.resources,
         runScripts: options.runScripts,
         beforeParse: options.beforeParse,
       });
     }
+
     // webdriver-active property (W3C)
     this.dom.window.navigator.webdriver = true;
+    this.activeElement = this.dom.window.document.activeElement;
   }
 
   static configureJSDOMOptions(capabilities) {
@@ -55,11 +59,11 @@ class Browser {
         ? capabilities.unhandledPromptBehavior
         : 'dismiss and notify',
       strictSSL:
-        capabilities.acceptInsecureCerts instanceof Boolean ? capabilities.strictSSL : true,
+        capabilities.strictSSL === false ? capabilities.strictSSL : true,
     };
-
     const resourceLoader = new ResourceLoader({
       strictSSL: options.strictSSL,
+      proxy: '',
     });
 
     const JSDOMOptions = {
@@ -90,7 +94,7 @@ class Browser {
         case 'dismiss and notify':
           beforeParse = beforeParseFactory((message) => {
             console.log(message);
-            return true;
+            return false;
           });
           break;
         case 'accept and notify':
@@ -109,9 +113,9 @@ class Browser {
     return JSDOMOptions;
   }
 
-  async navigateToURL(URL) {
+  async navigateToURL(URL, pathType) {
     if (URL) {
-      await this.configureBrowser(this.options, URL);
+      await this.configureBrowser(this.options, URL, pathType);
     }
     return true;
   }

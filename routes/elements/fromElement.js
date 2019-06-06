@@ -71,9 +71,8 @@ element.get('/attribute/:name', async (req, res, next) => {
   req.sessionRequest.urlVariables.attributeName = req.params.name;
 
   try {
-    const result = req.session.process(req.sessionRequest);
+    const result = await req.session.process(req.sessionRequest);
     const response = { value: result };
-    console.log(response);
     res.json(response);
   } catch (err) {
     next(err);
@@ -83,8 +82,17 @@ element.get('/attribute/:name', async (req, res, next) => {
 });
 
 // send keys to element
-element.post('/value', (req, res, next) => {
-
+element.post('/value', async (req, res, next) => {
+  const release = await req.session.mutex.acquire();
+  req.sessionRequest.command = COMMANDS.ELEMENT_SEND_KEYS;
+  try {
+    await req.session.process(req.sessionRequest);
+    res.send(null);
+  } catch (err) {
+    next(err);
+  } finally {
+    release();
+  }
 });
 
 // click element

@@ -1,0 +1,59 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: inherit;
+}
+
+body {
+  font-family: 'Lato', sans-serif;
+  font-size: 1.6rem;
+}
+
+.main-heading {
+  text-align: center;
+  font-size: 2rem;
+  padding: 3rem;
+}
+
+main {
+  text-align: center;
+  margin: 0 auto;
+}
+
+p {
+  font-size: 1.6rem;
+  margin: 8rem;
+}
+
+html {
+  font-size: 10px;
+}
+
+.input-block {
+  width: 40vh;
+  display: inline-block;
+  margin: 0 auto;
+
+  & > label,
+  input {
+    float: left;
+    clear: both;
+  }
+}
+
+.form {
+  width: 40rem;
+  margin: 0 auto;
+}
+
+.test_form {
+  width: 100%;
+  font-size: 1.6rem;
+  text-align: left;
+  border: solid;
+  padding: 2rem;
+}
+
+input {
+  margin: 1rem;
+}

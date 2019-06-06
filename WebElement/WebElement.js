@@ -1,5 +1,10 @@
 const uuidv1 = require('uuid/v1');
 
+const {
+  isFocusableAreaElement,
+} = require('../node_modules/jsdom/lib/jsdom/living/helpers/focusing.js');
+const jsdomUtils = require('../node_modules/jsdom/lib/jsdom/living/generated/utils.js');
+
 const ELEMENT = 'element-6066-11e4-a52e-4f735466cecf';
 class WebElement {
   constructor(element) {
@@ -17,8 +22,12 @@ class WebElement {
     });
   }
 
+  isInteractable() {
+    return isFocusableAreaElement(this.element[jsdomUtils.implSymbol]);
+  }
+
   getText() {
-    return this.element.innerHTML;
+    return this.element.textContent;
   }
 
   getTagName() {
