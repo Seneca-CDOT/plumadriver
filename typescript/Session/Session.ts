@@ -1,14 +1,15 @@
-const uuidv1 = require('uuid/v1');
-const validator = require('validator');
-const os = require('os');
-const { Mutex } = require('async-mutex');
-const request = require('request');
-const { VM } = require('vm2');
-const { JSDOM } = require('jsdom');
+import uuidv1 from 'uuid/v1';
+import validator from 'validator';
+import * as os from 'os';
+import { Mutex } from 'async-mutex';
+import request from 'request';
+import { VM } from 'vm2';
+import { JSDOM } from 'jsdom';
 
-const Browser = require('../browser/browser.js');
-const WebElement = require('../WebElement/WebElement.js');
-const { COMMANDS } = require('../commands/commands');
+import { Browser } from '../Browser/Browser';
+import { WebElement } from '../WebElement/WebElement';
+import {ELEMENT, COMMANDS } from '../constants/constants';
+import { Pluma } from '../Types/types';
 
 // custom
 const { addFileList } = require('../jsdom_extensions/addFileList');
@@ -16,11 +17,6 @@ const utils = require('../utils/utils');
 
 // DOM specific
 const { Event } = new JSDOM().window;
-
-// W3C
-
-// types 
-import { ELEMENT, RunScripts, UnhandledPromptBehaviour } from '../Types/types';
 
 // errors
 const {
@@ -33,6 +29,12 @@ const {
 const CapabilityValidator = require('../CapabilityValidator/CapabilityValidator');
 
 class Session {
+  id:string;
+  pageLoadStrategy:string; // this is not being used at the moment
+  secureTLS:boolean;  // this is also not being used
+  timeouts: {};
+  mutex:Mutex;
+  browser:Browser;
   constructor(requestBody) {
     this.id = uuidv1();
     this.pageLoadStrategy = 'normal';
@@ -46,13 +48,17 @@ class Session {
     this.mutex = new Mutex();
   }
 
-  // delegates request
-  async process({ command, parameters, urlVariables }) {
-    let response = null;
-
+  /**
+   * 
+   * @param request @type {Pluma.PlumaRequest} with request parameters, urlVariables and command to execute
+   */
+  // async process({ command, parameters, urlVariables }) {
+  async process(request:Pluma.PlumaRequest) {
+    let response: any = null;
+    const {parameters, urlVariables, command }: any = request;
     return new Promise(async (resolve, reject) => {
       try {
-        switch (command) {
+        switch (request.command) {
           case COMMANDS.DELETE_SESSION:
             await this.browser.close();
             break;
@@ -60,10 +66,10 @@ class Session {
             await this.navigateTo(parameters);
             break;
           case COMMANDS.GET_CURRENT_URL:
-            response = this.browser.getURL();
+            response = this.browser.url();
             break;
           case COMMANDS.GET_TITLE:
-            response = this.browser.getTitle();
+            response = this.browser.title();
             break;
           case COMMANDS.FIND_ELEMENT:
           case COMMANDS.FIND_ELEMENTS:
@@ -74,7 +80,7 @@ class Session {
             );
             break;
           case COMMANDS.GET_ELEMENT_TEXT:
-            response = this.browser.getKnownElement(urlVariables.elementId).getText();
+            response = this.browser.getKnownElement(urlVariables.elementId);
             break;
           case COMMANDS.FIND_ELEMENTS_FROM_ELEMENT:
           case COMMANDS.FIND_ELEMENT_FROM_ELEMENT:
