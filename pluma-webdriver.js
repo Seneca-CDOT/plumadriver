@@ -52,17 +52,14 @@ async function onHTTPStart() {
 
 /* -------- ENDPOINTS -------------------- */
 
-// code for this endpoint is for testing purposes at the moment
 server.get('/', (req, res) => {
-  res.send(sessionsManager.sessions);
-  // TODO:  some sort of landing page here for plumadriver
+  res.redirect(/* insert rick roll link here */);
 });
 
 // Status
 server.get('/status', (req, res) => {
   const state = sessionsManager.getReadinessState();
   res.status(200).json(state);
-  // this endpoint should be more elaborate relating to readiness state.
 });
 
 
@@ -89,11 +86,11 @@ if (process.env.NODE_ENV !== 'test') {
 
 
 // error handler
+// eslint-disable-next-line no-unused-vars
 server.use((err, req, res, next) => {
   let error;
-  if (err instanceof SyntaxError) error = new InvalidArgument();
-
-  if (error === undefined) res.status(err.code).json(err);
+  if (err instanceof SyntaxError) error = new InvalidArgument('Syntax Error');
+  if (error === undefined) res.status(500).json(err);
   else res.status(error.code).json(error);
 });
 

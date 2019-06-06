@@ -4,11 +4,20 @@ const os = require('os');
 const { Mutex } = require('async-mutex');
 const request = require('request');
 const { VM } = require('vm2');
+const { JSDOM } = require('jsdom');
 
 const Browser = require('../browser/browser.js');
 const WebElement = require('../WebElement/WebElement.js');
 const { COMMANDS } = require('../commands/commands');
 
+// custom
+const { addFileList } = require('../jsdom_extensions/addFileList');
+const utils = require('../utils/utils');
+
+// DOM specific
+const { Event } = new JSDOM().window;
+
+// W3C
 const ELEMENT = 'element-6066-11e4-a52e-4f735466cecf';
 
 // errors
@@ -68,7 +77,7 @@ class Session {
           case COMMANDS.FIND_ELEMENTS_FROM_ELEMENT:
           case COMMANDS.FIND_ELEMENT_FROM_ELEMENT:
             response = this.elementRetrieval(
-              this.browser.getKnownElement(urlVariables.elementId),
+              this.browser.getKnownElement(urlVariables.elementId).element,
               parameters.using,
               parameters.value,
             );
@@ -94,6 +103,9 @@ class Session {
           case COMMANDS.EXECUTE_SCRIPT:
             response = await this.executeScript(parameters.script, parameters.args);
             break;
+          case COMMANDS.ELEMENT_SEND_KEYS:
+            await this.sendKeysToElement(parameters.text, urlVariables.elementId);
+            break;
           default:
             break;
         }
@@ -104,7 +116,65 @@ class Session {
     });
   }
 
+  sendKeysToElement(text, elementId) {
+    return new Promise(async (resolve, reject) => {
+      const webElement = this.browser.getKnownElement(elementId);
+      const { element } = webElement;
+      let files = [];
+
+      if (text === undefined) reject(new InvalidArgument());
+
+      if (!webElement.isInteractable() && element.getAttribute('contenteditable') !== 'true') {
+        reject(new InvalidArgument('Element is not interactable')); // TODO: create new error class
+      }
+
+      if (this.browser.activeElement !== element) element.focus();
+
+      if (element.tagName.toLowerCase() === 'input') {
+        if (text.constructor.name.toLowerCase() !== 'string') reject(new InvalidArgument());
+        // file input
+        if (element.getAttribute('type') === 'file') {
+          files = text.split('\n');
+          if (files.length === 0) throw new InvalidArgument();
+          if (!element.hasAttribute('multiple') && files.length !== 1) throw new InvalidArgument();
+
+          await Promise.all(files.map(file => utils.fileSystem.pathExists(file)));
+
+          addFileList(element, files);
+          element.dispatchEvent(new Event('input'));
+          element.dispatchEvent(new Event('change'));
+        } else if (
+          element.getAttribute('type') === 'text'
+          || element.getAttribute('type') === 'email'
+        ) {
+          element.value += text;
+          element.dispatchEvent(new Event('input'));
+          element.dispatchEvent(new Event('change'));
+        } else if (element.getAttribute('type') === 'color') {
+          if (!validator.isHexColor(text)) throw new InvalidArgument('not a hex colour');
+          element.value = text;
+        } else {
+          if (
+            !Object.prototype.hasOwnProperty.call(element, 'value')
+            || element.getAttribute('readonly')
+          ) throw new Error('element not interactable'); // TODO: create error class
+          // TODO: add check to see if element is mutable, reject with element not interactable
+          element.value = text;
+        }
+        element.dispatchEvent(new Event('input'));
+        element.dispatchEvent(new Event('change'));
+        resolve(null);
+      } else {
+        // TODO: text needs to be encoded before it is inserted into the element
+        // innerHTML, especially important since js code can be inserted in here and executed
+        element.innerHTML += text;
+        resolve(null);
+      }
+    });
+  }
+
   async navigateTo({ url }) {
+    console.log('SESSION NAVIGATE TO');
     if (!validator.isURL(url)) throw new InvalidArgument();
 
     // pageload timer
@@ -123,8 +193,14 @@ class Session {
       // them a correct response .
       // This takes a long time because it makes the request twice once with
       // request and a second time with jsdom
-      await (() => new Promise((resolve, reject) => {
-        request(url, async (err, response) => {
+
+      const options = {
+        url,
+        // eslint-disable-next-line no-underscore-dangle
+        strictSSL: this.browser.options.resources._strictSSL,
+      };
+      await new Promise((resolve, reject) => {
+        request(options, async (err, response) => {
           if (!err && response.statusCode === 200) {
             resolve();
           } else {
@@ -132,8 +208,7 @@ class Session {
             reject(err); // TODO create unknown error class, see W3C error codes
           }
         });
-      }))();
-
+      });
       await this.browser.navigateToURL(url);
       clearTimeout(timer);
     }
@@ -167,7 +242,7 @@ class Session {
     // extract browser specific data
     const browserConfig = configuredCapabilities['plm:plumaOptions'];
     if (configuredCapabilities.acceptInsecureCerts) {
-      browserConfig.strictSSL = configuredCapabilities.acceptInsecureCerts;
+      browserConfig.strictSSL = !configuredCapabilities.acceptInsecureCerts;
     }
 
     if (configuredCapabilities.unhandledPromptBehavior) {
@@ -379,8 +454,15 @@ class Session {
       tagName() {
         return startNode.getElementsByTagName(selector);
       },
-      XPathSelector() {
-        // TODO: figure out how to do this...
+      XPathSelector(document) {
+        const evaluateResult = document.evaluate(selector, startNode, null, 7);
+        const length = evaluateResult.snapshotLength;
+        const xPathResult = []; // according to W3C this should be a NodeList
+        for (let i = 0; i < length; i++) {
+          const node = evaluateResult.snapshotItem(i);
+          xPathResult.push(node);
+        }
+        return xPathResult;
       },
     };
 
@@ -400,19 +482,20 @@ class Session {
             elements = locationStrategies.tagName();
             break;
           case 'xpath':
-            // TODO: implement w3c standard for xpath strategy
+            elements = locationStrategies.XPathSelector(this.browser.dom.window.document);
             break;
           default:
             throw new InvalidArgument();
         }
       } catch (error) {
-        if (
-          error instanceof DOMException
-          || error instanceof SyntaxError
-          || error instanceof XPathException
-        ) throw new Error('invalid selector');
-        // TODO: add invalidSelector error class
-        else throw new UnknownError(); // TODO: add unknown error class
+        // if (
+        //   error instanceof DOMException
+        //   || error instanceof SyntaxError
+        //   || error instanceof XPathException
+        // ) throw new Error('invalid selector');
+        // // TODO: add invalidSelector error class
+        // else throw new UnknownError(); // TODO: add unknown error class
+        console.log(error);
       }
     } while (endTime > new Date() && elements.length < 1);
 

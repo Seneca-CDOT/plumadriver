@@ -1,4 +1,3 @@
-
 const { JSDOM, ResourceLoader } = require('jsdom');
 const tough = require('jsdom').toughCookie;
 
@@ -16,34 +15,37 @@ class Browser {
     this.knownElements = [];
   }
 
-
   // creates JSDOM object from provided options and (optional) url
   async configureBrowser(options, url = null) {
+    let dom;
+
     if (url !== null) {
-      await JSDOM.fromURL(url, {
-        resources: options.resourceLoader,
+      dom = await JSDOM.fromURL(url, {
+        resources: options.resources,
         runScripts: options.runScripts,
         beforeParse: options.beforeParse,
-      }).then((dom) => {
-        /*  promise resolves once the load event has fired allowing window.onload events to execute
-        before the DOM object can be manipulated  */
-        return new Promise((resolve) => {
-          dom.window.addEventListener('load', () => {
-            resolve(dom);
-          });
-        });
-      }).then((dom) => {
-        this.dom = dom;
       });
+
+      /*  promise resolves after load event has fired. Allows onload events to execute
+      before the DOM object can be manipulated  */
+      const loadEvent = () => new Promise((resolve) => {
+        dom.window.addEventListener('load', () => {
+          resolve(dom);
+        });
+      });
+
+      this.dom = await loadEvent();
     } else {
       this.dom = await new JSDOM(' ', {
-        resources: options.resourceLoader,
+        resources: options.resources,
         runScripts: options.runScripts,
         beforeParse: options.beforeParse,
       });
     }
+
     // webdriver-active property (W3C)
     this.dom.window.navigator.webdriver = true;
+    this.activeElement = this.dom.window.document.activeElement;
   }
 
   static configureJSDOMOptions(capabilities) {
@@ -51,16 +53,16 @@ class Browser {
 
     const options = {
       runScripts: capabilities.runScripts ? 'dangerously' : null,
-      unhandledPromptBehavior: capabilities.unhandledPromptBehavior ? capabilities.unhandledPromptBehavior : 'dismiss and notify',
-      strictSSL: capabilities.acceptInsecureCerts instanceof Boolean
-        ? capabilities.strictSSL
-        : true,
+      unhandledPromptBehavior: capabilities.unhandledPromptBehavior
+        ? capabilities.unhandledPromptBehavior
+        : 'dismiss and notify',
+      strictSSL:
+        capabilities.strictSSL === false ? capabilities.strictSSL : true,
     };
-
     const resourceLoader = new ResourceLoader({
       strictSSL: options.strictSSL,
+      proxy: '',
     });
-
 
     const JSDOMOptions = {
       resources: resourceLoader,
@@ -71,11 +73,11 @@ class Browser {
     if (options.runScripts !== null) JSDOMOptions.runScripts = options.runScripts;
 
     function beforeParseFactory(callback) {
-      return ((window) => {
+      return (window) => {
         window.confirm = callback;
         window.alert = callback;
         window.prompt = callback;
-      });
+      };
     }
 
     let beforeParse;
@@ -88,10 +90,16 @@ class Browser {
           beforeParse = beforeParseFactory(() => false);
           break;
         case 'dismiss and notify':
-          beforeParse = beforeParseFactory((message) => { console.log(message); return true; });
+          beforeParse = beforeParseFactory((message) => {
+            console.log(message);
+            return false;
+          });
           break;
         case 'accept and notify':
-          beforeParse = beforeParseFactory((message) => { console.log(message); return true; });
+          beforeParse = beforeParseFactory((message) => {
+            console.log(message);
+            return true;
+          });
           break;
         case 'ignore':
           break;
@@ -122,22 +130,22 @@ class Browser {
     // object validates cookie properties
     const validateCookie = {
       name(name) {
-        return (name !== null && name !== undefined);
+        return name !== null && name !== undefined;
       },
       value(cookieValue) {
         return this.name(cookieValue);
       },
       domain(passedDomain, currentDomain) {
-        return (passedDomain === currentDomain);
+        return passedDomain === currentDomain;
       },
       secure(value) {
-        return (typeof value === 'boolean');
+        return typeof value === 'boolean';
       },
       httpOnly(httpOnly) {
         return this.secure(httpOnly);
       },
       expiry(expiry) {
-        return (Number.isInteger(expiry));
+        return Number.isInteger(expiry);
       },
     };
 
@@ -145,7 +153,8 @@ class Browser {
     if (cookie === null || cookie === undefined) throw new InvalidArgument();
 
     // assert cookie has name and value properties
-    if (!Object.prototype.hasOwnProperty.call(cookie, 'name')
+    if (
+      !Object.prototype.hasOwnProperty.call(cookie, 'name')
       || !Object.prototype.hasOwnProperty.call(cookie, 'value')
     ) throw new InvalidArgument();
 
@@ -153,9 +162,7 @@ class Browser {
     const scheme = this.getURL().substr(0, this.getURL().indexOf(':'));
 
     // validate extracted scheme
-    if (scheme !== 'http'
-      && scheme !== 'https'
-      && scheme !== 'ftp') throw new InvalidArgument();
+    if (scheme !== 'http' && scheme !== 'https' && scheme !== 'ftp') throw new InvalidArgument();
 
     // validates cookie
     Object.keys(validateCookie).forEach((key) => {
@@ -203,7 +210,6 @@ class Browser {
         cookies.push(currentCookie);
       });
     });
-
 
     return cookies;
   }
