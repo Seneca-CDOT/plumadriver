@@ -16,15 +16,23 @@ class Browser {
   }
 
   // creates JSDOM object from provided options and (optional) url
-  async configureBrowser(options, url = null) {
+  async configureBrowser(options, url = null, pathType = 'url') {
     let dom;
 
     if (url !== null) {
-      dom = await JSDOM.fromURL(url, {
-        resources: options.resources,
-        runScripts: options.runScripts,
-        beforeParse: options.beforeParse,
-      });
+      if (pathType === 'url') {
+        dom = await JSDOM.fromURL(url, {
+          resources: options.resources,
+          runScripts: options.runScripts,
+          beforeParse: options.beforeParse,
+        });
+      } else if (pathType === 'file') {
+        dom = await JSDOM.fromFile(url, {
+          resources: options.resources,
+          runScripts: options.runScripts,
+          beforeParse: options.beforeParse,
+        });
+      }
 
       /*  promise resolves after load event has fired. Allows onload events to execute
       before the DOM object can be manipulated  */
@@ -111,9 +119,9 @@ class Browser {
     return JSDOMOptions;
   }
 
-  async navigateToURL(URL) {
+  async navigateToURL(URL, pathType) {
     if (URL) {
-      await this.configureBrowser(this.options, URL);
+      await this.configureBrowser(this.options, URL, pathType);
     }
     return true;
   }

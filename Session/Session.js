@@ -174,7 +174,15 @@ class Session {
   }
 
   async navigateTo({ url }) {
-    if (!validator.isURL(url)) throw new InvalidArgument();
+    let pathType;
+
+    try {
+      if (validator.isURL(url)) pathType = 'url';
+      else if (await utils.fileSystem.pathExists(url)) pathType = 'file';
+      else throw new InvalidArgument('NAVIGATE TO');
+    } catch (e) {
+      throw new InvalidArgument('NAVIGATE TO');
+    }
 
     // pageload timer
     let timer;
@@ -198,17 +206,20 @@ class Session {
         // eslint-disable-next-line no-underscore-dangle
         strictSSL: this.browser.options.resources._strictSSL,
       };
-      await new Promise((resolve, reject) => {
-        request(options, async (err, response) => {
-          if (!err && response.statusCode === 200) {
-            resolve();
-          } else {
-            clearTimeout(timer); // clear timer before throwing
-            reject(err); // TODO create unknown error class, see W3C error codes
-          }
+
+      if (pathType === 'url') {
+        await new Promise((resolve, reject) => {
+          request(options, async (err, response) => {
+            if (!err && response.statusCode === 200) {
+              resolve();
+            } else {
+              clearTimeout(timer); // clear timer before throwing
+              reject(err); // TODO create unknown error class, see W3C error codes
+            }
+          });
         });
-      });
-      await this.browser.navigateToURL(url);
+      }
+      await this.browser.navigateToURL(url, pathType);
       clearTimeout(timer);
     }
   }
