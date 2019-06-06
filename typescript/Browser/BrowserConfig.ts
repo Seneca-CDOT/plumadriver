@@ -1,10 +1,5 @@
 import { ResourceLoader } from 'jsdom';
-import {
-  RunScripts,
-  UnhandledPromptBehaviour,
-  BeforeParse,
-  BrowserOptions
-} from '../Types/types';
+import { Pluma } from '../Types/types';
 
 import * as Utils from '../utils/utils';
 
@@ -12,17 +7,17 @@ import * as Utils from '../utils/utils';
  * Stores jsdom configuration based on user defined BrowserOptions object for future use
  */
 export class BrowserConfig {
-  readonly runScripts: RunScripts = '';
+  readonly runScripts: Pluma.RunScripts = '';
 
   readonly strictSSL: Boolean = true;
 
-  readonly unhandledPromptBehaviour: UnhandledPromptBehaviour = 'dismiss';
+  readonly unhandledPromptBehaviour: Pluma.UnhandledPromptBehaviour = 'dismiss';
 
   readonly resourceLoader: ResourceLoader;
 
-  readonly beforeParse: BeforeParse;
+  readonly beforeParse: Pluma.BeforeParse;
 
-  constructor(options: BrowserOptions) {
+  constructor(options: Pluma.BrowserOptions) {
     this.resourceLoader = new ResourceLoader({
       strictSSL: this.strictSSL,
     });
@@ -60,7 +55,7 @@ export class BrowserConfig {
     }
   }
 
-  static beforeParseFactory(func: BeforeParse) {
+  static beforeParseFactory(func: Pluma.BeforeParse) {
     return (window) => {
       ['confirm', 'alert', 'prompt'].forEach((method) => {
         window[method] = func;

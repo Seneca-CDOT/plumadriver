@@ -1,35 +1,43 @@
-import { ElementBooleanAttribute } from "../constants/constants";
-import { ResourceLoader } from "jsdom";
 import {
-  StringUnion,
+  ElementBooleanAttributeValues,
   UnhandledPromptBehaviourValues,
   RunScriptsValues
-} from "../utils/utils";
+} from '../constants/constants';
 
-export type RunScripts = typeof RunScriptsValues.type;
+import { ResourceLoader } from 'jsdom';
 
-export type UnhandledPromptBehaviour = typeof UnhandledPromptBehaviourValues.type;
-export type BeforeParse = (message?: string) => void;
-
-export type ElementBooleanAttribute = typeof ElementBooleanAttribute.type;
-
-/**
- * Client defined options for jsdom
- */
-export interface BrowserOptions {
-  runScripts: RunScripts;
-  strictSSL: boolean;
-  unhandledPromptBehaviour: UnhandledPromptBehaviour;
+export namespace Pluma {
+  type RunScripts = typeof RunScriptsValues.type;
+  type UnhandledPromptBehaviour = typeof UnhandledPromptBehaviourValues.type;
+  type BeforeParse = (message?: string) => void;
+  type ElementBooleanAttribute = typeof ElementBooleanAttributeValues.type;
+  
+  /**
+   * Client defined options for jsdom
+   */
+  interface BrowserOptions {
+    runScripts: RunScripts;
+    strictSSL: boolean;
+    unhandledPromptBehaviour: UnhandledPromptBehaviour;
+  }
+  
+  /**
+   * Expected cookie shape
+   */
+  interface Cookie {
+    name: string;
+    value: string | boolean;
+    domain?: string;
+    secure?: boolean;
+    httpOnly?: boolean;
+    expiry?: number;
+  }
+  
+  interface PlumaRequest {
+    urlVariables:any;
+    parameters:any;
+    command: string;
+  }
 }
 
-/**
- * Expected cookie shape
- */
-export interface Cookie {
-  name: string;
-  value: string | boolean;
-  domain?: string;
-  secure?: boolean;
-  httpOnly?: boolean;
-  expiry?: number;
-}
+

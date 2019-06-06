@@ -1,6 +1,6 @@
 import { toughCookie, JSDOM, ResourceLoader } from 'jsdom';
 import { BrowserConfig } from './BrowserConfig';
-import { BrowserOptions } from '../Types/types';
+import { Pluma } from '../Types/types';
 import { ELEMENT } from '../constants/constants';
 import { WebElement } from '../WebElement/WebElement';
 import  * as Utils  from '../utils/utils';
@@ -25,7 +25,7 @@ export class Browser {
 
   constructor(capabilities: object) {
     
-    let browserOptions: BrowserOptions = {
+    let browserOptions: Pluma.BrowserOptions = {
       runScripts: '',
       strictSSL: true,
       unhandledPromptBehaviour: 'dismiss and notify',
