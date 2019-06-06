@@ -174,7 +174,6 @@ class Session {
   }
 
   async navigateTo({ url }) {
-    console.log('SESSION NAVIGATE TO');
     if (!validator.isURL(url)) throw new InvalidArgument();
 
     // pageload timer
