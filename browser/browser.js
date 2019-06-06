@@ -20,23 +20,29 @@ class Browser {
     let dom;
 
     if (url !== null) {
-      await JSDOM.fromURL(url, {
-        resources: options.resourceLoader,
-        runScripts: options.runScripts,
-        beforeParse: options.beforeParse,
-      })
-        .then(
-          dom => new Promise((resolve) => {
-            dom.window.addEventListener('load', () => {
-              /*  promise resolves once the load event has fired allowing window.onload
-              events to execute before the DOM object can be manipulated  */
-              resolve(dom);
-            });
-          }),
-        )
-        .then((dom) => {
-          this.dom = dom;
+      if (pathType === 'url') {
+        dom = await JSDOM.fromURL(url, {
+          resources: options.resources,
+          runScripts: options.runScripts,
+          beforeParse: options.beforeParse,
         });
+      } else if (pathType === 'file') {
+        dom = await JSDOM.fromFile(url, {
+          resources: options.resources,
+          runScripts: options.runScripts,
+          beforeParse: options.beforeParse,
+        });
+      }
+
+      /*  promise resolves after load event has fired. Allows onload events to execute
+      before the DOM object can be manipulated  */
+      const loadEvent = () => new Promise((resolve) => {
+        dom.window.addEventListener('load', () => {
+          resolve(dom);
+        });
+      });
+
+      this.dom = await loadEvent();
     } else {
       this.dom = await new JSDOM(' ', {
         resources: options.resources,
@@ -129,7 +135,6 @@ class Browser {
   }
 
   addCookie(cookie) {
-    const { URL } = this.dom.window;
     // object validates cookie properties
     const validateCookie = {
       name(name) {
@@ -138,30 +143,8 @@ class Browser {
       value(cookieValue) {
         return this.name(cookieValue);
       },
-      domain(cookieDomain, currentURL) {
-        // strip current URL of path and protocol
-        let currentDomain = new URL(currentURL).hostname;
-
-        // strip currentDomain of subdomains
-        const www = /^www\./;
-
-        // remove leading www
-        if (currentDomain.search(www) > -1) currentDomain = currentDomain.replace(www, '');
-
-        if (currentDomain === cookieDomain) return true; // replace with success
-
-        if (cookieDomain.indexOf('.') === 0) { // begins with '.'
-          let cookieDomainRegEx = cookieDomain.substring(1).replace(/\./, '\\.');
-          cookieDomainRegEx = new RegExp(`${cookieDomainRegEx}$`);
-
-          if (currentDomain.search(cookieDomainRegEx) > -1) return true;
-
-          const cleanCookieDomain = cookieDomain.substring(1);
-          if (cleanCookieDomain === currentDomain) return true;
-
-          return false;
-        }
-        return false;
+      domain(passedDomain, currentDomain) {
+        return passedDomain === currentDomain;
       },
       secure(value) {
         return typeof value === 'boolean';
@@ -183,7 +166,7 @@ class Browser {
       || !Object.prototype.hasOwnProperty.call(cookie, 'value')
     ) throw new InvalidArgument();
 
-    // get the url scheme, determine if it is not a network scheme
+    // get the scheme of the provided cookie
     const scheme = this.getURL().substr(0, this.getURL().indexOf(':'));
 
     // validate extracted scheme
@@ -192,13 +175,7 @@ class Browser {
     // validates cookie
     Object.keys(validateCookie).forEach((key) => {
       if (Object.prototype.hasOwnProperty.call(cookie, key)) {
-        if (key === 'domain') {
-          if (!validateCookie[key](cookie[key], this.getURL())) {
-            throw new InvalidArgument();
-          }
-        } else if (!validateCookie[key](cookie[key])) {
-          throw new InvalidArgument();
-        }
+        if (!validateCookie[key](cookie[key])) throw new InvalidArgument();
       }
     });
 
