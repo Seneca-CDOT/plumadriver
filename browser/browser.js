@@ -65,7 +65,9 @@ class Browser {
         ? capabilities.unhandledPromptBehavior
         : 'dismiss and notify',
       strictSSL:
-        capabilities.strictSSL === false ? capabilities.strictSSL : true,
+        capabilities.acceptInsecureCerts instanceof Boolean
+          ? capabilities.acceptInsecureCerts
+          : true,
     };
     const resourceLoader = new ResourceLoader({
       strictSSL: options.strictSSL,
@@ -143,8 +145,30 @@ class Browser {
       value(cookieValue) {
         return this.name(cookieValue);
       },
-      domain(passedDomain, currentDomain) {
-        return passedDomain === currentDomain;
+      domain(cookieDomain, currentURL) {
+        // strip current URL of path and protocol
+        let currentDomain = new URL(currentURL).hostname;
+
+        // strip currentDomain of subdomains
+        const www = /^www\./;
+
+        // remove leading www
+        if (currentDomain.search(www) > -1) currentDomain = currentDomain.replace(www, '');
+
+        if (currentDomain === cookieDomain) return true; // replace with success
+
+        if (cookieDomain.indexOf('.') === 0) { // begins with '.'
+          let cookieDomainRegEx = cookieDomain.substring(1).replace(/\./, '\\.');
+          cookieDomainRegEx = new RegExp(`${cookieDomainRegEx}$`);
+
+          if (currentDomain.search(cookieDomainRegEx) > -1) return true;
+
+          const cleanCookieDomain = cookieDomain.substring(1);
+          if (cleanCookieDomain === currentDomain) return true;
+
+          return false;
+        }
+        return false;
       },
       secure(value) {
         return typeof value === 'boolean';
