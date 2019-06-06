@@ -1,5 +1,4 @@
-import * as PlumaTypes from '../Types/types';
-import { JSDOM } from 'jsdom';
+import { Pluma } from '../Types/types';
 
 export const StringUnion = <UnionType extends string>(...values: UnionType[]) => {
     Object.freeze(values);
@@ -22,7 +21,7 @@ export const StringUnion = <UnionType extends string>(...values: UnionType[]) =>
     return Object.freeze(unionNamespace as typeof unionNamespace & {type: UnionType});
   };
 
-export const isCookie = (cookie:any) : cookie is PlumaTypes.Cookie => {
+export const isCookie = (cookie:any) : cookie is Pluma.Cookie => {
   if (!cookie.name || !cookie.value) return false;
   return true;
 }
@@ -63,22 +62,8 @@ export const validateCookie = {
     return Number.isInteger(expiry);
   },
 }
-
-export const UnhandledPromptBehaviourValues = StringUnion(
-  'accept',
-  'dismiss',
-  'dismiss and notify',
-  'accept and notify',
-  'ignore'
-);
-
-
-
-export const RunScriptsValues = StringUnion(
-  'dangerously', 'outside-only', ''
-);
   
-export const isBrowserOptions = (obj:any): obj is PlumaTypes.BrowserOptions => {
+export const isBrowserOptions = (obj:any): obj is Pluma.BrowserOptions => {
   if (
     obj.runScripts === undefined
     || (obj.strictSSL === undefined)
