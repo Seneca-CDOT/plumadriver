@@ -454,8 +454,15 @@ class Session {
       tagName() {
         return startNode.getElementsByTagName(selector);
       },
-      XPathSelector() {
-        // TODO: figure out how to do this...
+      XPathSelector(document) {
+        const evaluateResult = document.evaluate(selector, startNode, null, 7);
+        const length = evaluateResult.snapshotLength;
+        const xPathResult = []; // according to W3C this should be a NodeList
+        for (let i = 0; i < length; i++) {
+          const node = evaluateResult.snapshotItem(i);
+          xPathResult.push(node);
+        }
+        return xPathResult;
       },
     };
 
@@ -475,7 +482,7 @@ class Session {
             elements = locationStrategies.tagName();
             break;
           case 'xpath':
-            // TODO: implement w3c standard for xpath strategy
+            elements = locationStrategies.XPathSelector(this.browser.dom.window.document);
             break;
           default:
             throw new InvalidArgument();
