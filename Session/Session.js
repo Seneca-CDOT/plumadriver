@@ -15,7 +15,7 @@ const { addFileList } = require('../jsdom_extensions/addFileList');
 const utils = require('../utils/utils');
 
 // DOM specific
-const { Event } = new JSDOM().window;
+const { Event, HTMLElement } = new JSDOM().window;
 
 // W3C
 const ELEMENT = 'element-6066-11e4-a52e-4f735466cecf';
@@ -541,11 +541,28 @@ class Session {
         arguments: argumentList,
       },
     });
-    let value;
+    let returned;
+    let response;
     return new Promise((resolve, reject) => {
       try {
-        value = vm.run('func(arguments);');
-        resolve(value);
+        console.log('ABOUT TO EXECUTE SCRIPT');
+        returned = vm.run('func(arguments);');
+
+        if (returned instanceof Array) {
+          response = [];
+          returned.forEach((value) => {
+            if (value instanceof HTMLElement) {
+              const element = new WebElement(value);
+              this.browser.knownElements.push(element);
+              response.push(element);
+            } else response.push(value);
+          });
+        } else if (returned instanceof HTMLElement) {
+          const element = new WebElement(returned);
+          this.browser.knownElements.push(element);
+          response = element;
+        } else response = returned;
+        resolve(response);
       } catch (err) {
         reject(err);
       }
