@@ -561,7 +561,7 @@ class Session {
           const element = new WebElement(returned);
           this.browser.knownElements.push(element);
           response = element;
-        }
+        } else response = returned;
         resolve(response);
       } catch (err) {
         reject(err);
