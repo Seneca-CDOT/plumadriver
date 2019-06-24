@@ -192,33 +192,8 @@ class Session {
       }, this.timeouts.pageLoad);
     };
 
-    // TODO: need to check if URL is special
     if (this.browser.getURL() !== url) {
       startTimer();
-      // W3C post navigation checks must be performed before navigation for jsdom
-      // because jsdom does not check response  and status codes and will deem
-      // them a correct response .
-      // This takes a long time because it makes the request twice once with
-      // request and a second time with jsdom
-
-      const options = {
-        url,
-        // eslint-disable-next-line no-underscore-dangle
-        strictSSL: this.browser.options.resources._strictSSL,
-      };
-
-      if (pathType === 'url') {
-        await new Promise((resolve, reject) => {
-          request(options, async (err, response) => {
-            if (!err && response.statusCode === 200) {
-              resolve();
-            } else {
-              clearTimeout(timer); // clear timer before throwing
-              reject(err); // TODO create unknown error class, see W3C error codes
-            }
-          });
-        });
-      }
       await this.browser.navigateToURL(url, pathType);
       clearTimeout(timer);
     }
@@ -251,7 +226,7 @@ class Session {
 
     // extract browser specific data
     const browserConfig = configuredCapabilities['plm:plumaOptions'];
-    if (configuredCapabilities.acceptInsecureCerts) {
+    if (Object.prototype.hasOwnProperty.call(configuredCapabilities, 'acceptInsecureCerts')) {
       browserConfig.strictSSL = !configuredCapabilities.acceptInsecureCerts;
     }
 
