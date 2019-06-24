@@ -110,6 +110,9 @@ class CapabilityValidator {
         if (resources !== 'useable') return false;
         return true;
       },
+      rejectPublicSuffixes(value) {
+        return value.constructor === Boolean;
+      },
     };
 
     Object.keys(options).forEach((key) => {
