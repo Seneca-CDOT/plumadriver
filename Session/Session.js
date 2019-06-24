@@ -2,7 +2,6 @@ const uuidv1 = require('uuid/v1');
 const validator = require('validator');
 const os = require('os');
 const { Mutex } = require('async-mutex');
-const request = require('request');
 const { VM } = require('vm2');
 const { JSDOM } = require('jsdom');
 
@@ -223,11 +222,14 @@ class Session {
 
     // configure Session object capabilties
     const configuredCapabilities = this.configureCapabilties(requestedCapabilities);
-
     // extract browser specific data
     const browserConfig = configuredCapabilities['plm:plumaOptions'];
     if (Object.prototype.hasOwnProperty.call(configuredCapabilities, 'acceptInsecureCerts')) {
       browserConfig.strictSSL = !configuredCapabilities.acceptInsecureCerts;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(configuredCapabilities, 'rejectPublicSuffixes')) {
+      browserConfig.rejectPublicSuffixes = configuredCapabilities.rejectPublicSuffixes;
     }
 
     if (configuredCapabilities.unhandledPromptBehavior) {
@@ -281,6 +283,7 @@ class Session {
       'proxy',
       'timeouts',
       'unhandledPromptBehaviour',
+      'plm:plumaOptions',
     ];
 
     if (

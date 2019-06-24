@@ -1,4 +1,4 @@
-const { JSDOM, ResourceLoader } = require('jsdom');
+const { JSDOM, ResourceLoader, CookieJar } = require('jsdom');
 const tough = require('jsdom').toughCookie;
 
 const { Cookie } = tough;
@@ -18,19 +18,22 @@ class Browser {
   // creates JSDOM object from provided options and (optional) url
   async configureBrowser(options, url = null, pathType = 'url') {
     let dom;
-
     if (url !== null) {
       if (pathType === 'url') {
         dom = await JSDOM.fromURL(url, {
           resources: options.resources,
           runScripts: options.runScripts,
           beforeParse: options.beforeParse,
+          pretendToBeVisual: true,
+          cookieJar: options.cookieJar,
         });
       } else if (pathType === 'file') {
         dom = await JSDOM.fromFile(url, {
           resources: options.resources,
           runScripts: options.runScripts,
           beforeParse: options.beforeParse,
+          pretendToBeVisual: true,
+          cookieJar: options.cookieJar,
         });
       }
 
@@ -48,6 +51,8 @@ class Browser {
         resources: options.resources,
         runScripts: options.runScripts,
         beforeParse: options.beforeParse,
+        pretendToBeVisual: true,
+        cookieJar: options.cookieJar,
       });
     }
 
@@ -58,26 +63,28 @@ class Browser {
 
   static configureJSDOMOptions(capabilities) {
     // TODO: configure proxy options if provided
-
     const options = {
       runScripts: capabilities.runScripts ? 'dangerously' : null,
       unhandledPromptBehavior: capabilities.unhandledPromptBehavior
         ? capabilities.unhandledPromptBehavior
         : 'dismiss and notify',
-      strictSSL:
-        capabilities.acceptInsecureCerts instanceof Boolean
-          ? capabilities.acceptInsecureCerts
-          : true,
+      strictSSL: typeof capabilities.strictSSL === 'boolean' ? capabilities.strictSSL : true,
     };
     const resourceLoader = new ResourceLoader({
       strictSSL: options.strictSSL,
       proxy: '',
     });
 
+    const jar = new CookieJar(new tough.MemoryCookieStore(), {
+      looseMode: true,
+      rejectPublicSuffixes: typeof capabilities.rejectPublicSuffixes === 'boolean' ? capabilities.rejectPublicSuffixes : true,
+    });
+
     const JSDOMOptions = {
       resources: resourceLoader,
       includeNodeLocations: true,
       contentType: 'text/html',
+      cookieJar: jar,
     };
 
     if (options.runScripts !== null) JSDOMOptions.runScripts = options.runScripts;
@@ -147,7 +154,6 @@ class Browser {
       },
       domain(cookieDomain, currentURL) {
         // strip current URL of path and protocol
-        console.log(currentURL);
         let currentDomain = new URL(currentURL).hostname;
 
         // strip currentDomain of subdomains
