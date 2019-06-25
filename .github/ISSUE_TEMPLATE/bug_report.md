@@ -1,9 +1,7 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
+labels: 'Type: Bug'
 
 ---
 
@@ -17,16 +15,14 @@ Steps to reproduce the behavior:
 3. Scroll down to '....'
 4. See error
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+**Describe the results you received:**
+If applicable, add screenshots.
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+**Describe the results you expected:**
 
 **Environment:**
  - OS: [e.g. iOS]
  - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
 
 **Additional context**
 Add any other context about the problem here.
