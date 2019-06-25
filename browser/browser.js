@@ -1,5 +1,5 @@
 const { JSDOM, ResourceLoader, CookieJar } = require('jsdom');
-const tough = require('jsdom').toughCookie;
+const tough = require('../jsdom_extensions/tough-cookie');
 
 const { Cookie } = tough;
 
