@@ -22,7 +22,8 @@ If applicable, add screenshots.
 
 **Environment:**
  - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
+ - PlumaDriver version:
+ - Selenium version:
 
 **Additional context**
 Add any other context about the problem here.
