@@ -35,7 +35,6 @@ var pubsuffix = require('./pubsuffix-psl');
 // array is in shortest-to-longest order.  Handy for indexing.
 function permuteDomain(domain, rejectPublicSuffixes) {
   let suffix;
-  console.log('PLUMA :) ');
   /** added to accomodate .local domains for parsing. psl returns null when .local is passed */
   if (rejectPublicSuffixes) {
     suffix = pubsuffix.getPublicSuffix(domain);
