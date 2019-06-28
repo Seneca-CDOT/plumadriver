@@ -1,7 +1,7 @@
-const { JSDOM, ResourceLoader, CookieJar } = require('jsdom');
-const tough = require('jsdom').toughCookie;
+const { JSDOM, ResourceLoader } = require('jsdom');
+const tough = require('../jsdom_extensions/tough-cookie');
 
-const { Cookie } = tough;
+const { Cookie, CookieJar } = tough;
 
 // identifies a web element
 const ELEMENT = 'element-6066-11e4-a52e-4f735466cecf';
