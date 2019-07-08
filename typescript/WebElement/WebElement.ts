@@ -1,14 +1,10 @@
 import uuidv1 from 'uuid/v1';
 import isFocusableAreaElement from 'jsdom/lib/jsdom/living/helpers/focusing';
 import jsdomUtils from 'jsdom/lib/jsdom/living/generated/utils';
-
-import { ELEMENT, ElementBooleanAttribute } from '../constants/constants';
-
-type ElementBooleanAttribute = typeof ElementBooleanAttribute.type;
+import { ELEMENT, ElementBooleanAttributeValues } from '../constants/constants';
 
 export class WebElement {
   readonly element: HTMLElement;
-
   readonly [ELEMENT]: string;
 
   isInteractable(): boolean {
@@ -29,7 +25,7 @@ export class WebElement {
   }
 
   getElementAttribute(name: string):string {
-    if (ElementBooleanAttribute.guard(name)) return this.element.hasAttribute(name).toString();
+    if (ElementBooleanAttributeValues.guard(name)) return this.element.hasAttribute(name).toString();
     return this.element.getAttribute(name);
   }
 }
