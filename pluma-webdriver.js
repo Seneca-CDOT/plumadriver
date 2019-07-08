@@ -92,6 +92,7 @@ server.use((err, req, res, next) => {
   if (err instanceof SyntaxError) error = new InvalidArgument('Syntax Error');
   if (error === undefined) res.status(500).json(err);
   else res.status(error.code).json(error);
+  process.exit(0);
 });
 
 server.listen(HTTP_PORT, async () => {

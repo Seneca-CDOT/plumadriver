@@ -2,7 +2,6 @@ const uuidv1 = require('uuid/v1');
 const validator = require('validator');
 const os = require('os');
 const { Mutex } = require('async-mutex');
-const request = require('request');
 const { VM } = require('vm2');
 const { JSDOM } = require('jsdom');
 
@@ -15,7 +14,7 @@ const { addFileList } = require('../jsdom_extensions/addFileList');
 const utils = require('../utils/utils');
 
 // DOM specific
-const { Event } = new JSDOM().window;
+const { Event, HTMLElement } = new JSDOM().window;
 
 // W3C
 const ELEMENT = 'element-6066-11e4-a52e-4f735466cecf';
@@ -117,7 +116,7 @@ class Session {
   }
 
   sendKeysToElement(text, elementId) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const webElement = this.browser.getKnownElement(elementId);
       const { element } = webElement;
       let files = [];
@@ -136,11 +135,10 @@ class Session {
         if (element.getAttribute('type') === 'file') {
           files = text.split('\n');
           if (files.length === 0) throw new InvalidArgument();
-          if (files.length === 0 || (!element.hasAttribute('multiple') && files.length !== 1)) throw new InvalidArgument();
+          if (!element.hasAttribute('multiple') && files.length !== 1) throw new InvalidArgument();
 
-          files.forEach(async (file) => {
-            await utils.fileSystem.pathExists(file);
-          });
+          await Promise.all(files.map(file => utils.fileSystem.pathExists(file)));
+
           addFileList(element, files);
           element.dispatchEvent(new Event('input'));
           element.dispatchEvent(new Event('change'));
@@ -175,8 +173,15 @@ class Session {
   }
 
   async navigateTo({ url }) {
-    console.log('SESSION NAVIGATE TO');
-    if (!validator.isURL(url)) throw new InvalidArgument();
+    let pathType;
+
+    try {
+      if (validator.isURL(url)) pathType = 'url';
+      else if (await utils.fileSystem.pathExists(url)) pathType = 'file';
+      else throw new InvalidArgument('NAVIGATE TO');
+    } catch (e) {
+      throw new InvalidArgument('NAVIGATE TO');
+    }
 
     // pageload timer
     let timer;
@@ -186,31 +191,9 @@ class Session {
       }, this.timeouts.pageLoad);
     };
 
-    // TODO: need to check if URL is special
     if (this.browser.getURL() !== url) {
       startTimer();
-      // W3C post navigation checks must be performed before navigation for jsdom
-      // because jsdom does not check response  and status codes and will deem
-      // them a correct response .
-      // This takes a long time because it makes the request twice once with
-      // request and a second time with jsdom
-
-      const options = {
-        url,
-        // eslint-disable-next-line no-underscore-dangle
-        strictSSL: this.browser.options.resources._strictSSL,
-      };
-      await (() => new Promise((resolve, reject) => {
-        request(options, async (err, response) => {
-          if (!err && response.statusCode === 200) {
-            resolve();
-          } else {
-            clearTimeout(timer); // clear timer before throwing
-            reject(err); // TODO create unknown error class, see W3C error codes
-          }
-        });
-      }))();
-      await this.browser.navigateToURL(url);
+      await this.browser.navigateToURL(url, pathType);
       clearTimeout(timer);
     }
   }
@@ -239,11 +222,14 @@ class Session {
 
     // configure Session object capabilties
     const configuredCapabilities = this.configureCapabilties(requestedCapabilities);
-
     // extract browser specific data
     const browserConfig = configuredCapabilities['plm:plumaOptions'];
-    if (configuredCapabilities.acceptInsecureCerts) {
+    if (Object.prototype.hasOwnProperty.call(configuredCapabilities, 'acceptInsecureCerts')) {
       browserConfig.strictSSL = !configuredCapabilities.acceptInsecureCerts;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(configuredCapabilities, 'rejectPublicSuffixes')) {
+      browserConfig.rejectPublicSuffixes = configuredCapabilities.rejectPublicSuffixes;
     }
 
     if (configuredCapabilities.unhandledPromptBehavior) {
@@ -297,6 +283,7 @@ class Session {
       'proxy',
       'timeouts',
       'unhandledPromptBehaviour',
+      'plm:plumaOptions',
     ];
 
     if (
@@ -455,8 +442,15 @@ class Session {
       tagName() {
         return startNode.getElementsByTagName(selector);
       },
-      XPathSelector() {
-        // TODO: figure out how to do this...
+      XPathSelector(document) {
+        const evaluateResult = document.evaluate(selector, startNode, null, 7);
+        const length = evaluateResult.snapshotLength;
+        const xPathResult = []; // according to W3C this should be a NodeList
+        for (let i = 0; i < length; i++) {
+          const node = evaluateResult.snapshotItem(i);
+          xPathResult.push(node);
+        }
+        return xPathResult;
       },
     };
 
@@ -476,7 +470,7 @@ class Session {
             elements = locationStrategies.tagName();
             break;
           case 'xpath':
-            // TODO: implement w3c standard for xpath strategy
+            elements = locationStrategies.XPathSelector(this.browser.dom.window.document);
             break;
           default:
             throw new InvalidArgument();
@@ -525,11 +519,28 @@ class Session {
         arguments: argumentList,
       },
     });
-    let value;
+    let returned;
+    let response;
     return new Promise((resolve, reject) => {
       try {
-        value = vm.run('func(arguments);');
-        resolve(value);
+        console.log('ABOUT TO EXECUTE SCRIPT');
+        returned = vm.run('func(arguments);');
+
+        if (returned instanceof Array) {
+          response = [];
+          returned.forEach((value) => {
+            if (value instanceof HTMLElement) {
+              const element = new WebElement(value);
+              this.browser.knownElements.push(element);
+              response.push(element);
+            } else response.push(value);
+          });
+        } else if (returned instanceof HTMLElement) {
+          const element = new WebElement(returned);
+          this.browser.knownElements.push(element);
+          response = element;
+        } else response = returned;
+        resolve(response);
       } catch (err) {
         reject(err);
       }

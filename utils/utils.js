@@ -36,8 +36,8 @@ exports.fileSystem = {
     return new Promise((res, rej) => {
       fs.access(path, fs.F_OK, (err) => {
         if (err) rej(new InvalidArgument());
+        res(true);
       });
-      res(true);
     });
   },
 };

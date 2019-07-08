@@ -1,8 +1,7 @@
 const { JSDOM, ResourceLoader } = require('jsdom');
-const tough = require('jsdom').toughCookie;
-const { BrowserOptions } = require('../typescript/Browser/BrowserOptions');
+const tough = require('../jsdom_extensions/tough-cookie');
 
-const { Cookie } = tough;
+const { Cookie, CookieJar } = tough;
 
 // identifies a web element
 const ELEMENT = 'element-6066-11e4-a52e-4f735466cecf';
@@ -11,26 +10,32 @@ const { InvalidArgument, NoSuchElement } = require('../Error/errors');
 
 class Browser {
   constructor(capabilties) {
-    capabilties.runScripts = 'dangerously';
-    console.log('RECEIVED CAPABILITIES');
-    console.log(capabilties);
-    this.options = new BrowserOptions(capabilties);
-    console.log('VALIDATED BROWSER OPTIONS');
-    console.log(this.options);
+    this.options = Browser.configureJSDOMOptions(capabilties);
     this.configureBrowser(this.options);
     this.knownElements = [];
   }
 
   // creates JSDOM object from provided options and (optional) url
-  async configureBrowser(options, url = null) {
+  async configureBrowser(options, url = null, pathType = 'url') {
     let dom;
-
     if (url !== null) {
-      dom = await JSDOM.fromURL(url, {
-        resources: options.resources,
-        runScripts: options.runScripts,
-        beforeParse: options.beforeParse,
-      });
+      if (pathType === 'url') {
+        dom = await JSDOM.fromURL(url, {
+          resources: options.resources,
+          runScripts: options.runScripts,
+          beforeParse: options.beforeParse,
+          pretendToBeVisual: true,
+          cookieJar: options.cookieJar,
+        });
+      } else if (pathType === 'file') {
+        dom = await JSDOM.fromFile(url, {
+          resources: options.resources,
+          runScripts: options.runScripts,
+          beforeParse: options.beforeParse,
+          pretendToBeVisual: true,
+          cookieJar: options.cookieJar,
+        });
+      }
 
       /*  promise resolves after load event has fired. Allows onload events to execute
       before the DOM object can be manipulated  */
@@ -46,6 +51,8 @@ class Browser {
         resources: options.resources,
         runScripts: options.runScripts,
         beforeParse: options.beforeParse,
+        pretendToBeVisual: true,
+        cookieJar: options.cookieJar,
       });
     }
 
@@ -54,72 +61,76 @@ class Browser {
     this.activeElement = this.dom.window.document.activeElement;
   }
 
-  // static configureJSDOMOptions(capabilities) {
-  //   // TODO: configure proxy options if provided
+  static configureJSDOMOptions(capabilities) {
+    // TODO: configure proxy options if provided
+    const options = {
+      runScripts: capabilities.runScripts ? 'dangerously' : null,
+      unhandledPromptBehavior: capabilities.unhandledPromptBehavior
+        ? capabilities.unhandledPromptBehavior
+        : 'dismiss and notify',
+      strictSSL: typeof capabilities.strictSSL === 'boolean' ? capabilities.strictSSL : true,
+    };
+    const resourceLoader = new ResourceLoader({
+      strictSSL: options.strictSSL,
+      proxy: '',
+    });
 
-  //   const options = {
-  //     runScripts: capabilities.runScripts ? 'dangerously' : null,
-  //     unhandledPromptBehavior: capabilities.unhandledPromptBehavior
-  //       ? capabilities.unhandledPromptBehavior
-  //       : 'dismiss and notify',
-  //     strictSSL:
-  //       capabilities.strictSSL === false ? capabilities.strictSSL : true,
-  //   };
-  //   const resourceLoader = new ResourceLoader({
-  //     strictSSL: options.strictSSL,
-  //     proxy: '',
-  //   });
+    const jar = new CookieJar(new tough.MemoryCookieStore(), {
+      looseMode: true,
+      rejectPublicSuffixes: typeof capabilities.rejectPublicSuffixes === 'boolean' ? capabilities.rejectPublicSuffixes : true,
+    });
 
-  //   const JSDOMOptions = {
-  //     resources: resourceLoader,
-  //     includeNodeLocations: true,
-  //     contentType: 'text/html',
-  //   };
+    const JSDOMOptions = {
+      resources: resourceLoader,
+      includeNodeLocations: true,
+      contentType: 'text/html',
+      cookieJar: jar,
+    };
 
-  //   if (options.runScripts !== null) JSDOMOptions.runScripts = options.runScripts;
+    if (options.runScripts !== null) JSDOMOptions.runScripts = options.runScripts;
 
-  //   function beforeParseFactory(callback) {
-  //     return (window) => {
-  //       window.confirm = callback;
-  //       window.alert = callback;
-  //       window.prompt = callback;
-  //     };
-  //   }
+    function beforeParseFactory(callback) {
+      return (window) => {
+        window.confirm = callback;
+        window.alert = callback;
+        window.prompt = callback;
+      };
+    }
 
-  //   let beforeParse;
-  //   if (options.unhandledPromptBehavior && options.runScripts) {
-  //     switch (options.unhandledPromptBehavior) {
-  //       case 'accept':
-  //         beforeParse = beforeParseFactory(() => true);
-  //         break;
-  //       case 'dismiss':
-  //         beforeParse = beforeParseFactory(() => false);
-  //         break;
-  //       case 'dismiss and notify':
-  //         beforeParse = beforeParseFactory((message) => {
-  //           console.log(message);
-  //           return false;
-  //         });
-  //         break;
-  //       case 'accept and notify':
-  //         beforeParse = beforeParseFactory((message) => {
-  //           console.log(message);
-  //           return true;
-  //         });
-  //         break;
-  //       case 'ignore':
-  //         break;
-  //       default:
-  //         break;
-  //     }
-  //   }
-  //   if (beforeParse) JSDOMOptions.beforeParse = beforeParse;
-  //   return JSDOMOptions;
-  // }
+    let beforeParse;
+    if (options.unhandledPromptBehavior && options.runScripts) {
+      switch (options.unhandledPromptBehavior) {
+        case 'accept':
+          beforeParse = beforeParseFactory(() => true);
+          break;
+        case 'dismiss':
+          beforeParse = beforeParseFactory(() => false);
+          break;
+        case 'dismiss and notify':
+          beforeParse = beforeParseFactory((message) => {
+            console.log(message);
+            return false;
+          });
+          break;
+        case 'accept and notify':
+          beforeParse = beforeParseFactory((message) => {
+            console.log(message);
+            return true;
+          });
+          break;
+        case 'ignore':
+          break;
+        default:
+          break;
+      }
+    }
+    if (beforeParse) JSDOMOptions.beforeParse = beforeParse;
+    return JSDOMOptions;
+  }
 
-  async navigateToURL(URL) {
+  async navigateToURL(URL, pathType) {
     if (URL) {
-      await this.configureBrowser(this.options, URL);
+      await this.configureBrowser(this.options, URL, pathType);
     }
     return true;
   }
@@ -141,8 +152,31 @@ class Browser {
       value(cookieValue) {
         return this.name(cookieValue);
       },
-      domain(passedDomain, currentDomain) {
-        return passedDomain === currentDomain;
+      domain(cookieDomain, currentURL) {
+        // strip current URL of path and protocol
+        let currentDomain = new URL(currentURL).hostname;
+
+        // strip currentDomain of subdomains
+        const www = /^www\./;
+
+        // remove leading www
+        if (currentDomain.search(www) > -1) currentDomain = currentDomain.replace(www, '');
+
+        if (currentDomain === cookieDomain) return true; // replace with success
+
+        if (cookieDomain.indexOf('.') === 0) {
+          // begins with '.'
+          let cookieDomainRegEx = cookieDomain.substring(1).replace(/\./, '\\.');
+          cookieDomainRegEx = new RegExp(`${cookieDomainRegEx}$`);
+
+          if (currentDomain.search(cookieDomainRegEx) > -1) return true;
+
+          const cleanCookieDomain = cookieDomain.substring(1);
+          if (cleanCookieDomain === currentDomain) return true;
+
+          return false;
+        }
+        return false;
       },
       secure(value) {
         return typeof value === 'boolean';
@@ -173,7 +207,9 @@ class Browser {
     // validates cookie
     Object.keys(validateCookie).forEach((key) => {
       if (Object.prototype.hasOwnProperty.call(cookie, key)) {
-        if (!validateCookie[key](cookie[key])) throw new InvalidArgument();
+        if (key === 'domain') {
+          if (!validateCookie[key](cookie[key], this.getURL())) throw new InvalidArgument('ADD COOKIE');
+        } else if (!validateCookie[key](cookie[key])) throw new InvalidArgument('ADD COOKIE');
       }
     });
 
