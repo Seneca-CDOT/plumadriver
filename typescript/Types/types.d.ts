@@ -9,7 +9,8 @@ import { ResourceLoader } from 'jsdom';
 export namespace Pluma {
   type RunScripts = typeof RunScriptsValues.type;
   type UnhandledPromptBehaviour = typeof UnhandledPromptBehaviourValues.type;
-  type BeforeParse = (message?: string) => void;
+  type BeforeParse = (window) => void;
+  type UserPrompt = (message? : string) => boolean;
   type ElementBooleanAttribute = typeof ElementBooleanAttributeValues.type;
   
   /**
@@ -19,6 +20,7 @@ export namespace Pluma {
     runScripts: RunScripts;
     strictSSL: boolean;
     unhandledPromptBehaviour: UnhandledPromptBehaviour;
+    rejectPublicSuffixes: boolean;
   }
   
   /**
