@@ -1,30 +1,91 @@
 import { Pluma } from '../Types/types';
 
-export const StringUnion = <UnionType extends string>(...values: UnionType[]) => {
-    Object.freeze(values);
-    const valueSet: Set<string> = new Set(values);
-  
-    const guard = (value: string): value is UnionType => {
-      return valueSet.has(value);
-    };
-  
-    const check = (value: string): UnionType => {
-      if (!guard(value)) {
-        const actual = JSON.stringify(value);
-        const expected = values.map(s => JSON.stringify(s)).join(' | ');
-        throw new TypeError(`Value '${actual}' is not assignable to type '${expected}'.`);
-      }
-      return value;
-    };
-  
-    const unionNamespace = {guard, check, values};
-    return Object.freeze(unionNamespace as typeof unionNamespace & {type: UnionType});
+export const StringUnion = <UnionType extends string>(
+  ...values: UnionType[]
+) => {
+  Object.freeze(values);
+  const valueSet: Set<string> = new Set(values);
+
+  const guard = (value: string): value is UnionType => {
+    return valueSet.has(value);
   };
 
-export const isCookie = (cookie:any) : cookie is Pluma.Cookie => {
+  const check = (value: string): UnionType => {
+    if (!guard(value)) {
+      const actual = JSON.stringify(value);
+      const expected = values.map(s => JSON.stringify(s)).join(' | ');
+      throw new TypeError(
+        `Value '${actual}' is not assignable to type '${expected}'.`
+      );
+    }
+    return value;
+  };
+
+  const unionNamespace = { guard, check, values };
+  return Object.freeze(unionNamespace as typeof unionNamespace & {
+    type: UnionType;
+  });
+};
+
+export const isValidCookie = (cookie: any, url): cookie is Pluma.Cookie => {
+  // check for null or undefined
+  if (cookie === null || cookie === undefined) return false;
+
+  const validCookie = {
+    name(name) {
+      return name !== null && name !== undefined;
+    },
+    value(cookieValue) {
+      return this.name(cookieValue);
+    },
+    domain(cookieDomain, currentURL) {
+      // strip current URL of path and protocol
+      let currentDomain = new URL(currentURL).hostname;
+
+      // strip currentDomain of subdomains
+      const www = /^www\./;
+
+      // remove leading www
+      if (currentDomain.search(www) > -1)
+        currentDomain = currentDomain.replace(www, '');
+
+      if (currentDomain === cookieDomain) return true; // replace with success
+
+      if (cookieDomain.indexOf('.') === 0) {
+        // begins with '.'
+        let cookieDomainRegEx = cookieDomain.substring(1).replace(/\./, '\\.');
+        cookieDomainRegEx = new RegExp(`${cookieDomainRegEx}$`);
+
+        if (currentDomain.search(cookieDomainRegEx) > -1) return true;
+
+        const cleanCookieDomain = cookieDomain.substring(1);
+        if (cleanCookieDomain === currentDomain) return true;
+
+        return false;
+      }
+      return false;
+    },
+    secure(value) {
+      return typeof value === 'boolean';
+    },
+    httpOnly(httpOnly) {
+      return this.secure(httpOnly);
+    },
+    expiry(expiry) {
+      return Number.isInteger(expiry);
+    }
+  };
+
   if (!cookie.name || !cookie.value) return false;
-  return true;
-}
+
+  Object.keys(validCookie).forEach((key) => {
+    if (Object.prototype.hasOwnProperty.call(cookie, key))
+    if (key === 'domain') {
+      if (!validateCookie[key](cookie[key], url)) throw new InvalidArgument('ADD COOKIE');
+    } else if (!validateCookie[key](cookie[key])) throw new InvalidArgument('ADD COOKIE');
+  })
+
+};
 
 export const validateCookie = {
   name(name) {
@@ -38,11 +99,13 @@ export const validateCookie = {
     let currentDomain = new URL(currentURL).hostname;
 
     // remove leading www if any
-    if (currentDomain.search(/^www\./) > -1) currentDomain = currentDomain.replace(/^www\./, '');
+    if (currentDomain.search(/^www\./) > -1)
+      currentDomain = currentDomain.replace(/^www\./, '');
 
     if (currentDomain === cookieDomain) return true;
 
-    if (cookieDomain.indexOf('.') === 0) { // begins with '.'
+    if (cookieDomain.indexOf('.') === 0) {
+      // begins with '.'
       let cookieDomainRegEx = cookieDomain.substring(1).replace(/\./, '\\.');
       cookieDomainRegEx = new RegExp(`${cookieDomainRegEx}$`);
 
@@ -60,14 +123,16 @@ export const validateCookie = {
   },
   expiry(expiry) {
     return Number.isInteger(expiry);
-  },
-}
-  
-export const isBrowserOptions = (obj:any): obj is Pluma.BrowserOptions => {
+  }
+};
+
+export const isBrowserOptions = (obj: any): obj is Pluma.BrowserOptions => {
   if (
-    obj.runScripts === undefined
-    || (obj.strictSSL === undefined)
-    || obj.unhandledPromptBehaviour === undefined
-  ) return false;
+    obj.runScripts === undefined ||
+    obj.strictSSL === undefined ||
+    obj.unhandledPromptBehaviour === undefined ||
+    obj.rejectPublicSuffixes === undefined
+  )
+    return false;
   return true;
-}
+};
