@@ -40,6 +40,10 @@ export const ElementBooleanAttributeValues = StringUnion(
   , 'translate'
 );
 
+export const TimeoutValues = StringUnion(
+  'script', 'pageLoad', 'implicit'
+);
+
 export const UnhandledPromptBehaviourValues = StringUnion(
   'accept'
   , 'dismiss'
@@ -50,6 +54,10 @@ export const UnhandledPromptBehaviourValues = StringUnion(
 
 export const RunScriptsValues = StringUnion(
   'dangerously', 'outside-only', ''
+);
+
+export const PageLoadStrategyValues = StringUnion(
+  'none', 'eager', 'normal',
 );
 
 // webelement identifier
