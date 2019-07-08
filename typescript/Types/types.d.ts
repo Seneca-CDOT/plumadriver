@@ -1,7 +1,8 @@
 import {
   ElementBooleanAttributeValues,
   UnhandledPromptBehaviourValues,
-  RunScriptsValues
+  RunScriptsValues,
+  PageLoadStrategyValues,
 } from '../constants/constants';
 
 import { ResourceLoader } from 'jsdom';
@@ -12,6 +13,7 @@ export namespace Pluma {
   type BeforeParse = (window) => void;
   type UserPrompt = (message? : string) => boolean;
   type ElementBooleanAttribute = typeof ElementBooleanAttributeValues.type;
+  type PageLoadStrategy = typeof PageLoadStrategyValues.type;
   
   /**
    * Client defined options for jsdom
@@ -39,6 +41,12 @@ export namespace Pluma {
     urlVariables:any;
     parameters:any;
     command: string;
+  }
+
+  interface Timeouts {
+    script: number,
+    pageLoad: number,
+    implicit: number
   }
 }
 
