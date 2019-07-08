@@ -11,15 +11,15 @@ export class WebElement {
 
   readonly [ELEMENT]: string;
 
-  get isInteractable(): boolean {
+  isInteractable(): boolean {
     return isFocusableAreaElement(this.element[jsdomUtils.implSymbol]);
   }
 
-  get text(): string {
+  getText(): string {
     return this.element.textContent;
   }
 
-  get tagName(): string {
+  getTagName(): string {
     return this.element.tagName;
   }
 
