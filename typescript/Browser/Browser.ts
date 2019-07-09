@@ -1,9 +1,10 @@
-import { JSDOM, ResourceLoader } from 'jsdom';
+import { JSDOM } from 'jsdom';
 import { BrowserConfig } from './BrowserConfig';
 import { Pluma } from '../Types/types';
 import { ELEMENT } from '../constants/constants';
 import { WebElement } from '../WebElement/WebElement';
 import * as Utils from '../utils/utils';
+import * as PlumaError from '../Error/errors';
 
 import { tough } from '../../jsdom_extensions/tough-cookie';
 
@@ -38,7 +39,7 @@ export class Browser {
   }
 
   /**
-   * Creates an empty jsdom object or from a url depending on if the url parameter was passed
+   * Creates an empty @type {JSDOM} object or from a url depending on if the url parameter was passed
    * @param config @type {BrowserConfig} the browser configuration for a given session
    * @param url @type {URL} an optional url
    */
@@ -93,9 +94,14 @@ export class Browser {
     this.activeElement = this.dom.window.document.activeElement;
   }
 
-  async navigateToURL(url: URL, pathType) {
-    if (url) {
-      await this.configureBrowser(this.browserConfig, url, pathType);
+  /**
+   * 
+   * @param path the url or file path from which to instantiate JSDOM 
+   * @param pathType the type of path (url or file)
+   */
+  async navigate(path: URL, pathType) {
+    if (path) {
+      await this.configureBrowser(this.browserConfig, path, pathType);
     }
     return true;
   }
@@ -118,12 +124,12 @@ export class Browser {
    * sets a cookie on the browser
    */
   addCookie(cookie) {
-    if (cookie === null || cookie === undefined) throw new InvalidArgument();
+    if (cookie === null || cookie === undefined) throw new PlumaError.InvalidArgument('');
 
     const scheme = this.getUrl().substr(0, this.getUrl().indexOf(':'));
 
     if (scheme !== 'http' && scheme !== 'https' && scheme !== 'ftp')
-      throw new InvalidArgument();
+      throw new PlumaError.InvalidArgument('');
 
     if (Utils.isValidCookie(cookie, this.getUrl())) {
       let validCookie;
@@ -142,7 +148,7 @@ export class Browser {
       } catch (err) {
         throw new Error('UNABLE TO SET COOKIE'); // need to create this error class
       }
-    } else throw new InvalidArgument('');
+    } else throw new PlumaError.InvalidArgument('');
   }
 
   /**
@@ -180,7 +186,7 @@ export class Browser {
     this.knownElements.forEach(element => {
       if (element[ELEMENT] === elementId) foundElement = element;
     });
-    if (!foundElement) throw new NoSuchElement();
+    if (!foundElement) throw new PlumaError.NoSuchElement();
     return foundElement;
   }
 
