@@ -3,7 +3,7 @@ import { Session } from '../Session/Session';
 import { NotFoundError } from '../Error/errors';
 import { Pluma } from '../Types/types';
 
-export class SessionsManager {
+export class SessionManager {
     sessions:Array<Session>;
     readinessState: Pluma.ReadinessState;
   constructor() {
