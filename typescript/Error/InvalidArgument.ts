@@ -1,6 +1,6 @@
-const BadRequest = require('./BadRequestError');
+import { BadRequest } from './BadRequest';
 
-class InvalidArgument extends BadRequest {
+export class InvalidArgument extends BadRequest {
   constructor(command) {
     const message = `The arguments passed to ${command} are either invalid or malformed`;
     super(message);
@@ -8,5 +8,3 @@ class InvalidArgument extends BadRequest {
     this.value.message = message;
   }
 }
-
-module.exports = InvalidArgument;

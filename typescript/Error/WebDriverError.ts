@@ -1,4 +1,5 @@
 export class WebDriverError extends Error {
+  code :number;
   constructor(message, code) {
     super(message);
 
@@ -12,9 +13,9 @@ export class WebDriverError extends Error {
       writable: false,
       enumerable: false,
     });
-    this.value = {
-      stacktrace: this.stack,
-    };
+    // this.value = {
+    //   stacktrace: this.stack,
+    // };
   }
 }
 
