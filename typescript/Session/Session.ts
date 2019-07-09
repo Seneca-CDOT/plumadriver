@@ -1,40 +1,43 @@
 import uuidv1 from 'uuid/v1';
 import validator from 'validator';
-import * as os from 'os';
+import * as os from 'os'
 import { Mutex } from 'async-mutex';
-import request from 'request';
 import { VM } from 'vm2';
 import { JSDOM } from 'jsdom';
 
-import { Browser } from '../Browser/Browser';
 import { WebElement } from '../WebElement/WebElement';
-import {ELEMENT, COMMANDS } from '../constants/constants';
+import { COMMANDS } from '../constants/constants';
+import { Browser } from "../Browser/Browser";
 import { Pluma } from '../Types/types';
+import * as utils from '../utils/utils';
 
 // custom
-const { addFileList } = require('../jsdom_extensions/addFileList');
-const utils = require('../utils/utils');
+import { addFileList } from '../jsdom_extensions/addFileList';
 
 // DOM specific
-const { Event } = new JSDOM().window;
+const { Event, HTMLElement } = new JSDOM().window;
+
+// W3C
+const ELEMENT = 'element-6066-11e4-a52e-4f735466cecf';
 
 // errors
-const {
+import {
   InvalidArgument,
   SessionNotCreated,
   InternalServerError,
   NoSuchElement,
-} = require('../Error/errors');
+}from '../Error/errors';
 
-const CapabilityValidator = require('../CapabilityValidator/CapabilityValidator');
+import { CapabilityValidator } from'../CapabilityValidator/CapabilityValidator';
 
-class Session {
-  id:string;
-  pageLoadStrategy:string; // this is not being used at the moment
-  secureTLS:boolean;  // this is also not being used
-  timeouts: {};
-  mutex:Mutex;
-  browser:Browser;
+export class Session {
+  readonly id: string;
+  browser: Browser;
+  pageLoadStrategy: Pluma.PageLoadStrategy;
+  secureTLS: boolean; // is this needed?????
+  timeouts: Pluma.Timeouts;
+  mutex: Mutex;
+  
   constructor(requestBody) {
     this.id = uuidv1();
     this.pageLoadStrategy = 'normal';
@@ -49,16 +52,18 @@ class Session {
   }
 
   /**
+   * Delegates logic execution to different methods depending on the passed command.
    * 
-   * @param request @type {Pluma.PlumaRequest} with request parameters, urlVariables and command to execute
+   * @param command the command or endpoint requested by the client
+   * @param parameters the parameters sent by the client in the request body
+   * @param urlVariables the variables in the endpoint url 
    */
-  // async process({ command, parameters, urlVariables }) {
-  async process(request:Pluma.PlumaRequest) {
-    let response: any = null;
-    const {parameters, urlVariables, command }: any = request;
+  async process({ command, parameters, urlVariables }:Pluma.Request) {
+    let response = null;
+
     return new Promise(async (resolve, reject) => {
       try {
-        switch (request.command) {
+        switch (command) {
           case COMMANDS.DELETE_SESSION:
             await this.browser.close();
             break;
@@ -66,21 +71,21 @@ class Session {
             await this.navigateTo(parameters);
             break;
           case COMMANDS.GET_CURRENT_URL:
-            response = this.browser.url();
+            response = this.browser.getUrl();
             break;
           case COMMANDS.GET_TITLE:
-            response = this.browser.title();
+            response = this.browser.getTitle();
             break;
           case COMMANDS.FIND_ELEMENT:
           case COMMANDS.FIND_ELEMENTS:
             response = this.elementRetrieval(
-              this.browser.dom.window.document, // start node
-              parameters.using, // strategy
-              parameters.value, // selector
+              this.browser.dom.window.document,
+              parameters.using, 
+              parameters.value, 
             );
             break;
           case COMMANDS.GET_ELEMENT_TEXT:
-            response = this.browser.getKnownElement(urlVariables.elementId);
+            response = this.browser.getKnownElement(urlVariables.elementId).getText();
             break;
           case COMMANDS.FIND_ELEMENTS_FROM_ELEMENT:
           case COMMANDS.FIND_ELEMENT_FROM_ELEMENT:
@@ -124,13 +129,19 @@ class Session {
     });
   }
 
-  sendKeysToElement(text, elementId) {
-    return new Promise((resolve, reject) => {
+  /**
+   * sets a user defined value on a given HTML element
+   * TODO: this method needs to be updated to incorporate the action Object
+   * @param text the text to pass onto the specified element
+   * @param elementId the element id 
+   */
+  sendKeysToElement(text:string, elementId:string) {
+    return new Promise(async (resolve, reject) => {
       const webElement = this.browser.getKnownElement(elementId);
-      const { element } = webElement;
+      const element:any = webElement.element;
       let files = [];
 
-      if (text === undefined) reject(new InvalidArgument());
+      if (text === undefined) reject(new InvalidArgument(''));
 
       if (!webElement.isInteractable() && element.getAttribute('contenteditable') !== 'true') {
         reject(new InvalidArgument('Element is not interactable')); // TODO: create new error class
@@ -139,16 +150,16 @@ class Session {
       if (this.browser.activeElement !== element) element.focus();
 
       if (element.tagName.toLowerCase() === 'input') {
-        if (text.constructor.name.toLowerCase() !== 'string') reject(new InvalidArgument());
+      
+        if (text.constructor.name.toLowerCase() !== 'string') reject(new InvalidArgument(''));
         // file input
         if (element.getAttribute('type') === 'file') {
           files = text.split('\n');
-          if (files.length === 0) throw new InvalidArgument();
-          if (files.length === 0 || (!element.hasAttribute('multiple') && files.length !== 1)) throw new InvalidArgument();
+          if (files.length === 0) throw new InvalidArgument('');
+          if (!element.hasAttribute('multiple') && files.length !== 1) throw new InvalidArgument('');
 
-          files.forEach(async (file) => {
-            await utils.fileSystem.pathExists(file);
-          });
+          await Promise.all(files.map(file => utils.fileSystem.pathExists(file)));
+
           addFileList(element, files);
           element.dispatchEvent(new Event('input'));
           element.dispatchEvent(new Event('change'));
@@ -182,9 +193,21 @@ class Session {
     });
   }
 
+  /**
+   * navigates to a specified url
+   * sets timers according to session config
+   * @param url the url to navigate the user-agent to
+   */
   async navigateTo({ url }) {
-    console.log('SESSION NAVIGATE TO');
-    if (!validator.isURL(url)) throw new InvalidArgument();
+    let pathType;
+
+    try {
+      if (validator.isURL(url)) pathType = 'url';
+      else if (await utils.fileSystem.pathExists(url)) pathType = 'file';
+      else throw new InvalidArgument('NAVIGATE TO');
+    } catch (e) {
+      throw new InvalidArgument('NAVIGATE TO');
+    }
 
     // pageload timer
     let timer;
@@ -194,31 +217,9 @@ class Session {
       }, this.timeouts.pageLoad);
     };
 
-    // TODO: need to check if URL is special
-    if (this.browser.getURL() !== url) {
+    if (this.browser.getUrl() !== url) {
       startTimer();
-      // W3C post navigation checks must be performed before navigation for jsdom
-      // because jsdom does not check response  and status codes and will deem
-      // them a correct response .
-      // This takes a long time because it makes the request twice once with
-      // request and a second time with jsdom
-
-      const options = {
-        url,
-        // eslint-disable-next-line no-underscore-dangle
-        strictSSL: this.browser.options.resources._strictSSL,
-      };
-      await (() => new Promise((resolve, reject) => {
-        request(options, async (err, response) => {
-          if (!err && response.statusCode === 200) {
-            resolve();
-          } else {
-            clearTimeout(timer); // clear timer before throwing
-            reject(err); // TODO create unknown error class, see W3C error codes
-          }
-        });
-      }))();
-      await this.browser.navigateToURL(url);
+      await this.browser.navigate(url, pathType);
       clearTimeout(timer);
     }
   }
@@ -229,7 +230,7 @@ class Session {
     let valid = true;
     Object.keys(timeouts).forEach((key) => {
       valid = capabilityValidator.validateTimeouts(key, timeouts[key]);
-      if (!valid) throw new InvalidArgument();
+      if (!valid) throw new InvalidArgument('');
     });
 
     Object.keys(timeouts).forEach((validTimeout) => {
@@ -237,21 +238,25 @@ class Session {
     });
   }
 
-  getTimeouts() {
+  /**
+   * return the current session's timeouts
+   */
+  getTimeouts() : Pluma.Timeouts {
     return this.timeouts;
   }
 
   // configures session properties
   configureSession(requestedCapabilities) {
-    this.id = uuidv1();
-
     // configure Session object capabilties
     const configuredCapabilities = this.configureCapabilties(requestedCapabilities);
-
     // extract browser specific data
     const browserConfig = configuredCapabilities['plm:plumaOptions'];
-    if (configuredCapabilities.acceptInsecureCerts) {
+    if (Object.prototype.hasOwnProperty.call(configuredCapabilities, 'acceptInsecureCerts')) {
       browserConfig.strictSSL = !configuredCapabilities.acceptInsecureCerts;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(configuredCapabilities, 'rejectPublicSuffixes')) {
+      browserConfig.rejectPublicSuffixes = configuredCapabilities.rejectPublicSuffixes;
     }
 
     if (configuredCapabilities.unhandledPromptBehavior) {
@@ -305,6 +310,7 @@ class Session {
       'proxy',
       'timeouts',
       'unhandledPromptBehaviour',
+      'plm:plumaOptions',
     ];
 
     if (
@@ -438,11 +444,11 @@ class Session {
   elementRetrieval(startNode, strategy, selector) {
     // TODO: check if element is connected (shadow-root) https://dom.spec.whatwg.org/#connected
     // check W3C endpoint spec for details
-    const endTime = new Date(new Date().getTime + this.timeouts.implicit);
+    const endTime = new Date(new Date().getTime() + this.timeouts.implicit);
     let elements;
     const result = [];
 
-    if (!strategy || !selector) throw new InvalidArgument();
+    if (!strategy || !selector) throw new InvalidArgument('');
     if (!startNode) throw new NoSuchElement();
 
     const locationStrategies = {
@@ -463,8 +469,15 @@ class Session {
       tagName() {
         return startNode.getElementsByTagName(selector);
       },
-      XPathSelector() {
-        // TODO: figure out how to do this...
+      XPathSelector(document) {
+        const evaluateResult = document.evaluate(selector, startNode, null, 7);
+        const length = evaluateResult.snapshotLength;
+        const xPathResult = []; // according to W3C this should be a NodeList
+        for (let i = 0; i < length; i++) {
+          const node = evaluateResult.snapshotItem(i);
+          xPathResult.push(node);
+        }
+        return xPathResult;
       },
     };
 
@@ -484,10 +497,10 @@ class Session {
             elements = locationStrategies.tagName();
             break;
           case 'xpath':
-            // TODO: implement w3c standard for xpath strategy
+            elements = locationStrategies.XPathSelector(this.browser.dom.window.document);
             break;
           default:
-            throw new InvalidArgument();
+            throw new InvalidArgument('');
         }
       } catch (error) {
         // if (
@@ -533,11 +546,28 @@ class Session {
         arguments: argumentList,
       },
     });
-    let value;
+    let returned;
+    let response;
     return new Promise((resolve, reject) => {
       try {
-        value = vm.run('func(arguments);');
-        resolve(value);
+        console.log('ABOUT TO EXECUTE SCRIPT');
+        returned = vm.run('func(arguments);');
+
+        if (returned instanceof Array) {
+          response = [];
+          returned.forEach((value) => {
+            if (value instanceof HTMLElement) {
+              const element = new WebElement(value);
+              this.browser.knownElements.push(element);
+              response.push(element);
+            } else response.push(value);
+          });
+        } else if (returned instanceof HTMLElement) {
+          const element = new WebElement(returned);
+          this.browser.knownElements.push(element);
+          response = element;
+        } else response = returned;
+        resolve(response);
       } catch (err) {
         reject(err);
       }
