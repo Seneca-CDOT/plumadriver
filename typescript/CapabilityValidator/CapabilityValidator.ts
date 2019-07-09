@@ -13,6 +13,11 @@ export class CapabilityValidator {
     this.valid = true;
   }
 
+  /**
+   * validates any given plumadriver capability
+   * @param capability the capability object
+   * @param capabilityName the name of the capability to be validated
+   */
   validate(capability, capabilityName) {
     switch (capabilityName) {
       case 'browserName':
@@ -63,6 +68,10 @@ export class CapabilityValidator {
     return this.valid;
   }
 
+  /**
+   * validates proxy for session
+   * @param reqProxy the proxy to be valdiated
+   */
   static validateProxy(reqProxy) {
     const proxyProperties = [
       'proxyType',
@@ -153,7 +162,12 @@ export class CapabilityValidator {
     return validProxy;
   }
 
-  validateTimeouts(key, value) {
+  /**
+   * validates timeouts based on their type
+   * @param key the type of timeout to validate
+   * @param value the value of the given timeout
+   */
+  validateTimeouts(key, value) :boolean {
     this.valid = TimeoutValues.guard(key);
     this.valid = this.valid
       ? (Number.isInteger(value) && value > 0)
@@ -161,6 +175,10 @@ export class CapabilityValidator {
     return this.valid;
   }
 
+  /**
+   * Validates plumadriver specific options 
+   * @param options vendor (plumadriver) specific options 
+   */
   static validatePlumaOptions(options) {
     let validatedOptions = true;
 
