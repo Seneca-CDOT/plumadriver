@@ -1,4 +1,5 @@
 import { Pluma } from '../Types/types';
+import * as PlumaError from '../Error/errors';
 import * as fs from 'fs';
 
 export const StringUnion = <UnionType extends string>(
@@ -82,8 +83,8 @@ export const isValidCookie = (cookie: any, url): cookie is Pluma.Cookie => {
   Object.keys(validCookie).forEach((key) => {
     if (Object.prototype.hasOwnProperty.call(cookie, key))
     if (key === 'domain') {
-      if (!validateCookie[key](cookie[key], url)) throw new InvalidArgument('ADD COOKIE');
-    } else if (!validateCookie[key](cookie[key])) throw new InvalidArgument('ADD COOKIE');
+      if (!validateCookie[key](cookie[key], url)) throw new PlumaError.InvalidArgument('ADD COOKIE');
+    } else if (!validateCookie[key](cookie[key])) throw new PlumaError.InvalidArgument('ADD COOKIE');
   })
 
 };
@@ -165,8 +166,8 @@ export const validate = {
 export const fileSystem = {
   pathExists(path) {
     return new Promise ((res,rej)=>{
-      fs.access(path, fs.F_OK, (err) => {
-        if (err) rej(new InvalidArgument(''));
+      fs.access(path, fs.constants.F_OK, (err) => {
+        if (err) rej(new PlumaError.InvalidArgument(''));
         res(true);
       });
     });
