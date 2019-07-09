@@ -1,4 +1,5 @@
 import { Pluma } from '../Types/types';
+import * as fs from 'fs';
 
 export const StringUnion = <UnionType extends string>(
   ...values: UnionType[]
@@ -159,4 +160,15 @@ export const validate = {
   isEmpty(obj) {
     return (Object.keys(obj).length === 0);
   },
+}
+
+export const fileSystem = {
+  pathExists(path) {
+    return new Promise ((res,rej)=>{
+      fs.access(path, fs.F_OK, (err) => {
+        if (err) rej(new InvalidArgument(''));
+        res(true);
+      });
+    });
+  }
 }
