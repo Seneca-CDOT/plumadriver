@@ -37,7 +37,7 @@ export namespace Pluma {
     expiry?: number;
   }
   
-  interface PlumaRequest {
+  interface Request {
     urlVariables:any;
     parameters:any;
     command: string;
@@ -47,6 +47,20 @@ export namespace Pluma {
     script: number,
     pageLoad: number,
     implicit: number
+  }
+
+  interface ReadinessState {
+      status: number,
+      value: {
+        message: string,
+        os: {
+          arch: string,
+          name: string,
+          version: string
+        },
+        ready: boolean
+      }
+
   }
 }
 
