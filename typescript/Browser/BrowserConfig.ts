@@ -1,6 +1,7 @@
 import { ResourceLoader } from 'jsdom';
 import { Pluma } from '../Types/types';
 import { tough } from '../../jsdom_extensions/tough-cookie';
+import { InvalidArgument } from '../Error/errors';
 
 import * as Utils from '../utils/utils';
 
