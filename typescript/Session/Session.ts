@@ -37,6 +37,7 @@ export class Session {
   secureTLS: boolean; // is this needed?????
   timeouts: Pluma.Timeouts;
   mutex: Mutex;
+  proxy: Object | null;
   
   constructor(requestBody) {
     this.id = uuidv1();
