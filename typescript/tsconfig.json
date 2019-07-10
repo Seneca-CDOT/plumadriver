@@ -1,8 +1,0 @@
-{
-  "compilerOptions": {
-    "target": "es5",
-    "watch": true,
-    "lib": ["dom"],
-    "outDir": "./build"
-  }
-}
