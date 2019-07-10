@@ -34,7 +34,6 @@
     "fs": "0.0.1-security",
     "http-post": "^0.1.1",
     "mocha": "^6.1.4",
-    "node-sass": "^4.12.0",
     "nodemon": "^1.18.9",
     "should": "^13.2.3",
     "tslint-eslint-rules": "^5.4.0",
