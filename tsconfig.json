@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "watch": false,
+    "lib": ["dom"],
+    "outDir": "./build",
+    "rootDir": "./src",
+  },
+}

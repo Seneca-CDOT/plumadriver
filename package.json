@@ -37,13 +37,19 @@
     "node-sass": "^4.12.0",
     "nodemon": "^1.18.9",
     "should": "^13.2.3",
-    "tslint-eslint-rules": "^5.4.0"
+    "tslint-eslint-rules": "^5.4.0",
+    "typescript": "^3.5.2"
   },
   "scripts": {
     "test": "mocha --exit",
     "lint": "eslint",
     "start": "node pluma-webdriver.js",
-    "compile-sass": "node-sass ./test_docs/style.scss ./test_docs/style.css -w"
+    "compile-sass": "node-sass ./test_docs/style.scss ./test_docs/style.css -w",
+    "compile-ts": "tsc",
+    "build-linux": "tsc && pkg . --target latest-linux",
+    "build-win": "tsc && pkg . --target latest-win",
+    "build-macos": "tsc && pkg . --target latest-mac",
+    "build-all": "tsc && pkg ."
   },
   "bin": "bin.js",
   "author": "miguel roncancio",
@@ -53,7 +59,7 @@
       "./node_modules/vm2",
       "./node_modules/@types",
       "./node_modules/typescript/lib/*.d.ts",
-      "./typescript/**/*.ts",
+      "./src/**/*.ts",
       "./tsconfig.json"
     ]
   }

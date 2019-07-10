@@ -1,0 +1,578 @@
+import * as uuidv1 from 'uuid/v1';
+import validator from 'validator';
+import * as os from 'os'
+import { Mutex } from 'async-mutex';
+import { VM } from 'vm2';
+import { JSDOM } from 'jsdom';
+
+import { WebElement } from '../WebElement/WebElement';
+import { COMMANDS } from '../constants/constants';
+import { Browser } from "../Browser/Browser";
+import { Pluma } from '../Types/types';
+import * as utils from '../utils/utils';
+
+// custom
+import { addFileList } from '../jsdom_extensions/addFileList';
+
+// DOM specific
+const { Event, HTMLElement } = new JSDOM().window;
+
+// W3C
+const ELEMENT = 'element-6066-11e4-a52e-4f735466cecf';
+
+// errors
+import {
+  InvalidArgument,
+  SessionNotCreated,
+  InternalServerError,
+  NoSuchElement,
+}from '../Error/errors';
+
+import { CapabilityValidator } from'../CapabilityValidator/CapabilityValidator';
+class Session {
+  readonly id: string;
+  browser: Browser;
+  pageLoadStrategy: Pluma.PageLoadStrategy;
+  secureTLS: boolean; // is this needed?????
+  timeouts: Pluma.Timeouts;
+  mutex: Mutex;
+  proxy: Object | null;
+  
+  constructor(requestBody) {
+    this.id = uuidv1();
+    this.pageLoadStrategy = 'normal';
+    this.secureTLS = true;
+    this.timeouts = {
+      implicit: 0,
+      pageLoad: 30000,
+      script: 30000,
+    };
+    this.configureSession(requestBody);
+    this.mutex = new Mutex();
+  }
+
+  /**
+   * Delegates logic execution to different methods depending on the passed command.
+   * 
+   * @param command the command or endpoint requested by the client
+   * @param parameters the parameters sent by the client in the request body
+   * @param urlVariables the variables in the endpoint url 
+   */
+  async process({ command, parameters, urlVariables }:Pluma.Request) {
+    let response = null;
+
+    return new Promise(async (resolve, reject) => {
+      try {
+        switch (command) {
+          case COMMANDS.DELETE_SESSION:
+            await this.browser.close();
+            break;
+          case COMMANDS.NAVIGATE_TO:
+            await this.navigateTo(parameters);
+            break;
+          case COMMANDS.GET_CURRENT_URL:
+            response = this.browser.getUrl();
+            break;
+          case COMMANDS.GET_TITLE:
+            response = this.browser.getTitle();
+            break;
+          case COMMANDS.FIND_ELEMENT:
+          case COMMANDS.FIND_ELEMENTS:
+            response = this.elementRetrieval(
+              this.browser.dom.window.document,
+              parameters.using, 
+              parameters.value, 
+            );
+            break;
+          case COMMANDS.GET_ELEMENT_TEXT:
+            response = this.browser.getKnownElement(urlVariables.elementId).getText();
+            break;
+          case COMMANDS.FIND_ELEMENTS_FROM_ELEMENT:
+          case COMMANDS.FIND_ELEMENT_FROM_ELEMENT:
+            response = this.elementRetrieval(
+              this.browser.getKnownElement(urlVariables.elementId).element,
+              parameters.using,
+              parameters.value,
+            );
+            break;
+          case COMMANDS.SET_TIMEOUTS:
+            break;
+          case COMMANDS.GET_TIMEOUTS:
+            break;
+          case COMMANDS.GET_ALL_COOKIES:
+            response = this.browser.getCookies();
+            break;
+          case COMMANDS.ADD_COOKIE:
+            response = this.browser.addCookie(parameters.cookie);
+            break;
+          case COMMANDS.GET_ELEMENT_TAG_NAME:
+            response = this.browser.getKnownElement(urlVariables.elementId).getTagName();
+            break;
+          case COMMANDS.GET_ELEMENT_ATTRIBUTE:
+            response = this.browser
+              .getKnownElement(urlVariables.elementId)
+              .getElementAttribute(urlVariables.attributeName);
+            break;
+          case COMMANDS.EXECUTE_SCRIPT:
+            response = await this.executeScript(parameters.script, parameters.args);
+            break;
+          case COMMANDS.ELEMENT_SEND_KEYS:
+            await this.sendKeysToElement(parameters.text, urlVariables.elementId);
+            break;
+          default:
+            break;
+        }
+        resolve(response);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
+  /**
+   * sets a user defined value on a given HTML element
+   * TODO: this method needs to be updated to incorporate the action Object
+   * @param text the text to pass onto the specified element
+   * @param elementId the element id 
+   */
+  sendKeysToElement(text:string, elementId:string) {
+    return new Promise(async (resolve, reject) => {
+      const webElement = this.browser.getKnownElement(elementId);
+      const element:any = webElement.element;
+      let files = [];
+
+      if (text === undefined) reject(new InvalidArgument(''));
+
+      if (!webElement.isInteractable() && element.getAttribute('contenteditable') !== 'true') {
+        reject(new InvalidArgument('Element is not interactable')); // TODO: create new error class
+      }
+
+      if (this.browser.activeElement !== element) element.focus();
+
+      if (element.tagName.toLowerCase() === 'input') {
+      
+        if (text.constructor.name.toLowerCase() !== 'string') reject(new InvalidArgument(''));
+        // file input
+        if (element.getAttribute('type') === 'file') {
+          files = text.split('\n');
+          if (files.length === 0) throw new InvalidArgument('');
+          if (!element.hasAttribute('multiple') && files.length !== 1) throw new InvalidArgument('');
+
+          await Promise.all(files.map(file => utils.fileSystem.pathExists(file)));
+
+          addFileList(element, files);
+          element.dispatchEvent(new Event('input'));
+          element.dispatchEvent(new Event('change'));
+        } else if (
+          element.getAttribute('type') === 'text'
+          || element.getAttribute('type') === 'email'
+        ) {
+          element.value += text;
+          element.dispatchEvent(new Event('input'));
+          element.dispatchEvent(new Event('change'));
+        } else if (element.getAttribute('type') === 'color') {
+          if (!validator.isHexColor(text)) throw new InvalidArgument('not a hex colour');
+          element.value = text;
+        } else {
+          if (
+            !Object.prototype.hasOwnProperty.call(element, 'value')
+            || element.getAttribute('readonly')
+          ) throw new Error('element not interactable'); // TODO: create error class
+          // TODO: add check to see if element is mutable, reject with element not interactable
+          element.value = text;
+        }
+        element.dispatchEvent(new Event('input'));
+        element.dispatchEvent(new Event('change'));
+        resolve(null);
+      } else {
+        // TODO: text needs to be encoded before it is inserted into the element
+        // innerHTML, especially important since js code can be inserted in here and executed
+        element.innerHTML += text;
+        resolve(null);
+      }
+    });
+  }
+
+  /**
+   * navigates to a specified url
+   * sets timers according to session config
+   * @param url the url to navigate the user-agent to
+   */
+  async navigateTo({ url }) {
+    let pathType;
+
+    try {
+      if (validator.isURL(url)) pathType = 'url';
+      else if (await utils.fileSystem.pathExists(url)) pathType = 'file';
+      else throw new InvalidArgument('NAVIGATE TO');
+    } catch (e) {
+      throw new InvalidArgument('NAVIGATE TO');
+    }
+
+    // pageload timer
+    let timer;
+    const startTimer = () => {
+      timer = setTimeout(() => {
+        throw new Error('timeout'); // TODO: create timeout error class
+      }, this.timeouts.pageLoad);
+    };
+
+    if (this.browser.getUrl() !== url) {
+      startTimer();
+      await this.browser.navigate(url, pathType);
+      clearTimeout(timer);
+    }
+  }
+
+  // sets and validates the timeouts object
+  setTimeouts(timeouts) {
+    const capabilityValidator = new CapabilityValidator();
+    let valid = true;
+    Object.keys(timeouts).forEach((key) => {
+      valid = capabilityValidator.validateTimeouts(key, timeouts[key]);
+      if (!valid) throw new InvalidArgument('');
+    });
+
+    Object.keys(timeouts).forEach((validTimeout) => {
+      this.timeouts[validTimeout] = timeouts[validTimeout];
+    });
+  }
+
+  /**
+   * return the current session's timeouts
+   */
+  getTimeouts() : Pluma.Timeouts {
+    return this.timeouts;
+  }
+
+  // configures session properties
+  configureSession(requestedCapabilities) {
+    // configure Session object capabilties
+    const configuredCapabilities = this.configureCapabilties(requestedCapabilities);
+    // extract browser specific data
+    const browserConfig = configuredCapabilities['plm:plumaOptions'];
+    if (Object.prototype.hasOwnProperty.call(configuredCapabilities, 'acceptInsecureCerts')) {
+      browserConfig.strictSSL = !configuredCapabilities.acceptInsecureCerts;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(configuredCapabilities, 'rejectPublicSuffixes')) {
+      browserConfig.rejectPublicSuffixes = configuredCapabilities.rejectPublicSuffixes;
+    }
+
+    if (configuredCapabilities.unhandledPromptBehavior) {
+      browserConfig.unhandledPromptBehavior = configuredCapabilities.unhandledPromptBehavior;
+    }
+
+    this.browser = new Browser(browserConfig);
+  }
+
+  // configures session object capabilties
+  configureCapabilties(requestedCapabilities) {
+    const capabilities = Session.processCapabilities(requestedCapabilities);
+    if (capabilities === null) throw new InternalServerError('could not create session');
+
+    // configure pageLoadStrategy
+    this.pageLoadStrategy = 'normal';
+    if (
+      Object.prototype.hasOwnProperty.call(capabilities, 'pageLoadStrategy')
+      && typeof capabilities.pageLoadStrategy === 'string'
+    ) {
+      this.pageLoadStrategy = capabilities.pageLoadStrategy;
+    } else {
+      capabilities.pageLoadStrategy = 'normal';
+    }
+
+    if (Object.prototype.hasOwnProperty.call(capabilities, 'proxy')) {
+      // TODO: set JSDOM proxy address
+    } else {
+      capabilities.proxy = {};
+    }
+
+    if (Object.prototype.hasOwnProperty.call(capabilities, 'timeouts')) {
+      this.setTimeouts(capabilities.timeouts);
+    }
+    capabilities.timeouts = this.timeouts;
+
+    return capabilities;
+  }
+
+  // validates, merges and matches capabilties
+  static processCapabilities({ capabilities }) {
+    const command = 'POST /session';
+    const capabilityValidator = new CapabilityValidator();
+
+    const defaultCapabilities = [
+      'acceptInsecureCerts',
+      'browserName',
+      'browserVersion',
+      'platformName',
+      'pageLoadStrategy',
+      'proxy',
+      'timeouts',
+      'unhandledPromptBehaviour',
+      'plm:plumaOptions',
+    ];
+
+    if (
+      !capabilities
+      || capabilities.constructor !== Object
+      || Object.keys(capabilities).length === 0
+    ) {
+      throw new InvalidArgument(command);
+    }
+
+    // validate alwaysMatch capabilties
+    const requiredCapabilities = {};
+    if (capabilities.alwaysMatch !== undefined) {
+      defaultCapabilities.forEach((key) => {
+        if (Object.prototype.hasOwnProperty.call(capabilities.alwaysMatch, key)) {
+          const validatedCapability = capabilityValidator.validate(
+            capabilities.alwaysMatch[key],
+            key,
+          );
+          if (validatedCapability) requiredCapabilities[key] = capabilities.alwaysMatch[key];
+          else {
+            throw new InvalidArgument(command);
+          }
+        }
+      });
+    }
+
+    // validate first match capabilities
+    let allMatchedCapabilities = capabilities.firstMatch;
+    if (allMatchedCapabilities === undefined) {
+      allMatchedCapabilities = [{}];
+    } else if (
+      allMatchedCapabilities.constructor.name.toLowerCase() !== 'array'
+      || allMatchedCapabilities.length === 0
+    ) {
+      throw new InvalidArgument(command);
+    }
+    /**
+     * @param {Array[Capability]} validatedFirstMatchCapabilties contains
+     * a list of all the validated firstMatch capabilties requested by the client
+     */
+    const validatedFirstMatchCapabilties = [];
+
+    allMatchedCapabilities.forEach((indexedFirstMatchCapability) => {
+      const validatedFirstMatchCapability = {};
+      Object.keys(indexedFirstMatchCapability).forEach((key) => {
+        const validatedCapability = capabilityValidator.validate(
+          indexedFirstMatchCapability[key],
+          key,
+        );
+        if (validatedCapability) {
+          validatedFirstMatchCapability[key] = indexedFirstMatchCapability[key];
+        }
+      });
+      validatedFirstMatchCapabilties.push(validatedFirstMatchCapability);
+    });
+
+    // attempt merging capabilities
+    const mergedCapabilities = [];
+
+    validatedFirstMatchCapabilties.forEach((firstMatch) => {
+      const merged = Session.mergeCapabilities(requiredCapabilities, firstMatch);
+      mergedCapabilities.push(merged);
+    });
+
+    let matchedCapabilities;
+    mergedCapabilities.forEach((capabilites) => {
+      matchedCapabilities = Session.matchCapabilities(capabilites);
+      if (matchedCapabilities === null) throw new SessionNotCreated('Capabilities could not be matched');
+    });
+
+    return matchedCapabilities;
+  }
+
+  // merges capabilities in both
+  static mergeCapabilities(primary, secondary) {
+    const result = {};
+    Object.keys(primary).forEach((key) => {
+      result[key] = primary[key];
+    });
+
+    if (secondary === undefined) return result;
+
+    Object.keys(secondary).forEach((property) => {
+      if (Object.prototype.hasOwnProperty.call(primary, property)) {
+        throw new InvalidArgument('POST /session');
+      }
+      result[property] = secondary[property];
+    });
+
+    return result;
+  }
+
+  // matches supported capabilities
+  static matchCapabilities(capabilties) {
+    const matchedCapabilities = {
+      browserName: 'pluma',
+      browserVersion: 'v1.0',
+      platformName: os.platform(),
+      acceptInsecureCerts: false,
+      setWindowRect: false,
+    };
+
+    // TODO: add extension capabilities here in the future
+    let flag = true;
+    Object.keys(capabilties).forEach((property) => {
+      switch (property) {
+        case 'browserName':
+        case 'platformName':
+          if (capabilties[property] !== matchedCapabilities[property]) flag = false;
+          break;
+        case 'browserVersion':
+          // TODO: change to comparison algorith once more versions are released
+          if (capabilties[property] !== matchedCapabilities[property]) flag = false;
+          break;
+        case 'setWindowRect':
+          if (capabilties[property]) throw new InvalidArgument('POST /session');
+          break;
+        // TODO: add proxy matching in the future
+        default:
+          break;
+      }
+      if (flag) matchedCapabilities[property] = capabilties[property];
+    });
+
+    if (flag) return matchedCapabilities;
+
+    return null;
+  }
+
+  elementRetrieval(startNode, strategy, selector) {
+    // TODO: check if element is connected (shadow-root) https://dom.spec.whatwg.org/#connected
+    // check W3C endpoint spec for details
+    const endTime = new Date(new Date().getTime() + this.timeouts.implicit);
+    let elements;
+    const result = [];
+
+    if (!strategy || !selector) throw new InvalidArgument('');
+    if (!startNode) throw new NoSuchElement();
+
+    const locationStrategies = {
+      cssSelector() {
+        return startNode.querySelectorAll(selector);
+      },
+      linkTextSelector(partial = false) {
+        const linkElements = startNode.querySelectorAll('a');
+        const strategyResult = [];
+
+        linkElements.forEach((element) => {
+          const renderedText = element.innerHTML;
+          if (!partial && renderedText.trim() === selector) strategyResult.push(element);
+          else if (partial && renderedText.includes(selector)) strategyResult.push(element);
+        });
+        return result;
+      },
+      tagName() {
+        return startNode.getElementsByTagName(selector);
+      },
+      XPathSelector(document) {
+        const evaluateResult = document.evaluate(selector, startNode, null, 7);
+        const length = evaluateResult.snapshotLength;
+        const xPathResult = []; // according to W3C this should be a NodeList
+        for (let i = 0; i < length; i++) {
+          const node = evaluateResult.snapshotItem(i);
+          xPathResult.push(node);
+        }
+        return xPathResult;
+      },
+    };
+
+    do {
+      try {
+        switch (strategy) {
+          case 'css selector':
+            elements = locationStrategies.cssSelector();
+            break;
+          case 'link text':
+            elements = locationStrategies.linkTextSelector();
+            break;
+          case 'partial link text':
+            elements = locationStrategies.linkTextSelector(true);
+            break;
+          case 'tag name':
+            elements = locationStrategies.tagName();
+            break;
+          case 'xpath':
+            elements = locationStrategies.XPathSelector(this.browser.dom.window.document);
+            break;
+          default:
+            throw new InvalidArgument('');
+        }
+      } catch (error) {
+        // if (
+        //   error instanceof DOMException
+        //   || error instanceof SyntaxError
+        //   || error instanceof XPathException
+        // ) throw new Error('invalid selector');
+        // // TODO: add invalidSelector error class
+        // else throw new UnknownError(); // TODO: add unknown error class
+        console.log(error);
+      }
+    } while (endTime > new Date() && elements.length < 1);
+
+    elements.forEach((element) => {
+      const foundElement = new WebElement(element);
+      result.push(foundElement);
+      this.browser.knownElements.push(foundElement);
+    });
+    return result;
+  }
+
+  executeScript(script, args) {
+    const argumentList = [];
+
+    args.forEach((arg) => {
+      if (arg[ELEMENT] !== undefined && arg[ELEMENT] !== null) {
+        const element = this.browser.getKnownElement(arg[ELEMENT]);
+        argumentList.push(element.element);
+      } else {
+        argumentList.push(arg);
+      }
+    });
+
+    // eslint-disable-next-line no-new-func
+    const scriptFunc = new Function('arguments', script);
+
+    const vm = new VM({
+      timeout: this.timeouts.script,
+      sandbox: {
+        window: this.browser.dom.window,
+        document: this.browser.dom.window.document,
+        func: scriptFunc,
+        arguments: argumentList,
+      },
+    });
+    let returned;
+    let response;
+    return new Promise((resolve, reject) => {
+      try {
+        console.log('ABOUT TO EXECUTE SCRIPT');
+        returned = vm.run('func(arguments);');
+
+        if (returned instanceof Array) {
+          response = [];
+          returned.forEach((value) => {
+            if (value instanceof HTMLElement) {
+              const element = new WebElement(value);
+              this.browser.knownElements.push(element);
+              response.push(element);
+            } else response.push(value);
+          });
+        } else if (returned instanceof HTMLElement) {
+          const element = new WebElement(returned);
+          this.browser.knownElements.push(element);
+          response = element;
+        } else response = returned;
+        resolve(response);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+}
+
+export { Session };
