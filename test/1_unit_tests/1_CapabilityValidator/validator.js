@@ -33,9 +33,6 @@ const runTestAgainstTestData = (func) => {
 };
 
 const capabilityValidator = new CapabilityValidator();
-
-console.log('INSIDE CAPABILITY VALIDATOR TEST');
-
 describe('Testing CapabilityValidator class', () => {
   beforeEach(() => {
     capabilityValidator.valid = true;
