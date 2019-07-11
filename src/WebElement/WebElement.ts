@@ -7,25 +7,34 @@ class WebElement {
   readonly element: HTMLElement;
   readonly [ELEMENT]: string;
 
-  isInteractable(): boolean {
-    return isFocusableAreaElement(this.element[jsdomUtils.implSymbol]);
-  }
-
-  getText(): string {
-    return this.element.textContent;
-  }
-
-  getTagName(): string {
-    return this.element.tagName;
-  }
-
   constructor(element: HTMLElement) {
     this.element = element;
     this[ELEMENT] = uuidv1();
   }
+  /**
+   * Wrapper for the jsdom isFocusableAreaElement method
+   */
+  isInteractable(): boolean {
+    return isFocusableAreaElement(this.element[jsdomUtils.implSymbol]);
+  }
 
-  getElementAttribute(name: string):string {
-    if (ElementBooleanAttributeValues.guard(name)) return this.element.hasAttribute(name).toString();
+  /**
+   * returns the textContent @type {String} of this WebElement.element @type {HTMLElement}
+   */
+  getText(): string {
+    return this.element.textContent;
+  }
+
+  /**
+   * returns the tagName @type {String} of this WebElement.element @type {HTMLElement}
+   */
+  getTagName(): string {
+    return this.element.tagName;
+  }
+
+  getElementAttribute(name: string): string {
+    if (ElementBooleanAttributeValues.guard(name))
+      return this.element.hasAttribute(name).toString();
     return this.element.getAttribute(name);
   }
 }
