@@ -7,7 +7,7 @@ chai.use(chaiHttp);
 
 module.exports.importTest = ({ name, path }) => {
   describe(name, () => {
-    require({path});
+    require(path);
   });
 };
 
