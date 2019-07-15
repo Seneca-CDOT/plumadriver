@@ -33,22 +33,24 @@
     "eslint-plugin-import": "^2.14.0",
     "fs": "0.0.1-security",
     "http-post": "^0.1.1",
+    "jsdoc": "^3.6.2",
     "mocha": "^6.1.4",
     "nodemon": "^1.18.9",
     "should": "^13.2.3",
     "tslint-eslint-rules": "^5.4.0",
+    "typedoc": "^0.14.2",
     "typescript": "^3.5.2"
   },
   "scripts": {
     "test": "mocha --exit",
     "lint": "eslint",
-    "start": "node pluma-webdriver.js",
-    "compile-sass": "node-sass ./test_docs/style.scss ./test_docs/style.css -w",
+    "start": "node ./src/index.js",
     "compile-ts": "tsc",
     "build-linux": "tsc && pkg . --target latest-linux",
     "build-win": "tsc && pkg . --target latest-win",
     "build-macos": "tsc && pkg . --target latest-mac",
-    "build-all": "tsc && pkg ."
+    "build-all": "tsc && pkg .",
+    "generate-docs": "./node_modules/.bin/typedoc --out docs ./src/ --options ./typedoc.json &>/dev/null"
   },
   "bin": "bin.js",
   "author": "miguel roncancio",
