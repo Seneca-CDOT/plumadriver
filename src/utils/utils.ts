@@ -2,6 +2,8 @@ import { Pluma } from '../Types/types';
 import * as PlumaError from '../Error/errors';
 import * as fs from 'fs';
 
+
+// credit where it's due: https://stackoverflow.com/questions/36836011/checking-validity-of-string-literal-union-type-at-runtime/43621735
 export const StringUnion = <UnionType extends string>(
   ...values: UnionType[]
 ) => {

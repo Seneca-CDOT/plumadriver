@@ -7,14 +7,17 @@ import {
 
 import { ResourceLoader } from 'jsdom';
 
+/**
+ * contains interfaces paticular to plumadriver
+ */
 export namespace Pluma {
   type RunScripts = typeof RunScriptsValues.type;
   type UnhandledPromptBehaviour = typeof UnhandledPromptBehaviourValues.type;
   type BeforeParse = (window) => void;
-  type UserPrompt = (message? : string) => boolean;
+  type UserPrompt = (message?: string) => boolean;
   type ElementBooleanAttribute = typeof ElementBooleanAttributeValues.type;
   type PageLoadStrategy = typeof PageLoadStrategyValues.type;
-  
+
   /**
    * Client defined options for jsdom
    */
@@ -24,7 +27,7 @@ export namespace Pluma {
     unhandledPromptBehaviour: UnhandledPromptBehaviour;
     rejectPublicSuffixes: boolean;
   }
-  
+
   /**
    * Expected cookie shape
    */
@@ -36,32 +39,42 @@ export namespace Pluma {
     httpOnly?: boolean;
     expiry?: number;
   }
-  
+
+  /**
+   * The plumadriver request object structure
+   */
   interface Request {
-    urlVariables:any;
-    parameters:any;
+    /** the http url variables */
+    urlVariables: any;
+    /** the parameters passed inside the body of the http request */
+    parameters: any;
+    /** the specific webdriver command to be executed */
     command: string;
   }
 
+  /**
+   * The timeouts object which records the timeout duration values used to control the behaviour of script evaluation
+   * navigation and element retrieval 
+   */
   interface Timeouts {
-    script: number,
-    pageLoad: number,
-    implicit: number
+    script: number;
+    pageLoad: number;
+    implicit: number;
   }
 
+  /**
+   * defines the shape of the webdriver's readiness state response
+   */
   interface ReadinessState {
-      status: number,
-      value: {
-        message: string,
-        os: {
-          arch: string,
-          name: string,
-          version: string
-        },
-        ready: boolean
-      }
-
+    status: number;
+    value: {
+      message: string;
+      os: {
+        arch: string;
+        name: string;
+        version: string;
+      };
+      ready: boolean;
+    };
   }
 }
-
-

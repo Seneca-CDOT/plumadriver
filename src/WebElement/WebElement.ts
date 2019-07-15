@@ -19,22 +19,30 @@ class WebElement {
   }
 
   /**
-   * returns the textContent @type {String} of this WebElement.element @type {HTMLElement}
+   * returns the textContent of the WebElement's HTML element
+   * @returns {String}
    */
   getText(): string {
     return this.element.textContent;
   }
 
   /**
-   * returns the tagName @type {String} of this WebElement.element @type {HTMLElement}
+   * returns the tagName of the WebElement's HTML element
+   * @returns {String}
    */
   getTagName(): string {
     return this.element.tagName;
   }
 
+  /**
+   * returns 'true' @type {String} or null if @param name is an ElementBooleanAttribute
+   * otherwise returns the result of getting an element attribute with name @param name
+   * @param name the name of the element attribute
+   * @returns {String | null}
+   */
   getElementAttribute(name: string): string {
     if (ElementBooleanAttributeValues.guard(name))
-      return this.element.hasAttribute(name).toString();
+      return this.element.hasAttribute(name).toString(); // returns 'true' (string) or null
     return this.element.getAttribute(name);
   }
 }

@@ -6,7 +6,7 @@ import { VM } from 'vm2';
 import { JSDOM } from 'jsdom';
 
 import { WebElement } from '../WebElement/WebElement';
-import { COMMANDS } from '../constants/constants';
+import { COMMANDS, ELEMENT } from '../constants/constants';
 import { Browser } from "../Browser/Browser";
 import { Pluma } from '../Types/types';
 import * as utils from '../utils/utils';
@@ -15,10 +15,11 @@ import * as utils from '../utils/utils';
 import { addFileList } from '../jsdom_extensions/addFileList';
 
 // DOM specific
-const { Event, HTMLElement } = new JSDOM().window;
-
-// W3C
-const ELEMENT = 'element-6066-11e4-a52e-4f735466cecf';
+const {
+  /** A window event, imported from jsdom */ 
+  Event,
+  /** jsdom implementation of the HTMLElement object */ 
+  HTMLElement } = new JSDOM().window;
 
 // errors
 import {
@@ -29,13 +30,26 @@ import {
 }from '../Error/errors';
 
 import { CapabilityValidator } from'../CapabilityValidator/CapabilityValidator';
+
+/**
+ * Represents the connection between a local end and a specific remote end. In this case, jsdom.
+ * Has a unique session Id that can be used to differentiate one session from another.  
+ */
 class Session {
+  /** the session id */
   readonly id: string;
+  /** the user agent */
   browser: Browser;
-  pageLoadStrategy: Pluma.PageLoadStrategy;
-  secureTLS: boolean; // is this needed?????
+  /** */
+  pageLoadStrategy: Pluma.PageLoadStrategy = 'normal';
+  /** indicated wherher untrusted or self-signed TLS certificates should be trusted for the duration of the webdrive session */
+  secureTLS: boolean;
+  /** records the timeout duration values used to control the behaviour of script evaluation, navigation and element retrieval */
   timeouts: Pluma.Timeouts;
-  mutex: Mutex;
+  /** 
+   * a queue of [[Pluma.Request]] currently awaiting processsing
+   *  */
+  requestQueue: Mutex;
   proxy: Object | null;
   
   constructor(requestBody) {
@@ -48,15 +62,14 @@ class Session {
       script: 30000,
     };
     this.configureSession(requestBody);
-    this.mutex = new Mutex();
+    this.requestQueue = new Mutex();
   }
 
   /**
-   * Delegates logic execution to different methods depending on the passed command.
-   * 
-   * @param command the command or endpoint requested by the client
-   * @param parameters the parameters sent by the client in the request body
-   * @param urlVariables the variables in the endpoint url 
+   * Accepts a [[Pluma.Request]] object which are executed on a FIFO order inside the
+   * [[requestQueue]] list.
+   * Delegates logic execution to different methods depending on the command passed.
+   * @returns {Promise} 
    */
   async process({ command, parameters, urlVariables }:Pluma.Request) {
     let response = null;
@@ -130,10 +143,10 @@ class Session {
   }
 
   /**
+   * Accepts a string and an elementId @type {string}
+   * Tries to locate the element with the user provided Id and insert the specified string of text
    * sets a user defined value on a given HTML element
    * TODO: this method needs to be updated to incorporate the action Object
-   * @param text the text to pass onto the specified element
-   * @param elementId the element id 
    */
   sendKeysToElement(text:string, elementId:string) {
     return new Promise(async (resolve, reject) => {
@@ -196,7 +209,6 @@ class Session {
   /**
    * navigates to a specified url
    * sets timers according to session config
-   * @param url the url to navigate the user-agent to
    */
   async navigateTo({ url }) {
     let pathType;
@@ -224,7 +236,9 @@ class Session {
     }
   }
 
-  // sets and validates the timeouts object
+  /** 
+   * sets and validates the [[timeouts]] object 
+   * */ 
   setTimeouts(timeouts) {
     const capabilityValidator = new CapabilityValidator();
     let valid = true;
@@ -239,13 +253,13 @@ class Session {
   }
 
   /**
-   * return the current session's timeouts
+   * return the current session's [[timeouts]]
    */
   getTimeouts() : Pluma.Timeouts {
     return this.timeouts;
   }
 
-  // configures session properties
+  /** configures session properties*/
   configureSession(requestedCapabilities) {
     // configure Session object capabilties
     const configuredCapabilities = this.configureCapabilties(requestedCapabilities);
@@ -272,7 +286,6 @@ class Session {
     if (capabilities === null) throw new InternalServerError('could not create session');
 
     // configure pageLoadStrategy
-    this.pageLoadStrategy = 'normal';
     if (
       Object.prototype.hasOwnProperty.call(capabilities, 'pageLoadStrategy')
       && typeof capabilities.pageLoadStrategy === 'string'
@@ -296,7 +309,9 @@ class Session {
     return capabilities;
   }
 
-  // validates, merges and matches capabilties
+  /**
+   * processes and validates the user defined capabilties
+   */
   static processCapabilities({ capabilities }) {
     const command = 'POST /session';
     const capabilityValidator = new CapabilityValidator();
@@ -385,7 +400,10 @@ class Session {
     return matchedCapabilities;
   }
 
-  // merges capabilities in both
+  /** 
+   * accepts required primary and secondary capabilties
+   * merges any overlapping capabilties
+   */
   static mergeCapabilities(primary, secondary) {
     const result = {};
     Object.keys(primary).forEach((key) => {
@@ -404,7 +422,9 @@ class Session {
     return result;
   }
 
-  // matches supported capabilities
+  /**
+   * matches implementation capabilties with the merged capabilties 
+   * */
   static matchCapabilities(capabilties) {
     const matchedCapabilities = {
       browserName: 'pluma',
@@ -441,6 +461,9 @@ class Session {
     return null;
   }
 
+  /**
+   * attempts to find a [[WebElement]] from a given startNode, selection strategy and selector
+   */
   elementRetrieval(startNode, strategy, selector) {
     // TODO: check if element is connected (shadow-root) https://dom.spec.whatwg.org/#connected
     // check W3C endpoint spec for details
@@ -522,6 +545,9 @@ class Session {
     return result;
   }
 
+  /**
+   * executes a user defined script within the context of the dom on a given set of user defined arguments
+   */
   executeScript(script, args) {
     const argumentList = [];
 

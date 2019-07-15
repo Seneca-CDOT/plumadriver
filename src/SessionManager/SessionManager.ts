@@ -3,8 +3,13 @@ import { Session } from '../Session/Session';
 import { NotFoundError } from '../Error/errors';
 import { Pluma } from '../Types/types';
 
+/**
+ * manages the life and death of all Session objects
+ */
 class SessionManager {
+    /** the Active Plumadriver sessions */
     sessions:Array<Session>;
+    /** plumadriver's [readiness state](https://w3c.github.io/webdriver/#nodes) */
     readinessState: Pluma.ReadinessState;
   constructor() {
     this.sessions = [];
@@ -24,7 +29,7 @@ class SessionManager {
 
   /**
    * Creates a new @type {Session}
-   * @param requestBody contains the user defined session configuration object
+   * from a user defined session configuration object
    */
   createSession(requestBody) {
     const session = new Session(requestBody);
@@ -53,7 +58,6 @@ class SessionManager {
 
   /**
    * find a session from a user specified uuid
-   * @param sessionId The Id of the session to find
    */
   findSession(sessionId:string) {
     const foundSession = this.sessions.find(
@@ -68,8 +72,6 @@ class SessionManager {
  
   /**
    * deletes a session from a user specified uuid
-   * @param currentSession the current session
-   * @param request the request object 
    */
   async deleteSession(currentSession:Session, request:Pluma.Request) {
     const index = this.sessions

@@ -6,7 +6,14 @@ import {
   TimeoutValues,
 } from '../constants/constants';
 
+/**
+ * Validates webdriver and jsdom capabilities before they are used to configure a given session and/or user agent
+ * valid property
+ */
 class CapabilityValidator {
+  /** set to true until a capability is deemed invalid. Prevents any further
+   * validation when set to false.
+   */
   valid: boolean;
 
   constructor() {
@@ -70,7 +77,6 @@ class CapabilityValidator {
 
   /**
    * validates proxy for session
-   * @param reqProxy the proxy to be valdiated
    */
   static validateProxy(reqProxy) {
     const proxyProperties = [

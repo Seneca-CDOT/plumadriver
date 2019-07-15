@@ -12,17 +12,20 @@ import { tough } from '../jsdom_extensions/tough-cookie/lib/cookie';
 
 /**
  * Plumadriver browser with jsdom at its core.
- * @param {BrowserConfig} browserConfig contains the user-defined jsdom configuration for the session
- * @param {Array<WebElement>} knownElements the list of known elements https://www.w3.org/TR/webdriver1/#elements
- * @param {JSDOM} dom jsdom object
- * @param {HTMLElement} activeElement the browser's active element
+ * Stores user-defined config object from which to create new instances of jsdom upon 
+ * navigation to any given URL.
  */
 class Browser {
+  /** contains the user-defined jsdom configuration object for the session */
   browserConfig: BrowserConfig;
+  /** the [list of known elements](https://www.w3.org/TR/webdriver1/#elements) */
   knownElements: Array<WebElement> = [];
+  /** the jsdom object */
   dom: JSDOM;
+  /** the user-agent's active element */
   activeElement: HTMLElement | null;
 
+  /** accepts a capabilities object with jsdom and plumadriver specific options */
   constructor(capabilities: object) {
     let browserOptions: Pluma.BrowserOptions = {
       runScripts: '',
@@ -40,9 +43,8 @@ class Browser {
   }
 
   /**
-   * Creates an empty @type {JSDOM} object or from a url depending on if the url parameter was passed
-   * @param config @type {BrowserConfig} the browser configuration for a given session
-   * @param url @type {URL} an optional url
+   * Creates an empty jsdom object from a url or file path depending on the url pathType parameter value.
+   * Accepts a [[BrowserConfig]] object used to configure the jsdom object
    */
   async configureBrowser(
     config: BrowserConfig,
@@ -96,9 +98,8 @@ class Browser {
   }
 
   /**
-   * 
-   * @param path the url or file path from which to instantiate JSDOM 
-   * @param pathType the type of path (url or file)
+   * accepts a url and pathType @type {String} from which to instantiate the
+   * jsdom object
    */
   async navigate(path: URL, pathType) {
     if (path) {
@@ -109,6 +110,7 @@ class Browser {
 
   /**
    * Returns the current page title
+   * @returns {String}
    */
   getTitle() {
     return this.dom.window.document.title;
@@ -116,6 +118,7 @@ class Browser {
 
   /**
    * returns the current page url
+   * @returns {String}
    */
   getUrl() {
     return this.dom.window.document.URL;
