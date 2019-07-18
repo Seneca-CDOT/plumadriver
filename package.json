@@ -44,7 +44,7 @@
   "scripts": {
     "test": "mocha --exit",
     "lint": "eslint",
-    "start": "node ./src/index.js",
+    "start": "node ./build/index.js",
     "compile-ts": "tsc",
     "build-linux": "tsc && pkg . --target latest-linux",
     "build-win": "tsc && pkg . --target latest-win",
