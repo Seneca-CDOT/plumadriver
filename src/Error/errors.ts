@@ -1,17 +1,17 @@
-import { MethodNotAllowed } from './MethodNotAllowedError'; // remove
+import { MethodNotAllowed } from './MethodNotAllowedError';
 import { NoSuchElement } from './NoSuchElement';
 import { NotFoundError } from './NotFoundError';
-import { RequestTimeout } from './RequestTimeoutError'; // remove
 import { InvalidArgument } from './InvalidArgument';
 import { SessionNotCreated } from './SessionNotCreated';
 import { InternalServerError } from './InternalServerError';
+import {ElementNotInteractable } from './ElementNotInteractableError';
 
 export {
   MethodNotAllowed,
   NoSuchElement,
   NotFoundError,
-  RequestTimeout,
   InvalidArgument,
   SessionNotCreated,
   InternalServerError,
+  ElementNotInteractable
 };

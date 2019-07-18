@@ -5,5 +5,6 @@ export class InvalidArgument extends BadRequest {
     super()
     this.message = `The arguments passed to ${this.command} are either invalid or malformed`;
     this.name = 'InvalidArgumentError';
+    this.JSONCodeError = 'invalid argument';
   }
 }
