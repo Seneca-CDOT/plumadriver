@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Session | Bob</title>
+	<title>Session | Plumadriver</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -22,7 +22,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="../index.html" class="title">Bob</a>
+					<a href="../index.html" class="title">Plumadriver</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -98,9 +98,9 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_session_session_.session.html#browser" class="tsd-kind-icon">browser</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_session_session_.session.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_session_session_.session.html#mutex" class="tsd-kind-icon">mutex</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_session_session_.session.html#pageloadstrategy" class="tsd-kind-icon">page<wbr>Load<wbr>Strategy</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_session_session_.session.html#proxy" class="tsd-kind-icon">proxy</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_session_session_.session.html#requestqueue" class="tsd-kind-icon">request<wbr>Queue</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_session_session_.session.html#securetls" class="tsd-kind-icon">secureTLS</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_session_session_.session.html#timeouts" class="tsd-kind-icon">timeouts</a></li>
 							</ul>
@@ -137,7 +137,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/Session/Session.ts#L53">Session/Session.ts:53</a></li>
+									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/Session/Session.ts#L57">Session/Session.ts:57</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -159,7 +159,7 @@
 					<div class="tsd-signature tsd-kind-icon">browser<span class="tsd-signature-symbol">:</span> <a href="_browser_browser_.browser.html" class="tsd-signature-type">Browser</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/Session/Session.ts#L42">Session/Session.ts:42</a></li>
+							<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/Session/Session.ts#L46">Session/Session.ts:46</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -174,7 +174,7 @@
 					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/Session/Session.ts#L40">Session/Session.ts:40</a></li>
+							<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/Session/Session.ts#L44">Session/Session.ts:44</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -184,32 +184,12 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
-					<a name="pageloadstrategy" class="tsd-anchor"></a>
-					<h3>page<wbr>Load<wbr>Strategy</h3>
-					<div class="tsd-signature tsd-kind-icon">page<wbr>Load<wbr>Strategy<span class="tsd-signature-symbol">:</span> <a href="../modules/_types_types_d_.pluma.html#pageloadstrategy" class="tsd-signature-type">PageLoadStrategy</a><span class="tsd-signature-symbol"> =&nbsp;&quot;normal&quot;</span></div>
+					<a name="mutex" class="tsd-anchor"></a>
+					<h3>mutex</h3>
+					<div class="tsd-signature tsd-kind-icon">mutex<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Mutex</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/Session/Session.ts#L44">Session/Session.ts:44</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
-					<a name="proxy" class="tsd-anchor"></a>
-					<h3>proxy</h3>
-					<div class="tsd-signature tsd-kind-icon">proxy<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/Session/Session.ts#L53">Session/Session.ts:53</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
-					<a name="requestqueue" class="tsd-anchor"></a>
-					<h3>request<wbr>Queue</h3>
-					<div class="tsd-signature tsd-kind-icon">request<wbr>Queue<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Mutex</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/Session/Session.ts#L52">Session/Session.ts:52</a></li>
+							<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/Session/Session.ts#L56">Session/Session.ts:56</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -219,12 +199,32 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+					<a name="pageloadstrategy" class="tsd-anchor"></a>
+					<h3>page<wbr>Load<wbr>Strategy</h3>
+					<div class="tsd-signature tsd-kind-icon">page<wbr>Load<wbr>Strategy<span class="tsd-signature-symbol">:</span> <a href="../modules/_types_types_d_.pluma.html#pageloadstrategy" class="tsd-signature-type">PageLoadStrategy</a><span class="tsd-signature-symbol"> =&nbsp;&quot;normal&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/Session/Session.ts#L48">Session/Session.ts:48</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+					<a name="proxy" class="tsd-anchor"></a>
+					<h3>proxy</h3>
+					<div class="tsd-signature tsd-kind-icon">proxy<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/Session/Session.ts#L57">Session/Session.ts:57</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
 					<a name="securetls" class="tsd-anchor"></a>
 					<h3>secureTLS</h3>
 					<div class="tsd-signature tsd-kind-icon">secureTLS<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/Session/Session.ts#L46">Session/Session.ts:46</a></li>
+							<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/Session/Session.ts#L50">Session/Session.ts:50</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -239,7 +239,7 @@
 					<div class="tsd-signature tsd-kind-icon">timeouts<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_types_types_d_.pluma.timeouts.html" class="tsd-signature-type">Timeouts</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/Session/Session.ts#L48">Session/Session.ts:48</a></li>
+							<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/Session/Session.ts#L52">Session/Session.ts:52</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -261,7 +261,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/Session/Session.ts#L284">Session/Session.ts:284</a></li>
+									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/Session/Session.ts#L337">Session/Session.ts:337</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -284,7 +284,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/Session/Session.ts#L263">Session/Session.ts:263</a></li>
+									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/Session/Session.ts#L302">Session/Session.ts:302</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -312,7 +312,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/Session/Session.ts#L467">Session/Session.ts:467</a></li>
+									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/Session/Session.ts#L529">Session/Session.ts:529</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -346,7 +346,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/Session/Session.ts#L551">Session/Session.ts:551</a></li>
+									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/Session/Session.ts#L617">Session/Session.ts:617</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -377,7 +377,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/Session/Session.ts#L258">Session/Session.ts:258</a></li>
+									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/Session/Session.ts#L297">Session/Session.ts:297</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -399,7 +399,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/Session/Session.ts#L213">Session/Session.ts:213</a></li>
+									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/Session/Session.ts#L251">Session/Session.ts:251</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -433,13 +433,13 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/Session/Session.ts#L74">Session/Session.ts:74</a></li>
+									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/Session/Session.ts#L78">Session/Session.ts:78</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Accepts a <a href="../interfaces/_types_types_d_.pluma.request.html">Pluma.Request</a> object which are executed on a FIFO order inside the
-										<a href="_session_session_.session.html#requestqueue">requestQueue</a> list.
+										<a href="_session_session_.session.html#mutex">mutex</a> list.
 									Delegates logic execution to different methods depending on the command passed.</p>
 								</div>
 							</div>
@@ -474,7 +474,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/Session/Session.ts#L151">Session/Session.ts:151</a></li>
+									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/Session/Session.ts#L181">Session/Session.ts:181</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -508,7 +508,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/Session/Session.ts#L242">Session/Session.ts:242</a></li>
+									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/Session/Session.ts#L281">Session/Session.ts:281</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -536,7 +536,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/Session/Session.ts#L428">Session/Session.ts:428</a></li>
+									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/Session/Session.ts#L488">Session/Session.ts:488</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -581,7 +581,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/Session/Session.ts#L407">Session/Session.ts:407</a></li>
+									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/Session/Session.ts#L467">Session/Session.ts:467</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -615,7 +615,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/Session/Session.ts#L315">Session/Session.ts:315</a></li>
+									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/Session/Session.ts#L369">Session/Session.ts:369</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -646,8 +646,80 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_browser_browser_.html">"<wbr>Browser/<wbr>Browser"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_browser_browserconfig_.html">"<wbr>Browser/<wbr>Browser<wbr>Config"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_capabilityvalidator_capabilityvalidator_.html">"<wbr>Capability<wbr>Validator/<wbr>Capability<wbr>Validator"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_error_badrequest_.html">"<wbr>Error/<wbr>Bad<wbr>Request"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_error_elementnotinteractableerror_.html">"<wbr>Error/<wbr>Element<wbr>Not<wbr>Interactable<wbr>Error"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_error_internalservererror_.html">"<wbr>Error/<wbr>Internal<wbr>Server<wbr>Error"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_error_invalidargument_.html">"<wbr>Error/<wbr>Invalid<wbr>Argument"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_error_methodnotallowederror_.html">"<wbr>Error/<wbr>Method<wbr>Not<wbr>Allowed<wbr>Error"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_error_nosuchelement_.html">"<wbr>Error/<wbr>NoSuch<wbr>Element"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_error_notfounderror_.html">"<wbr>Error/<wbr>Not<wbr>Found<wbr>Error"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_error_sessionnotcreated_.html">"<wbr>Error/<wbr>Session<wbr>Not<wbr>Created"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_error_webdrivererror_.html">"<wbr>Error/<wbr>Web<wbr>Driver<wbr>Error"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_error_errors_.html">"<wbr>Error/errors"</a>
+					</li>
 					<li class="current tsd-kind-external-module">
 						<a href="../modules/_session_session_.html">"<wbr>Session/<wbr>Session"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_sessionmanager_sessionmanager_.html">"<wbr>Session<wbr>Manager/<wbr>Session<wbr>Manager"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_types_types_d_.html">"<wbr>Types/types.d"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_webelement_webelement_.html">"<wbr>Web<wbr>Element/<wbr>Web<wbr>Element"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_constants_constants_.html">"constants/constants"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_index_.html">"index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_routes_cookies_.html">"routes/cookies"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_routes_elements_.html">"routes/elements"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_routes_index_.html">"routes/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_routes_navigate_.html">"routes/navigate"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_routes_timeouts_.html">"routes/timeouts"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_utils_utils_.html">"utils/utils"</a>
 					</li>
 				</ul>
 			</nav>
@@ -668,13 +740,13 @@
 								<a href="_session_session_.session.html#id" class="tsd-kind-icon">id</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_session_session_.session.html#mutex" class="tsd-kind-icon">mutex</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
 								<a href="_session_session_.session.html#pageloadstrategy" class="tsd-kind-icon">page<wbr>Load<wbr>Strategy</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
 								<a href="_session_session_.session.html#proxy" class="tsd-kind-icon">proxy</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
-								<a href="_session_session_.session.html#requestqueue" class="tsd-kind-icon">request<wbr>Queue</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
 								<a href="_session_session_.session.html#securetls" class="tsd-kind-icon">secureTLS</a>

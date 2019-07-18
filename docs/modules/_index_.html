@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>&quot;index&quot; | Bob</title>
+	<title>&quot;index&quot; | Plumadriver</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -22,7 +22,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="../index.html" class="title">Bob</a>
+					<a href="../index.html" class="title">Plumadriver</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -73,6 +73,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_index_.html#http_port" class="tsd-kind-icon">HTTP_<wbr>PORT</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_index_.html#args" class="tsd-kind-icon">args</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_index_.html#errtransports" class="tsd-kind-icon">err<wbr>Transports</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_index_.html#server" class="tsd-kind-icon">server</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_index_.html#sessionmanager" class="tsd-kind-icon">session<wbr>Manager</a></li>
 							</ul>
@@ -94,7 +95,7 @@
 					<div class="tsd-signature tsd-kind-icon">HTTP_<wbr>PORT<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;process.env.PORT || args.port || 3000</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/index.ts#L14">index.ts:14</a></li>
+							<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/index.ts#L13">index.ts:13</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -104,7 +105,17 @@
 					<div class="tsd-signature tsd-kind-icon">args<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;argv(process.argv.slice(2))</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/index.ts#L12">index.ts:12</a></li>
+							<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/index.ts#L11">index.ts:11</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="errtransports" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> err<wbr>Transports</h3>
+					<div class="tsd-signature tsd-kind-icon">err<wbr>Transports<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;process.env.NODE_ENV &#x3D;&#x3D;&#x3D; &#x27;test&#x27;? [new winston.transports.Console({ level: &#x27;error&#x27; }),new winston.transports.File({filename: &#x27;pluma_error_log.txt&#x27;,level: &#x27;error&#x27;,handleExceptions: true,}),]: [new winston.transports.File({filename: &#x27;pluma_error_log.txt&#x27;,level: &#x27;error&#x27;,handleExceptions: true,}),]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/index.ts#L69">index.ts:69</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -114,7 +125,7 @@
 					<div class="tsd-signature tsd-kind-icon">server<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;express()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/index.ts#L13">index.ts:13</a></li>
+							<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/index.ts#L12">index.ts:12</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -124,7 +135,7 @@
 					<div class="tsd-signature tsd-kind-icon">session<wbr>Manager<span class="tsd-signature-symbol">:</span> <a href="../classes/_sessionmanager_sessionmanager_.sessionmanager.html" class="tsd-signature-type">SessionManager</a><span class="tsd-signature-symbol"> =&nbsp;new SessionManager()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/index.ts#L17">index.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/index.ts#L16">index.ts:16</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -141,7 +152,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7ce4982/src/index.ts#L49">index.ts:49</a></li>
+									<li>Defined in <a href="https://github.com/Seneca-CDOT/plumadriver/blob/7d94939/src/index.ts#L57">index.ts:57</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -156,8 +167,80 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_browser_browser_.html">"<wbr>Browser/<wbr>Browser"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_browser_browserconfig_.html">"<wbr>Browser/<wbr>Browser<wbr>Config"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_capabilityvalidator_capabilityvalidator_.html">"<wbr>Capability<wbr>Validator/<wbr>Capability<wbr>Validator"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_error_badrequest_.html">"<wbr>Error/<wbr>Bad<wbr>Request"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_error_elementnotinteractableerror_.html">"<wbr>Error/<wbr>Element<wbr>Not<wbr>Interactable<wbr>Error"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_error_internalservererror_.html">"<wbr>Error/<wbr>Internal<wbr>Server<wbr>Error"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_error_invalidargument_.html">"<wbr>Error/<wbr>Invalid<wbr>Argument"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_error_methodnotallowederror_.html">"<wbr>Error/<wbr>Method<wbr>Not<wbr>Allowed<wbr>Error"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_error_nosuchelement_.html">"<wbr>Error/<wbr>NoSuch<wbr>Element"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_error_notfounderror_.html">"<wbr>Error/<wbr>Not<wbr>Found<wbr>Error"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_error_sessionnotcreated_.html">"<wbr>Error/<wbr>Session<wbr>Not<wbr>Created"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_error_webdrivererror_.html">"<wbr>Error/<wbr>Web<wbr>Driver<wbr>Error"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_error_errors_.html">"<wbr>Error/errors"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_session_session_.html">"<wbr>Session/<wbr>Session"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_sessionmanager_sessionmanager_.html">"<wbr>Session<wbr>Manager/<wbr>Session<wbr>Manager"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_types_types_d_.html">"<wbr>Types/types.d"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_webelement_webelement_.html">"<wbr>Web<wbr>Element/<wbr>Web<wbr>Element"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_constants_constants_.html">"constants/constants"</a>
+					</li>
 					<li class="current tsd-kind-external-module">
 						<a href="_index_.html">"index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_routes_cookies_.html">"routes/cookies"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_routes_elements_.html">"routes/elements"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_routes_index_.html">"routes/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_routes_navigate_.html">"routes/navigate"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_routes_timeouts_.html">"routes/timeouts"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_utils_utils_.html">"utils/utils"</a>
 					</li>
 				</ul>
 			</nav>
@@ -168,6 +251,9 @@
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_index_.html#args" class="tsd-kind-icon">args</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_index_.html#errtransports" class="tsd-kind-icon">err<wbr>Transports</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_index_.html#server" class="tsd-kind-icon">server</a>
