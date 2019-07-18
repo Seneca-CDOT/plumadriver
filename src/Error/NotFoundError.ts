@@ -1,7 +1,8 @@
 import { WebDriverError } from './WebDriverError';
 
 export class NotFoundError extends WebDriverError {
-  constructor(message) {
-    super(message, 404);
+  constructor() {
+    super(404);
+    this.name = 'NotFoundError';
   }
 }

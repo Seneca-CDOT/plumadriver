@@ -2,6 +2,7 @@ import { WebDriverError } from './WebDriverError';
 
 export class InternalServerError extends WebDriverError {
   constructor(message) {
-    super(message, 500);
+    super(500);
+    this.name = 'InternalServerError';
   }
 }
