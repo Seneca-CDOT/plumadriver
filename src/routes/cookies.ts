@@ -1,72 +1,21 @@
 
 import * as express from 'express';
 import { COMMANDS } from '../constants/constants';
+import* as utils from '../utils/utils';
+const { defaultSessionEndpointLogic, sessionEndpointExceptionHandler } = utils.endpoint;
 
 const cookies = express.Router();
-// add cookie
-cookies.post('/', async (req, res, next) => {
-  const release = await req.session.mutex.acquire();
-  try {
-    req.sessionRequest.command = COMMANDS.ADD_COOKIE;
-    const response = await req.session.process(req.sessionRequest);
-    res.send(response); // returns SUCCESS: null for this endpoint
-  } catch (err) {
-    next(err);
-  } finally {
-    release();
-  }
-});
 
-// get all cookies
-cookies.get('/', async (req, res, next) => {
-  const release = await req.session.mutex.acquire();
-  const response:any = {};
-  try {
-    req.sessionRequest.command = COMMANDS.GET_ALL_COOKIES;
-    const foundCookies = await req.session.process(req.sessionRequest);
-    response.value = foundCookies;
-    res.json(response);
-  } catch (err) {
-    next(err);
-  } finally {
-    release();
-  }
-});
+cookies.post('/', sessionEndpointExceptionHandler(defaultSessionEndpointLogic,COMMANDS.ADD_COOKIE));
+cookies.get('/', sessionEndpointExceptionHandler(defaultSessionEndpointLogic,COMMANDS.GET_ALL_COOKIES));
 
-// get named cookie
-cookies.post('/:name', async (req, res, next) => {
-  const release = await req.session.mutex.acquire();
-  try {
-    // TODO: implement endpoint
-  } catch (err) {
-    next(err);
-  } finally {
-    release();
-  }
-});
+// TODO: get named cookie
+cookies.post('/:name', sessionEndpointExceptionHandler(defaultSessionEndpointLogic,COMMANDS.GET_NAMED_COOKIE));
 
-// delete cookie
-cookies.delete('/:name', async (req, res, next) => {
-  const release = await req.session.mutex.acquire();
-  try {
-    // TODO: implement endpoint
-  } catch (err) {
-    next(err);
-  } finally {
-    release();
-  }
-});
+// TODO: delete cookie
+cookies.delete('/:name', sessionEndpointExceptionHandler(defaultSessionEndpointLogic,COMMANDS.DELETE_COOKIE));
 
-// delete all cookies
-cookies.delete('/', async (req, res, next) => {
-  const release = await req.session.mutex.acquire();
-  try {
-    // TODO: implement endpoint
-  } catch (err) {
-    next(err);
-  } finally {
-    release();
-  }
-});
+// TODO: delete all cookies
+cookies.delete('/', sessionEndpointExceptionHandler(defaultSessionEndpointLogic,COMMANDS.DELETE_ALL_COOKIES));
 
 export default cookies;

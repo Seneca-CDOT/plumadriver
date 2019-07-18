@@ -1,32 +1,12 @@
 import * as express from 'express';
 import { COMMANDS } from '../constants/constants';
+import * as utils from '../utils/utils';
+
+const {sessionEndpointExceptionHandler, defaultSessionEndpointLogic} = utils.endpoint;
 
 const navigate = express.Router();
-// navigate to
-navigate.post('/', async (req, res, next) => {
-  const release = await req.session.mutex.acquire();
-  try {
-    req.sessionRequest.command = COMMANDS.NAVIGATE_TO;
-    const response = await req.session.process(req.sessionRequest);
-    res.send(response);
-  } catch (error) {
-    next(error);
-  } finally {
-    release();
-  }
-});
 
-// get current url
-navigate.get('/', async (req, res, next) => {
-  const release = await req.session.mutex.acquire();
-  try {
-    req.sessionRequest.command = COMMANDS.GET_CURRENT_URL;
-    const response = await req.session.process(req.sessionRequest);
-    res.send(response);
-  } catch (error) {
-    next(error);
-  } finally {
-    release();
-  }
-});
+navigate.post('/', sessionEndpointExceptionHandler(defaultSessionEndpointLogic, COMMANDS.NAVIGATE_TO));
+navigate.get('/', sessionEndpointExceptionHandler(defaultSessionEndpointLogic, COMMANDS.GET_CURRENT_URL));
+
 export default navigate;

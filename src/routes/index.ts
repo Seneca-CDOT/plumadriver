@@ -1,39 +1,35 @@
 // routers
 import * as express from 'express';
-import elements from './elements/elements';
-import timeouts from'./timeouts';
-import navigate from'./navigate';
-import cookies from'./cookies';
+import element from './elements';
+import timeouts from './timeouts';
+import navigate from './navigate';
+import cookies from './cookies';
 import { Pluma } from '../Types/types';
 import * as Utils from '../utils/utils';
 
+const {sessionEndpointExceptionHandler, defaultSessionEndpointLogic} = Utils.endpoint;
 
 // pluma commands
 import { COMMANDS } from '../constants/constants';
 
 // errors
-import { InvalidArgument } from '../Error/errors'; 
+import { InvalidArgument } from '../Error/errors';
 
 const router = express.Router();
 
-
-
 router.use('/session/:sessionId', (req, res, next) => {
   const sessionsManager = req.app.get('sessionManager');
-  const request:Pluma.Request = {
+  const request: Pluma.Request = {
     urlVariables: req.params,
     parameters: req.body,
-    command: ''
-  }
+    command: '',
+  };
   req.sessionId = req.params.sessionId;
   req.session = sessionsManager.findSession(req.sessionId);
   req.sessionRequest = request;
   next();
 });
 
-// router.get('/', (req, res) => {
-//   res.redirect(/* insert rick roll link here */);
-// });
 
 
 // New session
@@ -42,7 +38,7 @@ router.post('/session', async (req, res, next) => {
   try {
     // not sure if this conditional is needed here, body-parser checks for this anyway
     if (!(await Utils.validate.requestBodyType(req, 'application/json'))) {
-      throw new InvalidArgument('POST /session');
+      throw new InvalidArgument();
     }
     const newSession = sessionManager.createSession(req.body);
     res.json(newSession);
@@ -51,7 +47,7 @@ router.post('/session', async (req, res, next) => {
   }
 });
 
-// delete session
+
 router.delete('/session/:sessionId', async (req, res, next) => {
   const sessionManager = req.app.get('sessionManager');
   const release = await req.session.mutex.acquire();
@@ -67,40 +63,12 @@ router.delete('/session/:sessionId', async (req, res, next) => {
   }
 });
 
-// get title
-router.get('/session/:sessionId/title', async (req, res, next) => {
-  let response = null;
-  const release = await req.session.mutex.acquire();
-  try {
-    req.sessionRequest.command = COMMANDS.GET_TITLE;
-    const title = await req.session.process(req.sessionRequest);
-    response = { value: title };
-    res.send(response);
-  } catch (err) {
-    next(err);
-  } finally {
-    release();
-  }
-});
-
-router.post('/session/:sessionId/execute/sync', async (req, res, next) => {
-  let response = null;
-  const release = await req.session.mutex.acquire();
-  try {
-    req.sessionRequest.command = COMMANDS.EXECUTE_SCRIPT;
-    const result = await req.session.process(req.sessionRequest);
-    response = { value: result };
-    res.json(response);
-  } catch (err) {
-    next(err);
-  } finally {
-    release();
-  }
-});
+router.get('/session/:sessionId/title', sessionEndpointExceptionHandler(defaultSessionEndpointLogic, COMMANDS.GET_TITLE));
+router.post('/session/:sessionId/execute/sync', sessionEndpointExceptionHandler(defaultSessionEndpointLogic, COMMANDS.EXECUTE_SCRIPT));
 
 // element(s) routes
-router.use('/session/:sessionId/element', elements);
-router.use('/session/:sessionId/elements', elements);
+router.post('/session/:sessionId/element', sessionEndpointExceptionHandler(defaultSessionEndpointLogic, COMMANDS.FIND_ELEMENT));
+router.post('/session/:sessionId/elements', sessionEndpointExceptionHandler(defaultSessionEndpointLogic, COMMANDS.FIND_ELEMENTS));
 
 // timeout routes
 router.use('/session/:sessionId/timeouts', timeouts);
@@ -110,5 +78,13 @@ router.use('/session/:sessionId/url', navigate);
 
 // cookies routes
 router.use('/session/:sessionId/cookie', cookies);
+router.use(
+  '/session/:sessionId/element/:elementId',
+  (req, res, next) => {
+    req.sessionRequest.urlVariables.elementId = req.params.elementId;
+    next();
+  },
+  element,
+);
 
 export default router;

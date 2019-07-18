@@ -2,7 +2,6 @@ import { Pluma } from '../Types/types';
 import * as PlumaError from '../Error/errors';
 import * as fs from 'fs';
 
-
 // credit where it's due: https://stackoverflow.com/questions/36836011/checking-validity-of-string-literal-union-type-at-runtime/43621735
 export const StringUnion = <UnionType extends string>(
   ...values: UnionType[]
@@ -17,9 +16,9 @@ export const StringUnion = <UnionType extends string>(
   const check = (value: string): UnionType => {
     if (!guard(value)) {
       const actual = JSON.stringify(value);
-      const expected = values.map(s => JSON.stringify(s)).join(' | ');
+      const expected = values.map((s) => JSON.stringify(s)).join(' | ');
       throw new TypeError(
-        `Value '${actual}' is not assignable to type '${expected}'.`
+        `Value '${actual}' is not assignable to type '${expected}'.`,
       );
     }
     return value;
@@ -77,18 +76,19 @@ export const isValidCookie = (cookie: any, url): cookie is Pluma.Cookie => {
     },
     expiry(expiry) {
       return Number.isInteger(expiry);
-    }
+    },
   };
 
   if (!cookie.name || !cookie.value) return false;
 
   Object.keys(validCookie).forEach((key) => {
     if (Object.prototype.hasOwnProperty.call(cookie, key))
-    if (key === 'domain') {
-      if (!validateCookie[key](cookie[key], url)) throw new PlumaError.InvalidArgument('ADD COOKIE');
-    } else if (!validateCookie[key](cookie[key])) throw new PlumaError.InvalidArgument('ADD COOKIE');
-  })
-
+      if (key === 'domain') {
+        if (!validateCookie[key](cookie[key], url))
+          throw new PlumaError.InvalidArgument();
+      } else if (!validateCookie[key](cookie[key]))
+        throw new PlumaError.InvalidArgument();
+  });
 };
 
 export const validateCookie = {
@@ -127,7 +127,7 @@ export const validateCookie = {
   },
   expiry(expiry) {
     return Number.isInteger(expiry);
-  }
+  },
 };
 
 export const isBrowserOptions = (obj: any): obj is Pluma.BrowserOptions => {
@@ -156,22 +156,49 @@ export const validate = {
       if (!array.includes(key)) validObject = false;
     });
 
-    if (validObject && Object.keys(object).length > array.length) validObject = false;
+    if (validObject && Object.keys(object).length > array.length)
+      validObject = false;
 
     return validObject;
   },
   isEmpty(obj) {
-    return (Object.keys(obj).length === 0);
+    return Object.keys(obj).length === 0;
   },
-}
+};
 
 export const fileSystem = {
   pathExists(path) {
-    return new Promise ((res,rej)=>{
+    return new Promise((res, rej) => {
       fs.access(path, fs.constants.F_OK, (err) => {
-        if (err) rej(new PlumaError.InvalidArgument(''));
+        if (err) rej(new PlumaError.InvalidArgument());
         res(true);
       });
     });
+  },
+};
+
+export const endpoint = {
+  sessionEndpointExceptionHandler: (endpointLogic, plumaCommand) => 
+    async (req, res, next) => {
+      req.sessionRequest.command = plumaCommand;
+      const release = await req.session.mutex.acquire();
+      endpointLogic(req, res)
+        .catch((e) => {
+          e.command = req.sessionRequest.command;
+          next(e);
+        })
+        .finally(() => {
+          release();
+        });
+    },
+  async defaultSessionEndpointLogic (req, res, additionalLogic = null) {
+    let response = null;
+    const result = await req.session.process(req.sessionRequest);
+    if (result) {
+      response = { value: result };
+      res.json(response);
+    } else {
+      res.send(response);
+    }
   }
 }
