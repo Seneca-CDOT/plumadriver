@@ -1,7 +1,10 @@
 export class WebDriverError extends Error {
-  code :number;
-  constructor(message, code) {
-    super(message);
+  command: string;
+  code: number;
+  value: object;
+  JSONCodeError:string = '';
+  constructor(code) {
+    super();
 
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, WebDriverError);
@@ -13,9 +16,6 @@ export class WebDriverError extends Error {
       writable: false,
       enumerable: false,
     });
-    // this.value = {
-    //   stacktrace: this.stack,
-    // };
   }
 }
 
