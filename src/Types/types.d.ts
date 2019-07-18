@@ -77,4 +77,12 @@ export namespace Pluma {
       ready: boolean;
     };
   }
+
+  interface ErrorResponse {
+    value:{
+      error: string;
+      message: string;
+      stacktrace: string;
+    }
+  }
 }
