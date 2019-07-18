@@ -8,8 +8,6 @@ import * as PlumaError from '../Error/errors';
 
 import { tough } from '../jsdom_extensions/tough-cookie/lib/cookie';
 
-// TODO: include Error classes after migratring to typescript
-
 /**
  * Plumadriver browser with jsdom at its core.
  * Stores user-defined config object from which to create new instances of jsdom upon 
@@ -128,12 +126,12 @@ class Browser {
    * sets a cookie on the browser
    */
   addCookie(cookie) {
-    if (cookie === null || cookie === undefined) throw new PlumaError.InvalidArgument('');
+    if (cookie === null || cookie === undefined) throw new PlumaError.InvalidArgument();
 
     const scheme = this.getUrl().substr(0, this.getUrl().indexOf(':'));
 
     if (scheme !== 'http' && scheme !== 'https' && scheme !== 'ftp')
-      throw new PlumaError.InvalidArgument('');
+      throw new PlumaError.InvalidArgument();
 
     if (Utils.isValidCookie(cookie, this.getUrl())) {
       let validCookie;
@@ -152,7 +150,7 @@ class Browser {
       } catch (err) {
         throw new Error('UNABLE TO SET COOKIE'); // need to create this error class
       }
-    } else throw new PlumaError.InvalidArgument('');
+    } else throw new PlumaError.InvalidArgument();
   }
 
   /**
