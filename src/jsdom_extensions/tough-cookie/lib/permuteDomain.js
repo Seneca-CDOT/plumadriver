@@ -50,7 +50,6 @@ function permuteDomain(domain, rejectPublicSuffixes) {
   if (suffix === domain) {
     return [domain];
   }
-  console.log(suffix);
   const prefix = domain.slice(0, -(suffix.length + 1)); // ".example.com"
   const parts = prefix.split('.').reverse();
   let cur = suffix;
