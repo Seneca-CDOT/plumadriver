@@ -64,7 +64,7 @@ class SessionManager {
       session => session.id === sessionId
     );
     if (!foundSession) {
-      throw new NotFoundError(`Session ${sessionId} not found`);
+      throw new NotFoundError();
     } else {
       return foundSession;
     }
