@@ -12,7 +12,7 @@ export class BrowserConfig {
   /** defines the context under which scripts can run, if at all */
   runScripts: Pluma.RunScripts | null;
   /** defines whether self-signed or insecure SSL certificates should be trusted */
-  readonly strictSSL: boolean = true;
+  strictSSL: boolean = true;
   /** defines the type of behaviour when a user prompt is encountered see [W3C unhandledPromptBehaviour](https://w3c.github.io/webdriver/#dfn-unhandled-prompt-behavior) */
   readonly unhandledPromptBehaviour: Pluma.UnhandledPromptBehaviour = 'dismiss';
   /** the jsdom [resource loader](https://github.com/jsdom/jsdom#loading-subresources)
@@ -39,14 +39,15 @@ export class BrowserConfig {
 
     Object.keys(options).forEach((option) => {
       if (option === 'strictSSL' && typeof options[option] !== 'boolean')
-        throw new InvalidArgument('');
+        throw new InvalidArgument();
       else if (
         option === 'rejectPublicSuffixes' &&
         typeof options[option] !== 'boolean'
       )
-        throw new InvalidArgument('');
+        throw new InvalidArgument();
       else if (option === 'runScripts')
         this[option] = options[option] ? 'dangerously' : null;
+      else if (option === 'strictSSL') this[option] = !options[option]
       else this[option] = options[option];
     });
 
