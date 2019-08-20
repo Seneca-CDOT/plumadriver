@@ -50,11 +50,12 @@
     "build-win": "tsc && cp -r ./src/jsdom_extensions/ ./build/ && pkg . --target latest-win",
     "build-macos": "tsc && cp -r ./src/jsdom_extensions/ ./build/ && pkg . --target latest-mac",
     "build-all": "tsc && cp -r ./src/jsdom_extensions/ ./build/ && pkg .",
-    "generate-docs": "./node_modules/.bin/typedoc --out docs ./src/ --options ./typedoc.json &>/dev/null"
+    "generate-docs": "./node_modules/.bin/typedoc --out docs ./src/ --options ./typedoc.json &>/dev/null",
+    "watch": "nodemon --watch src/ --exec 'npm run compile-ts && npm start' -e ts"
   },
   "bin": "bin.js",
   "author": "miguel roncancio",
-  "license": "ISC",
+  "license": "MIT",
   "pkg": {
     "assets": [
       "./node_modules/vm2",

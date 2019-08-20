@@ -54,10 +54,6 @@ if (process.env.NODE_ENV !== 'test') {
   );
 }
 
-async function onHTTPStart() {
-  console.log(`plumadriver listening on port ${HTTP_PORT}`);
-}
-
 router.get('/status', (req, res) => {
   const state = sessionManager.getReadinessState();
   res.status(200).json(state);
@@ -95,7 +91,7 @@ server.use(
         \n${err.meta.stack}        
         \n\treq: ${err.meta.req.method} ${err.meta.req.url}
 -------------------------------------------------------------------------------------
-        `;
+        ` ;
       }),
     ),
   }),
@@ -104,6 +100,7 @@ server.use(
 // error handler
 // eslint-disable-next-line no-unused-vars
 server.use((err, req, res, next) => {
+  console.log('err=', err.status);
   let errorResponse: Pluma.ErrorResponse = {
     value: {
       error: err.JSONCodeError,
@@ -114,8 +111,8 @@ server.use((err, req, res, next) => {
   res.status(err.code).json(errorResponse);
 });
 
-server.listen(HTTP_PORT, async () => {
-  await onHTTPStart();
+server.listen(HTTP_PORT, () => {
+  console.log(`plumadriver listening on port ${HTTP_PORT}`);
 });
 
- export {server};
+ export {server };
