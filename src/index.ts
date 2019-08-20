@@ -100,7 +100,6 @@ server.use(
 // error handler
 // eslint-disable-next-line no-unused-vars
 server.use((err, req, res, next) => {
-  console.log('err=', err.status);
   let errorResponse: Pluma.ErrorResponse = {
     value: {
       error: err.JSONCodeError,
@@ -108,7 +107,7 @@ server.use((err, req, res, next) => {
       stacktrace: err.stack,
     },
   };
-  res.status(err.code).json(errorResponse);
+  res.status(err.code || err.status || 500).json(errorResponse);
 });
 
 server.listen(HTTP_PORT, () => {
