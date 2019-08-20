@@ -91,7 +91,7 @@ server.use(
         \n${err.meta.stack}        
         \n\treq: ${err.meta.req.method} ${err.meta.req.url}
 -------------------------------------------------------------------------------------
-        ` ;
+        `;
       }),
     ),
   }),
@@ -115,4 +115,4 @@ server.listen(HTTP_PORT, () => {
   console.log(`plumadriver listening on port ${HTTP_PORT}`);
 });
 
- export {server };
+ export {server};
