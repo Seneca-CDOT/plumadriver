@@ -2,7 +2,7 @@
   "name": "plumadriver",
   "version": "1.0.0",
   "description": "",
-  "main": "pluma-webdriver.js",
+  "main": "./build/index.js",
   "dependencies": {
     "async-mutex": "^0.1.3",
     "body-parser": "^1.18.3",

@@ -4,12 +4,16 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Debug TypeScript in Node.js",
+      "name": "Debugging TypeScript in Node.js",
       // "preLaunchTask": "npm",
       "program": "${workspaceFolder}/src/index.ts",
       "cwd": "${workspaceFolder}",
       "protocol": "inspector",
-      "outFiles": ["${workspaceFolder}/build/**/*.js"]
+      "outFiles": ["${workspaceFolder}/build/**/*.js"],
+      "skipFiles": [
+        "${workspaceFolder}/node_modules/**/*.js",
+        "<node_internals>/**/*.js"
+      ]
     }
   ]
 }
