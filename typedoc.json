@@ -1,9 +1,11 @@
 {
     "out": "docs",
+    "allowJs": true,
     "excludeExternals": true,
     "externalPattern": "**/node_modules/**",
     "ignoreCompilerErrors" : true,
     "includeDeclarations": true,
     "readme": "../README.md",
-    "name": "Plumadriver"
+    "name": "Plumadriver",
+    
 }

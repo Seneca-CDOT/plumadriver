@@ -1,11 +1,14 @@
 {
   "compilerOptions": {
-    "target": "es2018",
-    "module": "commonjs",
-    "watch": false,
+    "allowJs": true,
     "lib": ["dom"],
+    "module": "commonjs",
     "outDir": "./build",
+    "resolveJsonModule": true,
     "rootDir": "./src",
     "sourceMap": true,
-  }
+    "target": "es2018",
+    "watch": false
+  },
+  "include": ["./src"]
 }

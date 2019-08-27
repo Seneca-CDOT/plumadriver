@@ -6,7 +6,7 @@ import { WebElement } from '../WebElement/WebElement';
 import * as Utils from '../utils/utils';
 import * as PlumaError from '../Error/errors';
 
-import { tough } from '../jsdom_extensions/tough-cookie/lib/cookie';
+import { Cookie } from '../jsdom_extensions/tough-cookie/lib/cookie';
 
 /**
  * Plumadriver browser with jsdom at its core.
@@ -144,7 +144,7 @@ class Browser {
 
       try {
         this.dom.cookieJar.store.putCookie(
-          new tough.Cookie(validCookie),
+          new Cookie(validCookie),
           err => err
         );
       } catch (err) {
