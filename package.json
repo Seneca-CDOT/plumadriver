@@ -45,7 +45,7 @@
     "test": "mocha --exit",
     "lint": "eslint",
     "start": "node ./build/index.js",
-    "compile-ts": "tsc",
+    "compile": "tsc",
     "build-linux": "tsc && cp -r ./src/jsdom_extensions/ ./build/ && pkg . --target latest-linux",
     "build-win": "tsc && cp -r ./src/jsdom_extensions/ ./build/ && pkg . --target latest-win",
     "build-macos": "tsc && cp -r ./src/jsdom_extensions/ ./build/ && pkg . --target latest-mac",
