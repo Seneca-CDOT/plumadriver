@@ -46,7 +46,7 @@ export class BrowserConfig {
       )
         throw new InvalidArgument();
       else if (option === 'runScripts')
-        this[option] = options[option] ? 'dangerously' : null;
+        this[option] = options[option] ? 'dangerously' : undefined;
       else if (option === 'strictSSL') this[option] = !options[option]
       else this[option] = options[option];
     });
