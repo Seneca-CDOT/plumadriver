@@ -30,6 +30,8 @@
     "chai-http": "^4.2.1",
     "commitlint": "^8.1.0",
     "eslint": "^6.2.2",
+    "eslint-config-prettier": "^6.1.0",
+    "eslint-plugin-prettier": "^3.1.0",
     "fs": "0.0.1-security",
     "http-post": "^0.1.1",
     "husky": "^3.0.4",
@@ -37,6 +39,7 @@
     "lint-staged": "^9.2.5",
     "mocha": "^6.1.4",
     "nodemon": "^1.18.9",
+    "prettier": "^1.18.2",
     "should": "^13.2.3",
     "typedoc": "^0.14.2",
     "typescript": "^3.5.2"
