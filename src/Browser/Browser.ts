@@ -81,7 +81,7 @@ class Browser {
 
       this.dom = await loadEvent();
     } else {
-      this.dom = await new JSDOM(' ', {
+      this.dom = new JSDOM(' ', {
         resources: config.resourceLoader,
         runScripts: config.runScripts,
         beforeParse: config.beforeParse,
