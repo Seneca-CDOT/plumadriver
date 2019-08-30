@@ -3,8 +3,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 
 const { expect } = chai;
-const driver = require('../../../pluma-webdriver');
-
+const driver = require('../../../build/index');
 chai.use(chaiHttp);
 
 describe('Testing NAVIGATE TO endpoint: POST /session/:sessionId/url', function() {

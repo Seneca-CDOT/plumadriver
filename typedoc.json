@@ -1,0 +1,9 @@
+{
+  "out": "docs",
+  "excludeExternals": true,
+  "externalPattern": "**/node_modules/**",
+  "ignoreCompilerErrors": true,
+  "includeDeclarations": true,
+  "readme": "../README.md",
+  "name": "Plumadriver"
+}

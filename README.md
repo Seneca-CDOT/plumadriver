@@ -1,6 +1,6 @@
 # PlumaDriver
 
-PlumaDriver is a JavaScript implementation of the W3C WebDriver standard for the jsdom library. More information on this can be found at the [W3C webdriver protocol](https://www.w3.org/TR/webdriver1/#protocol) website. More information about jsdom can be found [here](https://github.com/jsdom/jsdom).
+PlumaDriver is a JavaScript/Typescript implementation of the W3C WebDriver standard for the jsdom library. More information on this can be found at the [W3C webdriver protocol](https://www.w3.org/TR/webdriver1/#protocol) website. More information about jsdom can be found [here](https://github.com/jsdom/jsdom).
 
 **NOTE:** This project is still in the development stage. You are welcome to use plumadriver, however, keep in mind that there are still unimplemented features and bugs to be fixed. If you would like to suggest a feature to implement or an issue that needs to be addressed, please create an issue and the team will address it as soon as possible.
 
@@ -28,7 +28,7 @@ The goal of this project is to provide an automation tool for jsdom in order to 
 - [x] **Execute Script:** POST 	/session/{session id}/execute/sync
 - [x] **Get Element Attribute:** POST 	/session/{session id}/element/{element id}/attribute/{name}
 
-The following endpoints require browser rendering capabilities and will therefore not be implemented for plumadriver. 
+The following endpoints will not be implemented as they require either rendering capabilities or functionality that jsdom does not yet have. 
 
 - [ ] **Accept Alert** POST 	/session/{session id}/alert/accept 	
 - [ ] **Get Alert Text** GET 	/session/{session id}/alert/text 	
@@ -44,31 +44,17 @@ The following endpoints require browser rendering capabilities and will therefor
 - [ ] **Minimize Window** POST 	/session/{session id}/window/minimize
 - [ ] **Fullscreen Window** POST 	/session/{session id}/window/fullscreen
 
-
-## Building Plumadriver
-
-### Requirements:
- - Latest stable version of NodeJS
- - npm pkg  module `npm install pkg -g`
-
-From the command line: 
-
-1. Clone this repository
-2. `cd plumadriver`
-3. `npm install`
-4. For Linux:    
-    `pkg . --target latest-linux `  
-   For Windows:  
-    `pkg . --target latest-win`  
-   For Mac:  
-    `pkg . --target latest-macos`
-    
- The executable should appear in the project root directory.
+## Using Plumadriver
+Plumadriver essentially boils down to RESTful API and can be used with any HTTP request client with the endpoints specified above. However,  
+bear in mind that plumadriver was created with the purpose to make jsdom accessible to those already familiar with selenium but hesitant to learn how to use
+jsdom directly. There is a plumadriver extension for selenium included in this repository for those that already know how to use selenium. 
 
 ## Getting Started
-To get started with plumadriver, you will need to either download or build the plumadriver executable. The most current build can be downloaded [here](). If you would rather build plumadriver from the source, follow the instructions in the [Building PlumaDriver]() section.
+To get started with plumadriver, you will need to either [download]() or [build]() the plumadriver executable. The most current build can be found [here](). If you would rather build plumadriver from the source, follow the instructions in the [Building PlumaDriver]() section.
 
-Currently, plumadriver can only be used with the Java language binding for the Selenium client. If you are not familiar with Selenium WebDriver, you can read more about it [here](https://www.seleniumhq.org/projects/webdriver/). The Java language binding for the Selenium client can be found [here](https://github.com/Seneca-CDOT/plumadriver/tree/master/selenium/Java). Because of the experimental state of this project, a pull request has not been made to the Selenium commnunity and therefore plumadriver is not part of the supported drivers included in the official Selenium build. In the meanwhile, you can work with selenium and plumadriver by adding the pluma.jar file to your project libraries in addition to the [official selenium build](https://www.seleniumhq.org/download/). The pluma.jar file can be found under the /selenium/java directory of this repo.
+Plumadriver can be used with the Java language binding for the Selenium client. If you are not familiar with Selenium WebDriver, you can read more about it [here](https://www.seleniumhq.org/projects/webdriver/). The Java language binding for the Selenium client can be found [here](https://github.com/Seneca-CDOT/plumadriver/tree/master/selenium/Java). Because of the experimental state of this project, a pull request has not been made to the Selenium commnunity and therefore plumadriver is not part of the supported drivers included in the official Selenium build. In the meanwhile, you can work with selenium and plumadriver by adding the pluma.jar file to your project libraries in addition to the [official selenium build](https://www.seleniumhq.org/download/). The pluma.jar file can be found under the /selenium/java directory of this repo.
+
+You can also use plumadriver with any HTTP request client as long as you hit its endpoints correctly.
 
 
 ## Using Plumadriver
@@ -115,3 +101,22 @@ Java:
 WebDriver pluma = new RemoteWebDriver("http://127.0.0.1:4040", new PlumaOptions());
 pluma.get("http://www.example.com");
 ```
+## Building Plumadriver
+
+### Requirements:
+ - Latest stable version of NodeJS
+ - npm pkg  module `npm install pkg -g`
+
+From the command line: 
+
+1. Clone this repository
+2. `cd plumadriver`
+3. `npm install`
+4. For Linux:    
+    `npm run build-linux`  
+   For Windows:  
+    `npm run build-win`  
+   For Mac:  
+    `npm run build-macos`
+
+These scripts will transpile all the typescript code found within src directory and output the result to the build directory. From here pkg will create an executable which should appear in the project's root directory.

@@ -1,2 +1,2 @@
 process.env.NODE_ENV = 'production';
-const plumadriver = require('.');
+const plumadriver = require('./build');

@@ -1,0 +1,317 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Plumadriver</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">Plumadriver</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1> Plumadriver</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<h1 id="plumadriver">PlumaDriver</h1>
+				<p>PlumaDriver is a JavaScript/Typescript implementation of the W3C WebDriver standard for the jsdom library. More information on this can be found at the <a href="https://www.w3.org/TR/webdriver1/#protocol">W3C webdriver protocol</a> website. More information about jsdom can be found <a href="https://github.com/jsdom/jsdom">here</a>.</p>
+				<p><strong>NOTE:</strong> This project is still in the development stage. You are welcome to use plumadriver, however, keep in mind that there are still unimplemented features and bugs to be fixed. If you would like to suggest a feature to implement or an issue that needs to be addressed, please create an issue and the team will address it as soon as possible.</p>
+				<h2 id="objective">Objective</h2>
+				<p>The goal of this project is to provide an automation tool for jsdom in order to load test web applications without the overhead of modern web browsers. Plumadriver can be used with the <a href="https://www.seleniumhq.org/">Selenium client</a>, however, at the time of writing there is only a Java language binding. Additional language bindings will be developed in the future. Note that this selenium extension was created for this project and is not part of the official Selenium WebDriver build. It is important to keep in mind that jsdom is not intended to be a full rendering browser but rather emulate enough of a browser to be useful for testing and webscraping applications. As a result, standard-specified endpoints which require browser rendering capabilities will not be implemented.</p>
+				<h2 id="endpoints">Endpoints</h2>
+				<ul>
+					<li><input checked="" disabled="" type="checkbox"> <strong>New Session:</strong>    POST /session</li>
+					<li><input checked="" disabled="" type="checkbox"> <strong>Delete Session:</strong> DELETE /session/{session id}</li>
+					<li><input checked="" disabled="" type="checkbox"> <strong>Get Status:</strong> GET /status</li>
+					<li><input checked="" disabled="" type="checkbox"> <strong>Get Timeouts:</strong> GET     /session/{session id}/timeouts</li>
+					<li><input checked="" disabled="" type="checkbox"> <strong>Set Timeouts:</strong> POST     /session/{session id}/timeouts</li>
+					<li><input checked="" disabled="" type="checkbox"> <strong>Navigate To:</strong> POST     /session/{session id}/url</li>
+					<li><input checked="" disabled="" type="checkbox"> <strong>Get Current URL:</strong> GET     /session/{session id}/url</li>
+					<li><input checked="" disabled="" type="checkbox"> <strong>Get Title:</strong> GET     /session/{session id}/title</li>
+					<li><input checked="" disabled="" type="checkbox"> <strong>Find Elements:</strong> POST     /session/{session id}/elements</li>
+					<li><input checked="" disabled="" type="checkbox"> <strong>Find Element:</strong> POST     /session/{session id}/element</li>
+					<li><input checked="" disabled="" type="checkbox"> <strong>Find Element from Element:</strong> POST     /session/{session id}/element/{element id}/element</li>
+					<li><input checked="" disabled="" type="checkbox"> <strong>Find Elements from Element:</strong> POST     /session/{session id}/element/{element id}/elements</li>
+					<li><input checked="" disabled="" type="checkbox"> <strong>Get Element Text:</strong> GET     /session/{session id}/element/{element id}/text</li>
+					<li><input checked="" disabled="" type="checkbox"> <strong>Get Element Tag Name:</strong> POST     /session/{session id}/element/{element id}/{name}</li>
+					<li><input checked="" disabled="" type="checkbox"> <strong>Get All Cookies:</strong> GET     /session/{session id}/cookie</li>
+					<li><input checked="" disabled="" type="checkbox"> <strong>Add Cookie:</strong> POST     /session/{session id}/cookie</li>
+					<li><input checked="" disabled="" type="checkbox"> <strong>Execute Script:</strong> POST     /session/{session id}/execute/sync</li>
+					<li><input checked="" disabled="" type="checkbox"> <strong>Get Element Attribute:</strong> POST     /session/{session id}/element/{element id}/attribute/{name}</li>
+				</ul>
+				<p>The following endpoints will not be implemented as they require either rendering capabilities or functionality that jsdom does not yet have. </p>
+				<ul>
+					<li><input disabled="" type="checkbox"> <strong>Accept Alert</strong> POST     /session/{session id}/alert/accept     </li>
+					<li><input disabled="" type="checkbox"> <strong>Get Alert Text</strong> GET     /session/{session id}/alert/text     </li>
+					<li><input disabled="" type="checkbox"> <strong>Send Alert Text</strong> POST     /session/{session id}/alert/text     </li>
+					<li><input disabled="" type="checkbox"> <strong>Take Screenshot</strong> GET     /session/{session id}/screenshot</li>
+					<li><input disabled="" type="checkbox"> <strong>Take Element Screenshot</strong> GET     /session/{session id}/element/{element id}/screenshot</li>
+					<li><input disabled="" type="checkbox"> <strong>Back</strong> POST     /session/{session id}/back</li>
+					<li><input disabled="" type="checkbox"> <strong>Forward</strong> POST     /session/{session id}/forward</li>
+					<li><input disabled="" type="checkbox"> <strong>Refresh</strong> POST     /session/{session id}/refresh</li>
+					<li><input disabled="" type="checkbox"> <strong>Switch To Window</strong> POST     /session/{session id}/window</li>
+					<li><input disabled="" type="checkbox"> <strong>New Window</strong> POST     /session/{session id}/window/new</li>
+					<li><input disabled="" type="checkbox"> <strong>Maximize Window</strong> POST     /session/{session id}/window/maximize</li>
+					<li><input disabled="" type="checkbox"> <strong>Minimize Window</strong> POST     /session/{session id}/window/minimize</li>
+					<li><input disabled="" type="checkbox"> <strong>Fullscreen Window</strong> POST     /session/{session id}/window/fullscreen</li>
+				</ul>
+				<h2 id="using-plumadriver">Using Plumadriver</h2>
+				<p>Plumadriver essentially boils down to RESTful API and can be used with any HTTP request client with the endpoints specified above. However,<br>bear in mind that plumadriver was created with the purpose to make jsdom accessible to those already familiar with selenium but hesitant to learn how to use
+				jsdom directly. There is a plumadriver extension for selenium included in this repository for those that already know how to use selenium. </p>
+				<h2 id="getting-started">Getting Started</h2>
+				<p>To get started with plumadriver, you will need to either <a href="">download</a> or <a href="">build</a> the plumadriver executable. The most current build can be found <a href="">here</a>. If you would rather build plumadriver from the source, follow the instructions in the <a href="">Building PlumaDriver</a> section.</p>
+				<p>Plumadriver can be used with the Java language binding for the Selenium client. If you are not familiar with Selenium WebDriver, you can read more about it <a href="https://www.seleniumhq.org/projects/webdriver/">here</a>. The Java language binding for the Selenium client can be found <a href="https://github.com/Seneca-CDOT/plumadriver/tree/master/selenium/Java">here</a>. Because of the experimental state of this project, a pull request has not been made to the Selenium commnunity and therefore plumadriver is not part of the supported drivers included in the official Selenium build. In the meanwhile, you can work with selenium and plumadriver by adding the pluma.jar file to your project libraries in addition to the <a href="https://www.seleniumhq.org/download/">official selenium build</a>. The pluma.jar file can be found under the /selenium/java directory of this repo.</p>
+				<p>You can also use plumadriver with any HTTP request client as long as you hit its endpoints correctly.</p>
+				<h2 id="using-plumadriver">Using Plumadriver</h2>
+				<p>The executable path must be set prior to running your code. This is the path to the executable created in the <strong>Building Plumadriver</strong> section above. The path can be set using:<br><code>System.setProperty(&quot;webdriver.pluma.driver&quot;,&quot;&lt;path_to_executable&gt;&quot;);</code></p>
+				<h3 id="sample-test">Sample Test</h3>
+				<pre><code class="language-java"><span class="hljs-comment">// Set plumadriver executable path</span>
+System.setProperty(<span class="hljs-string">"webdriver.pluma.driver"</span>,<span class="hljs-string">"&lt;path_to_executable&gt;"</span>);
+
+<span class="hljs-comment">// Create a driver Instance </span>
+Webdriver driver = <span class="hljs-keyword">new</span> PlumaDriver();
+
+driver.get(<span class="hljs-string">"http://www.example.com"</span>); <span class="hljs-comment">// navigate to </span>
+WebElement e = driver.findelement(By.tagName(<span class="hljs-string">"p"</span>));
+String text = e.getText();
+System.out.println(text);
+driver.quit();</code></pre>
+				<h3 id="plumadriver-lifetime">Plumadriver lifetime</h3>
+				<p>The PlumaDriver class will create a server instance at creation and destroy it when the quit() method is called. This means that for every instance of this class a separate server will be created resulting in a significant amount of resource usage. To reduce the resource consumption, the following options are available:</p>
+				<p>PlumaDriverService:</p>
+				<pre><code class="language-java">PlumaDriverService service = <span class="hljs-keyword">new</span> PlumaDriverService() {
+ .usingDriverExecuteable(<span class="hljs-keyword">new</span> File(<span class="hljs-string">"path/to/plumadriver/"</span>))
+ .usingAnyFreePort()
+ .build();
+
+service.start();
+
+ WebDriver pluma = <span class="hljs-keyword">new</span> RemoteWebDriver(service.getUrl(), <span class="hljs-keyword">new</span> PlumaOptions());</code></pre>
+				<p>Starting the Plumadriver server directly from the terminal and connecting it to the Remote WebDriver:</p>
+				<p>Terminal:</p>
+				<pre><code class="language-bash">./plumadriver --port=4040</code></pre>
+				<p>Java:  </p>
+				<pre><code class="language-java">WebDriver pluma = <span class="hljs-keyword">new</span> RemoteWebDriver(<span class="hljs-string">"http://127.0.0.1:4040"</span>, <span class="hljs-keyword">new</span> PlumaOptions());
+pluma.get(<span class="hljs-string">"http://www.example.com"</span>);</code></pre>
+				<h2 id="building-plumadriver">Building Plumadriver</h2>
+				<h3 id="requirements-">Requirements:</h3>
+				<ul>
+					<li>Latest stable version of NodeJS</li>
+					<li>npm pkg  module <code>npm install pkg -g</code></li>
+				</ul>
+				<p>From the command line: </p>
+				<ol>
+					<li>Clone this repository</li>
+					<li><code>cd plumadriver</code></li>
+					<li><code>npm install</code></li>
+					<li>For Linux:<br> <code>npm run build-linux</code><br>For Windows:<br> <code>npm run build-win</code><br>For Mac:<br> <code>npm run build-macos</code></li>
+				</ol>
+				<p>These scripts will transpile all the typescript code found within src directory and output the result to the build directory. From here pkg will create an executable which should appear in the project&#39;s root directory.</p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_browser_browser_.html">"<wbr>Browser/<wbr>Browser"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_browser_browserconfig_.html">"<wbr>Browser/<wbr>Browser<wbr>Config"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_capabilityvalidator_capabilityvalidator_.html">"<wbr>Capability<wbr>Validator/<wbr>Capability<wbr>Validator"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_error_badrequest_.html">"<wbr>Error/<wbr>Bad<wbr>Request"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_error_elementnotinteractableerror_.html">"<wbr>Error/<wbr>Element<wbr>Not<wbr>Interactable<wbr>Error"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_error_internalservererror_.html">"<wbr>Error/<wbr>Internal<wbr>Server<wbr>Error"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_error_invalidargument_.html">"<wbr>Error/<wbr>Invalid<wbr>Argument"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_error_methodnotallowederror_.html">"<wbr>Error/<wbr>Method<wbr>Not<wbr>Allowed<wbr>Error"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_error_nosuchelement_.html">"<wbr>Error/<wbr>NoSuch<wbr>Element"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_error_notfounderror_.html">"<wbr>Error/<wbr>Not<wbr>Found<wbr>Error"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_error_sessionnotcreated_.html">"<wbr>Error/<wbr>Session<wbr>Not<wbr>Created"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_error_webdrivererror_.html">"<wbr>Error/<wbr>Web<wbr>Driver<wbr>Error"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_error_errors_.html">"<wbr>Error/errors"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_session_session_.html">"<wbr>Session/<wbr>Session"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_sessionmanager_sessionmanager_.html">"<wbr>Session<wbr>Manager/<wbr>Session<wbr>Manager"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_types_types_d_.html">"<wbr>Types/types.d"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_webelement_webelement_.html">"<wbr>Web<wbr>Element/<wbr>Web<wbr>Element"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_constants_constants_.html">"constants/constants"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_index_.html">"index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_routes_cookies_.html">"routes/cookies"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_routes_elements_.html">"routes/elements"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_routes_index_.html">"routes/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_routes_navigate_.html">"routes/navigate"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_routes_timeouts_.html">"routes/timeouts"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_utils_utils_.html">"utils/utils"</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>

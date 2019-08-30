@@ -1,0 +1,88 @@
+import {
+  ElementBooleanAttributeValues,
+  UnhandledPromptBehaviourValues,
+  RunScriptsValues,
+  PageLoadStrategyValues,
+} from '../constants/constants';
+
+import { ResourceLoader } from 'jsdom';
+
+/**
+ * contains interfaces paticular to plumadriver
+ */
+export namespace Pluma {
+  type RunScripts = typeof RunScriptsValues.type;
+  type UnhandledPromptBehaviour = typeof UnhandledPromptBehaviourValues.type;
+  type BeforeParse = (window) => void;
+  type UserPrompt = (message?: string) => boolean;
+  type ElementBooleanAttribute = typeof ElementBooleanAttributeValues.type;
+  type PageLoadStrategy = typeof PageLoadStrategyValues.type;
+
+  /**
+   * Client defined options for jsdom
+   */
+  interface BrowserOptions {
+    runScripts: RunScripts;
+    strictSSL: boolean;
+    unhandledPromptBehaviour: UnhandledPromptBehaviour;
+    rejectPublicSuffixes: boolean;
+  }
+
+  /**
+   * Expected cookie shape
+   */
+  interface Cookie {
+    name: string;
+    value: string | boolean;
+    domain?: string;
+    secure?: boolean;
+    httpOnly?: boolean;
+    expiry?: number;
+  }
+
+  /**
+   * The plumadriver request object structure
+   */
+  interface Request {
+    /** the http url variables */
+    urlVariables: any;
+    /** the parameters passed inside the body of the http request */
+    parameters: any;
+    /** the specific webdriver command to be executed */
+    command: string;
+  }
+
+  /**
+   * The timeouts object which records the timeout duration values used to control the behaviour of script evaluation
+   * navigation and element retrieval 
+   */
+  interface Timeouts {
+    script: number;
+    pageLoad: number;
+    implicit: number;
+  }
+
+  /**
+   * defines the shape of the webdriver's readiness state response
+   */
+  interface ReadinessState {
+    status: number;
+    value: {
+      message: string;
+      os: {
+        arch: string;
+        name: string;
+        version: string;
+      };
+      ready: boolean;
+    };
+  }
+
+  interface ErrorResponse {
+    value:{
+      error: string;
+      message: string;
+      stacktrace: string;
+    }
+  }
+}
