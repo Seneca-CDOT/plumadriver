@@ -34,14 +34,14 @@
     "fs": "0.0.1-security",
     "http-post": "^0.1.1",
     "husky": "^3.0.4",
-    "jsdoc": "^3.6.2",
+    "jsdoc": "^3.6.3",
     "lint-staged": "^9.2.5",
     "mocha": "^6.1.4",
     "nodemon": "^1.18.9",
     "pkg": "^4.4.0",
     "prettier": "^1.18.2",
     "should": "^13.2.3",
-    "typedoc": "^0.14.2",
+    "typedoc": "^0.15.0",
     "typescript": "^3.5.2"
   },
   "scripts": {
