@@ -63,12 +63,12 @@ class WebElement {
   findParent(tagName: string): HTMLElement | null {
     let { parentElement: nextParent } = this.element;
 
-    function isMatchingOrIsFalsy(): boolean {
+    const isMatchingOrIsFalsy = (): boolean => {
       return (
         !nextParent ||
         nextParent.tagName.toLowerCase() === tagName.toLowerCase()
       );
-    }
+    };
 
     while (!isMatchingOrIsFalsy()) {
       const { parentElement } = nextParent;
@@ -80,11 +80,11 @@ class WebElement {
 
   /**
    * returns the container of the WebElement's HTML element
-   * @returns {String}
+   * @returns {string}
    */
   getContainer(): HTMLElement {
-    const tagName = this.element.tagName;
-    const OPTION_ELEMENTS = ['OPTION', 'OPTGROUP'];
+    const { tagName } = this.element;
+    const OPTION_ELEMENTS: string[] = ['OPTION', 'OPTGROUP'];
 
     if (OPTION_ELEMENTS.includes(tagName.toUpperCase())) {
       const datalistParent = this.findParent('datalist');
