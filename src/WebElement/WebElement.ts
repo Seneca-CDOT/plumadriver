@@ -54,6 +54,32 @@ class WebElement {
     const ATTRIBUTE_NAME = 'type';
     return this.element.getAttribute(ATTRIBUTE_NAME);
   }
+
+  /**
+   * Searches for a parent node of the WebElement's HTML element by traversing the tree in reverse order.
+   * Returns the parent element if found, otherwise returns null if the root of the tree is reached.
+   * @returns {HTMLElement | null}
+   */
+  findParent(tagName: string): HTMLElement | null {
+    let { parentElement: nextParent } = this.element;
+
+    function isMatchingOrIsFalsy(): boolean {
+      return nextParent.tagName === tagName || !nextParent;
+    }
+
+    while (!isMatchingOrIsFalsy()) {
+      const { parentElement } = nextParent;
+      nextParent = parentElement;
+    }
+
+    return nextParent;
+  }
+
+  /**
+   * returns the container of the WebElement's HTML element
+   * @returns {String}
+   */
+  getContainer(): HTMLElement {}
 }
 
 export { WebElement };
