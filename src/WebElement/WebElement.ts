@@ -95,9 +95,13 @@ class WebElement {
     return this.element;
   }
 
-
+  /**
+   * clicks an <option> element as outlined in the W3C specification.
+   * @returns {string}
+   */
   optionElementClick(): void {
     const parentNode: HTMLElement = this.getContainer();
+    const element  = this.element as HTMLOptionElement;
 
     const fireParentNodeEvents = () => {
       const EVENT_LIST: string[] = ['mouseover', 'mousemove', 'mousedown'];
@@ -106,16 +110,24 @@ class WebElement {
     }
 
     const changeSelectedness = () => {
-      if (!this.getElementAttribute('disabled')) {
+      if (!element.disabled) {
         parentNode.dispatchEvent(new Event('input'));
+        const previousSelectedness = element.selected;
+        if (parentNode.hasAttribute('multiple')) {
+          element.selected = !previousSelectedness;
+        } else {
+          element.selected =   true;
+        }
       }
-
     }
-      
+    
+    fireParentNodeEvents();
+    changeSelectedness();
+    parentNode.dispatchEvent(new Event('mouseup'));
+    parentNode.dispatchEvent(new Event('click'));
   }
 
   click(): void {}
-
 }
 
 export { WebElement };
