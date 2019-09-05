@@ -82,7 +82,18 @@ class WebElement {
    * returns the container of the WebElement's HTML element
    * @returns {String}
    */
-  getContainer(): HTMLElement {}
+  getContainer(): HTMLElement {
+    const tagName = this.element.tagName;
+    const OPTION_ELEMENTS = ['OPTION', 'OPTGROUP'];
+
+    if (OPTION_ELEMENTS.includes(tagName.toUpperCase())) {
+      const datalistParent = this.findParent('datalist');
+      const selectParent = this.findParent('select');
+      return datalistParent || selectParent;
+    }
+
+    return this.element;
+  }
 }
 
 export { WebElement };
