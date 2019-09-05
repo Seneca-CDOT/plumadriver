@@ -83,17 +83,39 @@ class WebElement {
    * @returns {string}
    */
   getContainer(): HTMLElement {
-    const { tagName } = this.element;
+    const tagName = this.getTagName();
     const OPTION_ELEMENTS: string[] = ['OPTION', 'OPTGROUP'];
 
     if (OPTION_ELEMENTS.includes(tagName.toUpperCase())) {
-      const datalistParent = this.findParent('datalist');
-      const selectParent = this.findParent('select');
-      return datalistParent || selectParent;
+      const datalistParent: HTMLElement = this.findParent('datalist');
+      const selectParent: HTMLElement = this.findParent('select');
+      return datalistParent || selectParent || this.element;
     }
 
     return this.element;
   }
+
+
+  optionElementClick(): void {
+    const parentNode: HTMLElement = this.getContainer();
+
+    const fireParentNodeEvents = () => {
+      const EVENT_LIST: string[] = ['mouseover', 'mousemove', 'mousedown'];
+      EVENT_LIST.forEach(event => parentNode.dispatchEvent(new Event(event)));
+      parentNode.focus();
+    }
+
+    const changeSelectedness = () => {
+      if (!this.getElementAttribute('disabled')) {
+        parentNode.dispatchEvent(new Event('input'));
+      }
+
+    }
+      
+  }
+
+  click(): void {}
+
 }
 
 export { WebElement };
