@@ -64,7 +64,10 @@ class WebElement {
     let { parentElement: nextParent } = this.element;
 
     function isMatchingOrIsFalsy(): boolean {
-      return nextParent.tagName === tagName || !nextParent;
+      return (
+        !nextParent ||
+        nextParent.tagName.toLowerCase() === tagName.toLowerCase()
+      );
     }
 
     while (!isMatchingOrIsFalsy()) {
