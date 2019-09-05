@@ -45,6 +45,15 @@ class WebElement {
       return this.element.hasAttribute(name).toString(); // returns 'true' (string) or null
     return this.element.getAttribute(name);
   }
+
+  /**
+   * returns the type attribute of the WebElement's HTML element
+   * @returns {String}
+   */
+  getType(): string {
+    const ATTRIBUTE_NAME = 'type';
+    return this.element.getAttribute(ATTRIBUTE_NAME);
+  }
 }
 
 export { WebElement };
