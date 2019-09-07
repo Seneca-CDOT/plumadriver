@@ -101,26 +101,26 @@ class WebElement {
    */
   optionElementClick(): void {
     const parentNode: HTMLElement = this.getContainer();
-    const element  = this.element as HTMLOptionElement;
+    const element = this.element as HTMLOptionElement;
 
-    const fireParentNodeEvents = () => {
+    const fireParentNodeEvents = (): void => {
       const EVENT_LIST: string[] = ['mouseover', 'mousemove', 'mousedown'];
       EVENT_LIST.forEach(event => parentNode.dispatchEvent(new Event(event)));
       parentNode.focus();
-    }
+    };
 
-    const changeSelectedness = () => {
+    const changeSelectedness = (): void => {
       if (!element.disabled) {
         parentNode.dispatchEvent(new Event('input'));
         const previousSelectedness = element.selected;
         if (parentNode.hasAttribute('multiple')) {
           element.selected = !previousSelectedness;
         } else {
-          element.selected =   true;
+          element.selected = true;
         }
       }
-    }
-    
+    };
+
     fireParentNodeEvents();
     changeSelectedness();
     parentNode.dispatchEvent(new Event('mouseup'));
