@@ -105,7 +105,7 @@ class WebElement {
     const element = this.element as HTMLOptionElement;
 
     const fireParentNodeEvents = (): void => {
-      dispatchEvents(this.element, ['mouseover', 'mousemove', 'mousedown']);
+      dispatchEvents(parentNode, ['mouseover', 'mousemove', 'mousedown']);
       parentNode.focus();
     };
 
@@ -129,16 +129,18 @@ class WebElement {
   }
 
   click(): void {
-    const isOptionOrOptGroupElement = (): boolean => {
-      return (
-        this.element.tagName === 'option' || this.element.tagName === 'optgroup'
-      );
-    };
+    const isOptionOrOptGroupElement = (): boolean =>
+      this.element.tagName === 'option' || this.element.tagName === 'optgroup';
 
     if (isOptionOrOptGroupElement()) {
       this.optionElementClick();
     } else {
-      dispatchEvents(this.element, []);
+      dispatchEvents(this.element, [
+        'mouseover',
+        'mousedown',
+        'mouseup',
+        'click',
+      ]);
     }
   }
 }
