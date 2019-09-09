@@ -128,19 +128,19 @@ class WebElement {
     clickParentNode();
   }
 
+  /**
+   * clicks the WebElement's HTML element.
+   * @returns {string}
+   */
   click(): void {
-    const isOptionOrOptGroupElement = (): boolean =>
-      this.element.tagName === 'option' || this.element.tagName === 'optgroup';
+    const { element } = this;
+    const isOptionOrOptGroupElement = ({ tagName }: HTMLElement): boolean =>
+      tagName === 'option' || tagName === 'optgroup';
 
-    if (isOptionOrOptGroupElement()) {
+    if (isOptionOrOptGroupElement(element)) {
       this.optionElementClick();
     } else {
-      dispatchEvents(this.element, [
-        'mouseover',
-        'mousedown',
-        'mouseup',
-        'click',
-      ]);
+      dispatchEvents(element, ['mouseover', 'mousedown', 'mouseup', 'click']);
     }
   }
 }
