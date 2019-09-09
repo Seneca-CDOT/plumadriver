@@ -2,6 +2,7 @@ import * as uuidv1 from 'uuid/v1';
 import isFocusableAreaElement from 'jsdom/lib/jsdom/living/helpers/focusing';
 import jsdomUtils from 'jsdom/lib/jsdom/living/generated/utils';
 import { ELEMENT, ElementBooleanAttributeValues } from '../constants/constants';
+import { dispatchEvents } from '../utils/utils';
 
 class WebElement {
   readonly element: HTMLElement;
@@ -96,7 +97,7 @@ class WebElement {
   }
 
   /**
-   * clicks an <option> element as outlined in the W3C specification.
+   * clicks an <option> or <optgroup> element as outlined in the W3C specification.
    * @returns {string}
    */
   optionElementClick(): void {
@@ -104,8 +105,7 @@ class WebElement {
     const element = this.element as HTMLOptionElement;
 
     const fireParentNodeEvents = (): void => {
-      const EVENT_LIST: string[] = ['mouseover', 'mousemove', 'mousedown'];
-      EVENT_LIST.forEach(event => parentNode.dispatchEvent(new Event(event)));
+      dispatchEvents(this.element, ['mouseover', 'mousemove', 'mousedown']);
       parentNode.focus();
     };
 
@@ -121,13 +121,28 @@ class WebElement {
       }
     };
 
+    const clickParentNode = (): void => {
+      dispatchEvents(parentNode, ['mouseup', 'click']);
+    };
+
     fireParentNodeEvents();
     changeSelectedness();
-    parentNode.dispatchEvent(new Event('mouseup'));
-    parentNode.dispatchEvent(new Event('click'));
+    clickParentNode();
   }
 
-  click(): void {}
+  click(): void {
+    const isOptionOrOptGroupElement = (): boolean => {
+      return (
+        this.element.tagName === 'option' || this.element.tagName === 'optgroup'
+      );
+    };
+
+    if (isOptionOrOptGroupElement()) {
+      this.optionElementClick();
+    } else {
+      dispatchEvents(this.element, []);
+    }
+  }
 }
 
 export { WebElement };
