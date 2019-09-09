@@ -113,11 +113,9 @@ class WebElement {
       if (!element.disabled) {
         parentNode.dispatchEvent(new Event('input'));
         const previousSelectedness = element.selected;
-        if (parentNode.hasAttribute('multiple')) {
-          element.selected = !previousSelectedness;
-        } else {
-          element.selected = true;
-        }
+        element.selected = parentNode.hasAttribute('multiple')
+          ? !previousSelectedness
+          : true;
       }
     };
 
