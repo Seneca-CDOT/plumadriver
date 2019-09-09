@@ -54,7 +54,7 @@ class Session {
    * a queue of [[Pluma.Request]] currently awaiting processsing
    *  */
   mutex: Mutex;
-  proxy: Object | null;
+  proxy: Record<string, any> | null;
 
   constructor(requestBody) {
     this.id = uuidv1();
@@ -162,6 +162,8 @@ class Session {
               urlVariables.elementId,
             );
             break;
+          case COMMANDS.CLICK_ELEMENT:
+            this.browser.getKnownElement(urlVariables.elementId).click();
           default:
             break;
         }
@@ -206,7 +208,7 @@ class Session {
             throw new InvalidArgument();
 
           await Promise.all(
-            files.map((file) => utils.fileSystem.pathExists(file)),
+            files.map(file => utils.fileSystem.pathExists(file)),
           );
 
           addFileList(element, files);
@@ -220,8 +222,7 @@ class Session {
           element.dispatchEvent(new Event('input'));
           element.dispatchEvent(new Event('change'));
         } else if (element.getAttribute('type') === 'color') {
-          if (!validator.isHexColor(text))
-            throw new InvalidArgument();
+          if (!validator.isHexColor(text)) throw new InvalidArgument();
           element.value = text;
         } else {
           if (
@@ -281,12 +282,12 @@ class Session {
   setTimeouts(timeouts) {
     const capabilityValidator = new CapabilityValidator();
     let valid = true;
-    Object.keys(timeouts).forEach((key) => {
+    Object.keys(timeouts).forEach(key => {
       valid = capabilityValidator.validateTimeouts(key, timeouts[key]);
       if (!valid) throw new InvalidArgument();
     });
 
-    Object.keys(timeouts).forEach((validTimeout) => {
+    Object.keys(timeouts).forEach(validTimeout => {
       this.timeouts[validTimeout] = timeouts[validTimeout];
     });
   }
@@ -392,7 +393,7 @@ class Session {
     // validate alwaysMatch capabilties
     const requiredCapabilities = {};
     if (capabilities.alwaysMatch !== undefined) {
-      defaultCapabilities.forEach((key) => {
+      defaultCapabilities.forEach(key => {
         if (
           Object.prototype.hasOwnProperty.call(capabilities.alwaysMatch, key)
         ) {
@@ -425,9 +426,9 @@ class Session {
      */
     const validatedFirstMatchCapabilties = [];
 
-    allMatchedCapabilities.forEach((indexedFirstMatchCapability) => {
+    allMatchedCapabilities.forEach(indexedFirstMatchCapability => {
       const validatedFirstMatchCapability = {};
-      Object.keys(indexedFirstMatchCapability).forEach((key) => {
+      Object.keys(indexedFirstMatchCapability).forEach(key => {
         const validatedCapability = capabilityValidator.validate(
           indexedFirstMatchCapability[key],
           key,
@@ -442,7 +443,7 @@ class Session {
     // attempt merging capabilities
     const mergedCapabilities = [];
 
-    validatedFirstMatchCapabilties.forEach((firstMatch) => {
+    validatedFirstMatchCapabilties.forEach(firstMatch => {
       const merged = Session.mergeCapabilities(
         requiredCapabilities,
         firstMatch,
@@ -451,7 +452,7 @@ class Session {
     });
 
     let matchedCapabilities;
-    mergedCapabilities.forEach((capabilites) => {
+    mergedCapabilities.forEach(capabilites => {
       matchedCapabilities = Session.matchCapabilities(capabilites);
       if (matchedCapabilities === null)
         throw new SessionNotCreated('Capabilities could not be matched');
@@ -466,13 +467,13 @@ class Session {
    */
   static mergeCapabilities(primary, secondary) {
     const result = {};
-    Object.keys(primary).forEach((key) => {
+    Object.keys(primary).forEach(key => {
       result[key] = primary[key];
     });
 
     if (secondary === undefined) return result;
 
-    Object.keys(secondary).forEach((property) => {
+    Object.keys(secondary).forEach(property => {
       if (Object.prototype.hasOwnProperty.call(primary, property)) {
         throw new InvalidArgument();
       }
@@ -496,7 +497,7 @@ class Session {
 
     // TODO: add extension capabilities here in the future
     let flag = true;
-    Object.keys(capabilties).forEach((property) => {
+    Object.keys(capabilties).forEach(property => {
       switch (property) {
         case 'browserName':
         case 'platformName':
@@ -544,7 +545,7 @@ class Session {
         const linkElements = startNode.querySelectorAll('a');
         const strategyResult = [];
 
-        linkElements.forEach((element) => {
+        linkElements.forEach(element => {
           const renderedText = element.innerHTML;
           if (!partial && renderedText.trim() === selector)
             strategyResult.push(element);
@@ -603,7 +604,7 @@ class Session {
       }
     } while (endTime > new Date() && elements.length < 1);
 
-    elements.forEach((element) => {
+    elements.forEach(element => {
       const foundElement = new WebElement(element);
       result.push(foundElement);
       this.browser.knownElements.push(foundElement);
@@ -617,7 +618,7 @@ class Session {
   executeScript(script, args) {
     const argumentList = [];
 
-    args.forEach((arg) => {
+    args.forEach(arg => {
       if (arg[ELEMENT] !== undefined && arg[ELEMENT] !== null) {
         const element = this.browser.getKnownElement(arg[ELEMENT]);
         argumentList.push(element.element);
@@ -646,7 +647,7 @@ class Session {
 
         if (returned instanceof Array) {
           response = [];
-          returned.forEach((value) => {
+          returned.forEach(value => {
             if (value instanceof HTMLElement) {
               const element = new WebElement(value);
               this.browser.knownElements.push(element);
