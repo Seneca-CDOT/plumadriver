@@ -206,7 +206,10 @@ export const endpoint = {
   },
 };
 
-export const runEvents = (element: HTMLElement, events: string[]): void => {
+export const dispatchEvents = (
+  element: HTMLElement,
+  events: string[],
+): void => {
   events.forEach(event => {
     element.dispatchEvent(new Event(event));
   });
