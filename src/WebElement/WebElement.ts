@@ -64,12 +64,8 @@ class WebElement {
   findParent(tagName: string): HTMLElement | null {
     let { parentElement: nextParent } = this.element;
 
-    const isMatchingOrIsFalsy = (): boolean => {
-      return (
-        !nextParent ||
-        nextParent.tagName.toLowerCase() === tagName.toLowerCase()
-      );
-    };
+    const isMatchingOrIsFalsy = (): boolean =>
+      !nextParent || nextParent.tagName.toLowerCase() === tagName.toLowerCase();
 
     while (!isMatchingOrIsFalsy()) {
       const { parentElement } = nextParent;
@@ -84,20 +80,22 @@ class WebElement {
    * @returns {string}
    */
   getContainer(): HTMLElement {
-    const tagName = this.getTagName();
-    const OPTION_ELEMENTS: string[] = ['OPTION', 'OPTGROUP'];
+    const { element } = this;
+    const isOptionOrOptgroupElement = ({ tagName }: HTMLElement): boolean =>
+      tagName.toLowerCase() === 'option' ||
+      tagName.toLowerCase() === 'optgroup';
 
-    if (OPTION_ELEMENTS.includes(tagName.toUpperCase())) {
+    if (isOptionOrOptgroupElement(element)) {
       const datalistParent: HTMLElement = this.findParent('datalist');
       const selectParent: HTMLElement = this.findParent('select');
-      return datalistParent || selectParent || this.element;
+      return datalistParent || selectParent || element;
     }
 
-    return this.element;
+    return element;
   }
 
   /**
-   * clicks an <option> or <optgroup> element as outlined in the W3C specification.
+   * clicks an <option> element as outlined in the W3C specification.
    * @returns {string}
    */
   optionElementClick(): void {
@@ -134,10 +132,10 @@ class WebElement {
    */
   click(): void {
     const { element } = this;
-    const isOptionOrOptGroupElement = ({ tagName }: HTMLElement): boolean =>
-      tagName === 'option' || tagName === 'optgroup';
+    const isOptionElement = ({ tagName }: HTMLElement): boolean =>
+      tagName.toLowerCase() === 'option';
 
-    if (isOptionOrOptGroupElement(element)) {
+    if (isOptionElement(element)) {
       this.optionElementClick();
     } else {
       dispatchEvents(element, ['mouseover', 'mousedown', 'mouseup', 'click']);
