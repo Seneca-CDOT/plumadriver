@@ -2,7 +2,10 @@ import * as uuidv1 from 'uuid/v1';
 import isFocusableAreaElement from 'jsdom/lib/jsdom/living/helpers/focusing';
 import jsdomUtils from 'jsdom/lib/jsdom/living/generated/utils';
 import { ELEMENT, ElementBooleanAttributeValues } from '../constants/constants';
-import { dispatchEvents } from '../utils/utils';
+
+// TODO: find a more efficient way to import this
+import { JSDOM } from 'jsdom';
+const { Event } = new JSDOM().window;
 
 class WebElement {
   readonly element: HTMLElement;
@@ -103,7 +106,7 @@ class WebElement {
     const element = this.element as HTMLOptionElement;
 
     const fireParentNodeEvents = (): void => {
-      dispatchEvents(parentNode, ['mouseover', 'mousemove', 'mousedown']);
+      this.dispatchEvents(parentNode, ['mouseover', 'mousemove', 'mousedown']);
       parentNode.focus();
     };
 
@@ -118,7 +121,7 @@ class WebElement {
     };
 
     const clickParentNode = (): void => {
-      dispatchEvents(parentNode, ['mouseup', 'click']);
+      this.dispatchEvents(parentNode, ['mouseup', 'click']);
     };
 
     fireParentNodeEvents();
@@ -138,8 +141,20 @@ class WebElement {
     if (isOptionElement(element)) {
       this.optionElementClick();
     } else {
-      dispatchEvents(element, ['mouseover', 'mousedown', 'mouseup', 'click']);
+      // this.dispatchEvents(element, [
+      //   'mouseover',
+      //   'mousedown',
+      //   'mouseup',
+      //   'click',
+      // ]);
+      this.element.click();
     }
+  }
+
+  dispatchEvents(element: HTMLElement, events: string[]): void {
+    events.forEach(event => {
+      element.dispatchEvent(new Event(event));
+    });
   }
 }
 
