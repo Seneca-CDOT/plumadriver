@@ -75,103 +75,110 @@ class Session {
    * Delegates logic execution to different methods depending on the command passed.
    * @returns {Promise}
    */
-  async process({ command, parameters, urlVariables }: Pluma.Request) {
+  async process({
+    command,
+    parameters,
+    urlVariables,
+  }: Pluma.Request): Promise<string> {
     let response = null;
 
-    return new Promise(async (resolve, reject) => {
-      try {
-        switch (command) {
-          case COMMANDS.DELETE_SESSION:
-            await this.browser.close();
-            break;
-          case COMMANDS.NAVIGATE_TO:
-            await this.navigateTo(parameters);
-            break;
-          case COMMANDS.GET_CURRENT_URL:
-            response = this.browser.getUrl();
-            break;
-          case COMMANDS.GET_TITLE:
-            response = this.browser.getTitle();
-            break;
-          case COMMANDS.FIND_ELEMENT:
-            response = this.elementRetrieval(
-              this.browser.dom.window.document,
-              parameters.using,
-              parameters.value,
-            )[0];
-            if (!response) throw new NoSuchElement();
-            break;
-          case COMMANDS.FIND_ELEMENTS:
-            response = this.elementRetrieval(
-              this.browser.dom.window.document,
-              parameters.using,
-              parameters.value,
-            );
-            if (response.length === 0) throw new NoSuchElement();
-            break;
-          case COMMANDS.GET_ELEMENT_TEXT:
-            response = this.browser
-              .getKnownElement(urlVariables.elementId)
-              .getText();
-            break;
-          case COMMANDS.FIND_ELEMENTS_FROM_ELEMENT:
-            response = this.elementRetrieval(
-              this.browser.getKnownElement(urlVariables.elementId).element,
-              parameters.using,
-              parameters.value,
-            );
-            if (response.length === 0) throw new NoSuchElement();
-            break;
-          case COMMANDS.FIND_ELEMENT_FROM_ELEMENT:
-            response = this.elementRetrieval(
-              this.browser.getKnownElement(urlVariables.elementId).element,
-              parameters.using,
-              parameters.value,
-            )[0];
-            if (!response) throw new NoSuchElement();
-            break;
-          case COMMANDS.SET_TIMEOUTS:
-            break;
-          case COMMANDS.GET_TIMEOUTS:
-            break;
-          case COMMANDS.GET_ALL_COOKIES:
-            response = this.browser.getCookies();
-            break;
-          case COMMANDS.ADD_COOKIE:
-            response = this.browser.addCookie(parameters.cookie);
-            break;
-          case COMMANDS.GET_ELEMENT_TAG_NAME:
-            response = this.browser
-              .getKnownElement(urlVariables.elementId)
-              .getTagName();
-            break;
-          case COMMANDS.GET_ELEMENT_ATTRIBUTE:
-            response = this.browser
-              .getKnownElement(urlVariables.elementId)
-              .getElementAttribute(urlVariables.attributeName);
-            break;
-          case COMMANDS.EXECUTE_SCRIPT:
-            response = await this.executeScript(
-              parameters.script,
-              parameters.args,
-            );
-            break;
-          case COMMANDS.ELEMENT_SEND_KEYS:
-            await this.sendKeysToElement(
-              parameters.text,
-              urlVariables.elementId,
-            );
-            break;
-          case COMMANDS.CLICK_ELEMENT:
-            this.browser.getKnownElement(urlVariables.elementId).click();
-          default:
-            break;
+    return new Promise(
+      async (resolve, reject): Promise<void> => {
+        try {
+          switch (command) {
+            case COMMANDS.DELETE_SESSION:
+              await this.browser.close();
+              break;
+            case COMMANDS.NAVIGATE_TO:
+              await this.navigateTo(parameters);
+              break;
+            case COMMANDS.GET_CURRENT_URL:
+              response = this.browser.getUrl();
+              break;
+            case COMMANDS.GET_TITLE:
+              response = this.browser.getTitle();
+              break;
+            case COMMANDS.FIND_ELEMENT:
+              response = this.elementRetrieval(
+                this.browser.dom.window.document,
+                parameters.using,
+                parameters.value,
+              )[0];
+              if (!response) throw new NoSuchElement();
+              break;
+            case COMMANDS.FIND_ELEMENTS:
+              response = this.elementRetrieval(
+                this.browser.dom.window.document,
+                parameters.using,
+                parameters.value,
+              );
+              if (response.length === 0) throw new NoSuchElement();
+              break;
+            case COMMANDS.GET_ELEMENT_TEXT:
+              response = this.browser
+                .getKnownElement(urlVariables.elementId)
+                .getText();
+              break;
+            case COMMANDS.FIND_ELEMENTS_FROM_ELEMENT:
+              response = this.elementRetrieval(
+                this.browser.getKnownElement(urlVariables.elementId).element,
+                parameters.using,
+                parameters.value,
+              );
+              if (response.length === 0) throw new NoSuchElement();
+              break;
+            case COMMANDS.FIND_ELEMENT_FROM_ELEMENT:
+              response = this.elementRetrieval(
+                this.browser.getKnownElement(urlVariables.elementId).element,
+                parameters.using,
+                parameters.value,
+              )[0];
+              if (!response) throw new NoSuchElement();
+              break;
+            case COMMANDS.SET_TIMEOUTS:
+              break;
+            case COMMANDS.GET_TIMEOUTS:
+              break;
+            case COMMANDS.GET_ALL_COOKIES:
+              response = this.browser.getCookies();
+              break;
+            case COMMANDS.ADD_COOKIE:
+              response = this.browser.addCookie(parameters.cookie);
+              break;
+            case COMMANDS.GET_ELEMENT_TAG_NAME:
+              response = this.browser
+                .getKnownElement(urlVariables.elementId)
+                .getTagName();
+              break;
+            case COMMANDS.GET_ELEMENT_ATTRIBUTE:
+              response = this.browser
+                .getKnownElement(urlVariables.elementId)
+                .getElementAttribute(urlVariables.attributeName);
+              break;
+            case COMMANDS.EXECUTE_SCRIPT:
+              response = await this.executeScript(
+                parameters.script,
+                parameters.args,
+              );
+              break;
+            case COMMANDS.ELEMENT_SEND_KEYS:
+              await this.sendKeysToElement(
+                parameters.text,
+                urlVariables.elementId,
+              );
+              break;
+            case COMMANDS.CLICK_ELEMENT:
+              this.browser.getKnownElement(urlVariables.elementId).click();
+              break;
+            default:
+              break;
+          }
+          resolve(response);
+        } catch (err) {
+          reject(err);
         }
-        resolve(response);
-      } catch (err) {
-        reject(err);
-      }
-    });
+      },
+    );
   }
 
   /**
