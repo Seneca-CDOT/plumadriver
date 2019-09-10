@@ -4,6 +4,12 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Launch Program",
+      "program": "${file}"
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Debugging TypeScript in Node.js",
       "preLaunchTask": "npm: compile",
       "program": "${workspaceFolder}/src/index.ts",
