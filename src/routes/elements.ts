@@ -60,7 +60,7 @@ element.post(
   '/click',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
-    COMMANDS.CLICK_ELEMENT,
+    COMMANDS.ELEMENT_CLICK,
   ),
 );
 

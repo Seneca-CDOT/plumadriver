@@ -167,7 +167,7 @@ class Session {
                 urlVariables.elementId,
               );
               break;
-            case COMMANDS.CLICK_ELEMENT:
+            case COMMANDS.ELEMENT_CLICK:
               this.browser.getKnownElement(urlVariables.elementId).click();
               break;
             default:
