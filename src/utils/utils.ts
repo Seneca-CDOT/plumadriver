@@ -198,7 +198,7 @@ export const endpoint = {
     let response = null;
     const result = await req.session.process(req.sessionRequest);
     if (result) {
-      response = { value: result };
+      response = result.value ? result : { value: result };
       res.json(response);
     } else {
       res.send(response);
