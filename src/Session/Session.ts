@@ -169,6 +169,7 @@ class Session {
               break;
             case COMMANDS.ELEMENT_CLICK:
               this.browser.getKnownElement(urlVariables.elementId).click();
+              response = { value: null };
               break;
             default:
               break;
