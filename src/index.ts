@@ -23,7 +23,9 @@ server.use(bodyParser.json());
 
 server.use((req, res, next) => {
   console.log(
-    `Method: '${req.method}', URL: ${req.originalUrl}, Body: ${req.body}`,
+    `Method: '${req.method}', URL: ${req.originalUrl}, Body: ${JSON.stringify(
+      req.body,
+    )}`,
   );
   next();
 });
