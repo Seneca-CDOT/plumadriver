@@ -2,6 +2,7 @@ import * as uuidv1 from 'uuid/v1';
 import isFocusableAreaElement from 'jsdom/lib/jsdom/living/helpers/focusing';
 import jsdomUtils from 'jsdom/lib/jsdom/living/generated/utils';
 import { ELEMENT, ElementBooleanAttributeValues } from '../constants/constants';
+import { InvalidArgument } from '../Error/errors';
 
 // TODO: find a more efficient way to import this
 import { JSDOM } from 'jsdom';
@@ -137,6 +138,13 @@ class WebElement {
     const { element } = this;
     const isOptionElement = ({ tagName }: HTMLElement): boolean =>
       tagName.toLowerCase() === 'option';
+
+    const isInUploadState = (element): boolean =>
+      element.tagName.toLowerCase() === 'input' && element.getType() === 'file';
+
+    if (isInUploadState(element)) {
+      throw new InvalidArgument();
+    }
 
     if (isOptionElement(element)) {
       this.optionElementClick();
