@@ -198,7 +198,9 @@ export const endpoint = {
     let response = null;
     const result = await req.session.process(req.sessionRequest);
     if (result) {
-      response = result.value ? result : { value: result };
+      response = Object.prototype.hasOwnProperty.call(result, 'value')
+        ? result
+        : { value: result };
       res.json(response);
     } else {
       res.send(response);
