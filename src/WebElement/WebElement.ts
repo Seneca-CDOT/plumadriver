@@ -146,6 +146,8 @@ class WebElement {
       throw new InvalidArgument();
     }
 
+    element.scrollIntoView();
+
     if (isOptionElement(element)) {
       this.optionElementClick();
     } else {
