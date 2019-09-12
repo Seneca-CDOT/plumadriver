@@ -31,6 +31,7 @@ import {
   InternalServerError,
   NoSuchElement,
   ElementNotInteractable,
+  NoSuchWindow,
 } from '../Error/errors';
 
 import { CapabilityValidator } from '../CapabilityValidator/CapabilityValidator';
@@ -168,6 +169,7 @@ class Session {
               );
               break;
             case COMMANDS.ELEMENT_CLICK:
+              if (!this.browser.dom) throw new NoSuchWindow();
               this.browser.getKnownElement(urlVariables.elementId).click();
               response = { value: null };
               break;
