@@ -4,7 +4,8 @@ import { NotFoundError } from './NotFoundError';
 import { InvalidArgument } from './InvalidArgument';
 import { SessionNotCreated } from './SessionNotCreated';
 import { InternalServerError } from './InternalServerError';
-import {ElementNotInteractable } from './ElementNotInteractableError';
+import { ElementNotInteractable } from './ElementNotInteractableError';
+import { NoSuchWindow } from './NoSuchWindow';
 
 export {
   MethodNotAllowed,
@@ -13,5 +14,6 @@ export {
   InvalidArgument,
   SessionNotCreated,
   InternalServerError,
-  ElementNotInteractable
+  ElementNotInteractable,
+  NoSuchWindow,
 };
