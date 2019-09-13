@@ -6,7 +6,7 @@ import { InvalidArgument } from '../Error/errors';
 
 // TODO: find a more efficient way to import this
 import { JSDOM } from 'jsdom';
-const { Event } = new JSDOM().window;
+const { MouseEvent } = new JSDOM().window;
 
 class WebElement {
   readonly element: HTMLElement;
@@ -107,7 +107,11 @@ class WebElement {
     const element = this.element as HTMLOptionElement;
 
     const fireParentNodeEvents = (): void => {
-      this.dispatchEvents(parentNode, ['mouseover', 'mousemove', 'mousedown']);
+      this.dispatchMouseEvents(parentNode, [
+        'mouseover',
+        'mousemove',
+        'mousedown',
+      ]);
       parentNode.focus();
     };
 
@@ -122,7 +126,7 @@ class WebElement {
     };
 
     const clickParentNode = (): void => {
-      this.dispatchEvents(parentNode, ['mouseup', 'click']);
+      this.dispatchMouseEvents(parentNode, ['mouseup', 'click']);
     };
 
     fireParentNodeEvents();
@@ -151,19 +155,24 @@ class WebElement {
     if (isOptionElement(element)) {
       this.optionElementClick();
     } else {
-      // this.dispatchEvents(element, [
-      //   'mouseover',
-      //   'mousedown',
-      //   'mouseup',
-      //   'click',
-      // ]);
-      this.element.click();
+      this.dispatchMouseEvents(element, [
+        'mouseover',
+        'mousedown',
+        'mouseup',
+        'click',
+      ]);
     }
   }
 
-  dispatchEvents(element: HTMLElement, events: string[]): void {
+  /**
+   * dispatches a series of MouseEvents
+   * @returns {undefined}
+   */
+  dispatchMouseEvents(element: HTMLElement, events: string[]): void {
     events.forEach(event => {
-      element.dispatchEvent(new Event(event));
+      element.dispatchEvent(
+        new MouseEvent(event, { bubbles: true, cancelable: true }),
+      );
     });
   }
 }
