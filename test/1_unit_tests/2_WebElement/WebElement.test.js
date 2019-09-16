@@ -1,0 +1,1 @@
+const { JSDOM } = require('jsdom');

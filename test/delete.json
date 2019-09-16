@@ -1,0 +1,12 @@
+{
+  "desiredCapabilities": {
+    "browserName": "pluma",
+    "plm:plumaOptions": { "runScripts": true },
+    "runScripts": true
+  },
+  "capabilities": {
+    "firstMatch": [
+      { "browserName": "pluma", "plm:plumaOptions": { "runScripts": true } }
+    ]
+  }
+}

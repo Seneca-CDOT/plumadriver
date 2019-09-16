@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <select>
+      <option selected>A</option>
+      <option>B</option>
+      <option>C</option>
+      <option>D</option>
+      <option>E</option>
+    </select>
+
+    <select>
+      <optgroup label="Swedish Cars">
+        <option value="volvo">Volvo</option>
+        <option value="saab">Saab</option>
+      </optgroup>
+      <optgroup label="German Cars">
+        <option value="mercedes">Mercedes</option>
+        <option value="audi">Audi</option>
+      </optgroup>
+    </select>
+
+    <datalist id="browsers">
+      <option value="Internet Explorer"> </option>
+      <option value="Firefox"> </option>
+      <option value="Chrome"> </option>
+      <option value="Opera"> </option>
+      <option value="Safari"> </option>
+    </datalist>
+
+    <button id="btn-disabled" disabled>Don't Click Me</button>
+
+    <button id="btn-enabled">Click Me</button>
+    <p id="log"></p>
+    <script>
+      const log = document.querySelector('#log');
+
+      document.querySelector('#btn-disabled').addEventListener('click', () => {
+        log.textContent += 'disabled clicked';
+      });
+
+      document.querySelector('#btn-enabled').addEventListener('click', () => {
+        log.textContent += 'enabled clicked';
+      });
+    </script>
+  </body>
+</html>
