@@ -80,6 +80,12 @@ describe('Select Elements', () => {
     const EXPECTED_OUTCOME = true;
     clickMultipleOptionAndEvaluate(SELECTOR, EXPECTED_OUTCOME);
   })
+
+  it('selects a datalist option', () => {
+    const SELECTOR = '#datalist-option';
+    const EXPECTED_OUTCOME = true;
+    clickMultipleOptionAndEvaluate(SELECTOR, EXPECTED_OUTCOME);
+  });
 });
 
 describe('Button Elements', () => {
