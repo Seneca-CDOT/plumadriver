@@ -1,24 +1,30 @@
 const { JSDOM } = require('jsdom');
 const { WebElement } = require('../../../build/WebElement/WebElement');
-const PAGES = {
-  RADIOS: './pages/radios.html',
-};
 const path = require('path');
-
-const generateDom = async page => {
-  const dom = await JSDOM.fromFile(path.join(__dirname, page));
-  return dom;
+const PAGES = {
+  RADIO: './pages/radio.html',
 };
+
+const generateDom = async page =>
+  await JSDOM.fromFile(path.join(__dirname, page));
 
 describe('Radio Elements', () => {
-  it('checks a radio button', async () => {
+  it('selects radio buttons', async () => {
     const {
       window: { document },
-    } = await generateDom(PAGES.RADIOS);
+    } = await generateDom(PAGES.RADIO);
 
-    const radioButton = document.querySelector('input[type="radio"]');
-    const radioElement = new WebElement(radioButton);
-    radioElement.click();
-    expect(radioButton.checked).toBe(true);
+    const [firstRadioButton, secondRadioButton] = document.querySelectorAll(
+      'input[type="radio"]',
+    );
+    const firstRadioElement = new WebElement(firstRadioButton);
+    const secondRadioElement = new WebElement(secondRadioButton);
+
+    firstRadioElement.click();
+    expect(firstRadioButton.checked).toBe(true);
+
+    secondRadioElement.click();
+    expect(firstRadioButton.checked).toBe(false);
+    expect(secondRadioButton.checked).toBe(true);
   });
 });
