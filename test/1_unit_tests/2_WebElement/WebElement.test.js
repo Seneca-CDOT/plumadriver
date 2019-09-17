@@ -3,7 +3,7 @@ const { WebElement } = require('../../../build/WebElement/WebElement');
 const path = require('path');
 const PAGES = {
   RADIO: './pages/radio.html',
-  DROPDOWN: './pages/dropdown.html',
+  SELECT: './pages/select.html',
 };
 
 const generateDom = async page =>
@@ -15,6 +15,8 @@ describe('Radio Elements', () => {
       window: { document },
     } = await generateDom(PAGES.RADIO);
 
+    expect.assertions(3);
+
     const [firstRadioButton, secondRadioButton] = document.querySelectorAll(
       'input[type="radio"]',
     );
@@ -23,26 +25,58 @@ describe('Radio Elements', () => {
 
     firstRadioElement.click();
     expect(firstRadioButton.checked).toBe(true);
-
     secondRadioElement.click();
     expect(firstRadioButton.checked).toBe(false);
     expect(secondRadioButton.checked).toBe(true);
   });
 });
 
-describe('Dropdown Elements', () => {
-  it('selects a dropdown element', async () => {
-    const {
-      window: { document },
-    } = await generateDom(PAGES.DROPDOWN);
+describe('Selection Elements', () => {
+  let document;
+
+  beforeEach(async () => {
+    const dom = await generateDom(PAGES.SELECT);
+    document = dom.window.document;
+  });
+
+  const clickMultipleOptionAndEvaluate = (selector, expectedBoolean) => {
+    const multipleOption = document.querySelector(selector);
+    const webElement = new WebElement(multipleOption);
+
+    webElement.click();
+    expect(multipleOption.selected).toBe(expectedBoolean);
+  };
+
+  it('selects a dropdown option element', async () => {
+    expect.assertions(3);
 
     const firstOptionElement = document.querySelector('option[value="first"]');
-    const secondOptionElement = document.querySelector('option[value="second"]');
+    const secondOptionElement = document.querySelector(
+      'option[value="second"]',
+    );
     const firstOptionWebElement = new WebElement(firstOptionElement);
-    
+
     firstOptionWebElement.click();
     expect(firstOptionElement.selected).toBe(true);
     expect(firstOptionWebElement.element.selected).toBe(true);
     expect(secondOptionElement.selected).toBe(false);
   });
+
+  it('selects an option element of type multiple', async () => {
+    const SELECTOR = 'option[value="first-multiple"]';
+    const EXPECTED_OUTCOME = true;
+    clickMultipleOptionAndEvaluate(SELECTOR, EXPECTED_OUTCOME);
+  });
+
+  it('unselects an option element of type multiple', async () => {
+    const SELECTOR = 'option[value="second-multiple"]';
+    const EXPECTED_OUTCOME = false;
+    clickMultipleOptionAndEvaluate(SELECTOR, EXPECTED_OUTCOME);
+  });
+
+  it('selects a nested option', async () => {
+    const SELECTOR = '#nested';
+    const EXPECTED_OUTCOME = true;
+    clickMultipleOptionAndEvaluate(SELECTOR, EXPECTED_OUTCOME);
+  })
 });
