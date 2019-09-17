@@ -117,7 +117,7 @@ class WebElement {
 
     const changeSelectedness = (): void => {
       if (!element.disabled) {
-        parentNode.dispatchEvent(new Event('input'));
+        parentNode.dispatchEvent(new MouseEvent('input'));
         const previousSelectedness = element.selected;
         element.selected = parentNode.hasAttribute('multiple')
           ? !previousSelectedness
@@ -149,8 +149,6 @@ class WebElement {
     if (isInUploadState(element as HTMLInputElement)) {
       throw new InvalidArgument();
     }
-
-    element.scrollIntoView();
 
     if (isOptionElement(element)) {
       this.optionElementClick();

@@ -52,7 +52,7 @@
     ]
   },
   "scripts": {
-    "test": "jest --watch",
+    "test": "tsc && jest --watch",
     "test-mocha": "mocha --exit",
     "lint": "eslint",
     "start": "node ./build/index.js",

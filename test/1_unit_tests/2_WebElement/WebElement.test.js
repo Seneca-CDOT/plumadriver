@@ -3,6 +3,7 @@ const { WebElement } = require('../../../build/WebElement/WebElement');
 const path = require('path');
 const PAGES = {
   RADIO: './pages/radio.html',
+  DROPDOWN: './pages/dropdown.html',
 };
 
 const generateDom = async page =>
@@ -26,5 +27,19 @@ describe('Radio Elements', () => {
     secondRadioElement.click();
     expect(firstRadioButton.checked).toBe(false);
     expect(secondRadioButton.checked).toBe(true);
+  });
+});
+
+describe('Dropdown Elements', () => {
+  it('selects a dropdown element', async () => {
+    const {
+      window: { document },
+    } = await generateDom(PAGES.DROPDOWN);
+
+    const optionElement = document.querySelector('option[value="second"]');
+    const optionWebElement = new WebElement(optionElement);
+    optionWebElement.click();
+
+    expect(optionElement.selected).toBe(true);
   });
 });
