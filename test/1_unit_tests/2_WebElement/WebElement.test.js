@@ -31,7 +31,7 @@ describe('Radio Elements', () => {
   });
 });
 
-describe('Selection Elements', () => {
+describe('Select Elements', () => {
   let document;
 
   beforeEach(async () => {
@@ -40,6 +40,7 @@ describe('Selection Elements', () => {
   });
 
   const clickMultipleOptionAndEvaluate = (selector, expectedBoolean) => {
+    expect.assertions(1);
     const multipleOption = document.querySelector(selector);
     const webElement = new WebElement(multipleOption);
 
@@ -80,3 +81,7 @@ describe('Selection Elements', () => {
     clickMultipleOptionAndEvaluate(SELECTOR, EXPECTED_OUTCOME);
   })
 });
+
+describe('Button Elements', () => {
+
+})
