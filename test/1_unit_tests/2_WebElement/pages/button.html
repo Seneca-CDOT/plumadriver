@@ -12,7 +12,7 @@
     <p id="event-log"></p>
     <script>
       const handleEvent = event => () => {
-        document.querySelector('#event-log').textContent = event;
+        document.querySelector('#event-log').textContent += ` ${event}`;
       };
 
       const addEventListeners = (element, events) => {

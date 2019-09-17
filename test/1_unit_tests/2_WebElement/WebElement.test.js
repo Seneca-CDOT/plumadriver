@@ -4,10 +4,13 @@ const path = require('path');
 const PAGES = {
   RADIO: './pages/radio.html',
   SELECT: './pages/select.html',
+  BUTTON: './pages/button.html',
 };
 
 const generateDom = async page =>
-  await JSDOM.fromFile(path.join(__dirname, page));
+  await JSDOM.fromFile(path.join(__dirname, page), {
+    runScripts: 'dangerously',
+  });
 
 describe('Radio Elements', () => {
   it('selects radio buttons', async () => {
@@ -79,7 +82,7 @@ describe('Select Elements', () => {
     const SELECTOR = '#nested';
     const EXPECTED_OUTCOME = true;
     clickMultipleOptionAndEvaluate(SELECTOR, EXPECTED_OUTCOME);
-  })
+  });
 
   it('selects a datalist option', () => {
     const SELECTOR = '#datalist-option';
@@ -89,5 +92,28 @@ describe('Select Elements', () => {
 });
 
 describe('Button Elements', () => {
+  let document;
 
-})
+  beforeEach(async () => {
+    const dom = await generateDom(PAGES.BUTTON);
+    document = dom.window.document;
+  });
+
+  it('fires event sequence: mouseover, mousedown, mouseup, and click', () => {
+    const button = document.querySelector('#enabled');
+    const eventLog = document.querySelector('#event-log');
+    const webElement = new WebElement(button);
+
+    webElement.click();
+    expect(eventLog.textContent).toEqual(' mouseover mousedown mouseup click');
+  });
+
+  it('should not fire events on a disabled button', () => {
+    const button = document.querySelector('#disabled');
+    const eventLog = document.querySelector('#event-log');
+    const webElement = new WebElement(button);
+
+    webElement.click();
+    expect(eventLog.textContent).toEqual('');
+  });
+});
