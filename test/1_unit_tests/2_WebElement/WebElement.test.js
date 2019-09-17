@@ -42,7 +42,7 @@ describe('Option Elements', () => {
     document = dom.window.document;
   });
 
-  const clickMultipleOptionAndEvaluate = (selector, expectedBoolean) => {
+  const clickOptionAndEvaluate = (selector, expectedBoolean) => {
     expect.assertions(1);
     const multipleOption = document.querySelector(selector);
     const webElement = new WebElement(multipleOption);
@@ -69,25 +69,25 @@ describe('Option Elements', () => {
   it('selects an option element of type multiple', async () => {
     const SELECTOR = 'option[value="first-multiple"]';
     const EXPECTED_OUTCOME = true;
-    clickMultipleOptionAndEvaluate(SELECTOR, EXPECTED_OUTCOME);
+    clickOptionAndEvaluate(SELECTOR, EXPECTED_OUTCOME);
   });
 
   it('unselects an option element of type multiple', async () => {
     const SELECTOR = 'option[value="second-multiple"]';
     const EXPECTED_OUTCOME = false;
-    clickMultipleOptionAndEvaluate(SELECTOR, EXPECTED_OUTCOME);
+    clickOptionAndEvaluate(SELECTOR, EXPECTED_OUTCOME);
   });
 
   it('selects a nested option', async () => {
     const SELECTOR = '#nested';
     const EXPECTED_OUTCOME = true;
-    clickMultipleOptionAndEvaluate(SELECTOR, EXPECTED_OUTCOME);
+    clickOptionAndEvaluate(SELECTOR, EXPECTED_OUTCOME);
   });
 
   it('selects a datalist option', () => {
     const SELECTOR = '#datalist-option';
     const EXPECTED_OUTCOME = true;
-    clickMultipleOptionAndEvaluate(SELECTOR, EXPECTED_OUTCOME);
+    clickOptionAndEvaluate(SELECTOR, EXPECTED_OUTCOME);
   });
 });
 
