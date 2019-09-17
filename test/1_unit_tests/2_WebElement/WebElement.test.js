@@ -34,7 +34,7 @@ describe('Radio Elements', () => {
   });
 });
 
-describe('Select Elements', () => {
+describe('Option Elements', () => {
   let document;
 
   beforeEach(async () => {
