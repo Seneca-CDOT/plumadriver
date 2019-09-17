@@ -152,7 +152,7 @@ class WebElement {
 
     if (isOptionElement(element)) {
       this.optionElementClick();
-    } else {
+    } else if (this.getElementAttribute('disabled') !== 'true') {
       this.dispatchMouseEvents(element, [
         'mouseover',
         'mousedown',

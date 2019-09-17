@@ -100,12 +100,13 @@ describe('Button Elements', () => {
   });
 
   it('fires event sequence: mouseover, mousedown, mouseup, and click', () => {
+    const EVENT_SEQUENCE = 'mouseover mousedown mouseup click';
     const button = document.querySelector('#enabled');
     const eventLog = document.querySelector('#event-log');
     const webElement = new WebElement(button);
 
     webElement.click();
-    expect(eventLog.textContent).toEqual(' mouseover mousedown mouseup click');
+    expect(eventLog.textContent).toEqual(EVENT_SEQUENCE);
   });
 
   it('should not fire events on a disabled button', () => {
