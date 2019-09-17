@@ -36,10 +36,13 @@ describe('Dropdown Elements', () => {
       window: { document },
     } = await generateDom(PAGES.DROPDOWN);
 
-    const optionElement = document.querySelector('option[value="second"]');
-    const optionWebElement = new WebElement(optionElement);
-    optionWebElement.click();
-
-    expect(optionElement.selected).toBe(true);
+    const firstOptionElement = document.querySelector('option[value="first"]');
+    const secondOptionElement = document.querySelector('option[value="second"]');
+    const firstOptionWebElement = new WebElement(firstOptionElement);
+    
+    firstOptionWebElement.click();
+    expect(firstOptionElement.selected).toBe(true);
+    expect(firstOptionWebElement.element.selected).toBe(true);
+    expect(secondOptionElement.selected).toBe(false);
   });
 });
