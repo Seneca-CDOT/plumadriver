@@ -18,17 +18,7 @@ const sessionManager = new SessionManager();
 server.set('sessionManager', sessionManager);
 
 // middleware
-
 server.use(bodyParser.json());
-
-server.use((req, res, next) => {
-  console.log(
-    `Method: '${req.method}', URL: ${req.originalUrl}, Body: ${JSON.stringify(
-      req.body,
-    )}`,
-  );
-  next();
-});
 
 // request logging
 if (process.env.NODE_ENV !== 'test') {
