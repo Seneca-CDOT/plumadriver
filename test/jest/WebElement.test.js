@@ -1,5 +1,5 @@
 const { JSDOM } = require('jsdom');
-const { WebElement } = require('../../../build/WebElement/WebElement');
+const { WebElement } = require('../../build/WebElement/WebElement');
 const path = require('path');
 const PAGES = {
   RADIO: './pages/radio.html',
