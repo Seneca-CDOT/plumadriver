@@ -43,18 +43,19 @@ describe('Checkbox Elements', () => {
     document = dom.window.document;
   });
 
-  it('ticks a checkbox', () => {
-    const checkbox = document.querySelector('#first');
+  const tickAndVerify = (selector, isChecked) => {
+    const checkbox = document.querySelector(selector);
     const webElement = new WebElement(checkbox);
     webElement.click();
-    expect(checkbox.checked).toBe(true);
+    expect(checkbox.checked).toBe(isChecked);
+  };
+
+  it('ticks a checkbox', () => {
+    tickAndVerify('#first', true);
   });
 
   it('unticks a checkbox', () => {
-    const checkbox = document.querySelector('#second');
-    const webElement = new WebElement(checkbox);
-    webElement.click();
-    expect(checkbox.checked).toBe(false);
+    tickAndVerify('#second', false);
   });
 });
 
