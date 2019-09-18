@@ -56,8 +56,7 @@ class WebElement {
    * @returns {String}
    */
   getType(): string {
-    const ATTRIBUTE_NAME = 'type';
-    return this.element.getAttribute(ATTRIBUTE_NAME);
+    return this.element.getAttribute('type');
   }
 
   /**

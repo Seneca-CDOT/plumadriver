@@ -19,14 +19,13 @@ describe('Radio Elements', () => {
       window: { document },
     } = await generateDom(PAGES.RADIO);
 
-    expect.assertions(3);
-
     const [firstRadioButton, secondRadioButton] = document.querySelectorAll(
       'input[type="radio"]',
     );
+    
+    expect.assertions(3);
     const firstRadioElement = new WebElement(firstRadioButton);
     const secondRadioElement = new WebElement(secondRadioButton);
-
     firstRadioElement.click();
     expect(firstRadioButton.checked).toBe(true);
     secondRadioElement.click();
@@ -37,7 +36,7 @@ describe('Radio Elements', () => {
 
 describe('Checkbox Elements', () => {
   let document;
-
+  
   beforeEach(async () => {
     const dom = await generateDom(PAGES.CHECKBOX);
     document = dom.window.document;
@@ -92,33 +91,25 @@ describe('Option Elements', () => {
   });
 
   it('selects an option element of type multiple', () => {
-    const SELECTOR = 'option[value="first-multiple"]';
-    const EXPECTED_OUTCOME = true;
-    clickOptionAndEvaluate(SELECTOR, EXPECTED_OUTCOME);
+    clickOptionAndEvaluate('option[value="first-multiple"]', true);
   });
 
   it('unselects an option element of type multiple', () => {
-    const SELECTOR = 'option[value="second-multiple"]';
-    const EXPECTED_OUTCOME = false;
-    clickOptionAndEvaluate(SELECTOR, EXPECTED_OUTCOME);
+    clickOptionAndEvaluate('option[value="second-multiple"]', false);
   });
 
   it('selects a nested option', () => {
-    const SELECTOR = '#nested';
-    const EXPECTED_OUTCOME = true;
-    clickOptionAndEvaluate(SELECTOR, EXPECTED_OUTCOME);
+    clickOptionAndEvaluate('#nested', true);
   });
 
   it('selects a datalist option', () => {
-    const SELECTOR = '#datalist-option';
-    const EXPECTED_OUTCOME = true;
-    clickOptionAndEvaluate(SELECTOR, EXPECTED_OUTCOME);
+    clickOptionAndEvaluate('#datalist-option', true);
   });
 });
 
 describe('Button Elements', () => {
   let document;
-
+  
   beforeEach(async () => {
     const dom = await generateDom(PAGES.BUTTON);
     document = dom.window.document;
