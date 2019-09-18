@@ -5,6 +5,7 @@ const PAGES = {
   RADIO: './pages/radio.html',
   SELECT: './pages/select.html',
   BUTTON: './pages/button.html',
+  CHECKBOX: './pages/checkbox.html',
 };
 
 const generateDom = async page =>
@@ -31,6 +32,29 @@ describe('Radio Elements', () => {
     secondRadioElement.click();
     expect(firstRadioButton.checked).toBe(false);
     expect(secondRadioButton.checked).toBe(true);
+  });
+});
+
+describe('Checkbox Elements', () => {
+  let document;
+
+  beforeEach(async () => {
+    const dom = await generateDom(PAGES.CHECKBOX);
+    document = dom.window.document;
+  });
+
+  it('ticks a checkbox', () => {
+    const checkbox = document.querySelector('#first');
+    const webElement = new WebElement(checkbox);
+    webElement.click();
+    expect(checkbox.checked).toBe(true);
+  });
+
+  it('unticks a checkbox', () => {
+    const checkbox = document.querySelector('#second');
+    const webElement = new WebElement(checkbox);
+    webElement.click();
+    expect(checkbox.checked).toBe(false);
   });
 });
 
