@@ -75,7 +75,7 @@ describe('Option Elements', () => {
     expect(multipleOption.selected).toBe(expectedBoolean);
   };
 
-  it('selects a dropdown option element', async () => {
+  it('selects a dropdown option element', () => {
     expect.assertions(3);
 
     const firstOptionElement = document.querySelector('option[value="first"]');
@@ -90,19 +90,19 @@ describe('Option Elements', () => {
     expect(secondOptionElement.selected).toBe(false);
   });
 
-  it('selects an option element of type multiple', async () => {
+  it('selects an option element of type multiple', () => {
     const SELECTOR = 'option[value="first-multiple"]';
     const EXPECTED_OUTCOME = true;
     clickOptionAndEvaluate(SELECTOR, EXPECTED_OUTCOME);
   });
 
-  it('unselects an option element of type multiple', async () => {
+  it('unselects an option element of type multiple', () => {
     const SELECTOR = 'option[value="second-multiple"]';
     const EXPECTED_OUTCOME = false;
     clickOptionAndEvaluate(SELECTOR, EXPECTED_OUTCOME);
   });
 
-  it('selects a nested option', async () => {
+  it('selects a nested option', () => {
     const SELECTOR = '#nested';
     const EXPECTED_OUTCOME = true;
     clickOptionAndEvaluate(SELECTOR, EXPECTED_OUTCOME);
