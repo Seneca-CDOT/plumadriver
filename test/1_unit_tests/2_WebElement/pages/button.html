@@ -23,7 +23,14 @@
         });
       };
 
-      const EVENTS = ['mouseover', 'mouseup', 'mousedown', 'click'];
+      const EVENTS = [
+        'mouseover',
+        'mouseenter',
+        'mousemove',
+        'mouseup',
+        'mousedown',
+        'click',
+      ];
 
       document.querySelectorAll('button').forEach(button => {
         addEventListeners(button, EVENTS);

@@ -155,6 +155,8 @@ class WebElement {
     } else if (this.getElementAttribute('disabled') !== 'true') {
       this.dispatchMouseEvents(element, [
         'mouseover',
+        'mouseenter',
+        'mousemove',
         'mousedown',
         'mouseup',
         'click',

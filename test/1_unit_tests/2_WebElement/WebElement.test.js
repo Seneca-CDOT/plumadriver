@@ -99,8 +99,9 @@ describe('Button Elements', () => {
     document = dom.window.document;
   });
 
-  it('fires event sequence: mouseover, mousedown, mouseup, and click', () => {
-    const EVENT_SEQUENCE = 'mouseover mousedown mouseup click';
+  it('fires event sequence: mouseover, mouseenter, mousemove, mousedown, mouseup, click', () => {
+    const EVENT_SEQUENCE =
+      'mouseover mouseenter mousemove mousedown mouseup click';
     const button = document.querySelector('#enabled');
     const eventLog = document.querySelector('#event-log');
     const webElement = new WebElement(button);
