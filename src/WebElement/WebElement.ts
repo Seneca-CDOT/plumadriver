@@ -60,11 +60,11 @@ class WebElement {
   }
 
   /**
-   * Searches for a parent node of the WebElement's HTML element by traversing the tree in reverse order.
-   * Returns the parent element if found, otherwise returns null if the root of the tree is reached.
+   * Searches for the nearest ancestor element of the WebElement's HTML element by traversing the tree in reverse order.
+   * Returns the element if found, otherwise returns null if the root of the tree is reached.
    * @returns {HTMLElement | null}
    */
-  findParent(tagName: string): HTMLElement | null {
+  findAncestor(tagName: string): HTMLElement | null {
     let { parentElement: nextParent } = this.element;
 
     const isMatchingOrIsFalsy = (): boolean =>
@@ -89,8 +89,8 @@ class WebElement {
       tagName.toLowerCase() === 'optgroup';
 
     if (isOptionOrOptgroupElement(element)) {
-      const datalistParent: HTMLElement = this.findParent('datalist');
-      const selectParent: HTMLElement = this.findParent('select');
+      const datalistParent: HTMLElement = this.findAncestor('datalist');
+      const selectParent: HTMLElement = this.findAncestor('select');
       return datalistParent || selectParent || element;
     }
 
