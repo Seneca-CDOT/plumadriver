@@ -56,7 +56,13 @@ element.get('/attribute/:name', (req, res, next) => {
 });
 
 // click element
-element.post('/click', (req, res, next) => {});
+element.post(
+  '/click',
+  sessionEndpointExceptionHandler(
+    defaultSessionEndpointLogic,
+    COMMANDS.ELEMENT_CLICK,
+  ),
+);
 
 // clear element
 element.post('/clear', (req, res, next) => {});

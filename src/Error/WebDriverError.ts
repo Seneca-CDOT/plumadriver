@@ -1,7 +1,7 @@
 export class WebDriverError extends Error {
   command: string;
   code: number;
-  JSONCodeError:string = '';
+  JSONCodeError = '';
   constructor(code) {
     super();
 
@@ -17,4 +17,3 @@ export class WebDriverError extends Error {
     });
   }
 }
-

@@ -18,7 +18,6 @@ const sessionManager = new SessionManager();
 server.set('sessionManager', sessionManager);
 
 // middleware
-
 server.use(bodyParser.json());
 
 // request logging
@@ -85,7 +84,7 @@ server.use(
     transports: errTransports,
     format: winston.format.combine(
       winston.format.timestamp(),
-      winston.format.printf((err) => {
+      winston.format.printf(err => {
         return `[PLUMA ERROR]
         \n${err.meta.date}
         \n${err.meta.stack}        
@@ -100,7 +99,7 @@ server.use(
 // error handler
 // eslint-disable-next-line no-unused-vars
 server.use((err, req, res, next) => {
-  let errorResponse: Pluma.ErrorResponse = {
+  const errorResponse: Pluma.ErrorResponse = {
     value: {
       error: err.JSONCodeError,
       message: err.message,
@@ -114,4 +113,4 @@ server.listen(HTTP_PORT, () => {
   console.log(`plumadriver listening on port ${HTTP_PORT}`);
 });
 
- export {server};
+export { server };

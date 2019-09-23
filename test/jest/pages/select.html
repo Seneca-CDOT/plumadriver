@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <select>
+      <option value="first" id="first">First</option>
+      <option value="second" id="second" selected>Second</option>
+      <option value="third" id="third">Third</option>
+      <option value="fourth" id="fourth">Fourth</option>
+    </select>
+
+    <select multiple>
+      <option value="first-multiple">first-multiple</option>
+      <option value="second-multiple" selected>second-multiple</option>
+      <option value="third-multiple">third-multiple</option>
+    </select>
+
+    <select>
+      <optgroup label="First Group">
+        <option value="first">First</option>
+        <option value="second" selected>Second</option>
+      </optgroup>
+      <optgroup label="Second Gorup">
+        <option value="third">Third</option>
+        <option value="fourth" id="nested">Fourth</option>
+      </optgroup>
+    </select>
+
+    <datalist>
+      <option value="first"></option>
+      <option value="second" id="datalist-option"></option>
+    </datalist>
+  </body>
+</html>
