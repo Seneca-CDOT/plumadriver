@@ -67,10 +67,10 @@ class WebElement {
   findAncestor(tagName: string): HTMLElement | null {
     let { parentElement: nextParent } = this.element;
 
-    const isMatchingOrIsFalsy = (): boolean =>
+    const isMatchingOrFalsy = (): boolean =>
       !nextParent || nextParent.tagName.toLowerCase() === tagName.toLowerCase();
 
-    while (!isMatchingOrIsFalsy()) {
+    while (!isMatchingOrFalsy()) {
       const { parentElement } = nextParent;
       nextParent = parentElement;
     }
