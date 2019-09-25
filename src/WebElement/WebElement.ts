@@ -174,6 +174,15 @@ class WebElement {
       );
     });
   }
+
+  isEditable(): boolean {
+    const isMutableFormControlElement = (element: HTMLElement) => {
+      const INPUT_TYPE_REGEXP =
+        'text|search|url|tel|email|date|month|week|time|datetime-locale|number|range|color|file';
+    };
+  }
+
+  clear(): void {}
 }
 
 export { WebElement };
