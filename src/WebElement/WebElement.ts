@@ -175,7 +175,6 @@ class WebElement {
     });
   }
 
-
   /**
    * checks if the WebElement's HTML element is editable.
    * @returns {boolean}
@@ -194,9 +193,14 @@ class WebElement {
       );
     };
 
-    const isMutableElement =  (): boolean => {
-      
-    }
+    const isMutableElement = (): boolean => {
+      const { designMode } = this.element.ownerDocument;
+      const isInDesignMode = designMode === 'on';
+
+      return this.element.contentEditable === 'true' || isInDesignMode;
+    };
+
+    return isMutableElement() || isMutableFormControlElement();
   }
 
   clear(): void {}
