@@ -16,6 +16,7 @@ class WebElement {
     this.element = element;
     this[ELEMENT] = uuidv1();
   }
+
   /**
    * Wrapper for the jsdom isFocusableAreaElement method
    */
@@ -181,29 +182,39 @@ class WebElement {
    */
   isEditable(): boolean {
     const isMutableFormControlElement = (): boolean => {
-      const mutableInputTypes = new RegExp(
+      const mutableInputPattern = new RegExp(
         '^(text|search|url|tel|email|password|date|month|week|time|datetime-locale|number|range|color|file)$',
       );
       const tagName: string = this.getTagName();
       const type: string = this.getType();
 
       return (
-        (tagName === 'input' && mutableInputTypes.test(type)) ||
+        (tagName === 'input' && mutableInputPattern.test(type)) ||
         tagName === 'textarea'
       );
     };
 
     const isMutableElement = (): boolean => {
-      const { designMode } = this.element.ownerDocument;
-      const isInDesignMode = designMode === 'on';
+      const {
+        contentEditable,
+        ownerDocument: { designMode },
+      } = this.element;
 
-      return this.element.contentEditable === 'true' || isInDesignMode;
+      return contentEditable === 'true' || designMode === 'on';
     };
 
-    return isMutableElement() || isMutableFormControlElement();
+    return isMutableFormControlElement() || isMutableElement();
   }
 
-  clear(): void {}
+  clear(implicitWaitDuration: number): void {
+    let isTimeoutExpired = false;
+    let isElementInteractable = false;
+    setTimeout(() => (isTimeoutExpired = true), implicitWaitDuration);
+
+    while (!isTimeoutExpired && !isElementInteractable) {
+      isElementInteractable = this.isInteractable();
+    }
+  }
 }
 
 export { WebElement };
