@@ -178,7 +178,7 @@ class WebElement {
   isEditable(): boolean {
     const isMutableFormControlElement: boolean = (element: HTMLElement) => {
       const mutableInputTypes = new RegExp(
-        '^(text|search|url|tel|email|date|month|week|time|datetime-locale|number|range|color|file)$',
+        '^(text|search|url|tel|email|password|date|month|week|time|datetime-locale|number|range|color|file)$',
       );
       const tagName: string = this.getTagName();
       const type: string = this.getType();
