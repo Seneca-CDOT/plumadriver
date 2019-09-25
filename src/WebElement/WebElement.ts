@@ -2,7 +2,11 @@ import * as uuidv1 from 'uuid/v1';
 import isFocusableAreaElement from 'jsdom/lib/jsdom/living/helpers/focusing';
 import jsdomUtils from 'jsdom/lib/jsdom/living/generated/utils';
 import { ELEMENT, ElementBooleanAttributeValues } from '../constants/constants';
-import { InvalidArgument, ElementNotInteractable } from '../Error/errors';
+import {
+  InvalidArgument,
+  InvalidElementState,
+  ElementNotInteractable,
+} from '../Error/errors';
 
 // TODO: find a more efficient way to import this
 import { JSDOM } from 'jsdom';
@@ -216,6 +220,7 @@ class WebElement {
     } else if (this.isMutableElement()) {
       waitForElementInteractvity();
     } else {
+      throw new InvalidElementState();
     }
   }
 }
