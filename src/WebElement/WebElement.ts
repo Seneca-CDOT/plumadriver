@@ -175,8 +175,13 @@ class WebElement {
     });
   }
 
+
+  /**
+   * checks if the WebElement's HTML element is editable.
+   * @returns {boolean}
+   */
   isEditable(): boolean {
-    const isMutableFormControlElement: boolean = (element: HTMLElement) => {
+    const isMutableFormControlElement = (): boolean => {
       const mutableInputTypes = new RegExp(
         '^(text|search|url|tel|email|password|date|month|week|time|datetime-locale|number|range|color|file)$',
       );
@@ -188,6 +193,10 @@ class WebElement {
         tagName === 'textarea'
       );
     };
+
+    const isMutableElement =  (): boolean => {
+      
+    }
   }
 
   clear(): void {}
