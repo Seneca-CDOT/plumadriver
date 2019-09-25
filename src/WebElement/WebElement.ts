@@ -176,46 +176,47 @@ class WebElement {
     });
   }
 
-  /**
-   * checks if the WebElement's HTML element is editable.
-   * @returns {boolean}
-   */
-  isEditable(): boolean {
-    const isMutableFormControlElement = (): boolean => {
-      const mutableInputPattern = new RegExp(
-        '^(text|search|url|tel|email|password|date|month|week|time|datetime-locale|number|range|color|file)$',
-      );
-      const tagName: string = this.getTagName();
-      const type: string = this.getType();
+  isMutableFormControlElement(): boolean {
+    const mutableInputPattern = new RegExp(
+      '^(text|search|url|tel|email|password|date|month|week|time|datetime-locale|number|range|color|file)$',
+    );
+    const tagName: string = this.getTagName();
+    const type: string = this.getType();
 
-      return (
-        (tagName === 'input' && mutableInputPattern.test(type)) ||
-        tagName === 'textarea'
-      );
-    };
+    return (
+      (tagName === 'input' && mutableInputPattern.test(type)) ||
+      tagName === 'textarea'
+    );
+  }
 
-    const isMutableElement = (): boolean => {
-      const {
-        contentEditable,
-        ownerDocument: { designMode },
-      } = this.element;
+  isMutableElement(): boolean {
+    const {
+      contentEditable,
+      ownerDocument: { designMode },
+    } = this.element;
 
-      return contentEditable === 'true' || designMode === 'on';
-    };
-
-    return isMutableFormControlElement() || isMutableElement();
+    return contentEditable === 'true' || designMode === 'on';
   }
 
   clear(implicitWaitDuration: number): void {
-    let isTimeoutExpired = false;
-    let isElementInteractable = false;
-    setTimeout(() => (isTimeoutExpired = true), implicitWaitDuration);
+    const waitForElementInteractvity = (): void => {
+      let isTimeoutExpired = false;
+      let isElementInteractable = false;
+      setTimeout(() => (isTimeoutExpired = true), implicitWaitDuration);
 
-    while (!isTimeoutExpired && !isElementInteractable) {
-      isElementInteractable = this.isInteractable();
+      while (!isTimeoutExpired && !isElementInteractable) {
+        isElementInteractable = this.isInteractable();
+      }
+
+      if (!isElementInteractable) throw new ElementNotInteractable();
+    };
+
+    if (this.isMutableFormControlElement()) {
+      waitForElementInteractvity();
+    } else if (this.isMutableElement()) {
+      waitForElementInteractvity();
+    } else {
     }
-
-    if (!isElementInteractable) throw new ElementNotInteractable();
   }
 }
 
