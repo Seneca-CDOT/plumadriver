@@ -176,9 +176,17 @@ class WebElement {
   }
 
   isEditable(): boolean {
-    const isMutableFormControlElement = (element: HTMLElement) => {
-      const INPUT_TYPE_REGEXP =
-        'text|search|url|tel|email|date|month|week|time|datetime-locale|number|range|color|file';
+    const isMutableFormControlElement: boolean = (element: HTMLElement) => {
+      const mutableInputTypes = new RegExp(
+        '^(text|search|url|tel|email|date|month|week|time|datetime-locale|number|range|color|file)$',
+      );
+      const tagName: string = this.getTagName();
+      const type: string = this.getType();
+
+      return (
+        (tagName === 'input' && mutableInputTypes.test(type)) ||
+        tagName === 'textarea'
+      );
     };
   }
 
