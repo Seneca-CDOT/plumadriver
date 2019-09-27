@@ -215,10 +215,14 @@ class WebElement {
       if (!isElementInteractable) throw new ElementNotInteractable();
     };
 
+    const clearContentEditableElement = (): void => {
+      waitForElementInteractvity();
+    };
+
     if (this.isMutableFormControlElement()) {
       waitForElementInteractvity();
     } else if (this.isMutableElement()) {
-      waitForElementInteractvity();
+      clearContentEditableElement();
     } else {
       throw new InvalidElementState();
     }
