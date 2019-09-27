@@ -207,3 +207,21 @@ export const endpoint = {
     }
   },
 };
+
+export const isInputElement = (
+  element: HTMLElement,
+): element is HTMLInputElement => {
+  return element.tagName.toLowerCase() === 'input';
+};
+
+export const isTextAreaElement = (
+  element: HTMLElement,
+): element is HTMLTextAreaElement => {
+  return element.tagName.toLowerCase() === 'textarea';
+};
+
+export const isOutputElement = (
+  element: HTMLElement,
+): element is HTMLOutputElement => {
+  return element.tagName.toLowerCase() === 'output';
+};

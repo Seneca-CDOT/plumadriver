@@ -221,19 +221,30 @@ class WebElement {
     element.blur();
   }
 
-  clearResettableElement(element: HTMLInputElement): void {
-    if (this.isEmptyFileInput(element)) {
+  clearResettableElement(element: HTMLElement): void {
+    let isEmpty: boolean;
+
+    if (element.type === 'file' && 'files' in element) {
+      isEmpty = element.files.length === 0;
+    } else {
+      isEmpty = element.value === '';
     }
+
+    element.focus();
+    // TODO: invoke appropriate clear algorithm here
+    element.blur();
   }
 
-  isEmptyFileInput(element: HTMLInputElement): boolean {
-    return element.files.length === 0;
-  }
+  clearInputAlgorithm(element: HTMLInputElement): void {}
+
+  clearTextAreaAlgorithm(element: HTMLTextAreaElement): void {}
+
+  clearOutputAlgorithm(element: HTMLTextAreaElement): void {}
 
   clear(implicitWaitDuration: number): void {
     if (this.isMutableFormControlElement()) {
       this.waitForElementInteractvity(implicitWaitDuration);
-      this.clearResettableElement(this.element as HTMLInputElement);
+      this.clearResettableElement(this.element);
     } else if (this.isMutableElement()) {
       this.waitForElementInteractvity(implicitWaitDuration);
       this.clearContentEditableElement(this.element);
