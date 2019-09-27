@@ -206,7 +206,7 @@ class WebElement {
     const waitForElementInteractvity = (): void => {
       let isTimeoutExpired = false;
       let isElementInteractable = false;
-      setTimeout(() => (isTimeoutExpired = true), implicitWaitDuration);
+      setTimeout(() => (isTimeoutExpired = true), implicitWaitDuration || 0);
 
       while (!isTimeoutExpired && !isElementInteractable) {
         isElementInteractable = this.isInteractable();
