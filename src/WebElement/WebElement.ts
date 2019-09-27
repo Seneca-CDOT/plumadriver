@@ -8,6 +8,12 @@ import {
   ElementNotInteractable,
 } from '../Error/errors';
 
+import {
+  isInputElement,
+  isTextAreaElement,
+  isOutputElement,
+} from '../utils/utils';
+
 // TODO: find a more efficient way to import this
 import { JSDOM } from 'jsdom';
 const { MouseEvent } = new JSDOM().window;
