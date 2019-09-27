@@ -203,6 +203,9 @@ class WebElement {
   }
 
   clear(implicitWaitDuration: number): void {
+    const { element } = this;
+    const type = this.getType();
+
     const waitForElementInteractvity = (): void => {
       let isTimeoutExpired = false;
       let isElementInteractable = false;
@@ -217,11 +220,19 @@ class WebElement {
 
     const clearContentEditableElement = (): void => {
       waitForElementInteractvity();
-      const { element } = this;
       if (element.innerHTML === '') return;
       element.focus();
       element.innerHTML = '';
       element.blur();
+    };
+
+    const isEmptyFileInput = (element: HTMLInputElement): boolean => {};
+
+    const clearResettableElement = (): void => {
+      waitForElementInteractvity();
+
+      if (isEmptyFileInput(element as HTMLInputElement)) {
+      }
     };
 
     if (this.isMutableFormControlElement()) {
