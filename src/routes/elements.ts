@@ -65,6 +65,12 @@ element.post(
 );
 
 // clear element
-element.post('/clear', (req, res, next) => {});
+element.post(
+  '/clear',
+  sessionEndpointExceptionHandler(
+    defaultSessionEndpointLogic,
+    COMMANDS.ELEMENT_CLEAR,
+  ),
+);
 
 export default element;
