@@ -217,6 +217,11 @@ class WebElement {
 
     const clearContentEditableElement = (): void => {
       waitForElementInteractvity();
+      const { element } = this;
+      if (element.innerHTML === '') return;
+      element.focus();
+      element.innerHTML = '';
+      element.blur();
     };
 
     if (this.isMutableFormControlElement()) {
