@@ -241,11 +241,11 @@ class WebElement {
     element.blur();
   }
 
-  clearInputAlgorithm(element: HTMLInputElement): void {}
+  clearInputElement(element: HTMLInputElement): void {}
 
-  clearTextAreaAlgorithm(element: HTMLTextAreaElement): void {}
+  clearTextAreaElement(element: HTMLTextAreaElement): void {}
 
-  clearOutputAlgorithm(element: HTMLTextAreaElement): void {}
+  clearOutputElement(element: HTMLTextAreaElement): void {}
 
   clear(implicitWaitDuration: number): void {
     if (this.isMutableFormControlElement()) {
