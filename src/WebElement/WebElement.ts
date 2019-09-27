@@ -202,43 +202,41 @@ class WebElement {
     return contentEditable === 'true' || designMode === 'on';
   }
 
+  waitForElementInteractvity(implicitWaitDuration: number): void {
+    let isTimeoutExpired = false;
+    let isElementInteractable = false;
+    setTimeout(() => (isTimeoutExpired = true), implicitWaitDuration || 0);
+
+    while (!isTimeoutExpired && !isElementInteractable) {
+      isElementInteractable = this.isInteractable();
+    }
+
+    if (!isElementInteractable) throw new ElementNotInteractable();
+  }
+
+  clearContentEditableElement(element: HTMLElement): void {
+    if (element.innerHTML === '') return;
+    element.focus();
+    element.innerHTML = '';
+    element.blur();
+  }
+
+  clearResettableElement(element: HTMLInputElement): void {
+    if (this.isEmptyFileInput(element)) {
+    }
+  }
+
+  isEmptyFileInput(element: HTMLInputElement): boolean {
+    return element.files.length === 0;
+  }
+
   clear(implicitWaitDuration: number): void {
-    const { element } = this;
-    const type = this.getType();
-
-    const waitForElementInteractvity = (): void => {
-      let isTimeoutExpired = false;
-      let isElementInteractable = false;
-      setTimeout(() => (isTimeoutExpired = true), implicitWaitDuration || 0);
-
-      while (!isTimeoutExpired && !isElementInteractable) {
-        isElementInteractable = this.isInteractable();
-      }
-
-      if (!isElementInteractable) throw new ElementNotInteractable();
-    };
-
-    const clearContentEditableElement = (): void => {
-      waitForElementInteractvity();
-      if (element.innerHTML === '') return;
-      element.focus();
-      element.innerHTML = '';
-      element.blur();
-    };
-
-    const isEmptyFileInput = (element: HTMLInputElement): boolean => {};
-
-    const clearResettableElement = (): void => {
-      waitForElementInteractvity();
-
-      if (isEmptyFileInput(element as HTMLInputElement)) {
-      }
-    };
-
     if (this.isMutableFormControlElement()) {
-      waitForElementInteractvity();
+      this.waitForElementInteractvity(implicitWaitDuration);
+      this.clearResettableElement(this.element as HTMLInputElement);
     } else if (this.isMutableElement()) {
-      clearContentEditableElement();
+      this.waitForElementInteractvity(implicitWaitDuration);
+      this.clearContentEditableElement(this.element);
     } else {
       throw new InvalidElementState();
     }
