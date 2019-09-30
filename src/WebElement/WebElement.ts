@@ -227,10 +227,12 @@ class WebElement {
     element.blur();
   }
 
-  clearResettableElement(element: HTMLElement): void {
+  clearResettableElement(
+    element: HTMLInputElement | HTMLTextAreaElement,
+  ): void {
     let isEmpty: boolean;
 
-    if (element.type === 'file' && 'files' in element) {
+    if (element instanceof HTMLInputElement && 'files' in element) {
       isEmpty = element.files.length === 0;
     } else {
       isEmpty = element.value === '';
@@ -247,12 +249,14 @@ class WebElement {
 
   clearTextAreaElement(element: HTMLTextAreaElement): void {}
 
-  clearOutputElement(element: HTMLTextAreaElement): void {}
-
   clear(implicitWaitDuration: number): void {
     if (this.isMutableFormControlElement()) {
       this.waitForElementInteractvity(implicitWaitDuration);
-      this.clearResettableElement(this.element);
+      this.clearResettableElement(
+        isInputElement(this.element)
+          ? (this.element as HTMLInputElement)
+          : (this.element as HTMLTextAreaElement),
+      );
     } else if (this.isMutableElement()) {
       this.waitForElementInteractvity(implicitWaitDuration);
       this.clearContentEditableElement(this.element);
