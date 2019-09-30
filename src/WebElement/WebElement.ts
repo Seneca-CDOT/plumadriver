@@ -232,7 +232,11 @@ class WebElement {
   ): void {
     let isEmpty: boolean;
 
-    if (element instanceof HTMLInputElement && 'files' in element) {
+    const isEmptyFileInput = (element): element is HTMLInputElement =>
+      element instanceof HTMLInputElement && 'files' in element;
+
+    // TODO: throw error if disabled or readOnly
+    if (isEmptyFileInput(element)) {
       isEmpty = element.files.length === 0;
     } else {
       isEmpty = element.value === '';
