@@ -241,13 +241,22 @@ class WebElement {
     if (isEmpty) return;
 
     element.focus();
-    // TODO: invoke appropriate clear algorithm here
+    if (element instanceof HTMLInputElement) {
+      this.clearInputAlgorithm(element);
+    } else {
+      this.clearTextAreaAlgorithm(element);
+    }
     element.blur();
   }
 
-  clearInputElement(element: HTMLInputElement): void {}
+  clearInputAlgorithm(element: HTMLInputElement): void {
+    element.value = '';
+    if ('checked' in element) {
+      // TODO: add checked algo
+    }
+  }
 
-  clearTextAreaElement(element: HTMLTextAreaElement): void {}
+  clearTextAreaAlgorithm(element: HTMLTextAreaElement): void {}
 
   clear(implicitWaitDuration: number): void {
     if (this.isMutableFormControlElement()) {
