@@ -236,6 +236,8 @@ class WebElement {
       isEmpty = element.value === '';
     }
 
+    if (isEmpty) return;
+
     element.focus();
     // TODO: invoke appropriate clear algorithm here
     element.blur();
