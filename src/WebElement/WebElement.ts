@@ -7,7 +7,11 @@ import {
   InvalidElementState,
   ElementNotInteractable,
 } from '../Error/errors';
-import { isInputElement } from '../utils/utils';
+import {
+  isInputElement,
+  isMutableFormControlElement,
+  isMutableElement,
+} from '../utils/utils';
 
 // TODO: find a more efficient way to import this
 import { JSDOM } from 'jsdom';
@@ -181,28 +185,6 @@ class WebElement {
     });
   }
 
-  isMutableFormControlElement(): boolean {
-    const mutableInputPattern = new RegExp(
-      '^(text|search|url|tel|email|password|date|month|week|time|datetime-locale|number|range|color|file)$',
-    );
-    const tagName: string = this.getTagName();
-    const type: string = this.getType();
-
-    return (
-      (tagName === 'input' && mutableInputPattern.test(type)) ||
-      tagName === 'textarea'
-    );
-  }
-
-  isMutableElement(): boolean {
-    const {
-      contentEditable,
-      ownerDocument: { designMode },
-    } = this.element;
-
-    return contentEditable === 'true' || designMode === 'on';
-  }
-
   waitForElementInteractvity(implicitWaitDuration: number): void {
     let isTimeoutExpired = false;
     let isElementInteractable = false;
@@ -241,16 +223,17 @@ class WebElement {
   }
 
   clear(implicitWaitDuration: number): void {
-    if (this.isMutableFormControlElement()) {
+    const { element } = this;
+    if (isMutableFormControlElement(element)) {
       this.waitForElementInteractvity(implicitWaitDuration);
       this.clearResettableElement(
-        isInputElement(this.element)
-          ? (this.element as HTMLInputElement)
-          : (this.element as HTMLTextAreaElement),
+        isInputElement(element)
+          ? (element as HTMLInputElement)
+          : (element as HTMLTextAreaElement),
       );
-    } else if (this.isMutableElement()) {
+    } else if (isMutableElement(element)) {
       this.waitForElementInteractvity(implicitWaitDuration);
-      this.clearContentEditableElement(this.element);
+      this.clearContentEditableElement(element);
     } else {
       throw new InvalidElementState();
     }
