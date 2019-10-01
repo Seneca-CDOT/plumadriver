@@ -227,10 +227,7 @@ class WebElement {
   ): void {
     let isEmpty: boolean;
 
-    const isEmptyFileInput = (element): element is HTMLInputElement =>
-      element instanceof HTMLInputElement && 'files' in element;
-
-    if (isEmptyFileInput(element)) {
+    if (isInputElement(element) && 'files' in element) {
       isEmpty = element.files.length === 0;
     } else {
       isEmpty = element.value === '';
