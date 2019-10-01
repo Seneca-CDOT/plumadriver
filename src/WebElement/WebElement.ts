@@ -7,12 +7,7 @@ import {
   InvalidElementState,
   ElementNotInteractable,
 } from '../Error/errors';
-
-import {
-  isInputElement,
-  isTextAreaElement,
-  isOutputElement,
-} from '../utils/utils';
+import { isInputElement } from '../utils/utils';
 
 // TODO: find a more efficient way to import this
 import { JSDOM } from 'jsdom';
@@ -235,7 +230,6 @@ class WebElement {
     const isEmptyFileInput = (element): element is HTMLInputElement =>
       element instanceof HTMLInputElement && 'files' in element;
 
-    // TODO: throw error if disabled or readOnly
     if (isEmptyFileInput(element)) {
       isEmpty = element.files.length === 0;
     } else {
@@ -245,22 +239,9 @@ class WebElement {
     if (isEmpty) return;
 
     element.focus();
-    if (element instanceof HTMLInputElement) {
-      this.clearInputAlgorithm(element);
-    } else {
-      this.clearTextAreaAlgorithm(element);
-    }
+    element.value = '';
     element.blur();
   }
-
-  clearInputAlgorithm(element: HTMLInputElement): void {
-    element.value = '';
-    if ('checked' in element) {
-      // TODO: add checked algo
-    }
-  }
-
-  clearTextAreaAlgorithm(element: HTMLTextAreaElement): void {}
 
   clear(implicitWaitDuration: number): void {
     if (this.isMutableFormControlElement()) {
