@@ -1,8 +1,8 @@
-import { WebDriverError } from './WebDriverError';
+import { NotFoundError } from './NotFoundError';
 
-export class NoSuchWindow extends WebDriverError {
+export class NoSuchWindow extends NotFoundError {
   constructor() {
-    super(404);
+    super();
     this.message =
       'A command to switch to a window could not be satisfied because the window could not be found.';
     this.name = 'NoSuchWindowError';
