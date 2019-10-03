@@ -6,7 +6,7 @@ const PAGES = {
   SELECT: './pages/select.html',
   BUTTON: './pages/button.html',
   CHECKBOX: './pages/checkbox.html',
-  CLEAR: './pages/clear.html',
+  CLEAR_FORM_CONTROL: './pages/clear-form-control.html',
 };
 
 const generateDom = async page =>
@@ -142,6 +142,36 @@ describe('Click Functionality', () => {
 });
 
 describe('Clear Functionality', () => {
-  it()
+  let document;
 
+  beforeEach(async () => {
+    const dom = await generateDom(PAGES.BUTTON);
+    document = dom.window.document;
+  });
+
+  const clearMutableInputType = element => {
+    const webElement = new WebElement(element);
+    webElement.clear();
+  };
+
+  const verifyClearedInputs = () => {
+    const inputElements = document.querySelectorAll('input');
+    const COLOR_INPUT_DEFAULT = '#000000';
+    const RADIO_INPUT_DEFAULT = '50';
+    const INPUT_DEFAULT = '';
+    
+    inputElements.forEach(inputElement => {
+      const { value, type } = inputElement;
+
+      if (type === 'color') {
+        expect(value).toBe(COLOR_INPUT_DEFAULT);
+      } else if (type === 'range') {
+        expect(value).toBe(RADIO_INPUT_DEFAULT);
+      } else {
+        expect(value).toBe(INPUT_DEFAULT);
+      }
+    });
+  };
+
+  it('clears all mutable input types', async () => {});
 });
