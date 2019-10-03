@@ -149,30 +149,14 @@ describe('Clear Functionality', () => {
     document = dom.window.document;
   });
 
-  it('clears all mutable input types', async () => {
-    const COLOR_INPUT_DEFAULT = '#000000';
-    const RADIO_INPUT_DEFAULT = '50';
-    const INPUT_DEFAULT = '';
+  const clearAndVerify = (cssSelector, clearValue) => {
+    const element = document.querySelector(cssSelector);
+    const webElement = new WebElement(element);
+    webElement.clear();
+    expect(element.value).toEqual(clearValue);
+  }
 
-    const clearMutableInputType = element => {
-      const webElement = new WebElement(element);
-      webElement.clear();
-    };
-
-    const verifyInputState = element => {
-      const { value, type } = element;
-
-      if (type === 'color') {a
-        expect(value).toBe(COLOR_INPUT_DEFAULT);
-      } else if (type === 'range') {
-        expect(value).toBe(RADIO_INPUT_DEFAULT);
-      } else {
-        expect(value).toBe(INPUT_DEFAULT);
-      }
-    };
-
-    const inputElements = document.querySelectorAll('input');
-    inputElements.forEach(clearMutableInputType);
-    inputElements.forEach(verifyInputState);
-  });
+  it('clears an input of type text', () => {
+    clearAndVerify('input[type="text"]', '');
+  })
 });
