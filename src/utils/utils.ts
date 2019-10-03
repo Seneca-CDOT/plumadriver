@@ -222,7 +222,7 @@ export const isTextAreaElement = (
 
 export const isMutableFormControlElement = (element: HTMLElement): boolean => {
   const mutableInputPattern = new RegExp(
-    '^(text|search|url|tel|email|password|date|month|week|time|datetime-locale|number|range|color|file)$',
+    '^(text|search|url|tel|email|password|date|month|week|time|datetime-local|number|range|color|file)$',
   );
 
   return (
