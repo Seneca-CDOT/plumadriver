@@ -1,6 +1,6 @@
 import * as uuidv1 from 'uuid/v1';
-import isFocusableAreaElement from 'jsdom/lib/jsdom/living/helpers/focusing';
-import jsdomUtils from 'jsdom/lib/jsdom/living/generated/utils';
+import { isFocusableAreaElement } from 'jsdom/lib/jsdom/living/helpers/focusing';
+import { implSymbol } from 'jsdom/lib/jsdom/living/generated/utils';
 import { ELEMENT, ElementBooleanAttributeValues } from '../constants/constants';
 import {
   InvalidArgument,
@@ -30,7 +30,7 @@ class WebElement {
    * Wrapper for the jsdom isFocusableAreaElement method
    */
   isInteractable(): boolean {
-    return isFocusableAreaElement(this.element[jsdomUtils.implSymbol]);
+    return isFocusableAreaElement(this.element[implSymbol]);
   }
 
   /**
