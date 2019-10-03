@@ -149,29 +149,33 @@ describe('Clear Functionality', () => {
     document = dom.window.document;
   });
 
-  const clearMutableInputType = element => {
-    const webElement = new WebElement(element);
-    webElement.clear();
-  };
+  it('clears all mutable input types', async () => {
+    const clearMutableInputType = element => {
+      const webElement = new WebElement(element);
+      webElement.clear();
+    };
 
-  const verifyClearedInputs = () => {
+    const verifyClearedInputs = () => {
+      const inputElements = document.querySelectorAll('input');
+      const COLOR_INPUT_DEFAULT = '#000000';
+      const RADIO_INPUT_DEFAULT = '50';
+      const INPUT_DEFAULT = '';
+
+      inputElements.forEach(inputElement => {
+        const { value, type } = inputElement;
+
+        if (type === 'color') {
+          expect(value).toBe(COLOR_INPUT_DEFAULT);
+        } else if (type === 'range') {
+          expect(value).toBe(RADIO_INPUT_DEFAULT);
+        } else {
+          expect(value).toBe(INPUT_DEFAULT);
+        }
+      });
+    };
+
     const inputElements = document.querySelectorAll('input');
-    const COLOR_INPUT_DEFAULT = '#000000';
-    const RADIO_INPUT_DEFAULT = '50';
-    const INPUT_DEFAULT = '';
-    
-    inputElements.forEach(inputElement => {
-      const { value, type } = inputElement;
-
-      if (type === 'color') {
-        expect(value).toBe(COLOR_INPUT_DEFAULT);
-      } else if (type === 'range') {
-        expect(value).toBe(RADIO_INPUT_DEFAULT);
-      } else {
-        expect(value).toBe(INPUT_DEFAULT);
-      }
-    });
-  };
-
-  it('clears all mutable input types', async () => {});
+    inputElements.forEach(clearMutableInputType);
+    verifyClearedInputs();
+  });
 });
