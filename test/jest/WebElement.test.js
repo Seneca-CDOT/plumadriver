@@ -154,9 +154,65 @@ describe('Clear Functionality', () => {
     const webElement = new WebElement(element);
     webElement.clear();
     expect(element.value).toEqual(clearValue);
-  }
+  };
 
   it('clears an input of type text', () => {
     clearAndVerify('input[type="text"]', '');
-  })
+  });
+
+  it('clears an input of type search', () => {
+    clearAndVerify('input[type="search"]', '');
+  });
+
+  it('clears an input of type url', () => {
+    clearAndVerify('input[type="url"]', '');
+  });
+
+  it('clears an input of type tel', () => {
+    clearAndVerify('input[type="tel"]', '');
+  });
+
+  it('clears an input of type email', () => {
+    clearAndVerify('input[type="email"]', '');
+  });
+
+  it('clears an input of type password', () => {
+    clearAndVerify('input[type="password"]', '');
+  });
+
+  it('clears an input of type date', () => {
+    clearAndVerify('input[type="date"]', '');
+  });
+
+  it('clears an input of type month', () => {
+    clearAndVerify('input[type="month"]', '');
+  });
+
+  it('clears an input of type week', () => {
+    clearAndVerify('input[type="week"]', '');
+  });
+
+  it('clears an input of type time', () => {
+    clearAndVerify('input[type="time"]', '');
+  });
+
+  it('clears an input of type datetime-local', () => {
+    clearAndVerify('input[type="datetime-local"]', '');
+  });
+
+  it('clears an input of type number', () => {
+    clearAndVerify('input[type="number"]', '');
+  });
+
+  it('clears an input of type range', () => {
+    clearAndVerify('input[type="range"]', '50');
+  });
+
+  it('clears an input of type color', () => {
+    clearAndVerify('input[type="color"]', '#000000');
+  });
+
+  it('clears an input of type file', () => {
+    clearAndVerify('input[type="file"]', '');
+  });
 });
