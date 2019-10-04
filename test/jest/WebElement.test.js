@@ -1,7 +1,7 @@
 const { JSDOM } = require('jsdom');
 const { WebElement } = require('../../build/WebElement/WebElement');
 const path = require('path');
-const { ElementNotInteractable } = require('../../build/Error/errors');
+const { InvalidElementState } = require('../../build/Error/errors');
 const PAGES = {
   RADIO: './pages/radio.html',
   SELECT: './pages/select.html',
@@ -171,7 +171,7 @@ describe('Clear Functionality', () => {
       { type: 'color', clearValue: '#000000' },
       { type: 'file', clearValue: '' },
     ];
-  
+
     const clearAndVerify = (cssSelector, clearValue) => {
       const element = clearElement(cssSelector);
       expect(element.value).toEqual(clearValue);
@@ -197,7 +197,12 @@ describe('Clear Functionality', () => {
     const IMMUTABLE_ELEMENT_IDS = ['readonly', 'disabled', 'hidden', 'output'];
 
     const clearAndExpectError = (cssSelector, errorType) => {
-      expect(() => clearElement(cssSelector)).toThrow(errorType);
+      expect.assertions(1);
+      const element = document.querySelector(cssSelector);
+      const webElement = new WebElement(element);
+      webElement.clear().catch(e => {
+        expect(e).toBeInstanceOf(InvalidElementState);
+      });
     };
 
     beforeEach(async () => {
@@ -206,8 +211,8 @@ describe('Clear Functionality', () => {
     });
 
     IMMUTABLE_ELEMENT_IDS.forEach(id => {
-      it(`throws ElementNotInteractable clearing ${id} element`, () => {
-        clearAndExpectError(`#${id}`, ElementNotInteractable);
+      it(`throws InvalidElementState clearing ${id} element`, () => {
+        clearAndExpectError(`#${id}`, InvalidElementState);
       });
     });
   });
