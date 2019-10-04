@@ -9,6 +9,7 @@ const PAGES = {
   CHECKBOX: './pages/checkbox.html',
   CLEAR_FORM_CONTROL: './pages/clear-form-control.html',
   CLEAR_FORM_IMMUTABLE: './pages/clear-form-immutable.html',
+  CLEAR_CONTENT_EDITABLE: './pages/clear-content-editable.html',
 };
 
 const generateDom = async page =>
@@ -153,6 +154,20 @@ describe('Clear Functionality', () => {
     return element;
   };
 
+  const clearElementAndVerifyValue = (cssSelector, clearValue) => {
+    const element = clearElement(cssSelector);
+    expect(element.value).toEqual(clearValue);
+  };
+
+  const clearElementAndExpectError = (cssSelector, errorType) => {
+    expect.assertions(1);
+    const element = document.querySelector(cssSelector);
+    const webElement = new WebElement(element);
+    webElement.clear().catch(e => {
+      expect(e).toBeInstanceOf(errorType);
+    });
+  };
+
   describe('Mutable Elements', () => {
     const MUTABLE_INPUTS = [
       { type: 'text', clearValue: '' },
@@ -172,11 +187,6 @@ describe('Clear Functionality', () => {
       { type: 'file', clearValue: '' },
     ];
 
-    const clearAndVerify = (cssSelector, clearValue) => {
-      const element = clearElement(cssSelector);
-      expect(element.value).toEqual(clearValue);
-    };
-
     beforeEach(async () => {
       const dom = await generateDom(PAGES.CLEAR_FORM_CONTROL);
       document = dom.window.document;
@@ -184,26 +194,17 @@ describe('Clear Functionality', () => {
 
     MUTABLE_INPUTS.forEach(({ type, clearValue }) => {
       it(`clears an input of type ${type}`, () => {
-        clearAndVerify(`input[type="${type}"]`, clearValue);
+        clearElementAndVerifyValue(`input[type="${type}"]`, clearValue);
       });
     });
 
     it('clears a textarea element', () => {
-      clearAndVerify('textarea', '');
+      clearElementAndVerifyValue('textarea', '');
     });
   });
 
   describe('Immutable Elements', () => {
     const IMMUTABLE_ELEMENT_IDS = ['readonly', 'disabled', 'hidden', 'output'];
-
-    const clearAndExpectError = (cssSelector, errorType) => {
-      expect.assertions(1);
-      const element = document.querySelector(cssSelector);
-      const webElement = new WebElement(element);
-      webElement.clear().catch(e => {
-        expect(e).toBeInstanceOf(InvalidElementState);
-      });
-    };
 
     beforeEach(async () => {
       const dom = await generateDom(PAGES.CLEAR_FORM_IMMUTABLE);
@@ -212,8 +213,24 @@ describe('Clear Functionality', () => {
 
     IMMUTABLE_ELEMENT_IDS.forEach(id => {
       it(`throws InvalidElementState clearing ${id} element`, () => {
-        clearAndExpectError(`#${id}`, InvalidElementState);
+        clearElementAndExpectError(`#${id}`, InvalidElementState);
       });
+    });
+  });
+
+  describe('Content Editable', () => {
+    beforeEach(async () => {
+      const dom = await generateDom(PAGES.CLEAR_CONTENT_EDITABLE);
+      document = dom.window.document;
+    });
+
+    it('clears a contenteditable element', () => {
+      const element = clearElement('#mutable');
+      expect(element.textContent).toEqual('');
+    });
+
+    it('throws InvalidElementState on non-contenteditable', () => {
+      clearElementAndExpectError('#immutable', InvalidElementState);
     });
   });
 });
