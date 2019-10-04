@@ -249,8 +249,9 @@ class WebElement {
       throw new InvalidElementState();
     }
 
-    if (!this.isInteractable())
+    if (!this.isInteractable()) {
       await this.waitForElementInteractivity(implicitWaitDuration);
+    }
 
     if (elementState === validStates.MutableFormControlElement) {
       this.clearResettableElement(

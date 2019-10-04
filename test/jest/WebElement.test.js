@@ -197,8 +197,7 @@ describe('Clear Functionality', () => {
     const IMMUTABLE_ELEMENT_IDS = ['readonly', 'disabled', 'hidden', 'output'];
 
     const clearAndExpectError = (cssSelector, errorType) => {
-      clearElement(cssSelector);
-      expect(clearElement(cssSelector)).toThrowError(errorType);
+      expect(() => clearElement(cssSelector)).toThrow(errorType);
     };
 
     beforeEach(async () => {
