@@ -220,15 +220,29 @@ export const isTextAreaElement = (
   return element.tagName.toLowerCase() === 'textarea';
 };
 
-export const isMutableFormControlElement = (element: HTMLElement): boolean => {
-  const mutableInputPattern = new RegExp(
-    '^(text|search|url|tel|email|password|date|month|week|time|datetime-local|number|range|color|file)$',
-  );
+export const isEditableFormControlElement = (
+  element: HTMLInputElement | HTMLTextAreaElement,
+): boolean => {
+  return !element.hidden && !element.readOnly && !element.disabled;
+};
 
-  return (
-    (isInputElement(element) && mutableInputPattern.test(element.type)) ||
-    isTextAreaElement(element)
-  );
+export const isMutableFormControlElement = (element: HTMLElement): boolean => {
+  let isMutable = false;
+
+  if (isTextAreaElement(element)) {
+    isMutable = isEditableFormControlElement(element);
+  } else if (isInputElement(element)) {
+    const mutableInputPattern = new RegExp(
+      '^(text|search|url|tel|email|password|date|month|week|time|datetime-local|number|range|color|file)$',
+    );
+    isMutable =
+      isEditableFormControlElement(element) &&
+      mutableInputPattern.test(element.type);
+  } else {
+    isMutable = false;
+  }
+
+  return isMutable;
 };
 
 export const isMutableElement = (element: HTMLElement): boolean => {
