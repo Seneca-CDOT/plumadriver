@@ -15,8 +15,6 @@ import {
 
 // TODO: find a more efficient way to import this
 import { JSDOM } from 'jsdom';
-import { resolve } from 'url';
-import { valid } from 'semver';
 const { MouseEvent } = new JSDOM().window;
 
 class WebElement {
