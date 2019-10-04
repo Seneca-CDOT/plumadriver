@@ -207,7 +207,7 @@ describe('Clear Functionality', () => {
     });
 
     IMMUTABLE_ELEMENT_IDS.forEach(id => {
-      it(`should throw ElementNotInteractable clearing ${id} element`, () => {
+      it(`throws ElementNotInteractable clearing ${id} element`, () => {
         clearAndExpectError(`#${id}`, ElementNotInteractable);
       });
     });
