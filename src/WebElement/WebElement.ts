@@ -16,6 +16,7 @@ import {
 // TODO: find a more efficient way to import this
 import { JSDOM } from 'jsdom';
 import { resolve } from 'url';
+import { valid } from 'semver';
 const { MouseEvent } = new JSDOM().window;
 
 class WebElement {
@@ -230,20 +231,35 @@ class WebElement {
     element.blur();
   }
 
-  clear(implicitWaitDuration: number): void {
+  async clear(implicitWaitDuration: number): Promise<void> {
     const { element } = this;
+
+    enum validStates {
+      MutableFormControlElement,
+      MutableElement,
+    }
+
+    let elementState: validStates;
+
     if (isMutableFormControlElement(element)) {
-      this.waitForElementInteractivity(implicitWaitDuration);
+      elementState = validStates.MutableFormControlElement;
+    } else if (isMutableElement(element)) {
+      elementState = validStates.MutableElement;
+    } else {
+      throw new InvalidElementState();
+    }
+
+    if (!this.isInteractable())
+      await this.waitForElementInteractivity(implicitWaitDuration);
+
+    if (elementState === validStates.MutableFormControlElement) {
       this.clearResettableElement(
         isInputElement(element)
           ? (element as HTMLInputElement)
           : (element as HTMLTextAreaElement),
       );
-    } else if (isMutableElement(element)) {
-      this.waitForElementInteractivity(implicitWaitDuration);
-      this.clearContentEditableElement(element);
     } else {
-      throw new InvalidElementState();
+      this.clearContentEditableElement(element);
     }
   }
 }
