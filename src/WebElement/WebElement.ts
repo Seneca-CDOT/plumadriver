@@ -15,6 +15,7 @@ import {
 
 // TODO: find a more efficient way to import this
 import { JSDOM } from 'jsdom';
+import { resolve } from 'url';
 const { MouseEvent } = new JSDOM().window;
 
 class WebElement {
@@ -185,14 +186,21 @@ class WebElement {
     });
   }
 
-  waitForElementInteractvity(implicitWaitDuration: number): void {
-    let isTimeoutExpired = false;
-    let isElementInteractable = false;
-    setTimeout(() => (isTimeoutExpired = true), implicitWaitDuration || 0);
+  async waitForElementInteractvity(implicitWaitDuration = 0): Promise<void> {
+    const countdown: Promise<boolean> = new Promise(resolve => {
+      setTimeout(() => resolve(false), implicitWaitDuration);
+    });
 
-    while (!isTimeoutExpired && !isElementInteractable) {
-      isElementInteractable = this.isInteractable();
-    }
+    const checkInteractivity: Promise<boolean> = new Promise(resolve =>
+      setInterval(() => {
+        if (this.isInteractable()) resolve(true);
+      }, 0),
+    );
+
+    const isElementInteractable = await Promise.race([
+      countdown,
+      checkInteractivity,
+    ]);
 
     if (!isElementInteractable) throw new ElementNotInteractable();
   }
