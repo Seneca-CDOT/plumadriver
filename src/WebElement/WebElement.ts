@@ -186,7 +186,7 @@ class WebElement {
     });
   }
 
-  async waitForElementInteractvity(implicitWaitDuration = 0): Promise<void> {
+  async waitForElementInteractivity(implicitWaitDuration = 0): Promise<void> {
     const countdown: Promise<boolean> = new Promise(resolve => {
       setTimeout(() => resolve(false), implicitWaitDuration);
     });
@@ -237,14 +237,14 @@ class WebElement {
   clear(implicitWaitDuration: number): void {
     const { element } = this;
     if (isMutableFormControlElement(element)) {
-      this.waitForElementInteractvity(implicitWaitDuration);
+      this.waitForElementInteractivity(implicitWaitDuration);
       this.clearResettableElement(
         isInputElement(element)
           ? (element as HTMLInputElement)
           : (element as HTMLTextAreaElement),
       );
     } else if (isMutableElement(element)) {
-      this.waitForElementInteractvity(implicitWaitDuration);
+      this.waitForElementInteractivity(implicitWaitDuration);
       this.clearContentEditableElement(element);
     } else {
       throw new InvalidElementState();
