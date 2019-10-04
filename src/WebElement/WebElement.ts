@@ -187,19 +187,15 @@ class WebElement {
   }
 
   async waitForElementInteractivity(implicitWaitDuration = 0): Promise<void> {
-    const countdown: Promise<boolean> = new Promise(resolve => {
-      setTimeout(() => resolve(false), implicitWaitDuration);
-    });
-
-    const checkInteractivity: Promise<boolean> = new Promise(resolve =>
-      setInterval(() => {
-        if (this.isInteractable()) resolve(true);
-      }, 0),
-    );
-
     const isElementInteractable = await Promise.race([
-      countdown,
-      checkInteractivity,
+      new Promise(resolve => {
+        setTimeout(() => resolve(false), implicitWaitDuration);
+      }),
+      new Promise(resolve =>
+        setInterval(() => {
+          if (this.isInteractable()) resolve(true);
+        }, 0),
+      ),
     ]);
 
     if (!isElementInteractable) throw new ElementNotInteractable();
