@@ -1,0 +1,17 @@
+exports.INPUT_TYPES = [
+  { type: 'text', clearValue: '' },
+  { type: 'search', clearValue: '' },
+  { type: 'url', clearValue: '' },
+  { type: 'tel', clearValue: '' },
+  { type: 'email', clearValue: '' },
+  { type: 'password', clearValue: '' },
+  { type: 'date', clearValue: '' },
+  { type: 'month', clearValue: '' },
+  { type: 'week', clearValue: '' },
+  { type: 'time', clearValue: '' },
+  { type: 'datetime-local', clearValue: '' },
+  { type: 'number', clearValue: '' },
+  { type: 'range', clearValue: '50' },
+  { type: 'color', clearValue: '#000000' },
+  { type: 'file', clearValue: '' },
+];

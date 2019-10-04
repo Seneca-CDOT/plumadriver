@@ -1,6 +1,7 @@
 const { JSDOM } = require('jsdom');
 const { WebElement } = require('../../build/WebElement/WebElement');
 const path = require('path');
+const { INPUT_TYPES } = require('./consts');
 const PAGES = {
   RADIO: './pages/radio.html',
   SELECT: './pages/select.html',
@@ -142,77 +143,35 @@ describe('Click Functionality', () => {
 });
 
 describe('Clear Functionality', () => {
-  let document;
+  describe('Mutable Elements', () => {
+    let document;
 
-  beforeEach(async () => {
-    const dom = await generateDom(PAGES.CLEAR_FORM_CONTROL);
-    document = dom.window.document;
+    beforeEach(async () => {
+      const dom = await generateDom(PAGES.CLEAR_FORM_CONTROL);
+      document = dom.window.document;
+    });
+
+    const clearAndVerify = (cssSelector, clearValue) => {
+      const element = document.querySelector(cssSelector);
+      const webElement = new WebElement(element);
+      webElement.clear();
+      expect(element.value).toEqual(clearValue);
+    };
+
+    INPUT_TYPES.forEach(({ type, clearValue }) => {
+      it(`clears an input of type ${type}`, () => {
+        clearAndVerify(`input[type="${type}"]`, clearValue);
+      });
+    });
   });
+  describe('Immutable Elements',  () => {
+    let document;
 
-  const clearAndVerify = (cssSelector, clearValue) => {
-    const element = document.querySelector(cssSelector);
-    const webElement = new WebElement(element);
-    webElement.clear();
-    expect(element.value).toEqual(clearValue);
-  };
+    beforeEach(async () => {
+      const dom = await generateDom(PAGES.CLEAR_FORM_CONTROL);
+      document = dom.window.document;
+    });
 
-  it('clears an input of type text', () => {
-    clearAndVerify('input[type="text"]', '');
-  });
-
-  it('clears an input of type search', () => {
-    clearAndVerify('input[type="search"]', '');
-  });
-
-  it('clears an input of type url', () => {
-    clearAndVerify('input[type="url"]', '');
-  });
-
-  it('clears an input of type tel', () => {
-    clearAndVerify('input[type="tel"]', '');
-  });
-
-  it('clears an input of type email', () => {
-    clearAndVerify('input[type="email"]', '');
-  });
-
-  it('clears an input of type password', () => {
-    clearAndVerify('input[type="password"]', '');
-  });
-
-  it('clears an input of type date', () => {
-    clearAndVerify('input[type="date"]', '');
-  });
-
-  it('clears an input of type month', () => {
-    clearAndVerify('input[type="month"]', '');
-  });
-
-  it('clears an input of type week', () => {
-    clearAndVerify('input[type="week"]', '');
-  });
-
-  it('clears an input of type time', () => {
-    clearAndVerify('input[type="time"]', '');
-  });
-
-  it('clears an input of type datetime-local', () => {
-    clearAndVerify('input[type="datetime-local"]', '');
-  });
-
-  it('clears an input of type number', () => {
-    clearAndVerify('input[type="number"]', '');
-  });
-
-  it('clears an input of type range', () => {
-    clearAndVerify('input[type="range"]', '50');
-  });
-
-  it('clears an input of type color', () => {
-    clearAndVerify('input[type="color"]', '#000000');
-  });
-
-  it('clears an input of type file', () => {
-    clearAndVerify('input[type="file"]', '');
-  });
+    it('should throw ')
+  })
 });
