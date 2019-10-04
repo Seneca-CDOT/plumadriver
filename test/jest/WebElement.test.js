@@ -1,13 +1,14 @@
 const { JSDOM } = require('jsdom');
 const { WebElement } = require('../../build/WebElement/WebElement');
 const path = require('path');
-const { INPUT_TYPES } = require('./consts');
+const { ElementNotInteractable } = require('../../build/Error/errors');
 const PAGES = {
   RADIO: './pages/radio.html',
   SELECT: './pages/select.html',
   BUTTON: './pages/button.html',
   CHECKBOX: './pages/checkbox.html',
   CLEAR_FORM_CONTROL: './pages/clear-form-control.html',
+  CLEAR_FORM_IMMUTABLE: './pages/clear-form-immutable.html',
 };
 
 const generateDom = async page =>
@@ -143,35 +144,72 @@ describe('Click Functionality', () => {
 });
 
 describe('Clear Functionality', () => {
+  let document;
+
+  const clearElement = cssSelector => {
+    const element = document.querySelector(cssSelector);
+    const webElement = new WebElement(element);
+    webElement.clear();
+    return element;
+  };
+
   describe('Mutable Elements', () => {
-    let document;
+    const MUTABLE_INPUTS = [
+      { type: 'text', clearValue: '' },
+      { type: 'search', clearValue: '' },
+      { type: 'url', clearValue: '' },
+      { type: 'tel', clearValue: '' },
+      { type: 'email', clearValue: '' },
+      { type: 'password', clearValue: '' },
+      { type: 'date', clearValue: '' },
+      { type: 'month', clearValue: '' },
+      { type: 'week', clearValue: '' },
+      { type: 'time', clearValue: '' },
+      { type: 'datetime-local', clearValue: '' },
+      { type: 'number', clearValue: '' },
+      { type: 'range', clearValue: '50' },
+      { type: 'color', clearValue: '#000000' },
+      { type: 'file', clearValue: '' },
+    ];
+  
+    const clearAndVerify = (cssSelector, clearValue) => {
+      const element = clearElement(cssSelector);
+      expect(element.value).toEqual(clearValue);
+    };
 
     beforeEach(async () => {
       const dom = await generateDom(PAGES.CLEAR_FORM_CONTROL);
       document = dom.window.document;
     });
 
-    const clearAndVerify = (cssSelector, clearValue) => {
-      const element = document.querySelector(cssSelector);
-      const webElement = new WebElement(element);
-      webElement.clear();
-      expect(element.value).toEqual(clearValue);
-    };
-
-    INPUT_TYPES.forEach(({ type, clearValue }) => {
+    MUTABLE_INPUTS.forEach(({ type, clearValue }) => {
       it(`clears an input of type ${type}`, () => {
         clearAndVerify(`input[type="${type}"]`, clearValue);
       });
     });
+
+    it('clears a textarea element', () => {
+      clearAndVerify('textarea', '');
+    });
   });
-  describe('Immutable Elements',  () => {
-    let document;
+
+  describe('Immutable Elements', () => {
+    const IMMUTABLE_ELEMENT_IDS = ['readonly', 'disabled', 'hidden', 'output'];
+
+    const clearAndExpectError = (cssSelector, errorType) => {
+      clearElement(cssSelector);
+      expect(clearElement(cssSelector)).toThrowError(errorType);
+    };
 
     beforeEach(async () => {
-      const dom = await generateDom(PAGES.CLEAR_FORM_CONTROL);
+      const dom = await generateDom(PAGES.CLEAR_FORM_IMMUTABLE);
       document = dom.window.document;
     });
 
-    it('should throw ')
-  })
+    IMMUTABLE_ELEMENT_IDS.forEach(id => {
+      it(`should throw ElementNotInteractable clearing ${id} element`, () => {
+        clearAndExpectError(`#${id}`, ElementNotInteractable);
+      });
+    });
+  });
 });
