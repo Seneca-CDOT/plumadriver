@@ -143,30 +143,29 @@ describe('Click Functionality', () => {
 });
 
 describe('Clear Functionality', () => {
-  const clearElement = cssSelector => {
+  let document;
+  const clearElement = async cssSelector => {
     const element = document.querySelector(cssSelector);
     const webElement = new WebElement(element);
-    webElement.clear();
+    await webElement.clear();
     return element;
   };
 
-  const clearElementAndVerifyValue = (cssSelector, clearValue) => {
-    const element = clearElement(cssSelector);
+  const clearElementAndVerifyValue = async (cssSelector, clearValue) => {
+    const element = await clearElement(cssSelector);
     expect(element.value).toEqual(clearValue);
   };
 
-  const clearElementAndExpectError = (cssSelector, errorType) => {
+  const clearElementAndExpectError = async (cssSelector, errorType) => {
     expect.assertions(1);
     const element = document.querySelector(cssSelector);
     const webElement = new WebElement(element);
-    webElement.clear().catch(e => {
+    await webElement.clear().catch(e => {
       expect(e).toBeInstanceOf(errorType);
     });
   };
 
   describe('Mutable Elements', () => {
-    let document;
-
     const MUTABLE_INPUTS = [
       { type: 'text', clearValue: '' },
       { type: 'search', clearValue: '' },
@@ -190,19 +189,17 @@ describe('Clear Functionality', () => {
     });
 
     MUTABLE_INPUTS.forEach(({ type, clearValue }) => {
-      it(`clears an input of type ${type}`, () => {
-        clearElementAndVerifyValue(`input[type="${type}"]`, clearValue);
+      it(`clears an input of type ${type}`, async () => {
+        await clearElementAndVerifyValue(`input[type="${type}"]`, clearValue);
       });
     });
 
-    it('clears a textarea element', () => {
-      clearElementAndVerifyValue('textarea', '');
+    it('clears a textarea element', async () => {
+      await clearElementAndVerifyValue('textarea', '');
     });
   });
 
   describe('Immutable Elements', () => {
-    let document;
-
     const IMMUTABLE_ELEMENT_IDS = ['readonly', 'disabled', 'hidden', 'output'];
 
     beforeEach(async () => {
@@ -210,26 +207,24 @@ describe('Clear Functionality', () => {
     });
 
     IMMUTABLE_ELEMENT_IDS.forEach(id => {
-      it(`throws InvalidElementState clearing ${id} element`, () => {
-        clearElementAndExpectError(`#${id}`, InvalidElementState);
+      it(`throws InvalidElementState clearing ${id} element`, async () => {
+        await clearElementAndExpectError(`#${id}`, InvalidElementState);
       });
     });
   });
 
   describe('Content Editable', () => {
-    let document;
-
     beforeEach(async () => {
       document = await generateDom(PAGES.CLEAR_CONTENT_EDITABLE);
     });
 
-    it('clears a contenteditable element', () => {
-      const element = clearElement('#mutable');
+    it('clears a contenteditable element', async () => {
+      const element = await clearElement('#mutable');
       expect(element.textContent).toEqual('');
     });
 
-    it('throws InvalidElementState on non-contenteditable', () => {
-      clearElementAndExpectError('#immutable', InvalidElementState);
+    it('throws InvalidElementState on non-contenteditable', async () => {
+      await clearElementAndExpectError('#immutable', InvalidElementState);
     });
   });
 });
