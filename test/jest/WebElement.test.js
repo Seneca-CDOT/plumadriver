@@ -12,18 +12,19 @@ const PAGES = {
   CLEAR_CONTENT_EDITABLE: './pages/clear-content-editable.html',
 };
 
-const generateDom = async page =>
-  await JSDOM.fromFile(path.join(__dirname, page), {
+const generateDom = async page => {
+  const {
+    window: { document },
+  } = await JSDOM.fromFile(path.join(__dirname, page), {
     runScripts: 'dangerously',
   });
+  return document;
+};
 
 describe('Click Functionality', () => {
   describe('Radio Elements', () => {
     it('selects radio buttons', async () => {
-      const {
-        window: { document },
-      } = await generateDom(PAGES.RADIO);
-
+      const document = await generateDom(PAGES.RADIO);
       const [firstRadioButton, secondRadioButton] = document.querySelectorAll(
         'input[type="radio"]',
       );
@@ -43,8 +44,7 @@ describe('Click Functionality', () => {
     let document;
 
     beforeEach(async () => {
-      const dom = await generateDom(PAGES.CHECKBOX);
-      document = dom.window.document;
+      document = await generateDom(PAGES.CHECKBOX);
     });
 
     const tickAndVerify = (selector, isChecked) => {
@@ -67,8 +67,7 @@ describe('Click Functionality', () => {
     let document;
 
     beforeEach(async () => {
-      const dom = await generateDom(PAGES.SELECT);
-      document = dom.window.document;
+      document = await generateDom(PAGES.SELECT);
     });
 
     const clickOptionAndEvaluate = (selector, expectedBoolean) => {
@@ -118,8 +117,7 @@ describe('Click Functionality', () => {
     let document;
 
     beforeEach(async () => {
-      const dom = await generateDom(PAGES.BUTTON);
-      document = dom.window.document;
+      document = await generateDom(PAGES.BUTTON);
     });
 
     it('fires event sequence: mouseover, mouseenter, mousemove, mousedown, mouseup, click', () => {
@@ -145,8 +143,6 @@ describe('Click Functionality', () => {
 });
 
 describe('Clear Functionality', () => {
-  let document;
-
   const clearElement = cssSelector => {
     const element = document.querySelector(cssSelector);
     const webElement = new WebElement(element);
@@ -169,6 +165,8 @@ describe('Clear Functionality', () => {
   };
 
   describe('Mutable Elements', () => {
+    let document;
+
     const MUTABLE_INPUTS = [
       { type: 'text', clearValue: '' },
       { type: 'search', clearValue: '' },
@@ -188,8 +186,7 @@ describe('Clear Functionality', () => {
     ];
 
     beforeEach(async () => {
-      const dom = await generateDom(PAGES.CLEAR_FORM_CONTROL);
-      document = dom.window.document;
+      document = await generateDom(PAGES.CLEAR_FORM_CONTROL);
     });
 
     MUTABLE_INPUTS.forEach(({ type, clearValue }) => {
@@ -204,11 +201,12 @@ describe('Clear Functionality', () => {
   });
 
   describe('Immutable Elements', () => {
+    let document;
+
     const IMMUTABLE_ELEMENT_IDS = ['readonly', 'disabled', 'hidden', 'output'];
 
     beforeEach(async () => {
-      const dom = await generateDom(PAGES.CLEAR_FORM_IMMUTABLE);
-      document = dom.window.document;
+      document = await generateDom(PAGES.CLEAR_FORM_IMMUTABLE);
     });
 
     IMMUTABLE_ELEMENT_IDS.forEach(id => {
@@ -219,9 +217,10 @@ describe('Clear Functionality', () => {
   });
 
   describe('Content Editable', () => {
+    let document;
+
     beforeEach(async () => {
-      const dom = await generateDom(PAGES.CLEAR_CONTENT_EDITABLE);
-      document = dom.window.document;
+      document = await generateDom(PAGES.CLEAR_CONTENT_EDITABLE);
     });
 
     it('clears a contenteditable element', () => {
