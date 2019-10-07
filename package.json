@@ -52,8 +52,9 @@
     ]
   },
   "scripts": {
-    "test": "tsc && jest",
-    "test-mocha": "mocha --exit",
+    "test": "jest",
+    "test:compile": "tsc && jest",
+    "test:mocha": "mocha --exit",
     "lint": "eslint",
     "start": "node ./build/index.js",
     "compile": "tsc",
