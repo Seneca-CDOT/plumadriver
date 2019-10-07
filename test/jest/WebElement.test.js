@@ -9,7 +9,7 @@ const PAGES = {
   CHECKBOX: './pages/checkbox.html',
   CLEAR_FORM_CONTROL: './pages/clear-form-control.html',
   CLEAR_FORM_IMMUTABLE: './pages/clear-form-immutable.html',
-  CLEAR_CONTENT_EDITABLE: './pages/clear-content-editable.html',
+  CLEAR_DESIGN_MODE: './pages/clear-design-mode.html',
 };
 
 const generateDom = async page => {
@@ -213,18 +213,33 @@ describe('Clear Functionality', () => {
     });
   });
 
-  describe('Content Editable', () => {
+  // describe('Content Editable', () => {
+  //   beforeEach(async () => {
+  //     document = await generateDom(PAGES.CLEAR_CONTENT_EDITABLE);
+  //   });
+
+  //   it('clears a contenteditable element', async () => {
+  //     const element = await clearElement('#mutable');
+  //     expect(element.textContent).toEqual('');
+  //   });
+
+  //   it('throws InvalidElementState on non-contenteditable', async () => {
+  //     await clearElementAndExpectError('#immutable', InvalidElementState);
+  //   });
+  // });
+
+  describe('Design Mode', () => {
     beforeEach(async () => {
-      document = await generateDom(PAGES.CLEAR_CONTENT_EDITABLE);
+      document = await generateDom(PAGES.CLEAR_DESIGN_MODE);
     });
 
-    it('clears a contenteditable element', async () => {
-      const element = await clearElement('#mutable');
-      expect(element.textContent).toEqual('');
-    });
+    const DESIGN_ELEMENT_TAGS = ['p', 'div', 'h1'];
 
-    it('throws InvalidElementState on non-contenteditable', async () => {
-      await clearElementAndExpectError('#immutable', InvalidElementState);
-    });
+    DESIGN_ELEMENT_TAGS.forEach(tag => {
+      it(`clears a ${tag} element when in design mode`, async () => {
+        const element = await clearElement(tag);
+        expect(element.textContent).toEqual('');
+      });
+    })
   });
 });
