@@ -185,6 +185,10 @@ class WebElement {
     });
   }
 
+  /**
+   * Clears a mutable element (https://www.w3.org/TR/webdriver/#dfn-mutable-element)
+   * @returns {undefined}
+   */
   clearContentEditableElement(element: HTMLElement): void {
     if (element.innerHTML === '') return;
     element.focus();
@@ -192,6 +196,10 @@ class WebElement {
     element.blur();
   }
 
+  /**
+   * Clears a resettable element (https://www.w3.org/TR/webdriver/#dfn-clear-a-resettable-element)
+   * @returns {undefined}
+   */
   clearResettableElement(
     element: HTMLInputElement | HTMLTextAreaElement,
   ): void {
@@ -214,6 +222,10 @@ class WebElement {
     element.blur();
   }
 
+  /**
+   * clicks the WebElement's HTML element.
+   * @returns {undefined}
+   */
   async clear(): Promise<void> {
     const { element } = this;
 
