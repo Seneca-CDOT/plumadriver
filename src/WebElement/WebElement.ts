@@ -217,29 +217,16 @@ class WebElement {
   async clear(): Promise<void> {
     const { element } = this;
 
-    enum validStates {
-      MutableFormControlElement,
-      MutableElement,
-    }
-
-    let elementState: validStates;
-
     if (isMutableFormControlElement(element)) {
-      elementState = validStates.MutableFormControlElement;
-    } else if (isMutableElement(element)) {
-      elementState = validStates.MutableElement;
-    } else {
-      throw new InvalidElementState();
-    }
-
-    if (elementState === validStates.MutableFormControlElement) {
       this.clearResettableElement(
         isInputElement(element)
           ? (element as HTMLInputElement)
           : (element as HTMLTextAreaElement),
       );
-    } else {
+    } else if (isMutableElement(element)) {
       this.clearContentEditableElement(element);
+    } else {
+      throw new InvalidElementState();
     }
   }
 }

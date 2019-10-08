@@ -175,9 +175,7 @@ class Session {
               break;
             case COMMANDS.ELEMENT_CLEAR:
               if (!this.browser.dom) throw new NoSuchWindow();
-              this.browser
-                .getKnownElement(urlVariables.elementId)
-                .clear(this.timeouts.implicit);
+              this.browser.getKnownElement(urlVariables.elementId).clear();
               response = { value: null };
               break;
             default:
