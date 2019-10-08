@@ -189,7 +189,7 @@ class WebElement {
    * Clears a mutable element (https://www.w3.org/TR/webdriver/#dfn-mutable-element)
    * @returns {undefined}
    */
-  clearContentEditableElement(element: HTMLElement): void {
+  private clearContentEditableElement(element: HTMLElement): void {
     if (element.innerHTML === '') return;
     element.focus();
     element.innerHTML = '';
@@ -200,7 +200,7 @@ class WebElement {
    * Clears a resettable element (https://www.w3.org/TR/webdriver/#dfn-clear-a-resettable-element)
    * @returns {undefined}
    */
-  clearResettableElement(
+  private clearResettableElement(
     element: HTMLInputElement | HTMLTextAreaElement,
   ): void {
     let isEmpty: boolean;
