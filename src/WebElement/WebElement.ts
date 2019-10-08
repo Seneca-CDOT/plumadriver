@@ -209,7 +209,6 @@ class WebElement {
       isInputElement(element) &&
       Object.prototype.hasOwnProperty.call(element, 'files')
     ) {
-      console.log(element);
       isEmpty = element.files.length === 0;
     } else {
       isEmpty = element.value === '';
