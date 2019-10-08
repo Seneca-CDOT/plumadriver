@@ -47,7 +47,8 @@
   },
   "jest": {
     "modulePathIgnorePatterns": [
-      "<rootDir>/src/"
+      "<rootDir>/src/",
+      "/node_modules/"
     ]
   },
   "scripts": {
