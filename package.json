@@ -48,7 +48,6 @@
   "jest": {
     "modulePathIgnorePatterns": [
       "<rootDir>/src/",
-      "<rootDir>/legacy/",
       "/node_modules/"
     ]
   },
