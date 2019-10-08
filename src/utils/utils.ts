@@ -227,7 +227,7 @@ export const isEditableFormControlElement = (
 };
 
 export const isMutableFormControlElement = (element: HTMLElement): boolean => {
-  let isMutable = false;
+  let isMutable: boolean;
 
   if (isTextAreaElement(element)) {
     isMutable = isEditableFormControlElement(element);
