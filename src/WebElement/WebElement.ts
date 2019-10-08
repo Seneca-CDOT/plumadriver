@@ -185,21 +185,6 @@ class WebElement {
     });
   }
 
-  async waitForElementInteractivity(implicitWaitDuration = 0): Promise<void> {
-    const isElementInteractable = await Promise.race([
-      new Promise(resolve => {
-        setTimeout(() => resolve(false), implicitWaitDuration);
-      }),
-      new Promise(resolve =>
-        setInterval(() => {
-          if (this.isInteractable()) resolve(true);
-        }, 0),
-      ),
-    ]);
-
-    if (!isElementInteractable) throw new ElementNotInteractable();
-  }
-
   clearContentEditableElement(element: HTMLElement): void {
     if (element.innerHTML === '') return;
     element.focus();
@@ -229,7 +214,7 @@ class WebElement {
     element.blur();
   }
 
-  async clear(implicitWaitDuration: number): Promise<void> {
+  async clear(): Promise<void> {
     const { element } = this;
 
     enum validStates {
@@ -245,10 +230,6 @@ class WebElement {
       elementState = validStates.MutableElement;
     } else {
       throw new InvalidElementState();
-    }
-
-    if (!this.isInteractable()) {
-      await this.waitForElementInteractivity(implicitWaitDuration);
     }
 
     if (elementState === validStates.MutableFormControlElement) {
