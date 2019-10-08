@@ -169,12 +169,12 @@ class Session {
               );
               break;
             case COMMANDS.ELEMENT_CLICK:
-              if (!this.browser.dom) throw new NoSuchWindow();
+              if (!this.browser.dom.window) throw new NoSuchWindow();
               this.browser.getKnownElement(urlVariables.elementId).click();
               response = { value: null };
               break;
             case COMMANDS.ELEMENT_CLEAR:
-              if (!this.browser.dom) throw new NoSuchWindow();
+              if (!this.browser.dom.window) throw new NoSuchWindow();
               this.browser.getKnownElement(urlVariables.elementId).clear();
               response = { value: null };
               break;
