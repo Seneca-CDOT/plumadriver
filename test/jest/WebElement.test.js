@@ -213,21 +213,6 @@ describe('Clear Functionality', () => {
     });
   });
 
-  // describe('Content Editable', () => {
-  //   beforeEach(async () => {
-  //     document = await generateDom(PAGES.CLEAR_CONTENT_EDITABLE);
-  //   });
-
-  //   it('clears a contenteditable element', async () => {
-  //     const element = await clearElement('#mutable');
-  //     expect(element.textContent).toEqual('');
-  //   });
-
-  //   it('throws InvalidElementState on non-contenteditable', async () => {
-  //     await clearElementAndExpectError('#immutable', InvalidElementState);
-  //   });
-  // });
-
   describe('Design Mode', () => {
     beforeEach(async () => {
       document = await generateDom(PAGES.CLEAR_DESIGN_MODE);
