@@ -2,11 +2,7 @@ import * as uuidv1 from 'uuid/v1';
 import { isFocusableAreaElement } from 'jsdom/lib/jsdom/living/helpers/focusing';
 import { implSymbol } from 'jsdom/lib/jsdom/living/generated/utils';
 import { ELEMENT, ElementBooleanAttributeValues } from '../constants/constants';
-import {
-  InvalidArgument,
-  InvalidElementState,
-  ElementNotInteractable,
-} from '../Error/errors';
+import { InvalidArgument, InvalidElementState } from '../Error/errors';
 import {
   isInputElement,
   isMutableFormControlElement,
