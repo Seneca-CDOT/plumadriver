@@ -52,15 +52,16 @@
     ]
   },
   "scripts": {
-    "test": "tsc && jest --watch",
-    "test-mocha": "mocha --exit",
+    "test": "jest",
+    "test:compile": "tsc && jest",
+    "test:mocha": "mocha --exit",
     "lint": "eslint",
     "start": "node ./build/index.js",
     "compile": "tsc",
-    "build-linux": "tsc && pkg . --target latest-linux-x64",
-    "build-win": "tsc && pkg . --target latest-win-x64",
-    "build-macos": "tsc && pkg . --target latest-mac-x64",
-    "build-all": "tsc && pkg . --target latest-linux-x64,latest-win-x64,latest-mac-x64",
+    "build:linux": "tsc && pkg . --target latest-linux-x64",
+    "build:win": "tsc && pkg . --target latest-win-x64",
+    "build:macos": "tsc && pkg . --target latest-mac-x64",
+    "build:all": "tsc && pkg . --target latest-linux-x64,latest-win-x64,latest-mac-x64",
     "generate-docs": "./node_modules/.bin/typedoc --out docs ./src/ --options ./typedoc.json &>/dev/null",
     "watch": "nodemon --watch src/ --exec 'npm run compile-ts && npm start' -e ts"
   },

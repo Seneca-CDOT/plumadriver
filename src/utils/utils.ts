@@ -207,3 +207,49 @@ export const endpoint = {
     }
   },
 };
+
+export const isInputElement = (
+  element: HTMLElement,
+): element is HTMLInputElement => {
+  return element.tagName.toLowerCase() === 'input';
+};
+
+export const isTextAreaElement = (
+  element: HTMLElement,
+): element is HTMLTextAreaElement => {
+  return element.tagName.toLowerCase() === 'textarea';
+};
+
+export const isEditableFormControlElement = (
+  element: HTMLInputElement | HTMLTextAreaElement,
+): boolean => {
+  return !element.hidden && !element.readOnly && !element.disabled;
+};
+
+export const isMutableFormControlElement = (element: HTMLElement): boolean => {
+  let isMutable: boolean;
+
+  if (isTextAreaElement(element)) {
+    isMutable = isEditableFormControlElement(element);
+  } else if (isInputElement(element)) {
+    const mutableInputPattern = new RegExp(
+      '^(text|search|url|tel|email|password|date|month|week|time|datetime-local|number|range|color|file)$',
+    );
+    isMutable =
+      isEditableFormControlElement(element) &&
+      mutableInputPattern.test(element.type);
+  } else {
+    isMutable = false;
+  }
+
+  return isMutable;
+};
+
+export const isMutableElement = (element: HTMLElement): boolean => {
+  const {
+    contentEditable,
+    ownerDocument: { designMode },
+  } = element;
+
+  return contentEditable === 'true' || designMode === 'on';
+};

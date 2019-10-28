@@ -1,8 +1,13 @@
 import * as uuidv1 from 'uuid/v1';
-import isFocusableAreaElement from 'jsdom/lib/jsdom/living/helpers/focusing';
-import jsdomUtils from 'jsdom/lib/jsdom/living/generated/utils';
+import { isFocusableAreaElement } from 'jsdom/lib/jsdom/living/helpers/focusing';
+import { implSymbol } from 'jsdom/lib/jsdom/living/generated/utils';
 import { ELEMENT, ElementBooleanAttributeValues } from '../constants/constants';
-import { InvalidArgument } from '../Error/errors';
+import { InvalidArgument, InvalidElementState } from '../Error/errors';
+import {
+  isInputElement,
+  isMutableFormControlElement,
+  isMutableElement,
+} from '../utils/utils';
 
 // TODO: find a more efficient way to import this
 import { JSDOM } from 'jsdom';
@@ -16,11 +21,12 @@ class WebElement {
     this.element = element;
     this[ELEMENT] = uuidv1();
   }
+
   /**
    * Wrapper for the jsdom isFocusableAreaElement method
    */
   isInteractable(): boolean {
-    return isFocusableAreaElement(this.element[jsdomUtils.implSymbol]);
+    return isFocusableAreaElement(this.element[implSymbol]);
   }
 
   /**
@@ -67,10 +73,10 @@ class WebElement {
   findAncestor(tagName: string): HTMLElement | null {
     let { parentElement: nextParent } = this.element;
 
-    const isMatchingOrIsFalsy = (): boolean =>
+    const isMatchingOrFalsy = (): boolean =>
       !nextParent || nextParent.tagName.toLowerCase() === tagName.toLowerCase();
 
-    while (!isMatchingOrIsFalsy()) {
+    while (!isMatchingOrFalsy()) {
       const { parentElement } = nextParent;
       nextParent = parentElement;
     }
@@ -173,6 +179,62 @@ class WebElement {
         new MouseEvent(event, { bubbles: true, cancelable: true }),
       );
     });
+  }
+
+  /**
+   * Clears a mutable element (https://www.w3.org/TR/webdriver/#dfn-mutable-element)
+   * @returns {undefined}
+   */
+  private clearContentEditableElement(element: HTMLElement): void {
+    if (element.innerHTML === '') return;
+    element.focus();
+    element.innerHTML = '';
+    element.blur();
+  }
+
+  /**
+   * Clears a resettable element (https://www.w3.org/TR/webdriver/#dfn-clear-a-resettable-element)
+   * @returns {undefined}
+   */
+  private clearResettableElement(
+    element: HTMLInputElement | HTMLTextAreaElement,
+  ): void {
+    let isEmpty: boolean;
+
+    if (
+      isInputElement(element) &&
+      Object.prototype.hasOwnProperty.call(element, 'files')
+    ) {
+      isEmpty = element.files.length === 0;
+    } else {
+      isEmpty = element.value === '';
+    }
+
+    if (isEmpty) return;
+
+    element.focus();
+    element.value = '';
+    element.blur();
+  }
+
+  /**
+   * clicks the WebElement's HTML element.
+   * @returns {undefined}
+   */
+  async clear(): Promise<void> {
+    const { element } = this;
+
+    if (isMutableFormControlElement(element)) {
+      this.clearResettableElement(
+        isInputElement(element)
+          ? (element as HTMLInputElement)
+          : (element as HTMLTextAreaElement),
+      );
+    } else if (isMutableElement(element)) {
+      this.clearContentEditableElement(element);
+    } else {
+      throw new InvalidElementState();
+    }
   }
 }
 
