@@ -15,6 +15,9 @@ export const logger = expressWinston.logger({
     }),
   ],
   format: winston.format.combine(
+    winston.format.timestamp({
+      format: 'YYYY-MM-DD HH:mm:ss',
+    }),
     winston.format.json(),
     winston.format.prettyPrint(),
   ),
