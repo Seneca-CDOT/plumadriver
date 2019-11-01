@@ -1,13 +1,14 @@
 import * as winston from 'winston';
 import * as expressWinston from 'express-winston';
 
-expressWinston.requestWhitelist.push('body');
-expressWinston.responseWhitelist.push('body');
 const LOG_FOLDER_NAME = 'pluma-logs';
 const FILENAMES = {
   REQUESTS: 'pluma-requests.txt',
   ERRORS: 'pluma-errors.txt',
 };
+
+expressWinston.requestWhitelist.push('body');
+expressWinston.responseWhitelist.push('body');
 
 export const logger = expressWinston.logger({
   transports: [
