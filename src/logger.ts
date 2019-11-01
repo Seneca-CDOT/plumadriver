@@ -3,6 +3,11 @@ import * as expressWinston from 'express-winston';
 
 expressWinston.requestWhitelist.push('body');
 expressWinston.responseWhitelist.push('body');
+const LOG_FOLDER_NAME = 'pluma-logs';
+const FILENAMES = {
+  requests: 'pluma-requests.txt',
+  errors: 'pluma-errors.txt',
+};
 
 export const logger = expressWinston.logger({
   transports: [
@@ -10,7 +15,7 @@ export const logger = expressWinston.logger({
       ? [new winston.transports.Console({ level: 'info' })]
       : []),
     new winston.transports.File({
-      filename: 'pluma_requests.txt',
+      filename: `${LOG_FOLDER_NAME}/${FILENAMES.requests}`,
       level: 'info',
     }),
   ],
@@ -33,7 +38,7 @@ export const errorLogger = expressWinston.errorLogger({
       ? [new winston.transports.Console({ level: 'error' })]
       : []),
     new winston.transports.File({
-      filename: 'pluma_error_log.txt',
+      filename: `${LOG_FOLDER_NAME}/${FILENAMES.errors}`,
       level: 'error',
       handleExceptions: true,
     }),
