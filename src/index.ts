@@ -1,7 +1,7 @@
 import * as express from 'express';
 import * as argv from 'minimist'; // for user provided port
 import * as bodyParser from 'body-parser';
-import { logger, errorLogger } from './logger/logger';
+import { logger, errorLogger } from './logger';
 import { Pluma } from './Types/types';
 
 import { SessionManager } from './SessionManager/SessionManager';
