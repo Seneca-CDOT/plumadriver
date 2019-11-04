@@ -10,7 +10,7 @@ import { Cookie } from '../jsdom_extensions/tough-cookie/lib/cookie';
 
 /**
  * Plumadriver browser with jsdom at its core.
- * Stores user-defined config object from which to create new instances of jsdom upon 
+ * Stores user-defined config object from which to create new instances of jsdom upon
  * navigation to any given URL.
  */
 class Browser {
@@ -29,7 +29,7 @@ class Browser {
       runScripts: '',
       strictSSL: true,
       unhandledPromptBehaviour: 'dismiss and notify',
-      rejectPublicSuffixes: false
+      rejectPublicSuffixes: false,
     };
 
     Object.keys(browserOptions).forEach(option => {
@@ -47,7 +47,7 @@ class Browser {
   async configureBrowser(
     config: BrowserConfig,
     url: URL | null,
-    pathType: string = 'url'
+    pathType: string = 'url',
   ) {
     let dom;
 
@@ -58,7 +58,7 @@ class Browser {
           runScripts: config.runScripts,
           beforeParse: config.beforeParse,
           pretendToBeVisual: true,
-          cookieJar: config.jar
+          cookieJar: config.jar,
         });
       } else if (pathType === 'file') {
         dom = await JSDOM.fromFile(url, {
@@ -66,7 +66,7 @@ class Browser {
           runScripts: config.runScripts,
           beforeParse: config.beforeParse,
           pretendToBeVisual: true,
-          cookieJar: config.jar
+          cookieJar: config.jar,
         });
       }
 
@@ -86,7 +86,7 @@ class Browser {
         runScripts: config.runScripts,
         beforeParse: config.beforeParse,
         pretendToBeVisual: true,
-        cookieJar: config.jar
+        cookieJar: config.jar,
       });
     }
 
@@ -123,10 +123,21 @@ class Browser {
   }
 
   /**
+   * returns the current domain
+   * @returns {String}
+   */
+  getDomain(): string {
+    const { URL: activeURL } = this.dom.window.document;
+    return new URL(activeURL).hostname.replace('^www.', '');
+    // TODO: match subdomains
+  }
+
+  /**
    * sets a cookie on the browser
    */
   addCookie(cookie) {
-    if (cookie === null || cookie === undefined) throw new PlumaError.InvalidArgument();
+    if (cookie === null || cookie === undefined)
+      throw new PlumaError.InvalidArgument();
 
     const scheme = this.getUrl().substr(0, this.getUrl().indexOf(':'));
 
@@ -143,10 +154,7 @@ class Browser {
       });
 
       try {
-        this.dom.cookieJar.store.putCookie(
-          new Cookie(validCookie),
-          err => err
-        );
+        this.dom.cookieJar.store.putCookie(new Cookie(validCookie), err => err);
       } catch (err) {
         throw new Error('UNABLE TO SET COOKIE'); // need to create this error class
       }
@@ -200,4 +208,4 @@ class Browser {
   }
 }
 
-export { Browser }
+export { Browser };
