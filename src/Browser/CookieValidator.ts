@@ -1,4 +1,3 @@
-import { http } from 'winston';
 import { Pluma } from '../Types/types';
 import { getDomainFromUrl } from '../utils/utils';
 
