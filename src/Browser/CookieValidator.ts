@@ -2,37 +2,35 @@ import { Pluma } from '../Types/types';
 import { getDomainFromUrl } from '../utils/utils';
 
 class CookieValidator {
-  isString(candidateValue: string): boolean {
+  static isString(candidateValue): boolean {
     return typeof candidateValue === 'string';
   }
 
-  isBoolean(candidateValue: boolean): boolean {
+  static isBoolean(candidateValue): boolean {
     return typeof candidateValue === 'boolean';
   }
 
-  isValidName(name: string): boolean {
+  static isValidName(name: string): boolean {
     return this.isString(name);
   }
 
-  isValidValue(value: string): boolean {
+  static isValidValue(value: string): boolean {
     return this.isString(value);
   }
 
-  isValidDomain(cookieDomain, activeDomain): boolean {
+  static isValidDomain(cookieDomain, activeDomain): boolean {
     return getDomainFromUrl(cookieDomain) === activeDomain;
   }
 
-  isValidPath() {}
-
-  isValidSecure(secure: boolean) {
+  static isValidSecure(secure: boolean) {
     return this.isBoolean(secure);
   }
 
-  isValidhttpOnly(httpOnly: boolean) {
+  static isValidhttpOnly(httpOnly: boolean) {
     return this.isBoolean(httpOnly);
   }
 
-  isValidExpiry(expiry: number) {
+  static isValidExpiry(expiry: number) {
     return (
       Number.isInteger(expiry) &&
       expiry >= 0 &&
@@ -40,7 +38,7 @@ class CookieValidator {
     );
   }
 
-  isValidCookie(cookie: Pluma.Cookie, activeDomain: string): boolean {
+  static isValidCookie(cookie: Pluma.Cookie, activeDomain: string): boolean {
     const { name, value, domain, httpOnly, secure, expiry } = cookie;
     return (
       this.isValidName(name) &&
@@ -52,3 +50,5 @@ class CookieValidator {
     );
   }
 }
+
+export default CookieValidator;
