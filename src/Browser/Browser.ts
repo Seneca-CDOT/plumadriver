@@ -123,19 +123,9 @@ class Browser {
   }
 
   /**
-   * returns the current domain
-   * @returns {String}
-   */
-  getDomain(): string {
-    const { URL: activeURL } = this.dom.window.document;
-    return new URL(activeURL).hostname.replace('^www.', '');
-    // TODO: match subdomains
-  }
-
-  /**
    * sets a cookie on the browser
    */
-  addCookie(cookie) {
+  addCookie(cookie: Pluma.Cookie) {
     if (cookie === null || cookie === undefined)
       throw new PlumaError.InvalidArgument();
 
