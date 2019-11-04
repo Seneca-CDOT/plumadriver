@@ -31,7 +31,7 @@ export namespace Pluma {
    */
   interface Cookie {
     name: string;
-    value: string | boolean;
+    value: string;
     domain?: string;
     secure?: boolean;
     httpOnly?: boolean;
