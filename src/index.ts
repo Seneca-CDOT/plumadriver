@@ -1,8 +1,7 @@
 import * as express from 'express';
 import * as argv from 'minimist'; // for user provided port
 import * as bodyParser from 'body-parser';
-import * as winston from 'winston';
-import * as expressWinston from 'express-winston';
+import { logger, errorLogger } from './logger';
 import { Pluma } from './Types/types';
 
 import { SessionManager } from './SessionManager/SessionManager';
@@ -21,37 +20,7 @@ server.set('sessionManager', sessionManager);
 server.use(bodyParser.json());
 
 // request logging
-if (process.env.NODE_ENV !== 'test') {
-  const reqTransports =
-    process.env.NODE_ENV === 'test'
-      ? [
-          new winston.transports.Console({ level: 'info' }),
-          new winston.transports.File({
-            filename: 'pluma_requests.txt',
-            level: 'info',
-          }),
-        ]
-      : [
-          new winston.transports.File({
-            filename: 'pluma_requests.txt',
-            level: 'info',
-          }),
-        ];
-
-  server.use(
-    expressWinston.logger({
-      transports: reqTransports,
-      format: winston.format.combine(
-        winston.format.json(),
-        winston.format.prettyPrint(),
-      ),
-      meta: true,
-      msg: 'HTTP {{req.method}} {{req.url}}',
-      expressFormat: true,
-      colorize: false,
-    }),
-  );
-}
+server.use(logger);
 
 router.get('/status', (req, res) => {
   const state = sessionManager.getReadinessState();
@@ -61,40 +30,7 @@ router.get('/status', (req, res) => {
 server.use('/', router);
 
 // error logging
-const errTransports =
-  process.env.NODE_ENV === 'test'
-    ? [
-        new winston.transports.Console({ level: 'error' }),
-        new winston.transports.File({
-          filename: 'pluma_error_log.txt',
-          level: 'error',
-          handleExceptions: true,
-        }),
-      ]
-    : [
-        new winston.transports.File({
-          filename: 'pluma_error_log.txt',
-          level: 'error',
-          handleExceptions: true,
-        }),
-      ];
-
-server.use(
-  expressWinston.errorLogger({
-    transports: errTransports,
-    format: winston.format.combine(
-      winston.format.timestamp(),
-      winston.format.printf(err => {
-        return `[PLUMA ERROR]
-        \n${err.meta.date}
-        \n${err.meta.stack}        
-        \n\treq: ${err.meta.req.method} ${err.meta.req.url}
--------------------------------------------------------------------------------------
-        `;
-      }),
-    ),
-  }),
-);
+server.use(errorLogger);
 
 // error handler
 // eslint-disable-next-line no-unused-vars

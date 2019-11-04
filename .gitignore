@@ -1,4 +1,4 @@
 node_modules/
-/plumadriver*
-/pluma_*.txt
 /build/*
+/plumadriver*
+pluma-logs/
