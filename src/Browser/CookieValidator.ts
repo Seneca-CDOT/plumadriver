@@ -1,8 +1,13 @@
+import { http } from 'winston';
 import { Pluma } from '../Types/types';
 
 class CookieValidator {
-  isString(candidate: string): boolean {
-    return typeof candidate === 'string';
+  isString(candidateValue: string): boolean {
+    return typeof candidateValue === 'string';
+  }
+
+  isBoolean(candidateValue: boolean): boolean {
+    return typeof candidateValue === 'boolean';
   }
 
   isValidName(name: string): boolean {
@@ -21,14 +26,35 @@ class CookieValidator {
     );
   }
 
-  isValidCookie(
-    { name, value, path, domain, httpOnly, secure, expiry } = {},
-    activeUrl: string,
-  ): boolean {
+  isValidPath() {
+
+  }
+
+  isValidSecure(secure: boolean) {
+    return this.isBoolean(secure);
+  }
+
+  isValidhttpOnly(httpOnly: boolean) {
+    return this.isBoolean(httpOnly);
+  }
+
+  isValidExpiry(expiry: number) {
+    return (
+      Number.isInteger(expiry) &&
+      expiry >= 0 &&
+      expiry < Number.MAX_SAFE_INTEGER
+    );
+  }
+
+  isValidCookie(cookie: Pluma.Cookie, activeUrl: string): boolean {
+    const { name, value, domain, httpOnly, secure, expiry } = cookie;
     return (
       this.isValidName(name) &&
       this.isValidValue(value) &&
-      this.isValidDomain(domain, activeUrl)
+      this.isValidDomain(domain, activeUrl) &&
+      this.isValidSecure(secure) &&
+      this.isValidhttpOnly(httpOnly) &&
+      this.isValidExpiry(expiry)
     );
   }
 }
