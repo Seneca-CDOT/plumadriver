@@ -5,6 +5,7 @@ import { ELEMENT } from '../constants/constants';
 import { WebElement } from '../WebElement/WebElement';
 import * as Utils from '../utils/utils';
 import * as PlumaError from '../Error/errors';
+import CookieValidator from './CookieValidator';
 
 import { Cookie } from '../jsdom_extensions/tough-cookie/lib/cookie';
 
@@ -126,29 +127,28 @@ class Browser {
    * sets a cookie on the browser
    */
   addCookie(cookie: Pluma.Cookie) {
-    if (cookie === null || cookie === undefined)
-      throw new PlumaError.InvalidArgument();
-
     const scheme = this.getUrl().substr(0, this.getUrl().indexOf(':'));
 
-    if (scheme !== 'http' && scheme !== 'https' && scheme !== 'ftp')
+    if (scheme !== 'http' && scheme !== 'https' && scheme !== 'ftp') {
       throw new PlumaError.InvalidArgument();
+    }
 
-    if (Utils.isValidCookie(cookie, this.getUrl())) {
-      let validCookie;
+    const activeDomain: string = Utils.getDomainFromUrl(this.getUrl());
 
-      Object.keys(cookie).forEach(key => {
-        if (key === 'name') validCookie.key = cookie[key];
-        else if (key === 'expiry') validCookie.expires = cookie[key];
-        else validCookie[key] = cookie[key];
-      });
+    if (CookieValidator.isValidCookie(cookie, activeDomain)) {
+      const { expiry: expires, ...rest } = cookie;
+      const cookieJarCookie = { expires, ...rest };
 
       try {
-        this.dom.cookieJar.store.putCookie(new Cookie(validCookie), err => err);
+        this.dom.cookieJar.store.putCookie(new Cookie(cookieJarCookie), err =>
+          console.error(err),
+        );
       } catch (err) {
         throw new Error('UNABLE TO SET COOKIE'); // need to create this error class
       }
-    } else throw new PlumaError.InvalidArgument();
+    } else {
+      throw new PlumaError.InvalidArgument();
+    }
   }
 
   /**
