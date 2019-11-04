@@ -1,7 +1,7 @@
 const { JSDOM } = require('jsdom');
-const { WebElement } = require('../../build/WebElement/WebElement');
+const { WebElement } = require('../../../build/WebElement/WebElement');
 const path = require('path');
-const { InvalidElementState } = require('../../build/Error/errors');
+const { InvalidElementState } = require('../../../build/Error/errors');
 const PAGES = {
   RADIO: './pages/radio.html',
   SELECT: './pages/select.html',
