@@ -268,3 +268,9 @@ export const getDomainFromUrl = (url: string) => {
 
   return `${secondLeveldomain}.${topLevelDomain}`;
 };
+
+export const isString = (candidateValue): boolean =>
+  typeof candidateValue === 'string';
+
+export const isBoolean = (candidateValue): boolean =>
+  typeof candidateValue === 'boolean';

@@ -1,21 +1,13 @@
 import { Pluma } from '../Types/types';
-import { getDomainFromUrl } from '../utils/utils';
+import { getDomainFromUrl, isBoolean, isString } from '../utils/utils';
 
 class CookieValidator {
-  static isString(candidateValue): boolean {
-    return typeof candidateValue === 'string';
-  }
-
-  static isBoolean(candidateValue): boolean {
-    return typeof candidateValue === 'boolean';
-  }
-
   static isValidName(name: string): boolean {
-    return this.isString(name);
+    return isString(name);
   }
 
   static isValidValue(value: string): boolean {
-    return this.isString(value);
+    return isString(value);
   }
 
   static isValidDomain(cookieDomain, activeDomain): boolean {
@@ -23,11 +15,11 @@ class CookieValidator {
   }
 
   static isValidSecure(secure: boolean) {
-    return this.isBoolean(secure);
+    return isBoolean(secure);
   }
 
-  static isValidhttpOnly(httpOnly: boolean) {
-    return this.isBoolean(httpOnly);
+  static isValidHttpOnly(httpOnly: boolean) {
+    return isBoolean(httpOnly);
   }
 
   static isValidExpiry(expiry: number) {
@@ -45,7 +37,7 @@ class CookieValidator {
       this.isValidValue(value) &&
       this.isValidDomain(domain, activeDomain) &&
       this.isValidSecure(secure) &&
-      this.isValidhttpOnly(httpOnly) &&
+      this.isValidHttpOnly(httpOnly) &&
       this.isValidExpiry(expiry)
     );
   }
