@@ -11,22 +11,26 @@ class CookieValidator {
   }
 
   static isValidDomain(cookieDomain, activeDomain): boolean {
-    return cookieDomain.replace(/^\./, '') === activeDomain;
+    return (
+      cookieDomain === undefined ||
+      cookieDomain.replace(/^\./, '') === activeDomain
+    );
   }
 
   static isValidSecure(secure: boolean) {
-    return isBoolean(secure);
+    return secure === undefined || isBoolean(secure);
   }
 
   static isValidHttpOnly(httpOnly: boolean) {
-    return isBoolean(httpOnly);
+    return httpOnly === undefined || isBoolean(httpOnly);
   }
 
   static isValidExpiry(expiry: number) {
     return (
-      Number.isInteger(expiry) &&
-      expiry >= 0 &&
-      expiry <= Number.MAX_SAFE_INTEGER
+      expiry === undefined ||
+      (Number.isInteger(expiry) &&
+        expiry >= 0 &&
+        expiry <= Number.MAX_SAFE_INTEGER)
     );
   }
 
@@ -37,25 +41,12 @@ class CookieValidator {
       return false;
     }
 
-    let isValidOptions = true;
-
-    if (domain) {
-      isValidOptions = this.isValidDomain(domain, activeDomain);
-    }
-
-    if (httpOnly) {
-      isValidOptions = this.isValidHttpOnly(httpOnly);
-    }
-
-    if (secure) {
-      isValidOptions = this.isValidSecure(secure);
-    }
-
-    if (expiry) {
-      isValidOptions = this.isValidExpiry(expiry);
-    }
-
-    return isValidOptions;
+    return (
+      this.isValidDomain(domain, activeDomain) &&
+      this.isValidHttpOnly(httpOnly) &&
+      this.isValidSecure(secure) &&
+      this.isValidExpiry(expiry)
+    );
   }
 }
 
