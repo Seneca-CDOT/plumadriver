@@ -130,7 +130,9 @@ class Browser {
     const scheme = this.getUrl().substr(0, this.getUrl().indexOf(':'));
 
     if (scheme !== 'http' && scheme !== 'https' && scheme !== 'ftp') {
-      throw new PlumaError.InvalidArgument();
+      throw new PlumaError.InvalidArgument(
+        `scheme is invalid. Expected http, https, or ftp but received "${scheme}"`,
+      );
     }
 
     const activeDomain: string = Utils.getDomainFromUrl(this.getUrl());
