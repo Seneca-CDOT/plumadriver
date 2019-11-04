@@ -5,8 +5,6 @@ import {
   PageLoadStrategyValues,
 } from '../constants/constants';
 
-import { ResourceLoader } from 'jsdom';
-
 /**
  * contains interfaces paticular to plumadriver
  */
@@ -54,7 +52,7 @@ export namespace Pluma {
 
   /**
    * The timeouts object which records the timeout duration values used to control the behaviour of script evaluation
-   * navigation and element retrieval 
+   * navigation and element retrieval
    */
   interface Timeouts {
     script: number;
@@ -79,10 +77,10 @@ export namespace Pluma {
   }
 
   interface ErrorResponse {
-    value:{
+    value: {
       error: string;
       message: string;
       stacktrace: string;
-    }
+    };
   }
 }
