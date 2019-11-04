@@ -32,14 +32,30 @@ class CookieValidator {
 
   static isValidCookie(cookie: Pluma.Cookie, activeDomain: string): boolean {
     const { name, value, domain, httpOnly, secure, expiry } = cookie;
-    return (
-      this.isValidName(name) &&
-      this.isValidValue(value) &&
-      this.isValidDomain(domain, activeDomain) &&
-      this.isValidSecure(secure) &&
-      this.isValidHttpOnly(httpOnly) &&
-      this.isValidExpiry(expiry)
-    );
+
+    if (!this.isValidName(name) || !this.isValidValue(value)) {
+      return false;
+    }
+
+    let isValidOptions = true;
+
+    if (domain) {
+      isValidOptions = this.isValidDomain(domain, activeDomain);
+    }
+
+    if (httpOnly) {
+      isValidOptions = this.isValidHttpOnly(httpOnly);
+    }
+
+    if (secure) {
+      isValidOptions = this.isValidSecure(secure);
+    }
+
+    if (expiry) {
+      isValidOptions = this.isValidExpiry(expiry);
+    }
+
+    return isValidOptions;
   }
 }
 
