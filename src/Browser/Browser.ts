@@ -142,9 +142,11 @@ class Browser {
       const cookieJarCookie = { expires, ...rest };
 
       try {
-        this.dom.cookieJar.store.putCookie(new Cookie(cookieJarCookie), err =>
-          console.error(err),
-        );
+        this.dom.cookieJar.store.putCookie(new Cookie(cookieJarCookie), err => {
+          if (err) {
+            console.error(`Error in cookieJar.putCookie: ${err}`);
+          }
+        });
       } catch (err) {
         throw new Error('UNABLE TO SET COOKIE'); // need to create this error class
       }
