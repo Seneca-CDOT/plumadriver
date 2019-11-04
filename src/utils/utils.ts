@@ -253,3 +253,18 @@ export const isMutableElement = (element: HTMLElement): boolean => {
 
   return contentEditable === 'true' || designMode === 'on';
 };
+
+/**
+ * retrieves the domain in <secondLeveldomain>.<topLevelDomain> format
+ * @returns {string}
+ */
+export const getDomainFromUrl = (url: string) => {
+  const { hostname } = new URL(url);
+  const hostnameComponents = hostname.split('.');
+  const {
+    [hostnameComponents.length - 1]: topLevelDomain,
+    [hostnameComponents.length - 2]: secondLeveldomain,
+  } = hostnameComponents;
+
+  return `${secondLeveldomain}.${topLevelDomain}`;
+};

@@ -1,5 +1,6 @@
 import { http } from 'winston';
 import { Pluma } from '../Types/types';
+import { getDomainFromUrl } from '../utils/utils';
 
 class CookieValidator {
   isString(candidateValue: string): boolean {
@@ -18,17 +19,11 @@ class CookieValidator {
     return this.isString(value);
   }
 
-  isValidDomain(cookieDomain, activeUrl): boolean {
-    const removeSubdomainRegExp = /^[^\.]*\./;
-    return (
-      cookieDomain.replace(removeSubdomainRegExp, '') ===
-      activeUrl.replace(removeSubdomainRegExp, '')
-    );
+  isValidDomain(cookieDomain, activeDomain): boolean {
+    return getDomainFromUrl(cookieDomain) === activeDomain;
   }
 
-  isValidPath() {
-
-  }
+  isValidPath() {}
 
   isValidSecure(secure: boolean) {
     return this.isBoolean(secure);
@@ -42,16 +37,16 @@ class CookieValidator {
     return (
       Number.isInteger(expiry) &&
       expiry >= 0 &&
-      expiry < Number.MAX_SAFE_INTEGER
+      expiry <= Number.MAX_SAFE_INTEGER
     );
   }
 
-  isValidCookie(cookie: Pluma.Cookie, activeUrl: string): boolean {
+  isValidCookie(cookie: Pluma.Cookie, activeDomain: string): boolean {
     const { name, value, domain, httpOnly, secure, expiry } = cookie;
     return (
       this.isValidName(name) &&
       this.isValidValue(value) &&
-      this.isValidDomain(domain, activeUrl) &&
+      this.isValidDomain(domain, activeDomain) &&
       this.isValidSecure(secure) &&
       this.isValidhttpOnly(httpOnly) &&
       this.isValidExpiry(expiry)
