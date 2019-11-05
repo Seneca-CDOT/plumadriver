@@ -38,16 +38,7 @@ describe('Browser Class', () => {
       };
 
       await navigateAndAddCookie(browser, 'http://example.com', cookie);
-      const addedCookies = browser.getCookies();
-      expect(addedCookies).toEqual([
-        {
-          name: 'foo',
-          value: 'bar',
-          domain: 'example.com',
-          path: '/',
-          creation: '2019-11-05T14:44:33.660Z',
-        },
-      ]);
+      expect(browser.getCookies()).toEqual(cookie);
     });
 
     it('Adds a cookie missing optional fields', async () => {
@@ -57,16 +48,7 @@ describe('Browser Class', () => {
       };
 
       await navigateAndAddCookie(browser, 'http://www.example.com', cookie);
-      const addedCookies = browser.getCookies();
-      expect(addedCookies).toEqual([
-        {
-          name: 'foo',
-          value: 'bar',
-          domain: 'example.com',
-          path: '/',
-          creation: '2019-11-05T14:44:33.660Z',
-        },
-      ]);
+      expect(browser.getCookies()).toEqual(cookie);
     });
   });
 });
