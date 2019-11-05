@@ -10,7 +10,7 @@ class CookieValidator {
     return isString(value);
   }
 
-  static isValidDomain(cookieDomain, activeDomain): boolean {
+  static isValidDomain(cookieDomain: string, activeDomain: string): boolean {
     return (
       cookieDomain === undefined ||
       cookieDomain.replace(/^\./, '') === activeDomain
