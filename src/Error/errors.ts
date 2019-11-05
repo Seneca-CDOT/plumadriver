@@ -7,6 +7,7 @@ import { SessionNotCreated } from './SessionNotCreated';
 import { InternalServerError } from './InternalServerError';
 import { ElementNotInteractable } from './ElementNotInteractable';
 import { NoSuchWindow } from './NoSuchWindow';
+import { UnableToSetCookie } from './UnableToSetCookie';
 
 export {
   MethodNotAllowed,
@@ -18,4 +19,5 @@ export {
   InternalServerError,
   ElementNotInteractable,
   NoSuchWindow,
+  UnableToSetCookie,
 };

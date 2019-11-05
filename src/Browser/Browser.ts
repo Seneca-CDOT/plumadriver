@@ -166,15 +166,11 @@ class Browser {
       ...remainingFields,
     };
 
-    try {
-      this.dom.cookieJar.store.putCookie(new Cookie(cookieJarFields), err => {
-        if (err) {
-          console.error(`Error in cookieJar.putCookie: ${err}`);
-        }
-      });
-    } catch (err) {
-      throw new Error('UNABLE TO SET COOKIE'); // need to create this error class
-    }
+    this.dom.cookieJar.store.putCookie(new Cookie(cookieJarFields), err => {
+      if (err) {
+        throw new PlumaError.UnableToSetCookie(err);
+      }
+    });
   }
 
   /**
