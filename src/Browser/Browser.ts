@@ -159,22 +159,19 @@ class Browser {
     }
 
     const {
-      expiry: expires,
       name: key,
+      expiry: expires,
       ...remainingFields
     } = this.setCookieDefaults(cookie, activeDomain);
 
-    const cookieJarFields = {
-      key,
-      ...(expires ? [expires] : []),
-      ...remainingFields,
-    };
-
-    this.dom.cookieJar.store.putCookie(new Cookie(cookieJarFields), err => {
-      if (err) {
-        throw new PlumaError.UnableToSetCookie(err);
-      }
-    });
+    this.dom.cookieJar.store.putCookie(
+      new Cookie({ key, ...(expires ? [expires] : []), ...remainingFields }),
+      err => {
+        if (err) {
+          throw new PlumaError.UnableToSetCookie(err);
+        }
+      },
+    );
   }
 
   /**
