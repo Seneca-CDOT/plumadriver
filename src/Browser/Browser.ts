@@ -123,11 +123,26 @@ class Browser {
     return this.dom.window.document.URL;
   }
 
+  private setCookieDefaults(
+    cookie: Pluma.Cookie,
+    activeDomain: string,
+  ): Pluma.Cookie {
+    const OPTIONAL_FIELD_DEFAULTS = {
+      domain: activeDomain,
+      path: '/',
+      secure: false,
+      httpOnly: false,
+    };
+
+    return { ...OPTIONAL_FIELD_DEFAULTS, ...cookie };
+  }
+
   /**
    * sets a cookie on the browser
    */
   addCookie(cookie: Pluma.Cookie) {
     const scheme = this.getUrl().substr(0, this.getUrl().indexOf(':'));
+    const activeDomain: string = Utils.getDomainFromUrl(this.getUrl());
 
     if (scheme !== 'http' && scheme !== 'https' && scheme !== 'ftp') {
       throw new PlumaError.InvalidArgument(
@@ -135,10 +150,12 @@ class Browser {
       );
     }
 
-    const activeDomain: string = Utils.getDomainFromUrl(this.getUrl());
-
     if (CookieValidator.isValidCookie(cookie, activeDomain)) {
-      const { expiry: expires, name: key, ...remainingFields } = cookie;
+      const {
+        expiry: expires,
+        name: key,
+        ...remainingFields
+      } = this.setCookieDefaults(cookie, activeDomain);
       const cookieJarFields = {
         key,
         ...(expires ? [expires] : []),
