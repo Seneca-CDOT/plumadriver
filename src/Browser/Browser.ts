@@ -138,11 +138,15 @@ class Browser {
     const activeDomain: string = Utils.getDomainFromUrl(this.getUrl());
 
     if (CookieValidator.isValidCookie(cookie, activeDomain)) {
-      const { expiry: expires, ...rest } = cookie;
-      const cookieJarCookie = { expires, ...rest };
+      const { expiry: expires, name: key, ...remainingFields } = cookie;
+      const cookieJarFields = {
+        key,
+        ...(expires ? [expires] : []),
+        ...remainingFields,
+      };
 
       try {
-        this.dom.cookieJar.store.putCookie(new Cookie(cookieJarCookie), err => {
+        this.dom.cookieJar.store.putCookie(new Cookie(cookieJarFields), err => {
           if (err) {
             console.error(`Error in cookieJar.putCookie: ${err}`);
           }
