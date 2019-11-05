@@ -150,29 +150,30 @@ class Browser {
       );
     }
 
-    if (CookieValidator.isValidCookie(cookie, activeDomain)) {
-      const {
-        expiry: expires,
-        name: key,
-        ...remainingFields
-      } = this.setCookieDefaults(cookie, activeDomain);
-      const cookieJarFields = {
-        key,
-        ...(expires ? [expires] : []),
-        ...remainingFields,
-      };
-
-      try {
-        this.dom.cookieJar.store.putCookie(new Cookie(cookieJarFields), err => {
-          if (err) {
-            console.error(`Error in cookieJar.putCookie: ${err}`);
-          }
-        });
-      } catch (err) {
-        throw new Error('UNABLE TO SET COOKIE'); // need to create this error class
-      }
-    } else {
+    if (!CookieValidator.isValidCookie(cookie, activeDomain)) {
       throw new PlumaError.InvalidArgument();
+    }
+
+    const {
+      expiry: expires,
+      name: key,
+      ...remainingFields
+    } = this.setCookieDefaults(cookie, activeDomain);
+
+    const cookieJarFields = {
+      key,
+      ...(expires ? [expires] : []),
+      ...remainingFields,
+    };
+
+    try {
+      this.dom.cookieJar.store.putCookie(new Cookie(cookieJarFields), err => {
+        if (err) {
+          console.error(`Error in cookieJar.putCookie: ${err}`);
+        }
+      });
+    } catch (err) {
+      throw new Error('UNABLE TO SET COOKIE'); // need to create this error class
     }
   }
 
