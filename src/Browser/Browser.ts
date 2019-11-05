@@ -186,7 +186,7 @@ class Browser {
     this.dom.cookieJar.serialize((err, serializedJar) => {
       if (err) throw err;
       serializedJar.cookies.forEach(cookie => {
-        const currentCookie: any = {};
+        const currentCookie: Pluma.Cookie = { name: '', value: '' };
         Object.keys(cookie).forEach(key => {
           // renames 'key' property to 'name' for W3C compliance and selenium functionality
           if (key === 'key') currentCookie.name = cookie[key];
