@@ -141,6 +141,10 @@ class Browser {
    * sets a cookie on the browser
    */
   addCookie(cookie: Pluma.Cookie) {
+    if (!this.dom.window) {
+      throw new PlumaError.NoSuchWindow();
+    }
+
     const scheme = this.getUrl().substr(0, this.getUrl().indexOf(':'));
     const activeDomain: string = Utils.getDomainFromUrl(this.getUrl());
 
