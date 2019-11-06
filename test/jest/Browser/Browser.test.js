@@ -15,7 +15,6 @@ const createBrowser = () => {
 const navigateAndAddCookie = async (browser, url, cookie) => {
   await browser.navigate(url, 'url');
   browser.addCookie(cookie);
-  console.log(browser.getCookies());
 };
 
 const testCookieEquality = (firstCookie, secondCookie) => {

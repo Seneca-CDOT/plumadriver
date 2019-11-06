@@ -1,5 +1,6 @@
 import { Pluma } from '../Types/types';
 import * as PlumaError from '../Error/errors';
+import * as parseDomain from 'parse-domain';
 import * as fs from 'fs';
 
 // credit where it's due: https://stackoverflow.com/questions/36836011/checking-validity-of-string-literal-union-type-at-runtime/43621735
@@ -158,15 +159,9 @@ export const isMutableElement = (element: HTMLElement): boolean => {
  * retrieves the domain in <secondLeveldomain>.<topLevelDomain> format
  * @returns {string}
  */
-export const getDomainFromUrl = (url: string) => {
-  const { hostname } = new URL(url);
-  const hostnameComponents = hostname.split('.');
-  const {
-    [hostnameComponents.length - 1]: topLevelDomain,
-    [hostnameComponents.length - 2]: secondLeveldomain,
-  } = hostnameComponents;
-
-  return `${secondLeveldomain}.${topLevelDomain}`;
+export const getDomainFromUrl = (url: string): string => {
+  const { domain, tld } = parseDomain(url);
+  return `${domain}.${tld}`;
 };
 
 export const isString = (candidateValue): boolean =>

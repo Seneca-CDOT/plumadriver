@@ -145,9 +145,9 @@ class Browser {
     if (!this.dom.window) {
       throw new PlumaError.NoSuchWindow();
     }
-
-    const scheme = this.getUrl().substr(0, this.getUrl().indexOf(':'));
-    const activeDomain: string = Utils.getDomainFromUrl(this.getUrl());
+    const activeUrl = this.getUrl();
+    const scheme = activeUrl.substr(0, activeUrl.indexOf(':'));
+    const activeDomain = Utils.getDomainFromUrl(activeUrl);
 
     if (scheme !== 'http' && scheme !== 'https' && scheme !== 'ftp') {
       throw new PlumaError.InvalidArgument(

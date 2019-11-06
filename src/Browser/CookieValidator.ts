@@ -1,5 +1,5 @@
 import { Pluma } from '../Types/types';
-import { isBoolean, isString } from '../utils/utils';
+import { isBoolean, isString, getDomainFromUrl } from '../utils/utils';
 
 class CookieValidator {
   static isValidName(name: string): boolean {
@@ -13,7 +13,7 @@ class CookieValidator {
   static isValidDomain(cookieDomain: string, activeDomain: string): boolean {
     return (
       cookieDomain === undefined ||
-      cookieDomain.replace(/^\./, '') === activeDomain
+      getDomainFromUrl(cookieDomain) === activeDomain
     );
   }
 
