@@ -5,7 +5,7 @@ import { ELEMENT } from '../constants/constants';
 import { WebElement } from '../WebElement/WebElement';
 import * as Utils from '../utils/utils';
 import * as PlumaError from '../Error/errors';
-import CookieValidator from './CookieValidator';
+import { CookieValidator } from './CookieValidator';
 
 import { Cookie } from '../jsdom_extensions/tough-cookie/lib/cookie';
 

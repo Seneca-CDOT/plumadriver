@@ -1,7 +1,7 @@
 import { Pluma } from '../Types/types';
 import { isBoolean, isString, getDomainFromUrl } from '../utils/utils';
 
-class CookieValidator {
+export class CookieValidator {
   static isValidName(name: string): boolean {
     return isString(name);
   }
@@ -49,5 +49,3 @@ class CookieValidator {
     );
   }
 }
-
-export default CookieValidator;

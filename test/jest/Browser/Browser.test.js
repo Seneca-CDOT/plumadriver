@@ -12,7 +12,6 @@ const createBrowser = () => {
 };
 
 const navigateAndAddCookie = async (browser, url, cookie) => {
-  Browser.prototype.getUrl = jest.fn(() =>)
   await browser.navigate(url, 'url');
   browser.addCookie(cookie);
 };
@@ -96,12 +95,6 @@ describe('Browser Class', () => {
         value: 'bar',
         secure: 'false',
       });
-    });
-
-    it('parses and validates domain names', async () => {
-      await browser.navigate('http://foo.bar.local/baz/ui/portal', 'url');
-      browser.addCookie({ name: 'foo', value: 'bar', domain: 'bar.local' });
-      expect(browser.getCookies().domain).toEqual('bar.local');
     });
   });
 });
