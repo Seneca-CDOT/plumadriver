@@ -123,7 +123,7 @@ class Browser {
     return this.dom.window.document.URL;
   }
 
-  private setCookieDefaults(
+  private createCookieJarOptions(
     cookie: Pluma.Cookie,
     activeDomain: string,
   ): Pluma.Cookie {
@@ -133,7 +133,8 @@ class Browser {
       secure: false,
       httpOnly: false,
     };
-
+    // fill in any missing fields with W3C defaults
+    // https://www.w3.org/TR/webdriver/#dfn-table-for-cookie-conversion
     return { ...OPTIONAL_FIELD_DEFAULTS, ...cookie };
   }
 
@@ -162,10 +163,15 @@ class Browser {
       name: key,
       expiry: expires,
       ...remainingFields
-    } = this.setCookieDefaults(cookie, activeDomain);
+    } = this.createCookieJarOptions(cookie, activeDomain);
 
     this.dom.cookieJar.store.putCookie(
-      new Cookie({ key, ...(expires ? [expires] : []), ...remainingFields }),
+      new Cookie({
+        key,
+        // CookieJar only accepts a Date object here, not a number
+        ...(expires ? [new Date(expires)] : []),
+        ...remainingFields,
+      }),
       err => {
         if (err) {
           throw new PlumaError.UnableToSetCookie(err);
