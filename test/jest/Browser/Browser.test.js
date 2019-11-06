@@ -59,7 +59,7 @@ describe('Browser Class', () => {
       };
 
       await navigateAndAddCookie(browser, 'http://example.com', requestCookie);
-      testCookieEquality(...browser.getCookies(), expectedCookie);
+      testCookieEquality(expectedCookie, ...browser.getCookies());
     });
 
     it('throws InvalidArgument error on invalid domain', async () => {
