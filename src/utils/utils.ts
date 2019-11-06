@@ -156,7 +156,7 @@ export const isMutableElement = (element: HTMLElement): boolean => {
 };
 
 /**
- * retrieves the domain in <secondLeveldomain>.<topLevelDomain> format
+ * retrieves the domain in <lowerLeveldomain>.<topLevelDomain> format
  * @returns {string}
  */
 export const getDomainFromUrl = (url: string): string => {
