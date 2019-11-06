@@ -1,6 +1,5 @@
 const { Browser } = require('../../../build/Browser/Browser');
 const { InvalidArgument } = require('../../../build/Error/errors');
-const { JSDOM } = require('jsdom');
 
 const createBrowser = () => {
   const browserOptions = {
