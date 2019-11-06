@@ -141,13 +141,13 @@ class Browser {
   /**
    * sets a cookie on the browser
    */
-  addCookie(cookie: Pluma.Cookie) {
+  addCookie(cookie: Pluma.Cookie): void {
     if (!this.dom.window) {
       throw new PlumaError.NoSuchWindow();
     }
-    const activeUrl = this.getUrl();
-    const scheme = activeUrl.substr(0, activeUrl.indexOf(':'));
-    const activeDomain = Utils.getDomainFromUrl(activeUrl);
+    const activeUrl: string = this.getUrl();
+    const scheme: string = activeUrl.substr(0, activeUrl.indexOf(':'));
+    const activeDomain: string = Utils.getDomainFromUrl(activeUrl);
 
     if (scheme !== 'http' && scheme !== 'https' && scheme !== 'ftp') {
       throw new PlumaError.InvalidArgument(
