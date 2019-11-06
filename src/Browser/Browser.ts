@@ -196,7 +196,7 @@ class Browser {
           else if (key === 'expires') {
             // sets the expiry time in seconds form epoch time
             // renames property for selenium functionality
-            const seconds = new Date(currentCookie[key]).getTime() / 1000;
+            const seconds = new Date(currentCookie[key]).getTime();
             currentCookie.expiry = seconds;
           } else currentCookie[key] = cookie[key];
         });
