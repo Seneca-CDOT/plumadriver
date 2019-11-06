@@ -8,19 +8,27 @@ const createBrowser = () => {
     unhandledPromptBehaviour: 'dismiss and notify',
     rejectPublicSuffixes: false,
   };
-
   return new Browser(browserOptions);
 };
 
 const navigateAndAddCookie = async (browser, url, cookie) => {
+  Browser.prototype.getUrl = jest.fn(() =>)
   await browser.navigate(url, 'url');
   browser.addCookie(cookie);
 };
 
-const testCookieEquality = (firstCookie, secondCookie) => {
+const assertCookieEquality = (firstCookie, secondCookie) => {
   Object.keys(firstCookie).forEach(field => {
     expect(firstCookie[field]).toEqual(secondCookie[field]);
   });
+};
+
+const addCookieAndAssertError = (browser, cookie) => {
+  try {
+    browser.addCookie(cookie);
+  } catch (e) {
+    expect(e).toBeInstanceOf(InvalidArgument);
+  }
 };
 
 describe('Browser Class', () => {
@@ -43,7 +51,7 @@ describe('Browser Class', () => {
       };
 
       await navigateAndAddCookie(browser, 'http://example.com', requestCookie);
-      testCookieEquality(...browser.getCookies(), requestCookie);
+      assertCookieEquality(...browser.getCookies(), requestCookie);
     });
 
     it('adds a cookie with missing optional fields', async () => {
@@ -59,21 +67,41 @@ describe('Browser Class', () => {
       };
 
       await navigateAndAddCookie(browser, 'http://example.com', requestCookie);
-      testCookieEquality(expectedCookie, ...browser.getCookies());
+      assertCookieEquality(expectedCookie, ...browser.getCookies());
     });
 
-    it('throws InvalidArgument error on invalid domain', async () => {
-      const requestCookie = {
+    it('throws InvalidArgument error on invalid fields', async () => {
+      await browser.navigate('http://example.com', 'url');
+      expect.assertions(5);
+      addCookieAndAssertError(browser, {
         name: 'foo',
         value: 'bar',
         domain: 'google.com',
-      };
-      expect.assertions(1);
-      await navigateAndAddCookie(
-        browser,
-        'http://example.com',
-        requestCookie,
-      ).catch(e => expect(e).toBeInstanceOf(InvalidArgument));
+      });
+      addCookieAndAssertError(browser, {
+        value: 'foo',
+      });
+      addCookieAndAssertError(browser, {
+        name: 'foo',
+        value: 'bar',
+        expiry: -1,
+      });
+      addCookieAndAssertError(browser, {
+        name: 'foo',
+        value: 'bar',
+        httpOnly: 'true',
+      });
+      addCookieAndAssertError(browser, {
+        name: 'foo',
+        value: 'bar',
+        secure: 'false',
+      });
+    });
+
+    it('parses and validates domain names', async () => {
+      await browser.navigate('http://foo.bar.local/baz/ui/portal', 'url');
+      browser.addCookie({ name: 'foo', value: 'bar', domain: 'bar.local' });
+      expect(browser.getCookies().domain).toEqual('bar.local');
     });
   });
 });
