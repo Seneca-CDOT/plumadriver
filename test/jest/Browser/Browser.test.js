@@ -18,6 +18,12 @@ const navigateAndAddCookie = async (browser, url, cookie) => {
   console.log(browser.getCookies());
 };
 
+const testCookieEquality = (firstCookie, secondCookie) => {
+  Object.keys(firstCookie).forEach(field => {
+    expect(firstCookie[field]).toEqual(secondCookie[field]);
+  });
+};
+
 describe('Browser Class', () => {
   describe('Add Cookie', () => {
     let browser;
@@ -26,29 +32,35 @@ describe('Browser Class', () => {
       browser = await createBrowser();
     });
 
-    it('Adds valid cookie', async () => {
-      const cookie = {
-        domain: '.example.com',
-        expiry: 3654907200,
+    it('adds valid cookie', async () => {
+      const requestCookie = {
+        secure: false,
         httpOnly: false,
+        expiry: 3654907200,
+        domain: '.example.com',
         name: 'foo',
         path: '/',
-        secure: false,
         value: 'bar',
       };
 
-      await navigateAndAddCookie(browser, 'http://example.com', cookie);
-      expect(browser.getCookies()).toEqual(cookie);
+      await navigateAndAddCookie(browser, 'http://example.com', requestCookie);
+      testCookieEquality(...browser.getCookies(), requestCookie);
     });
 
-    it('Adds a cookie missing optional fields', async () => {
-      const cookie = {
+    it('adds a cookie with missing optional fields', async () => {
+      const requestCookie = {
         name: 'foo',
         value: 'bar',
       };
 
-      await navigateAndAddCookie(browser, 'http://www.example.com', cookie);
-      expect(browser.getCookies()).toEqual(cookie);
+      const expectedCookie = {
+        ...requestCookie,
+        path: '/',
+        domain: 'example.com',
+      };
+
+      await navigateAndAddCookie(browser, 'http://example.com', requestCookie);
+      testCookieEquality(...browser.getCookies(), expectedCookie);
     });
   });
 });
