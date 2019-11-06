@@ -183,7 +183,7 @@ class Browser {
   /**
    * returns all cookies in the cookie jar
    */
-  getCookies() {
+  getCookies(): Pluma.Cookie[] {
     const cookies = [];
 
     this.dom.cookieJar.serialize((err, serializedJar) => {
