@@ -147,7 +147,7 @@ class Browser {
     }
     const activeUrl: string = this.getUrl();
     const scheme: string = activeUrl.substr(0, activeUrl.indexOf(':'));
-    const activeDomain: string = Utils.getDomainFromUrl(activeUrl);
+    const activeDomain: string = Utils.extractDomainFromString(activeUrl);
 
     if (scheme !== 'http' && scheme !== 'https' && scheme !== 'ftp') {
       throw new PlumaError.InvalidArgument(

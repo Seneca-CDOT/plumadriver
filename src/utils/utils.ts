@@ -159,9 +159,24 @@ export const isMutableElement = (element: HTMLElement): boolean => {
  * retrieves the domain in <lowerLeveldomain>.<topLevelDomain> format
  * @returns {string}
  */
-export const getDomainFromUrl = (url: string): string => {
-  const { domain, tld } = parseDomain(url);
-  return `${domain}.${tld}`;
+export const extractDomainFromString = (url: string): string => {
+  const formattedUrl = url.replace(/^\./, '');
+  let hostname: string;
+
+  if (/\.local/.test(url)) {
+    return extractDomainFromString(url.replace(/\.local/, '.com')).replace(
+      /\.com/,
+      '.local',
+    );
+  }
+
+  try {
+    hostname = new URL(formattedUrl).hostname;
+    const { domain, tld } = parseDomain(hostname);
+    return `${domain}.${tld}`;
+  } catch (e) {
+    return hostname || formattedUrl;
+  }
 };
 
 export const isString = (candidateValue): boolean =>
