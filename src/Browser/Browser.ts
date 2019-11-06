@@ -200,6 +200,7 @@ class Browser {
             currentCookie.expiry = seconds;
           } else currentCookie[key] = cookie[key];
         });
+        delete currentCookie.creation;
         cookies.push(currentCookie);
       });
     });
