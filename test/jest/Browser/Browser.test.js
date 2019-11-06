@@ -1,4 +1,5 @@
 const { Browser } = require('../../../build/Browser/Browser');
+const { InvalidArgument } = require('../../../build/Error/errors');
 const { JSDOM } = require('jsdom');
 
 const createBrowser = () => {
@@ -60,6 +61,20 @@ describe('Browser Class', () => {
 
       await navigateAndAddCookie(browser, 'http://example.com', requestCookie);
       testCookieEquality(...browser.getCookies(), expectedCookie);
+    });
+
+    it('throws InvalidArgument error on invalid domain', async () => {
+      const requestCookie = {
+        name: 'foo',
+        value: 'bar',
+        domain: 'google.com',
+      };
+      expect.assertions(1);
+      await navigateAndAddCookie(
+        browser,
+        'http://example.com',
+        requestCookie,
+      ).catch(e => expect(e).toBeInstanceOf(InvalidArgument));
     });
   });
 });
