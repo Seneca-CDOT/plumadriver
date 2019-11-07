@@ -9,5 +9,6 @@ describe('Utils Functions', () => {
     expect(extractDomainFromString('http://foo.example.com/path/to/page?name=ferret&color=purple')).toEqual('example.com');
     expect(extractDomainFromString('ftp://127.0.0.1:5500/index.html#foo?bar=baz')).toEqual('127.0.0.1');
     expect(extractDomainFromString('https://www.gojobs.gov.on.ca/Jobs.aspx')).toEqual('gov.on.ca');
+    expect(extractDomainFromString('.co.uk')).toEqual('co.uk');
   })
 })

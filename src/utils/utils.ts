@@ -156,27 +156,38 @@ export const isMutableElement = (element: HTMLElement): boolean => {
 };
 
 /**
- * retrieves the domain in <lowerLeveldomain>.<topLevelDomain> format
+ * extracts the domain in <lowerLeveldomain>.<topLevelDomain> format
  * @returns {string}
  */
-export const extractDomainFromString = (url: string): string => {
-  const formattedUrl = url.replace(/^\./, '');
-  let hostname: string;
-
-  if (/\.local/.test(url)) {
-    return extractDomainFromString(url.replace(/\.local/, '.com')).replace(
-      /\.com/,
-      '.local',
-    );
-  }
-
-  try {
-    hostname = new URL(formattedUrl).hostname;
+export const extractDomainFromString = (str: string): string => {
+  let domain: string;
+  const getDomainFromHostname = (url: string): string => {
+    const hostname = new URL(url).hostname;
     const { domain, tld } = parseDomain(hostname);
     return `${domain}.${tld}`;
-  } catch (e) {
-    return hostname || formattedUrl;
+  };
+
+  // parse .local domains as .com to get around package restrictions
+  const parseLocalDomain = (url: string): string => {
+    const topLevelDomainCom = url.replace(/\.local/, '.com');
+    const parsedDomain = getDomainFromHostname(topLevelDomainCom);
+    return parsedDomain.replace(/.com/, '.local');
+  };
+
+  // replace leading dot
+  const strWithReplacedDot = str.replace(/^\./, '');
+
+  try {
+    if (strWithReplacedDot.includes('.local')) {
+      domain = parseLocalDomain(strWithReplacedDot);
+    } else {
+      domain = getDomainFromHostname(strWithReplacedDot);
+    }
+  } catch {
+    domain = strWithReplacedDot;
   }
+
+  return domain;
 };
 
 export const isString = (candidateValue): boolean =>
