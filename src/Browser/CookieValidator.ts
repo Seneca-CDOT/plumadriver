@@ -3,7 +3,7 @@ import { isBoolean, isString, extractDomainFromString } from '../utils/utils';
 
 export class CookieValidator {
   static isValidName(name: string): boolean {
-    return isString(name);
+    return isString(name) && name !== '';
   }
 
   static isValidValue(value: string): boolean {
