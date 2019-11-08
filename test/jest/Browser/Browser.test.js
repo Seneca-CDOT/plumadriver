@@ -31,14 +31,14 @@ const addCookieAndAssertError = (browser, cookie) => {
 };
 
 describe('Browser Class', () => {
-  describe('Add Cookie', () => {
+  describe('AddCookie', () => {
     let browser;
 
     beforeEach(async () => {
       browser = await createBrowser();
     });
 
-    it('adds valid cookie', async () => {
+    it('adds valid cookies', async () => {
       const requestCookie = {
         secure: false,
         httpOnly: false,
@@ -62,10 +62,10 @@ describe('Browser Class', () => {
       const expectedCookie = {
         ...requestCookie,
         path: '/',
-        domain: 'example.com',
+        domain: 'www.example.com',
       };
 
-      await navigateAndAddCookie(browser, 'http://example.com', requestCookie);
+      await navigateAndAddCookie(browser, 'http://www.example.com', requestCookie);
       assertCookieEquality(expectedCookie, ...browser.getCookies());
     });
 
