@@ -1,5 +1,5 @@
 import { Pluma } from '../Types/types';
-import { isBoolean, isString, extractDomainFromString } from '../utils/utils';
+import { isBoolean, isString } from '../utils/utils';
 
 export class CookieValidator {
   static isValidName(name: string): boolean {
@@ -8,10 +8,6 @@ export class CookieValidator {
 
   static isValidValue(value: string): boolean {
     return isString(value);
-  }
-
-  static isValidDomain(cookieDomain: string, activeDomain: string): boolean {
-    return cookieDomain === undefined || cookieDomain === activeDomain;
   }
 
   static isValidSecure(secure: boolean) {
@@ -31,15 +27,14 @@ export class CookieValidator {
     );
   }
 
-  static isValidCookie(cookie: Pluma.Cookie, activeDomain: string): boolean {
-    const { name, value, domain, httpOnly, secure, expiry } = cookie;
+  static isValidCookie(cookie: Pluma.Cookie): boolean {
+    const { name, value, httpOnly, secure, expiry } = cookie;
 
     if (!this.isValidName(name) || !this.isValidValue(value)) {
       return false;
     }
 
     return (
-      this.isValidDomain(extractDomainFromString(domain), activeDomain) &&
       this.isValidHttpOnly(httpOnly) &&
       this.isValidSecure(secure) &&
       this.isValidExpiry(expiry)

@@ -147,7 +147,7 @@ class Browser {
     }
     const activeUrl: string = this.getUrl();
     const scheme: string = activeUrl.substr(0, activeUrl.indexOf(':'));
-    const activeDomain: string = Utils.extractDomainFromString(activeUrl);
+    const activeDomain: string = Utils.extractDomainFromUrl(activeUrl);
 
     if (scheme !== 'http' && scheme !== 'https' && scheme !== 'ftp') {
       throw new PlumaError.InvalidArgument(
@@ -155,7 +155,7 @@ class Browser {
       );
     }
 
-    if (!CookieValidator.isValidCookie(cookie, activeDomain)) {
+    if (!CookieValidator.isValidCookie(cookie)) {
       throw new PlumaError.InvalidArgument();
     }
 

@@ -71,12 +71,7 @@ describe('Browser Class', () => {
 
     it('throws InvalidArgument error on invalid fields', async () => {
       await browser.navigate('http://example.com', 'url');
-      expect.assertions(5);
-      addCookieAndAssertError(browser, {
-        name: 'foo',
-        value: 'bar',
-        domain: 'google.com',
-      });
+      expect.assertions(4);
       addCookieAndAssertError(browser, {
         value: 'foo',
       });

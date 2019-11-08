@@ -12,16 +12,6 @@ describe('CookieValidator Class', () => {
     expect(CookieValidator.isValidValue(true)).toBe(false);
   });
 
-  it('validates domains', () => {
-    expect(CookieValidator.isValidDomain('google.com', 'google.com')).toBe(
-      true,
-    );
-    expect(CookieValidator.isValidDomain('.google.com', 'google.com')).toBe(
-      false,
-    );
-    expect(CookieValidator.isValidDomain('foo.co.uk', 'co.uk')).toBe(false);
-  });
-
   it('validates expiry', () => {
     expect(CookieValidator.isValidExpiry(1573232663883)).toBe(true);
     expect(CookieValidator.isValidExpiry(new Date())).toBe(false);
@@ -51,7 +41,6 @@ describe('CookieValidator Class', () => {
         expiry: 1573232663883,
         domain: '.google.com',
       }),
-      'google.com',
     ).toBe(true);
 
     expect(
@@ -59,23 +48,12 @@ describe('CookieValidator Class', () => {
         name: 'foo',
         value: 'bar',
       }),
-      'site.co.uk',
     ).toBe(true);
 
     expect(
       CookieValidator.isValidCookie({
         name: 'foo',
       }),
-      'site.co.uk',
-    ).toBe(false);
-
-    expect(
-      CookieValidator.isValidCookie({
-        name: 'foo',
-        value: 'bar',
-        domain: 'co.uk',
-      }),
-      'site.co.uk',
     ).toBe(false);
   });
 });

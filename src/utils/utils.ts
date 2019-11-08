@@ -1,6 +1,5 @@
 import { Pluma } from '../Types/types';
 import * as PlumaError from '../Error/errors';
-import * as parseDomain from 'parse-domain';
 import * as fs from 'fs';
 
 // credit where it's due: https://stackoverflow.com/questions/36836011/checking-validity-of-string-literal-union-type-at-runtime/43621735
@@ -159,35 +158,8 @@ export const isMutableElement = (element: HTMLElement): boolean => {
  * extracts the domain in <lowerLeveldomain>.<topLevelDomain> format
  * @returns {string}
  */
-export const extractDomainFromString = (str: string): string => {
-  let domain: string;
-  const getDomainFromHostname = (url: string): string => {
-    const hostname = new URL(url).hostname;
-    const { domain, tld } = parseDomain(hostname);
-    return `${domain}.${tld}`;
-  };
-
-  // parse .local domains as .com to get around package restrictions
-  const parseLocalDomain = (url: string): string => {
-    const topLevelDomainCom = url.replace(/\.local/, '.com');
-    const parsedDomain = getDomainFromHostname(topLevelDomainCom);
-    return parsedDomain.replace(/.com/, '.local');
-  };
-
-  // replace leading dot
-  const strWithReplacedDot = str.replace(/^\./, '');
-
-  try {
-    if (strWithReplacedDot.includes('.local')) {
-      domain = parseLocalDomain(strWithReplacedDot);
-    } else {
-      domain = getDomainFromHostname(strWithReplacedDot);
-    }
-  } catch {
-    domain = strWithReplacedDot;
-  }
-
-  return domain;
+export const extractDomainFromUrl = (url: string): string => {
+  return new URL(url).hostname;
 };
 
 export const isString = (candidateValue): boolean =>
