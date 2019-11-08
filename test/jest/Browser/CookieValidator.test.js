@@ -1,19 +1,16 @@
 const { CookieValidator } = require('../../../build/Browser/CookieValidator');
 
 describe('CookieValidator Class', () => {
-  it('validates names'),
-    () => {
-      expect(CookieValidator.isValidName('name')).toBe(true);
-      expect(CookieValidator.isValidName(false)).toBe(false);
-      expect(CookieValidator.isValidName('')).toBe(false);
-    };
+  it('validates names', () => {
+    expect(CookieValidator.isValidName('name')).toBe(true);
+    expect(CookieValidator.isValidName(false)).toBe(false);
+    expect(CookieValidator.isValidName('')).toBe(false);
+  });
 
-  it('validates values'),
-    () => {
-      expect(CookieValidator.isValidValue('foo')).toBe(true);
-      expect(CookieValidator.isValidValue(true)).toBe(false);
-      expect(CookieValidator.isValidValue('')).toBe(false);
-    };
+  it('validates values', () => {
+    expect(CookieValidator.isValidValue('foo')).toBe(true);
+    expect(CookieValidator.isValidValue(true)).toBe(false);
+  });
 
   it('validates domains', () => {
     expect(CookieValidator.isValidDomain('google.com', 'google.com')).toBe(
