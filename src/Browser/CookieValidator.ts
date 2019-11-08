@@ -11,10 +11,7 @@ export class CookieValidator {
   }
 
   static isValidDomain(cookieDomain: string, activeDomain: string): boolean {
-    return (
-      cookieDomain === undefined ||
-      extractDomainFromString(cookieDomain) === activeDomain
-    );
+    return cookieDomain === undefined || cookieDomain === activeDomain;
   }
 
   static isValidSecure(secure: boolean) {
@@ -42,7 +39,7 @@ export class CookieValidator {
     }
 
     return (
-      this.isValidDomain(domain, activeDomain) &&
+      this.isValidDomain(extractDomainFromString(domain), activeDomain) &&
       this.isValidHttpOnly(httpOnly) &&
       this.isValidSecure(secure) &&
       this.isValidExpiry(expiry)
