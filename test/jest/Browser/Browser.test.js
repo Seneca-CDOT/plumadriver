@@ -38,12 +38,12 @@ describe('Browser Class', () => {
       browser = await createBrowser();
     });
 
-    it('adds valid cookies', async () => {
+    it('adds valid cookie', async () => {
       const requestCookie = {
         secure: false,
         httpOnly: false,
         expiry: 3654907200,
-        domain: '.example.com',
+        domain: 'example.com',
         name: 'foo',
         path: '/',
         value: 'bar',
@@ -51,6 +51,24 @@ describe('Browser Class', () => {
 
       await navigateAndAddCookie(browser, 'http://example.com', requestCookie);
       assertCookieEquality(...browser.getCookies(), requestCookie);
+    });
+
+    it('removes dot prefix from cookie domains', async () => {
+      const requestCookie = {
+        secure: true,
+        httpOnly: true,
+        expiry: 1573253325754,
+        domain: '.example.com',
+        name: 'foo',
+        path: '/portal',
+        value: 'bar',
+      };
+
+      await navigateAndAddCookie(browser, 'http://example.com', requestCookie);
+      assertCookieEquality(...browser.getCookies(), {
+        ...requestCookie,
+        domain: 'example.com',
+      });
     });
 
     it('adds a cookie with missing optional fields', async () => {
@@ -65,7 +83,11 @@ describe('Browser Class', () => {
         domain: 'www.example.com',
       };
 
-      await navigateAndAddCookie(browser, 'http://www.example.com', requestCookie);
+      await navigateAndAddCookie(
+        browser,
+        'http://www.example.com',
+        requestCookie,
+      );
       assertCookieEquality(expectedCookie, ...browser.getCookies());
     });
 

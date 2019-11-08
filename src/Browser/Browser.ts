@@ -139,14 +139,34 @@ class Browser {
   }
 
   /**
+   * clones a cookie removing the dot prefix in the domain field
+   */
+  private cloneCookieWithoutDomainDotPrefix(
+    cookie: Pluma.Cookie,
+  ): Pluma.Cookie {
+    return {
+      ...cookie,
+      domain: cookie.domain.replace(/^\./, ''),
+    };
+  }
+
+  /**
+   * returns true if the cookie domain is prefixed with a dot
+   */
+  private isCookieDomainDotPrefixed(cookie: Pluma.Cookie): boolean {
+    return cookie.domain && cookie.domain.charAt(0) === '.';
+  }
+
+  /**
    * sets a cookie on the browser
    */
   addCookie(cookie: Pluma.Cookie): void {
     if (!this.dom.window) {
       throw new PlumaError.NoSuchWindow();
     }
+
     const activeUrl: string = this.getUrl();
-    const scheme: string = activeUrl.substr(0, activeUrl.indexOf(':'));
+    const scheme = activeUrl.substr(0, activeUrl.indexOf(':'));
     const activeDomain: string = Utils.extractDomainFromUrl(activeUrl);
 
     if (scheme !== 'http' && scheme !== 'https' && scheme !== 'ftp') {
@@ -156,6 +176,11 @@ class Browser {
     }
 
     if (!CookieValidator.isValidCookie(cookie)) {
+    const shallowClonedCookie = this.isCookieDomainDotPrefixed(cookie)
+      ? this.cloneCookieWithoutDomainDotPrefix(cookie)
+      : { ...cookie };
+
+    if (!CookieValidator.isValidCookie(shallowClonedCookie)) {
       throw new PlumaError.InvalidArgument();
     }
 
@@ -163,7 +188,7 @@ class Browser {
       name: key,
       expiry: expires,
       ...remainingFields
-    } = this.createCookieJarOptions(cookie, activeDomain);
+    } = this.createCookieJarOptions(shallowClonedCookie, activeDomain);
 
     this.dom.cookieJar.store.putCookie(
       new Cookie({
