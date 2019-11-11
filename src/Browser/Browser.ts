@@ -150,11 +150,22 @@ class Browser {
     };
   }
 
-  /**
+  /*
    * returns true if the cookie domain is prefixed with a dot
    */
   private isCookieDomainDotPrefixed(cookie: Pluma.Cookie): boolean {
     return cookie.domain && cookie.domain.charAt(0) === '.';
+  }
+
+  /*
+   * returns true if the scheme is in an allowed format
+   */
+  private isValidScheme(scheme: string): boolean {
+    /* include 'about' (the default JSDOM scheme) to allow
+     * priming cookies prior to visiting a site
+     */
+    const VALID_SCHEMES = ['http', 'https', 'ftp', 'about'];
+    return VALID_SCHEMES.includes(scheme);
   }
 
   /**
@@ -169,10 +180,8 @@ class Browser {
     const activeDomain: string = Utils.extractDomainFromUrl(activeUrl);
     const scheme = activeUrl.substr(0, activeUrl.indexOf(':'));
 
-    if (scheme !== 'http' && scheme !== 'https' && scheme !== 'ftp') {
-      throw new PlumaError.InvalidArgument(
-        `scheme is invalid. Expected http, https, or ftp but received "${scheme}"`,
-      );
+    if (!this.isValidScheme(scheme)) {
+      throw new PlumaError.InvalidArgument(`scheme "${scheme}" is invalid.`);
     }
 
     const shallowClonedCookie = this.isCookieDomainDotPrefixed(cookie)
