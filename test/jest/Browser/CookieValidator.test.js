@@ -55,5 +55,12 @@ describe('CookieValidator Class', () => {
         name: 'foo',
       }),
     ).toBe(false);
+
+    expect(
+      CookieValidator.isValidCookie({
+        name: 'foo',
+        value: 1,
+      }),
+    ).toBe(false);
   });
 });

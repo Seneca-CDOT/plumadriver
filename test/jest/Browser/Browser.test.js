@@ -38,7 +38,7 @@ describe('Browser Class', () => {
       browser = await createBrowser();
     });
 
-    it('adds valid cookie', async () => {
+    it('adds a valid cookie', async () => {
       const requestCookie = {
         secure: false,
         httpOnly: false,
@@ -53,7 +53,7 @@ describe('Browser Class', () => {
       assertCookieEquality(...browser.getCookies(), requestCookie);
     });
 
-    it('removes dot prefix from cookie domains', async () => {
+    it('handles dot prefix in cookie domains', async () => {
       const requestCookie = {
         secure: true,
         httpOnly: true,
@@ -71,7 +71,7 @@ describe('Browser Class', () => {
       });
     });
 
-    it('adds a cookie with missing optional fields', async () => {
+    it('adds a cookie filling in missing optional fields', async () => {
       const requestCookie = {
         name: 'foo',
         value: 'bar',
