@@ -166,8 +166,8 @@ class Browser {
     }
 
     const activeUrl: string = this.getUrl();
-    const scheme = activeUrl.substr(0, activeUrl.indexOf(':'));
     const activeDomain: string = Utils.extractDomainFromUrl(activeUrl);
+    const scheme = activeUrl.substr(0, activeUrl.indexOf(':'));
 
     if (scheme !== 'http' && scheme !== 'https' && scheme !== 'ftp') {
       throw new PlumaError.InvalidArgument(
@@ -175,7 +175,6 @@ class Browser {
       );
     }
 
-    if (!CookieValidator.isValidCookie(cookie)) {
     const shallowClonedCookie = this.isCookieDomainDotPrefixed(cookie)
       ? this.cloneCookieWithoutDomainDotPrefix(cookie)
       : { ...cookie };
