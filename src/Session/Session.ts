@@ -28,7 +28,6 @@ const {
 import {
   InvalidArgument,
   SessionNotCreated,
-  InternalServerError,
   NoSuchElement,
   ElementNotInteractable,
   NoSuchWindow,
@@ -353,7 +352,7 @@ class Session {
   configureCapabilties(requestedCapabilities) {
     const capabilities = Session.processCapabilities(requestedCapabilities);
     if (capabilities === null)
-      throw new InternalServerError('could not create session');
+      throw new SessionNotCreated('capabilities object is null');
 
     // configure pageLoadStrategy
     if (
