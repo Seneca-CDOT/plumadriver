@@ -1,10 +1,10 @@
 import { InternalServerError } from './InternalServerError';
 
 export class SessionNotCreated extends InternalServerError {
-  constructor(message = '') {
-    super(message);
+  constructor(reason?: string) {
+    super();
     this.name = 'SessionNotCreatedError';
     this.JSONCodeError = 'session not created';
-    this.message = 'a new session could not be created';
+    this.message = reason || 'a new session could not be created';
   }
 }
