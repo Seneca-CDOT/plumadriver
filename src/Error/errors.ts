@@ -8,6 +8,8 @@ import { InternalServerError } from './InternalServerError';
 import { ElementNotInteractable } from './ElementNotInteractable';
 import { NoSuchWindow } from './NoSuchWindow';
 import { UnableToSetCookie } from './UnableToSetCookie';
+import { JavaScriptError } from './JavaScriptError';
+import { ScriptTimeout } from './ScriptTimeout';
 
 export {
   MethodNotAllowed,
@@ -20,4 +22,6 @@ export {
   ElementNotInteractable,
   NoSuchWindow,
   UnableToSetCookie,
+  JavaScriptError,
+  ScriptTimeout,
 };
