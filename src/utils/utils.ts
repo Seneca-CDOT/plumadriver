@@ -30,106 +30,6 @@ export const StringUnion = <UnionType extends string>(
   });
 };
 
-export const isValidCookie = (cookie: any, url): cookie is Pluma.Cookie => {
-  // check for null or undefined
-  if (cookie === null || cookie === undefined) return false;
-
-  const validCookie = {
-    name(name) {
-      return name !== null && name !== undefined;
-    },
-    value(cookieValue) {
-      return this.name(cookieValue);
-    },
-    domain(cookieDomain, currentURL) {
-      // strip current URL of path and protocol
-      let currentDomain = new URL(currentURL).hostname;
-
-      // strip currentDomain of subdomains
-      const www = /^www\./;
-
-      // remove leading www
-      if (currentDomain.search(www) > -1)
-        currentDomain = currentDomain.replace(www, '');
-
-      if (currentDomain === cookieDomain) return true; // replace with success
-
-      if (cookieDomain.indexOf('.') === 0) {
-        // begins with '.'
-        let cookieDomainRegEx = cookieDomain.substring(1).replace(/\./, '\\.');
-        cookieDomainRegEx = new RegExp(`${cookieDomainRegEx}$`);
-
-        if (currentDomain.search(cookieDomainRegEx) > -1) return true;
-
-        const cleanCookieDomain = cookieDomain.substring(1);
-        if (cleanCookieDomain === currentDomain) return true;
-
-        return false;
-      }
-      return false;
-    },
-    secure(value) {
-      return typeof value === 'boolean';
-    },
-    httpOnly(httpOnly) {
-      return this.secure(httpOnly);
-    },
-    expiry(expiry) {
-      return Number.isInteger(expiry);
-    },
-  };
-
-  if (!cookie.name || !cookie.value) return false;
-
-  Object.keys(validCookie).forEach(key => {
-    if (Object.prototype.hasOwnProperty.call(cookie, key))
-      if (key === 'domain') {
-        if (!validateCookie[key](cookie[key], url))
-          throw new PlumaError.InvalidArgument();
-      } else if (!validateCookie[key](cookie[key]))
-        throw new PlumaError.InvalidArgument();
-  });
-};
-
-export const validateCookie = {
-  name(name) {
-    return name !== null && name !== undefined;
-  },
-  value(cookieValue) {
-    return this.name(cookieValue);
-  },
-  domain(cookieDomain, currentURL) {
-    // strip current URL of path and protocol
-    let currentDomain = new URL(currentURL).hostname;
-
-    // remove leading www if any
-    if (currentDomain.search(/^www\./) > -1)
-      currentDomain = currentDomain.replace(/^www\./, '');
-
-    if (currentDomain === cookieDomain) return true;
-
-    if (cookieDomain.indexOf('.') === 0) {
-      // begins with '.'
-      let cookieDomainRegEx = cookieDomain.substring(1).replace(/\./, '\\.');
-      cookieDomainRegEx = new RegExp(`${cookieDomainRegEx}$`);
-
-      if (currentDomain.search(cookieDomainRegEx) > -1) return true;
-      if (cookieDomain.substring(1) === currentDomain) return true;
-      return false;
-    }
-    return false;
-  },
-  secure(value) {
-    return typeof value === 'boolean';
-  },
-  httpOnly(httpOnly) {
-    return this.secure(httpOnly);
-  },
-  expiry(expiry) {
-    return Number.isInteger(expiry);
-  },
-};
-
 export const isBrowserOptions = (obj: any): obj is Pluma.BrowserOptions => {
   if (
     obj.runScripts === undefined ||
@@ -253,3 +153,17 @@ export const isMutableElement = (element: HTMLElement): boolean => {
 
   return contentEditable === 'true' || designMode === 'on';
 };
+
+/**
+ * extracts the domain in <lowerLeveldomain>.<topLevelDomain> format
+ * @returns {string}
+ */
+export const extractDomainFromUrl = (url: string): string => {
+  return new URL(url).hostname;
+};
+
+export const isString = (candidateValue): boolean =>
+  typeof candidateValue === 'string';
+
+export const isBoolean = (candidateValue): boolean =>
+  typeof candidateValue === 'boolean';

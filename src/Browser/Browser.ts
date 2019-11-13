@@ -5,12 +5,13 @@ import { ELEMENT } from '../constants/constants';
 import { WebElement } from '../WebElement/WebElement';
 import * as Utils from '../utils/utils';
 import * as PlumaError from '../Error/errors';
+import { CookieValidator } from './CookieValidator';
 
 import { Cookie } from '../jsdom_extensions/tough-cookie/lib/cookie';
 
 /**
  * Plumadriver browser with jsdom at its core.
- * Stores user-defined config object from which to create new instances of jsdom upon 
+ * Stores user-defined config object from which to create new instances of jsdom upon
  * navigation to any given URL.
  */
 class Browser {
@@ -29,7 +30,7 @@ class Browser {
       runScripts: '',
       strictSSL: true,
       unhandledPromptBehaviour: 'dismiss and notify',
-      rejectPublicSuffixes: false
+      rejectPublicSuffixes: false,
     };
 
     Object.keys(browserOptions).forEach(option => {
@@ -47,7 +48,7 @@ class Browser {
   async configureBrowser(
     config: BrowserConfig,
     url: URL | null,
-    pathType: string = 'url'
+    pathType: string = 'url',
   ) {
     let dom;
 
@@ -58,7 +59,7 @@ class Browser {
           runScripts: config.runScripts,
           beforeParse: config.beforeParse,
           pretendToBeVisual: true,
-          cookieJar: config.jar
+          cookieJar: config.jar,
         });
       } else if (pathType === 'file') {
         dom = await JSDOM.fromFile(url, {
@@ -66,7 +67,7 @@ class Browser {
           runScripts: config.runScripts,
           beforeParse: config.beforeParse,
           pretendToBeVisual: true,
-          cookieJar: config.jar
+          cookieJar: config.jar,
         });
       }
 
@@ -86,7 +87,7 @@ class Browser {
         runScripts: config.runScripts,
         beforeParse: config.beforeParse,
         pretendToBeVisual: true,
-        cookieJar: config.jar
+        cookieJar: config.jar,
       });
     }
 
@@ -122,57 +123,117 @@ class Browser {
     return this.dom.window.document.URL;
   }
 
+  private createCookieJarOptions(
+    cookie: Pluma.Cookie,
+    activeDomain: string,
+  ): Pluma.Cookie {
+    const OPTIONAL_FIELD_DEFAULTS = {
+      domain: activeDomain,
+      path: '/',
+      secure: false,
+      httpOnly: false,
+    };
+    // fill in any missing fields with W3C defaults
+    // https://www.w3.org/TR/webdriver/#dfn-table-for-cookie-conversion
+    return { ...OPTIONAL_FIELD_DEFAULTS, ...cookie };
+  }
+
+  /**
+   * clones a cookie removing the dot prefix in the domain field
+   */
+  private cloneCookieWithoutDomainDotPrefix(
+    cookie: Pluma.Cookie,
+  ): Pluma.Cookie {
+    return {
+      ...cookie,
+      domain: cookie.domain.replace(/^\./, ''),
+    };
+  }
+
+  /*
+   * returns true if the cookie domain is prefixed with a dot
+   */
+  private isCookieDomainDotPrefixed(cookie: Pluma.Cookie): boolean {
+    return cookie.domain && cookie.domain.charAt(0) === '.';
+  }
+
+  /*
+   * returns true if the scheme is in an allowed format
+   */
+  private isValidScheme(scheme: string): boolean {
+    /* include 'about' (the default JSDOM scheme) to allow
+     * priming cookies prior to visiting a site
+     */
+    const VALID_SCHEMES = ['http', 'https', 'ftp', 'about'];
+    return VALID_SCHEMES.includes(scheme);
+  }
+
   /**
    * sets a cookie on the browser
    */
-  addCookie(cookie) {
-    if (cookie === null || cookie === undefined) throw new PlumaError.InvalidArgument();
+  addCookie(cookie: Pluma.Cookie): void {
+    if (!this.dom.window) {
+      throw new PlumaError.NoSuchWindow();
+    }
 
-    const scheme = this.getUrl().substr(0, this.getUrl().indexOf(':'));
+    const activeUrl: string = this.getUrl();
+    const activeDomain: string = Utils.extractDomainFromUrl(activeUrl);
+    const scheme = activeUrl.substr(0, activeUrl.indexOf(':'));
 
-    if (scheme !== 'http' && scheme !== 'https' && scheme !== 'ftp')
+    if (!this.isValidScheme(scheme)) {
+      throw new PlumaError.InvalidArgument(`scheme "${scheme}" is invalid.`);
+    }
+
+    const shallowClonedCookie = this.isCookieDomainDotPrefixed(cookie)
+      ? this.cloneCookieWithoutDomainDotPrefix(cookie)
+      : { ...cookie };
+
+    if (!CookieValidator.isValidCookie(shallowClonedCookie)) {
       throw new PlumaError.InvalidArgument();
+    }
 
-    if (Utils.isValidCookie(cookie, this.getUrl())) {
-      let validCookie;
+    const {
+      name: key,
+      expiry: expires,
+      ...remainingFields
+    } = this.createCookieJarOptions(shallowClonedCookie, activeDomain);
 
-      Object.keys(cookie).forEach(key => {
-        if (key === 'name') validCookie.key = cookie[key];
-        else if (key === 'expiry') validCookie.expires = cookie[key];
-        else validCookie[key] = cookie[key];
-      });
-
-      try {
-        this.dom.cookieJar.store.putCookie(
-          new Cookie(validCookie),
-          err => err
-        );
-      } catch (err) {
-        throw new Error('UNABLE TO SET COOKIE'); // need to create this error class
-      }
-    } else throw new PlumaError.InvalidArgument();
+    this.dom.cookieJar.store.putCookie(
+      new Cookie({
+        key,
+        // CookieJar only accepts a Date object here, not a number
+        ...(expires ? [new Date(expires)] : []),
+        ...remainingFields,
+      }),
+      err => {
+        if (err) {
+          throw new PlumaError.UnableToSetCookie(err);
+        }
+      },
+    );
   }
 
   /**
    * returns all cookies in the cookie jar
    */
-  getCookies() {
+  getCookies(): Pluma.Cookie[] {
     const cookies = [];
 
     this.dom.cookieJar.serialize((err, serializedJar) => {
       if (err) throw err;
       serializedJar.cookies.forEach(cookie => {
-        const currentCookie: any = {};
+        const currentCookie: Pluma.Cookie = { name: '', value: '' };
         Object.keys(cookie).forEach(key => {
           // renames 'key' property to 'name' for W3C compliance and selenium functionality
           if (key === 'key') currentCookie.name = cookie[key];
           else if (key === 'expires') {
             // sets the expiry time in seconds form epoch time
             // renames property for selenium functionality
-            const seconds = new Date(currentCookie[key]).getTime() / 1000;
+            const seconds = new Date(currentCookie[key]).getTime();
             currentCookie.expiry = seconds;
           } else currentCookie[key] = cookie[key];
         });
+        delete currentCookie.creation;
         cookies.push(currentCookie);
       });
     });
@@ -200,4 +261,4 @@ class Browser {
   }
 }
 
-export { Browser }
+export { Browser };
