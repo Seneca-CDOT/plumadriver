@@ -37,6 +37,14 @@ describe('Execute Script Sync', () => {
     expect(value).toBe(true);
   });
 
+  it('returns a resolved promise value', async () => {
+    const value = await session.process({
+      command: COMMANDS.EXECUTE_SCRIPT,
+      parameters: { script: 'return Promise.resolve("foo");', args: [] },
+    });
+    expect(value).toBe('foo');
+  });
+
   it('sums two arguments', async () => {
     const value = await session.process({
       command: COMMANDS.EXECUTE_SCRIPT,
@@ -48,25 +56,26 @@ describe('Execute Script Sync', () => {
     expect(value).toBe(3);
   });
 
-  it('handles null and undefined', async () => {
-    let value = await session.process({
-      command: COMMANDS.EXECUTE_SCRIPT,
-      parameters: {
-        script: 'return null;',
-        args: [],
-      },
-    });
-
-    expect(value).toBe(null);
-
-    value = await session.process({
+  it('returns null for undefined values', async () => {
+    const value = await session.process({
       command: COMMANDS.EXECUTE_SCRIPT,
       parameters: {
         script: 'return undefined;',
         args: [],
       },
     });
-
     expect(value).toBe(null);
   });
+
+  it('returns the value of document.title', async () => {
+    const value = await session.process({
+      command: COMMANDS.EXECUTE_SCRIPT,
+      parameters: {
+        script: 'return document.title;',
+        args: [],
+      },
+    });
+    expect(value).toBe('Example Domain');
+  });
+
 });
