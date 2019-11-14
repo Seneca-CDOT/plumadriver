@@ -78,4 +78,15 @@ describe('Execute Script Sync', () => {
     expect(value).toBe('Example Domain');
   });
 
+  it('mutates an object argument', async () => {
+    const foo = {bar: 1};
+    await session.process({
+      command: COMMANDS.EXECUTE_SCRIPT,
+      parameters: {
+        script: 'arguments[0].bar = 2; return arguments[0]',
+        args: [foo],
+      },
+    });
+    expect(foo.bar).toBe(2);
+  });
 });
