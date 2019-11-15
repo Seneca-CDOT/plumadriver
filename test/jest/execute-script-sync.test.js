@@ -159,6 +159,18 @@ describe('Execute Script Sync', () => {
       .catch(e => expect(e).toBeInstanceOf(ScriptTimeout));
   });
 
+  it('returns an array of HTMLElements', async () => {
+   const [pElement, buttonElement] =  await session.process({
+      command: COMMANDS.EXECUTE_SCRIPT,
+      parameters: {
+        script: 'return [document.querySelector("p"), document.querySelector("button")]',
+        args: [],
+      },
+    })
+    expect(pElement).toHaveProperty([ELEMENT], expect.any(String));
+    expect(buttonElement).toHaveProperty([ELEMENT], expect.any(String));
+  })
+
   it('clicks on a found element', async () => {
     const { ELEMENT: elementIdentifier } = await session.process({
       command: COMMANDS.FIND_ELEMENT,
