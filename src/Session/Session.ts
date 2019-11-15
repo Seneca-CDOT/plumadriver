@@ -654,7 +654,6 @@ class Session {
       }
     });
 
-    // eslint-disable-next-line no-new-func
     const func = new Function('arguments, window, document', script);
     const {
       window,
