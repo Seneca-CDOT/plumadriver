@@ -1,3 +1,5 @@
+const nock = require('nock');
+
 const { Session } = require('../../build/Session/Session');
 const { COMMANDS } = require('../../build/constants/constants');
 
@@ -5,6 +7,20 @@ describe('Execute Script Sync', () => {
   let session;
 
   beforeAll(async () => {
+    const scope = nock(/plumadriver\.com/)
+      .get('/')
+      .reply(
+        200,
+        `<html>
+            <head>
+              <title>Test Page</title>
+            </head>
+            <body>
+              <p id="foo">bar</p>
+            </body>
+        </html>`,
+      );
+
     const requestBody = {
       desiredCapabilities: {
         browserName: 'pluma',
@@ -75,11 +91,22 @@ describe('Execute Script Sync', () => {
         args: [],
       },
     });
-    expect(value).toBe('Example Domain');
+    expect(value).toBe('Test Page');
+  });
+
+  it('recognizes window and querySelector', async () => {
+    const value = await session.process({
+      command: COMMANDS.EXECUTE_SCRIPT,
+      parameters: {
+        script: 'return window.document.querySelector("#foo").textContent;',
+        args: [],
+      },
+    });
+    expect(value).toBe('bar');
   });
 
   it('mutates an object argument', async () => {
-    const foo = {bar: 1};
+    const foo = { bar: 1 };
     await session.process({
       command: COMMANDS.EXECUTE_SCRIPT,
       parameters: {

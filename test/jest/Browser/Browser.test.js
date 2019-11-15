@@ -1,7 +1,7 @@
+const nock = require('nock');
+
 const { Browser } = require('../../../build/Browser/Browser');
 const { InvalidArgument } = require('../../../build/Error/errors');
-
-const nock = require('nock');
 
 const createBrowser = () => {
   const browserOptions = {
@@ -54,7 +54,11 @@ describe('Browser Class', () => {
         value: 'bar',
       };
 
-      await navigateAndAddCookie(browser, 'http://plumadriver.com', requestCookie);
+      await navigateAndAddCookie(
+        browser,
+        'http://plumadriver.com',
+        requestCookie,
+      );
       assertCookieEquality(...browser.getCookies(), requestCookie);
     });
 
@@ -69,7 +73,11 @@ describe('Browser Class', () => {
         value: 'bar',
       };
 
-      await navigateAndAddCookie(browser, 'http://plumadriver.com', requestCookie);
+      await navigateAndAddCookie(
+        browser,
+        'http://plumadriver.com',
+        requestCookie,
+      );
       assertCookieEquality(...browser.getCookies(), {
         ...requestCookie,
         domain: 'plumadriver.com',
