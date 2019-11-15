@@ -31,6 +31,8 @@ import {
   NoSuchElement,
   ElementNotInteractable,
   NoSuchWindow,
+  JavaScriptError,
+  ScriptTimeout,
 } from '../Error/errors';
 
 import { CapabilityValidator } from '../CapabilityValidator/CapabilityValidator';
@@ -627,9 +629,22 @@ class Session {
   }
 
   /**
+   * handles errors resulting from failing to execute synchronous scripts
+   */
+  private handleSyncSciptError(
+    error: NodeJS.ErrnoException,
+  ): JavaScriptError | ScriptTimeout {
+    if (/timed out/i.test(error.code)) {
+      throw new ScriptTimeout();
+    } else {
+      throw new JavaScriptError(error.message);
+    }
+  }
+
+  /**
    * executes a user defined script within the context of the dom on a given set of user defined arguments
    */
-  executeScript(script, args) {
+  public executeScript(script, args) {
     const argumentList = args.map(arg => {
       if (arg[ELEMENT] == null) {
         return arg;
