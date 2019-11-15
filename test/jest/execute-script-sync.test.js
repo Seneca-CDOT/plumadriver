@@ -3,6 +3,7 @@ const nock = require('nock');
 const { Session } = require('../../build/Session/Session');
 const { COMMANDS } = require('../../build/constants/constants');
 const { JavaScriptError, ScriptTimeout } = require('../../build/Error/errors');
+const { ELEMENT } = require('../../build/constants/constants');
 
 describe('Execute Script Sync', () => {
   let session;
@@ -13,13 +14,21 @@ describe('Execute Script Sync', () => {
       .reply(
         200,
         `<html>
-            <head>
-              <title>Test Page</title>
-            </head>
-            <body>
-              <p id="foo">bar</p>
-            </body>
-        </html>`,
+        <head>
+          <title>Test Page</title>
+        </head>
+        <body>
+          <p id="foo">bar</p>
+          <button onclick="clickAction(this)">
+            not clicked
+          </button>
+          <script>
+            function clickAction(e) {
+              e.textContent = "click success";
+            }
+          </script>
+        </body>
+      </html>`,
       );
 
     const requestBody = {
@@ -42,7 +51,7 @@ describe('Execute Script Sync', () => {
     session = new Session(requestBody);
     await session.process({
       command: COMMANDS.NAVIGATE_TO,
-      parameters: { url: 'http://example.com' },
+      parameters: { url: 'http://plumadriver.com' },
     });
   });
 
@@ -146,5 +155,25 @@ describe('Execute Script Sync', () => {
         },
       })
       .catch(e => expect(e).toBeInstanceOf(ScriptTimeout));
+  });
+
+  it('clicks on a found element', async () => {
+    const { ELEMENT: elementIdentifier } = await session.process({
+      command: COMMANDS.FIND_ELEMENT,
+      parameters: {
+        using: 'css selector',
+        value: 'button',
+      },
+    });
+
+    const buttonText = await session.process({
+      command: COMMANDS.EXECUTE_SCRIPT,
+      parameters: {
+        script: 'arguments[0].click(); return arguments[0].textContent',
+        args: [{ [ELEMENT]: elementIdentifier }],
+      },
+    });
+
+    expect(buttonText).toBe('click success');
   });
 });
