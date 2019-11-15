@@ -631,13 +631,13 @@ class Session {
   /**
    * handles errors resulting from failing to execute synchronous scripts
    */
-  private handleSyncScriptError(
-    error: NodeJS.ErrnoException,
-  ): JavaScriptError | ScriptTimeout {
-    if (/timed out/i.test(error.code)) {
+  private handleSyncScriptError({
+    message,
+  }: NodeJS.ErrnoException): JavaScriptError | ScriptTimeout {
+    if (/timed out/i.test(message)) {
       throw new ScriptTimeout();
     } else {
-      throw new JavaScriptError(error.message);
+      throw new JavaScriptError(message);
     }
   }
 
