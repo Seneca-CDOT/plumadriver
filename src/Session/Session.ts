@@ -631,7 +631,7 @@ class Session {
   /**
    * handles errors resulting from failing to execute synchronous scripts
    */
-  private handleSyncSciptError(
+  private handleSyncScriptError(
     error: NodeJS.ErrnoException,
   ): JavaScriptError | ScriptTimeout {
     if (/timed out/i.test(error.code)) {
@@ -670,31 +670,34 @@ class Session {
         arguments: argumentList,
       },
     });
-    let returned;
-    let response;
-    return new Promise((resolve, reject) => {
-      try {
-        returned = vm.run('func(arguments, window, document);');
 
-        if (returned instanceof Array) {
-          response = [];
-          returned.forEach(value => {
-            if (value instanceof HTMLElement) {
-              const element = new WebElement(value);
-              this.browser.knownElements.push(element);
-              response.push(element);
-            } else response.push(value);
-          });
-        } else if (returned instanceof HTMLElement) {
-          const element = new WebElement(returned);
-          this.browser.knownElements.push(element);
-          response = element;
-        } else response = returned;
-        resolve(response);
-      } catch (err) {
-        reject(err);
-      }
-    });
+    const createElementAndAddToKnownElements = (value): WebElement => {
+      const element = new WebElement(value);
+      this.browser.knownElements.push(element);
+      return element;
+    };
+
+    let vmReturnValue;
+
+    try {
+      vmReturnValue = vm.run('func(arguments, window, document);');
+    } catch (error) {
+      this.handleSyncScriptError(error);
+    }
+
+    if (Array.isArray(vmReturnValue)) {
+      return vmReturnValue.map(value =>
+        value instanceof HTMLElement
+          ? createElementAndAddToKnownElements(value)
+          : value,
+      );
+    } else if (vmReturnValue instanceof HTMLElement) {
+      return createElementAndAddToKnownElements(vmReturnValue);
+    } else if (vmReturnValue === undefined) {
+      return null;
+    } else {
+      return vmReturnValue;
+    }
   }
 }
 
