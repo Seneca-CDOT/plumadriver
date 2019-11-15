@@ -236,6 +236,14 @@ class WebElement {
       throw new InvalidElementState();
     }
   }
+
+  /**
+   * returns the JSON representation of the WebElement
+   * @returns {Object}
+   */
+  public serialize() {
+    return { [ELEMENT]: this[ELEMENT] };
+  }
 }
 
 export { WebElement };
