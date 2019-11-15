@@ -172,7 +172,7 @@ describe('Execute Script Sync', () => {
   })
 
   it('clicks on a found element', async () => {
-    const { ELEMENT: elementIdentifier } = await session.process({
+    const { [ELEMENT]: elementIdentifier } = await session.process({
       command: COMMANDS.FIND_ELEMENT,
       parameters: {
         using: 'css selector',
