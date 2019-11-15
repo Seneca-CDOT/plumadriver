@@ -128,6 +128,7 @@ describe('Execute Script Sync', () => {
   });
 
   it('throws a JavaScriptError on an invalid script body', async () => {
+    expect.assertions(1);
     await session
       .process({
         command: COMMANDS.EXECUTE_SCRIPT,
@@ -146,6 +147,7 @@ describe('Execute Script Sync', () => {
       implicit: 5000,
     });
 
+    expect.assertions(1);
     await session
       .process({
         command: COMMANDS.EXECUTE_SCRIPT,
@@ -173,7 +175,6 @@ describe('Execute Script Sync', () => {
         args: [{ [ELEMENT]: elementIdentifier }],
       },
     });
-
     expect(buttonText).toBe('click success');
   });
 });
