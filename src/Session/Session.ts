@@ -630,14 +630,12 @@ class Session {
    * executes a user defined script within the context of the dom on a given set of user defined arguments
    */
   executeScript(script, args) {
-    const argumentList = [];
-
-    args.forEach(arg => {
-      if (arg[ELEMENT] !== undefined && arg[ELEMENT] !== null) {
-        const element = this.browser.getKnownElement(arg[ELEMENT]);
-        argumentList.push(element.element);
+    const argumentList = args.map(arg => {
+      if (arg[ELEMENT] == null) {
+        const { element } = this.browser.getKnownElement(arg[ELEMENT]);
+        return element;
       } else {
-        argumentList.push(arg);
+        return arg;
       }
     });
 
