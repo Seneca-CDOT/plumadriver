@@ -632,22 +632,26 @@ class Session {
   executeScript(script, args) {
     const argumentList = args.map(arg => {
       if (arg[ELEMENT] == null) {
+        return arg;
+      } else {
         const { element } = this.browser.getKnownElement(arg[ELEMENT]);
         return element;
-      } else {
-        return arg;
       }
     });
 
     // eslint-disable-next-line no-new-func
-    const scriptFunc = new Function('arguments', script);
+    const func = new Function('arguments, window, document', script);
+    const {
+      window,
+      window: { document },
+    } = this.browser.dom;
 
     const vm = new VM({
       timeout: this.timeouts.script,
       sandbox: {
-        window: this.browser.dom.window,
-        document: this.browser.dom.window.document,
-        func: scriptFunc,
+        window,
+        document,
+        func,
         arguments: argumentList,
       },
     });
@@ -655,7 +659,7 @@ class Session {
     let response;
     return new Promise((resolve, reject) => {
       try {
-        returned = vm.run('func(arguments);');
+        returned = vm.run('func(arguments, window, document);');
 
         if (returned instanceof Array) {
           response = [];
