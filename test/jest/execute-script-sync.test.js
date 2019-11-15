@@ -2,6 +2,7 @@ const nock = require('nock');
 
 const { Session } = require('../../build/Session/Session');
 const { COMMANDS } = require('../../build/constants/constants');
+const { JavaScriptError, ScriptTimeout } = require('../../build/Error/errors');
 
 describe('Execute Script Sync', () => {
   let session;
@@ -87,8 +88,8 @@ describe('Execute Script Sync', () => {
     const value = await session.process({
       command: COMMANDS.EXECUTE_SCRIPT,
       parameters: {
-        script: 'return document.title;',
-        args: [],
+        script: 'return document[arguments[0]];',
+        args: ['title'],
       },
     });
     expect(value).toBe('Test Page');
@@ -115,5 +116,35 @@ describe('Execute Script Sync', () => {
       },
     });
     expect(foo.bar).toBe(2);
+  });
+
+  it('throws a JavaScriptError on an invalid script body', async () => {
+    await session
+      .process({
+        command: COMMANDS.EXECUTE_SCRIPT,
+        parameters: {
+          script: 'return null.foo',
+          args: [],
+        },
+      })
+      .catch(e => expect(e).toBeInstanceOf(JavaScriptError));
+  });
+
+  it('throws ScriptTimeout when execution takes longer than the set limit', async () => {
+    session.setTimeouts({
+      script: 200,
+      pageLoad: 7000,
+      implicit: 5000,
+    });
+
+    await session
+      .process({
+        command: COMMANDS.EXECUTE_SCRIPT,
+        parameters: {
+          script: 'while (true) {}',
+          args: [],
+        },
+      })
+      .catch(e => expect(e).toBeInstanceOf(ScriptTimeout));
   });
 });
