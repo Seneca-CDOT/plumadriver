@@ -671,10 +671,10 @@ class Session {
       },
     });
 
-    const createElementAndAddToKnownElements = (value): WebElement => {
+    const createElementAndAddToKnownElements = value => {
       const element = new WebElement(value);
       this.browser.knownElements.push(element);
-      return element;
+      return element.serialize();
     };
 
     let vmReturnValue;
