@@ -158,6 +158,7 @@ class Session {
                 .getElementAttribute(urlVariables.attributeName);
               break;
             case COMMANDS.EXECUTE_SCRIPT:
+              if (!this.browser.dom.window) throw new NoSuchWindow();
               response = await this.executeScript(
                 parameters.script,
                 parameters.args,
