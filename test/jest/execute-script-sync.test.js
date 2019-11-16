@@ -1,9 +1,8 @@
 const nock = require('nock');
 
 const { Session } = require('../../build/Session/Session');
-const { COMMANDS } = require('../../build/constants/constants');
+const { COMMANDS, ELEMENT } = require('../../build/constants/constants');
 const { JavaScriptError, ScriptTimeout } = require('../../build/Error/errors');
-const { ELEMENT } = require('../../build/constants/constants');
 
 describe('Execute Script Sync', () => {
   let session;
@@ -160,16 +159,17 @@ describe('Execute Script Sync', () => {
   });
 
   it('returns an array of HTMLElements', async () => {
-   const [pElement, buttonElement] =  await session.process({
+    const [pElement, buttonElement] = await session.process({
       command: COMMANDS.EXECUTE_SCRIPT,
       parameters: {
-        script: 'return [document.querySelector("p"), document.querySelector("button")]',
+        script:
+          'return [document.querySelector("p"), document.querySelector("button")]',
         args: [],
       },
-    })
+    });
     expect(pElement).toHaveProperty([ELEMENT], expect.any(String));
     expect(buttonElement).toHaveProperty([ELEMENT], expect.any(String));
-  })
+  });
 
   it('clicks on a found element', async () => {
     const { [ELEMENT]: elementIdentifier } = await session.process({
