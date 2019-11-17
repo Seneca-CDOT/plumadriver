@@ -180,6 +180,12 @@ class Session {
               this.browser.getKnownElement(urlVariables.elementId).clear();
               response = { value: null };
               break;
+            case COMMANDS.ELEMENT_ENABLED:
+              if (!this.browser.dom.window) throw new NoSuchWindow();
+              response = this.browser
+                .getKnownElement(urlVariables.elementId)
+                .isEnabled();
+              break;
             default:
               break;
           }
