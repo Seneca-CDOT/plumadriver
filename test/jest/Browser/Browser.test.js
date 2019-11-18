@@ -1,3 +1,5 @@
+const nock = require('nock');
+
 const { Browser } = require('../../../build/Browser/Browser');
 const { InvalidArgument } = require('../../../build/Error/errors');
 
@@ -36,6 +38,9 @@ describe('Browser Class', () => {
 
     beforeEach(async () => {
       browser = await createBrowser();
+      const scope = nock(/plumadriver\.com/)
+        .get('/')
+        .reply(200, '<html></html>');
     });
 
     it('adds a valid cookie', async () => {
@@ -43,13 +48,17 @@ describe('Browser Class', () => {
         secure: false,
         httpOnly: false,
         expiry: 3654907200,
-        domain: 'example.com',
+        domain: 'plumadriver.com',
         name: 'foo',
         path: '/',
         value: 'bar',
       };
 
-      await navigateAndAddCookie(browser, 'http://example.com', requestCookie);
+      await navigateAndAddCookie(
+        browser,
+        'http://plumadriver.com',
+        requestCookie,
+      );
       assertCookieEquality(...browser.getCookies(), requestCookie);
     });
 
@@ -58,16 +67,20 @@ describe('Browser Class', () => {
         secure: true,
         httpOnly: true,
         expiry: 1573253325754,
-        domain: '.example.com',
+        domain: '.plumadriver.com',
         name: 'foo',
         path: '/portal',
         value: 'bar',
       };
 
-      await navigateAndAddCookie(browser, 'http://example.com', requestCookie);
+      await navigateAndAddCookie(
+        browser,
+        'http://plumadriver.com',
+        requestCookie,
+      );
       assertCookieEquality(...browser.getCookies(), {
         ...requestCookie,
-        domain: 'example.com',
+        domain: 'plumadriver.com',
       });
     });
 
@@ -80,19 +93,19 @@ describe('Browser Class', () => {
       const expectedCookie = {
         ...requestCookie,
         path: '/',
-        domain: 'www.example.com',
+        domain: 'www.plumadriver.com',
       };
 
       await navigateAndAddCookie(
         browser,
-        'http://www.example.com',
+        'http://www.plumadriver.com',
         requestCookie,
       );
       assertCookieEquality(expectedCookie, ...browser.getCookies());
     });
 
     it('throws InvalidArgument error on invalid fields', async () => {
-      await browser.navigate('http://example.com', 'url');
+      await browser.navigate('http://plumadriver.com', 'url');
       expect.assertions(4);
       addCookieAndAssertError(browser, {
         value: 'foo',
