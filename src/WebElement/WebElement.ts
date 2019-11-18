@@ -1,4 +1,4 @@
-import * as uuidv1 from 'uuid/v1';
+import uuidv1 from 'uuid/v1';
 import { isFocusableAreaElement } from 'jsdom/lib/jsdom/living/helpers/focusing';
 import { implSymbol } from 'jsdom/lib/jsdom/living/generated/utils';
 import { ELEMENT, ElementBooleanAttributeValues } from '../constants/constants';
@@ -243,6 +243,25 @@ class WebElement {
    */
   public serialize() {
     return { [ELEMENT]: this[ELEMENT] };
+  }
+
+  /**
+   * returns whether or not the WebElement's HTML element is enabled.
+   * @returns {boolean}
+   */
+  public isEnabled(): boolean {
+    const {
+      localName,
+      ownerDocument: { doctype },
+    } = this.element;
+
+    if (doctype.name === 'xml') {
+      return false;
+    }
+
+    if (['button', 'input', 'select', 'textarea'].includes(localName)) {
+      return (this.element as HTMLFormElement).disabled;
+    }
   }
 }
 
