@@ -262,6 +262,8 @@ class WebElement {
     if (['button', 'input', 'select', 'textarea'].includes(localName)) {
       return (this.element as HTMLFormElement).disabled;
     }
+
+    return false;
   }
 }
 
