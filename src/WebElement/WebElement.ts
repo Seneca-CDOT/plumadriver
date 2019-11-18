@@ -246,6 +246,34 @@ class WebElement {
   }
 
   /**
+   * returns true if the WebElement's HTML element is a descendant of a disabled fieldset
+   * and not the descendant of that fieldset's first legend element
+   * @returns {boolean}
+   */
+  private isDisabledFieldsetDescendant = (): boolean => {
+    const fieldsetAncestor = this.findAncestor(
+      'fieldset',
+    ) as HTMLFieldSetElement;
+
+    if (!fieldsetAncestor || !fieldsetAncestor.disabled) {
+      return false;
+    }
+
+    const fieldsetAncestorFirstLegendChild: HTMLLegendElement = fieldsetAncestor.querySelector(
+      'legend',
+    );
+
+    if (
+      fieldsetAncestorFirstLegendChild &&
+      this.findAncestor('legend') === fieldsetAncestorFirstLegendChild
+    ) {
+      return false;
+    }
+
+    return true;
+  };
+
+  /**
    * returns whether or not the WebElement's HTML element is enabled.
    * @returns {boolean}
    */
@@ -259,8 +287,12 @@ class WebElement {
       return false;
     }
 
+    if (this.isDisabledFieldsetDescendant()) {
+      return false;
+    }
+
     if (['button', 'input', 'select', 'textarea'].includes(localName)) {
-      return (this.element as HTMLFormElement).disabled;
+      return !(this.element as HTMLFormElement).disabled;
     }
 
     return false;
