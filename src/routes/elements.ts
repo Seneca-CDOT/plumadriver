@@ -73,7 +73,7 @@ element.post(
   ),
 );
 
-element.post(
+element.get(
   '/enabled',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
