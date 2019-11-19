@@ -31,11 +31,11 @@ describe('Is Element Enabled', () => {
 
   const checkEnabled = async (selector, expectation) => {
     const elementId = await findElement(selector);
-    const isEnabled = await session.process({
+    const { value } = await session.process({
       command: COMMANDS.ELEMENT_ENABLED,
       urlVariables: { elementId },
     });
-    expect(isEnabled).toBe(expectation);
+    expect(value).toBe(expectation);
   };
 
   beforeAll(async () => {

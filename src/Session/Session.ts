@@ -182,9 +182,10 @@ class Session {
               break;
             case COMMANDS.ELEMENT_ENABLED:
               if (!this.browser.dom.window) throw new NoSuchWindow();
-              response = this.browser
+              const isEnabled = this.browser
                 .getKnownElement(urlVariables.elementId)
                 .isEnabled();
+              response = { value: isEnabled };
               break;
             default:
               break;
