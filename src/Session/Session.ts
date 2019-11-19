@@ -694,11 +694,10 @@ class Session {
       );
     } else if (vmReturnValue instanceof HTMLElement) {
       return createElementAndAddToKnownElements(vmReturnValue);
-    } else if (vmReturnValue === undefined) {
-      return null;
-    } else {
-      return vmReturnValue;
     }
+
+    // client will expect undefined return values to be null
+    return typeof vmReturnValue === 'undefined' ? null : vmReturnValue;
   }
 }
 
