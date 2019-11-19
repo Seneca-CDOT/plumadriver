@@ -646,7 +646,7 @@ class Session {
   /**
    * executes a user defined script within the context of the dom on a given set of user defined arguments
    */
-  public executeScript(script, args) {
+  public executeScript(script: string, args: unknown[]): unknown {
     const argumentList = args.map(arg => {
       if (arg[ELEMENT] == null) {
         return arg;
