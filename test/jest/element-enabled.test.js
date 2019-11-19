@@ -7,6 +7,38 @@ const { JavaScriptError, ScriptTimeout } = require('../../build/Error/errors');
 describe('Is Element Enabled', () => {
   let session;
 
+  const setScopeAndNavigate = async pageSource => {
+    nock(/plumadriver\.com/)
+      .get('/')
+      .reply(200, pageSource);
+
+    await session.process({
+      command: COMMANDS.NAVIGATE_TO,
+      parameters: { url: 'http://plumadriver.com' },
+    });
+  };
+
+  const findElement = async selector => {
+    const { [ELEMENT]: elementId } = await session.process({
+      command: COMMANDS.FIND_ELEMENT,
+      parameters: {
+        using: 'css selector',
+        value: selector,
+      },
+    });
+
+    return elementId;
+  };
+
+  const checkEnabled = async (selector, expectation) => {
+    const elementId = await findElement(selector);
+    const isEnabled = await session.process({
+      command: COMMANDS.ELEMENT_ENABLED,
+      urlVariables: { elementId },
+    });
+    expect(isEnabled).toBe(expectation);
+  };
+
   beforeAll(async () => {
     const requestBody = {
       desiredCapabilities: {
@@ -29,80 +61,97 @@ describe('Is Element Enabled', () => {
   });
 
   it('returns false on xml document type', async () => {
-    nock(/plumadriver\.com/)
-      .get('/')
-      .reply(
-        200,
-        `<!DOCTYPE xml>
-      <html>
-      <head>
-        <title>Test Page</title>
-      </head>
-      <body>
-        <button>click</button>
-      </body>
-      </html>`,
-      );
+    const pageSource = `<!DOCTYPE xml>
+    <html>
+    <head>
+      <title>Test Page</title>
+    </head>
+    <body>
+      <button>click</button>
+    </body>
+    </html>`;
 
-    await session.process({
-      command: COMMANDS.NAVIGATE_TO,
-      parameters: { url: 'http://plumadriver.com' },
-    });
-
-    console.log(session.browser.dom.serialize());
-
-    const { [ELEMENT]: elementId } = await session.process({
-      command: COMMANDS.FIND_ELEMENT,
-      parameters: {
-        using: 'css selector',
-        value: 'button',
-      },
-    });
-
-    const isEnabled = await session.process({
-      command: COMMANDS.ELEMENT_ENABLED,
-      urlVariables: { elementId },
-    });
-
-    expect(isEnabled).toBe(false);
+    await setScopeAndNavigate(pageSource);
+    await checkEnabled('button', false);
   });
 
   it('returns true on an h1', async () => {
-    nock(/plumadriver\.com/)
-      .get('/')
-      .reply(
-        200,
-        `<!DOCTYPE html>
-      <html>
-      <head>
-        <title>Test Page</title>
-      </head>
-      <body>
-        <h1>Hello World</h1>
-      </body>
-      </html>`,
-      );
+    const pageSource = `<!DOCTYPE html>
+    <html>
+    <head>
+      <title>Test Page</title>
+    </head>
+    <body>
+      <h1>Hello World</h1>
+    </body>
+    </html>`;
 
-    await session.process({
-      command: COMMANDS.NAVIGATE_TO,
-      parameters: { url: 'http://plumadriver.com' },
-    });
+    await setScopeAndNavigate(pageSource);
+    await checkEnabled('h1', true);
+  });
 
-    console.log(session.browser.dom.serialize());
+  it('returns false on disabled form control elements', async () => {
+    const pageSource = `<!DOCTYPE html>
+    <html>
+    <head>
+      <title>Test Page</title>
+    </head>
+    <body>
+      <input type="text" />
+      <select></select>
+      <button>off</button>
+      <textarea>off</textarea>
+      <fieldset></fieldset>
 
-    const { [ELEMENT]: elementId } = await session.process({
-      command: COMMANDS.FIND_ELEMENT,
-      parameters: {
-        using: 'css selector',
-        value: 'h1',
-      },
-    });
+      <input type="text" disabled />
+      <select disabled></select>
+      <button disabled>off</button>
+      <textarea disabled>off</textarea>
+      <fieldset disabled></fieldset>
 
-    const isEnabled = await session.process({
-      command: COMMANDS.ELEMENT_ENABLED,
-      urlVariables: { elementId },
-    });
+    </body>
+    </html>`;
 
-    expect(isEnabled).toBe(true);
+    await setScopeAndNavigate(pageSource);
+    await checkEnabled('input[disabled]', false);
+    await checkEnabled('select[disabled]', false);
+    await checkEnabled('button[disabled]', false);
+    await checkEnabled('textarea[disabled]', false);
+    await checkEnabled('input:not([disabled])', true);
+    await checkEnabled('select:not([disabled])', true);
+    await checkEnabled('button:not([disabled])', true);
+    await checkEnabled('textarea:not([disabled])', true);
+  });
+
+  it('handles fieldset child elements', async () => {
+    const pageSource = `<!DOCTYPE html>
+    <html>
+    <head>
+      <title>Test Page</title>
+    </head>
+    <body>
+      <fieldset disabled>
+        <div>
+          <button>click</button>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>foo</legend>
+        <select disabled>click</select>
+      </fieldset>
+
+      <fieldset disabled>
+        <legend>
+          <textarea></textarea>
+        </legend>
+      </fieldset>
+    </body>
+    </html>`;
+
+    await setScopeAndNavigate(pageSource);
+    await checkEnabled('button', false);
+    await checkEnabled('select', false);
+    await checkEnabled('textarea', true);
   });
 });
