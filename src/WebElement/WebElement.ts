@@ -295,7 +295,7 @@ class WebElement {
       return !(this.element as HTMLFormElement).disabled;
     }
 
-    return false;
+    return true;
   }
 }
 
