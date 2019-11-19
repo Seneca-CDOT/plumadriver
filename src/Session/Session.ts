@@ -635,7 +635,7 @@ class Session {
   private handleSyncScriptError({
     message,
     code,
-  }: NodeJS.ErrnoException): JavaScriptError | ScriptTimeout {
+  }: NodeJS.ErrnoException): never {
     if (code === 'ERR_SCRIPT_EXECUTION_TIMEOUT') {
       throw new ScriptTimeout();
     } else {
