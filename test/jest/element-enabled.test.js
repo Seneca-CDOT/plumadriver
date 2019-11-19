@@ -2,7 +2,6 @@ const nock = require('nock');
 
 const { Session } = require('../../build/Session/Session');
 const { COMMANDS, ELEMENT } = require('../../build/constants/constants');
-const { JavaScriptError, ScriptTimeout } = require('../../build/Error/errors');
 
 describe('Is Element Enabled', () => {
   let session;
