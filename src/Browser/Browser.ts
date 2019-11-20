@@ -100,6 +100,7 @@ class Browser {
    * handles errors thrown by the navigation function
    */
   private handleNavigationError(error, config) {
+    // the jsdom instance will otherwise crash on a 401
     if (error.statusCode === 401) {
       this.dom = new JSDOM(' ', {
         resources: config.resourceLoader,
