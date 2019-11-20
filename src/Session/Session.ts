@@ -31,6 +31,8 @@ import {
   NoSuchElement,
   ElementNotInteractable,
   NoSuchWindow,
+  JavaScriptError,
+  ScriptTimeout,
 } from '../Error/errors';
 
 import { CapabilityValidator } from '../CapabilityValidator/CapabilityValidator';
@@ -156,6 +158,7 @@ class Session {
                 .getElementAttribute(urlVariables.attributeName);
               break;
             case COMMANDS.EXECUTE_SCRIPT:
+              if (!this.browser.dom.window) throw new NoSuchWindow();
               response = await this.executeScript(
                 parameters.script,
                 parameters.args,
@@ -627,57 +630,74 @@ class Session {
   }
 
   /**
+   * handles errors resulting from failing to execute synchronous scripts
+   */
+  private handleSyncScriptError({
+    message,
+    code,
+  }: NodeJS.ErrnoException): never {
+    if (code === 'ERR_SCRIPT_EXECUTION_TIMEOUT') {
+      throw new ScriptTimeout();
+    } else {
+      throw new JavaScriptError(message);
+    }
+  }
+
+  /**
    * executes a user defined script within the context of the dom on a given set of user defined arguments
    */
-  executeScript(script, args) {
-    const argumentList = [];
-
-    args.forEach(arg => {
-      if (arg[ELEMENT] !== undefined && arg[ELEMENT] !== null) {
-        const element = this.browser.getKnownElement(arg[ELEMENT]);
-        argumentList.push(element.element);
+  public executeScript(script: string, args: unknown[]): unknown {
+    const argumentList = args.map(arg => {
+      if (arg[ELEMENT] == null) {
+        return arg;
       } else {
-        argumentList.push(arg);
+        const { element } = this.browser.getKnownElement(arg[ELEMENT]);
+        return element;
       }
     });
 
-    // eslint-disable-next-line no-new-func
-    const scriptFunc = new Function('arguments', script);
+    const func = new Function('arguments, window, document', script);
+    const {
+      window,
+      window: { document },
+    } = this.browser.dom;
 
     const vm = new VM({
       timeout: this.timeouts.script,
       sandbox: {
-        window: this.browser.dom.window,
-        document: this.browser.dom.window.document,
-        func: scriptFunc,
+        window,
+        document,
+        func,
         arguments: argumentList,
       },
     });
-    let returned;
-    let response;
-    return new Promise((resolve, reject) => {
-      try {
-        returned = vm.run('func(arguments);');
 
-        if (returned instanceof Array) {
-          response = [];
-          returned.forEach(value => {
-            if (value instanceof HTMLElement) {
-              const element = new WebElement(value);
-              this.browser.knownElements.push(element);
-              response.push(element);
-            } else response.push(value);
-          });
-        } else if (returned instanceof HTMLElement) {
-          const element = new WebElement(returned);
-          this.browser.knownElements.push(element);
-          response = element;
-        } else response = returned;
-        resolve(response);
-      } catch (err) {
-        reject(err);
-      }
-    });
+    const createElementAndAddToKnownElements = value => {
+      const element = new WebElement(value);
+      this.browser.knownElements.push(element);
+      return element.serialize();
+    };
+
+    let vmReturnValue;
+
+    try {
+      vmReturnValue = vm.run('func(arguments, window, document);');
+    } catch (error) {
+      this.handleSyncScriptError(error);
+    }
+
+    if (Array.isArray(vmReturnValue)) {
+      return vmReturnValue.map(value =>
+        value instanceof HTMLElement
+          ? createElementAndAddToKnownElements(value)
+          : value,
+      );
+    } else if (vmReturnValue instanceof HTMLElement) {
+      return createElementAndAddToKnownElements(vmReturnValue);
+    }
+
+    // client will expect undefined return values to be null
+    return typeof vmReturnValue === 'undefined' ? null : vmReturnValue;
   }
 }
 
