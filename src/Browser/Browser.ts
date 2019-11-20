@@ -101,14 +101,12 @@ class Browser {
    */
   private handleNavigationError(error, config) {
     if (error.statusCode === 401) {
-      const { cookieJar: existingCookieJar } = this.dom;
-
       this.dom = new JSDOM(' ', {
         resources: config.resourceLoader,
         runScripts: config.runScripts,
         beforeParse: config.beforeParse,
         pretendToBeVisual: true,
-        cookieJar: existingCookieJar || config.jar,
+        cookieJar: config.jar,
       });
     } else {
       throw error;
