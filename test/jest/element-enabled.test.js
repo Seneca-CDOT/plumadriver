@@ -89,7 +89,7 @@ describe('Is Element Enabled', () => {
     await checkEnabled('h1', true);
   });
 
-  it('returns false on disabled form control elements', async () => {
+  it('handles form control elements', async () => {
     const pageSource = `<!DOCTYPE html>
     <html>
     <head>
@@ -116,6 +116,7 @@ describe('Is Element Enabled', () => {
     await checkEnabled('select[disabled]', false);
     await checkEnabled('button[disabled]', false);
     await checkEnabled('textarea[disabled]', false);
+    
     await checkEnabled('input:not([disabled])', true);
     await checkEnabled('select:not([disabled])', true);
     await checkEnabled('button:not([disabled])', true);
