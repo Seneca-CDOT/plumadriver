@@ -97,12 +97,35 @@ class Browser {
   }
 
   /**
+   * handles errors thrown by the navigation function
+   */
+  private handleNavigationError(error, config) {
+    if (error.statusCode === 401) {
+      const { cookieJar: existingCookieJar } = this.dom;
+
+      this.dom = new JSDOM(' ', {
+        resources: config.resourceLoader,
+        runScripts: config.runScripts,
+        beforeParse: config.beforeParse,
+        pretendToBeVisual: true,
+        cookieJar: existingCookieJar || config.jar,
+      });
+    } else {
+      throw error;
+    }
+  }
+
+  /**
    * accepts a url and pathType @type {String} from which to instantiate the
    * jsdom object
    */
   async navigate(path: URL, pathType) {
     if (path) {
-      await this.configureBrowser(this.browserConfig, path, pathType);
+      try {
+        await this.configureBrowser(this.browserConfig, path, pathType);
+      } catch (error) {
+        this.handleNavigationError(error, this.browserConfig);
+      }
     }
     return true;
   }
