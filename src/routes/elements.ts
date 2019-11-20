@@ -73,4 +73,12 @@ element.post(
   ),
 );
 
+element.get(
+  '/enabled',
+  sessionEndpointExceptionHandler(
+    defaultSessionEndpointLogic,
+    COMMANDS.ELEMENT_ENABLED,
+  ),
+);
+
 export default element;

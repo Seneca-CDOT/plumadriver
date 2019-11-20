@@ -244,6 +244,59 @@ class WebElement {
   public serialize() {
     return { [ELEMENT]: this[ELEMENT] };
   }
+
+  /**
+   * returns true if the WebElement's HTML element is a descendant of a disabled fieldset
+   * and not the descendant of that fieldset's first legend element
+   * @returns {boolean}
+   */
+  private isDisabledFieldsetDescendant = (): boolean => {
+    const fieldsetAncestor = this.findAncestor(
+      'fieldset',
+    ) as HTMLFieldSetElement;
+
+    if (!fieldsetAncestor || !fieldsetAncestor.disabled) {
+      return false;
+    }
+
+    const fieldsetAncestorFirstLegendChild: HTMLLegendElement = fieldsetAncestor.querySelector(
+      'legend',
+    );
+
+    if (
+      fieldsetAncestorFirstLegendChild &&
+      this.findAncestor('legend') === fieldsetAncestorFirstLegendChild
+    ) {
+      return false;
+    }
+
+    return true;
+  };
+
+  /**
+   * returns true if WebElement's HTML element is enabled, otherwise returns false.
+   * @returns {boolean}
+   */
+  public isEnabled(): boolean {
+    const {
+      localName,
+      ownerDocument: { doctype },
+    } = this.element;
+
+    if (doctype.name === 'xml') {
+      return false;
+    }
+
+    if (this.isDisabledFieldsetDescendant()) {
+      return false;
+    }
+
+    if (['button', 'input', 'select', 'textarea'].includes(localName)) {
+      return !(this.element as HTMLFormElement).disabled;
+    }
+
+    return true;
+  }
 }
 
 export { WebElement };
