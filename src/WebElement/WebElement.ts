@@ -274,7 +274,7 @@ class WebElement {
   };
 
   /**
-   * returns whether or not the WebElement's HTML element is enabled.
+   * returns true if WebElement's HTML element is enabled, otherwise returns false.
    * @returns {boolean}
    */
   public isEnabled(): boolean {
