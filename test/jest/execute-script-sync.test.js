@@ -26,6 +26,15 @@ describe('Execute Script Sync', () => {
               e.textContent = "click success";
             }
           </script>
+          <script>
+            function getTextContent() {
+              return document.querySelector('title').textContent;
+            }
+
+            function getParagraphElement() {
+              return document.querySelector('p');
+            }
+          </script>
         </body>
       </html>`,
       );
@@ -62,12 +71,15 @@ describe('Execute Script Sync', () => {
     expect(value).toBe(true);
   });
 
-  it('returns a resolved promise value', async () => {
+  it('handles Promises', async () => {
     const value = await session.process({
       command: COMMANDS.EXECUTE_SCRIPT,
-      parameters: { script: 'return Promise.resolve("foo");', args: [] },
+      parameters: {
+        script: `return new Promise((resolve) => setTimeout(() => resolve(arguments[0] + ' ' + arguments[1]), 400))`,
+        args: ['hello', 'world!'],
+      },
     });
-    expect(value).toBe('foo');
+    expect(value).toBe('hello world!');
   });
 
   it('sums two arguments', async () => {
@@ -188,5 +200,25 @@ describe('Execute Script Sync', () => {
       },
     });
     expect(buttonText).toBe('click success');
+  });
+
+  it('handles global functions', async () => {
+    const textContent = await session.process({
+      command: COMMANDS.EXECUTE_SCRIPT,
+      parameters: {
+        script: 'return getTextContent();',
+        args: [],
+      },
+    });
+    expect(textContent).toBe('Test Page');
+
+    const paragraphElement = await session.process({
+      command: COMMANDS.EXECUTE_SCRIPT,
+      parameters: {
+        script: 'return getParagraphElement();',
+        args: [],
+      },
+    });
+    expect(paragraphElement).toHaveProperty([ELEMENT], expect.any(String));
   });
 });
