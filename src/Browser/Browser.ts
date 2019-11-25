@@ -26,7 +26,7 @@ class Browser {
 
   /** accepts a capabilities object with jsdom and plumadriver specific options */
   constructor(capabilities: object) {
-    let browserOptions: Pluma.BrowserOptions = {
+    const browserOptions: Pluma.BrowserOptions = {
       runScripts: '',
       strictSSL: true,
       unhandledPromptBehaviour: 'dismiss and notify',
@@ -48,7 +48,7 @@ class Browser {
   async configureBrowser(
     config: BrowserConfig,
     url: URL | null,
-    pathType: string = 'url',
+    pathType = 'url',
   ) {
     let dom;
 
@@ -261,6 +261,23 @@ class Browser {
     });
 
     return cookies;
+  }
+
+  /**
+   * returns the cookie in the cookie jar matching the requested name
+   */
+  getNamedCookie(requestedName: string): Pluma.Cookie {
+    const { pathname, hostname }: URL = new URL(this.getUrl());
+
+    const requestedCookie = this.getCookies().find(
+      ({ name, path, domain }: Pluma.Cookie): boolean =>
+        name === requestedName &&
+        path === pathname &&
+        hostname.includes(domain),
+    );
+
+    if (!requestedCookie) throw new PlumaError.NoSuchCookie();
+    return requestedCookie;
   }
 
   /**
