@@ -118,7 +118,6 @@ describe('Get Named Cookie', () => {
         cookie: {
           name: 'foo',
           value: 'bar',
-          domain: '.example.com',
           path: '/baz',
         },
       },
