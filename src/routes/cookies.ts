@@ -38,7 +38,7 @@ cookies.use((req, res, next) => {
   next();
 });
 
-cookies.post(
+cookies.get(
   '/:name',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
