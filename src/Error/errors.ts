@@ -10,6 +10,7 @@ import { NoSuchWindow } from './NoSuchWindow';
 import { UnableToSetCookie } from './UnableToSetCookie';
 import { JavaScriptError } from './JavaScriptError';
 import { ScriptTimeout } from './ScriptTimeout';
+import { NoSuchCookie } from './NoSuchCookie';
 
 export {
   MethodNotAllowed,
@@ -24,4 +25,5 @@ export {
   UnableToSetCookie,
   JavaScriptError,
   ScriptTimeout,
+  NoSuchCookie,
 };

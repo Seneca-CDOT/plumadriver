@@ -37,6 +37,7 @@ export namespace Pluma {
     httpOnly?: boolean;
     expiry?: number;
     creation?: Date;
+    path?: string;
   }
 
   /**
