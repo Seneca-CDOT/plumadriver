@@ -148,7 +148,7 @@ class Session {
               response = this.browser.addCookie(parameters.cookie);
               break;
             case COMMANDS.GET_NAMED_COOKIE:
-              response = this.browser.getNamedCookie(parameters.name);
+              response = this.browser.getNamedCookie(urlVariables.cookieName);
               break;
             case COMMANDS.GET_ELEMENT_TAG_NAME:
               response = this.browser
