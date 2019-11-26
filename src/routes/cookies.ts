@@ -33,7 +33,7 @@ cookies.delete(
   ),
 );
 
-cookies.use((req, res, next) => {
+cookies.use('/:name', (req, res, next) => {
   req.sessionRequest.urlVariables.cookieName = req.params.name;
   next();
 });
