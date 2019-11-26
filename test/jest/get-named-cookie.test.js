@@ -1,7 +1,7 @@
 const nock = require('nock');
 
 const { Session } = require('../../build/Session/Session');
-const { COMMANDS, ELEMENT } = require('../../build/constants/constants');
+const { COMMANDS } = require('../../build/constants/constants');
 const { NoSuchCookie } = require('../../build/Error/errors');
 
 describe('Get Named Cookie', () => {
