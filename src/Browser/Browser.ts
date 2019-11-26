@@ -272,7 +272,7 @@ class Browser {
     const requestedCookie = this.getCookies().find(
       ({ name, path, domain }: Pluma.Cookie): boolean =>
         name === requestedName &&
-        path === pathname &&
+        new RegExp(`^${path}`).test(pathname) &&
         hostname.includes(domain),
     );
 
