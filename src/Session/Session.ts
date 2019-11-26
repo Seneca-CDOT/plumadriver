@@ -148,9 +148,11 @@ class Session {
               response = this.browser.addCookie(parameters.cookie);
               break;
             case COMMANDS.GET_NAMED_COOKIE:
+              if (!this.browser.dom.window) throw new NoSuchWindow();
               response = this.browser.getNamedCookie(urlVariables.cookieName);
               break;
             case COMMANDS.DELETE_ALL_COOKIES:
+              if (!this.browser.dom.window) throw new NoSuchWindow();
               response = this.browser.deleteAllCookies();
               break;
             case COMMANDS.GET_ELEMENT_TAG_NAME:
