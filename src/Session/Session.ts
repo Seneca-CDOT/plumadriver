@@ -56,7 +56,7 @@ class Session {
    * a queue of [[Pluma.Request]] currently awaiting processsing
    *  */
   mutex: Mutex;
-  proxy: Record<string, any> | null;
+  proxy: Record<string, unknown> | null;
 
   constructor(requestBody) {
     this.id = uuidv1();
@@ -153,7 +153,7 @@ class Session {
               break;
             case COMMANDS.DELETE_ALL_COOKIES:
               if (!this.browser.dom.window) throw new NoSuchWindow();
-              response = this.browser.deleteAllCookies();
+              response = this.browser.deleteCookies();
               break;
             case COMMANDS.GET_ELEMENT_TAG_NAME:
               response = this.browser
@@ -215,7 +215,7 @@ class Session {
   sendKeysToElement(text: string, elementId: string) {
     return new Promise(async (resolve, reject) => {
       const webElement = this.browser.getKnownElement(elementId);
-      const element: any = webElement.element;
+      const element: HTMLElement = webElement.element;
       let files = [];
 
       if (text === undefined) reject(new InvalidArgument());

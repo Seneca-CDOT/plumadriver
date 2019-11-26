@@ -281,6 +281,12 @@ class Browser {
   }
 
   /**
+   * deletes associated cookies from the cookie jar matching a pattern.
+   * If pattern is undefined, then all cookies are deleted.
+   */
+  deleteCookies(pattern?: string): void {}
+
+  /**
    * @param elementId @type {string} the id of a known element in the known element list
    */
   getKnownElement(elementId: string): WebElement {
