@@ -663,19 +663,16 @@ class Session {
       }
     });
 
-    const func = new Function('arguments, window, document', script);
-    const {
-      window,
-      window: { document },
-    } = this.browser.dom;
+    const { window } = this.browser.dom;
+
+    const func = window
+      .eval(`(function() {${script}})`)
+      .bind(null, ...argumentList);
 
     const vm = new VM({
       timeout: this.timeouts.script,
       sandbox: {
-        window,
-        document,
         func,
-        arguments: argumentList,
       },
     });
 
@@ -688,7 +685,7 @@ class Session {
     let vmReturnValue;
 
     try {
-      vmReturnValue = vm.run('func(arguments, window, document);');
+      vmReturnValue = vm.run('func();');
     } catch (error) {
       this.handleSyncScriptError(error);
     }
