@@ -151,9 +151,15 @@ class Session {
               if (!this.browser.dom.window) throw new NoSuchWindow();
               response = this.browser.getNamedCookie(urlVariables.cookieName);
               break;
+            case COMMANDS.DELETE_COOKIE:
+              if (!this.browser.dom.window) throw new NoSuchWindow();
+              response = this.browser.deleteCookies(
+                new RegExp(`^${urlVariables.cookieName}$`),
+              );
+              break;
             case COMMANDS.DELETE_ALL_COOKIES:
               if (!this.browser.dom.window) throw new NoSuchWindow();
-              response = this.browser.deleteCookies();
+              response = this.browser.deleteCookies(/.*/);
               break;
             case COMMANDS.GET_ELEMENT_TAG_NAME:
               response = this.browser
@@ -250,12 +256,12 @@ class Session {
           element.getAttribute('type') === 'text' ||
           element.getAttribute('type') === 'email'
         ) {
-          element.value += text;
+          (element as HTMLInputElement).value += text;
           element.dispatchEvent(new Event('input'));
           element.dispatchEvent(new Event('change'));
         } else if (element.getAttribute('type') === 'color') {
           if (!validator.isHexColor(text)) throw new InvalidArgument();
-          element.value = text;
+          (element as HTMLInputElement).value = text;
         } else {
           if (
             !Object.prototype.hasOwnProperty.call(element, 'value') ||
@@ -263,7 +269,7 @@ class Session {
           )
             throw new Error('element not interactable'); // TODO: create error class
           // TODO: add check to see if element is mutable, reject with element not interactable
-          element.value = text;
+          (element as HTMLInputElement).value = text;
         }
         element.dispatchEvent(new Event('input'));
         element.dispatchEvent(new Event('change'));
