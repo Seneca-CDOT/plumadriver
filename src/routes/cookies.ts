@@ -45,7 +45,6 @@ cookies.get(
   ),
 );
 
-// TODO: delete cookie
 cookies.delete(
   '/:name',
   sessionEndpointExceptionHandler(
