@@ -296,7 +296,7 @@ class Browser {
             pattern.test(cookie.name) && this.isAssociatedCookie(cookie),
         )
         .forEach(({ domain, path, name }: Pluma.Cookie): void => {
-          this.dom.cookieJar.store(domain, path, name, err => {
+          this.dom.cookieJar.store.removeCookie(domain, path, name, err => {
             if (err) reject(err);
           });
         });
