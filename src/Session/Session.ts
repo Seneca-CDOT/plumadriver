@@ -153,13 +153,13 @@ class Session {
               break;
             case COMMANDS.DELETE_COOKIE:
               if (!this.browser.dom.window) throw new NoSuchWindow();
-              response = this.browser.deleteCookies(
+              await this.browser.deleteCookies(
                 new RegExp(`^${urlVariables.cookieName}$`),
               );
               break;
             case COMMANDS.DELETE_ALL_COOKIES:
               if (!this.browser.dom.window) throw new NoSuchWindow();
-              response = this.browser.deleteCookies(/.*/);
+              await this.browser.deleteCookies(/.*/);
               break;
             case COMMANDS.GET_ELEMENT_TAG_NAME:
               response = this.browser
