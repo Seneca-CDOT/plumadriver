@@ -264,16 +264,21 @@ class Browser {
   }
 
   /**
+   * returns true if the cookie is associated with the current
+   * browsing context's active document
+   */
+  private isAssociatedCookie({ path, domain }: Pluma.Cookie): boolean {
+    const { pathname, hostname }: URL = new URL(this.getUrl());
+    return new RegExp(`^${path}`).test(pathname) && hostname.includes(domain);
+  }
+
+  /**
    * returns the cookie in the cookie jar matching the requested name
    */
-  getNamedCookie(requestedName: string): Pluma.Cookie {
-    const { pathname, hostname }: URL = new URL(this.getUrl());
-
+  public getNamedCookie(requestedName: string): Pluma.Cookie {
     const requestedCookie = this.getCookies().find(
-      ({ name, path, domain }: Pluma.Cookie): boolean =>
-        name === requestedName &&
-        new RegExp(`^${path}`).test(pathname) &&
-        hostname.includes(domain),
+      (cookie: Pluma.Cookie): boolean =>
+        cookie.name === requestedName && this.isAssociatedCookie(cookie),
     );
 
     if (!requestedCookie) throw new PlumaError.NoSuchCookie();
@@ -281,10 +286,23 @@ class Browser {
   }
 
   /**
-   * deletes associated cookies from the cookie jar matching a pattern.
-   * If pattern is undefined, then all cookies are deleted.
+   * delete associated cookies from the cookie jar matching a regexp pattern
    */
-  deleteCookies(pattern?: string): void {}
+  public deleteCookies(pattern: RegExp): Promise<void> {
+    return new Promise<void>(resolve => {
+      this.getCookies()
+        .filter(
+          (cookie: Pluma.Cookie): boolean =>
+            pattern.test(cookie.name) && this.isAssociatedCookie(cookie),
+        )
+        .forEach(({ domain, path, name }: Pluma.Cookie): void => {
+          this.dom.cookieJar.store(domain, path, name, err => {
+            if (err) throw err;
+          });
+        });
+      resolve();
+    });
+  }
 
   /**
    * @param elementId @type {string} the id of a known element in the known element list
