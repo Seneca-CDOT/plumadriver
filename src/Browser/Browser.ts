@@ -289,7 +289,7 @@ class Browser {
    * delete associated cookies from the cookie jar matching a regexp pattern
    */
   public deleteCookies(pattern: RegExp): Promise<void> {
-    return new Promise<void>(resolve => {
+    return new Promise<void>((resolve, reject) => {
       this.getCookies()
         .filter(
           (cookie: Pluma.Cookie): boolean =>
@@ -297,7 +297,7 @@ class Browser {
         )
         .forEach(({ domain, path, name }: Pluma.Cookie): void => {
           this.dom.cookieJar.store(domain, path, name, err => {
-            if (err) throw err;
+            if (err) reject(err);
           });
         });
       resolve();
