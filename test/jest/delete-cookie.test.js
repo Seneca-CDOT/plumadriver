@@ -104,4 +104,18 @@ describe('Delete Cookie', () => {
       'also not associated',
     ]);
   });
+
+  it('does not throw error on missing cookie name', async () => {
+    await navigateTo('http://plumadriver.com');
+    await addCookie('foo', '.pluma.com', '/');
+
+    await session.process({
+      command: COMMANDS.DELETE_COOKIE,
+      urlVariables: { cookieName: 'baz' },
+    });
+
+    const cookies = await session.process({
+      command: COMMANDS.GET_ALL_COOKIES,
+    });
+  });
 });
