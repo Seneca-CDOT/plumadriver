@@ -105,7 +105,7 @@ describe('Delete Cookie', () => {
     ]);
   });
 
-  it('does not throw error on missing cookie name', async () => {
+  it('does not throw error on mismatched cookie name', async () => {
     await navigateTo('http://plumadriver.com');
     await addCookie('foo', '.pluma.com', '/');
 
