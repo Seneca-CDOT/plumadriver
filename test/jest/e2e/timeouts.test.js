@@ -2,7 +2,7 @@ const request = require('supertest');
 const { app } = require('../../../build/app');
 const { createSession } = require('./helpers');
 
-describe('Timeout Endpoints', () => {
+describe('Timeouts', () => {
   it('should respond with proper timeout defaults', async () => {
     const sessionId = await createSession(request, app);
     const { body } = await request(app).get(`/session/${sessionId}/timeouts`);
@@ -19,7 +19,7 @@ describe('Timeout Endpoints', () => {
   it('should set requested timeouts', async () => {
     const sessionId = await createSession(request, app);
     const requestedTimeouts = {
-      script: 1000,
+      script: 0,
       pageLoad: 2000,
       implicit: 3000,
     };
@@ -28,7 +28,9 @@ describe('Timeout Endpoints', () => {
       .post(`/session/${sessionId}/timeouts`)
       .send(requestedTimeouts);
 
-    expect(timeoutPostResponse.body).toStrictEqual({});
+    expect(timeoutPostResponse.body).toStrictEqual({
+      value: null,
+    });
 
     const {
       body: { value },
