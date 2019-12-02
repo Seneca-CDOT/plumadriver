@@ -1,0 +1,77 @@
+const request = require('supertest');
+const nock = require('nock');
+
+const { app } = require('../../../build/app');
+const { createSession } = require('./helpers');
+
+describe('Navigation', () => {
+  beforeEach(() => {
+    nock(/plumadriver\.com/)
+      .get('/')
+      .delay(100)
+      .reply(
+        200,
+        `<html>
+        <head>
+          <title>Test Page</title>
+        </head>
+      </html>`,
+      );
+  });
+
+  it('navigates to a page and responds with null', async () => {
+    const sessionId = await createSession(request, app);
+    const url = 'http://plumadriver.com';
+    const { body } = await request(app)
+      .post(`/session/${sessionId}/url`)
+      .send({
+        url,
+      });
+    expect(body).toStrictEqual({
+      value: null,
+    });
+
+    const {
+      body: { value },
+    } = await request(app).get(`/session/${sessionId}/url`);
+    expect(value).toBe(url);
+  });
+
+  it('throws invalid argument on improperly formatted url', async () => {
+    const sessionId = await createSession(request, app);
+    const {
+      body: {
+        value: { error },
+      },
+    } = await request(app)
+      .post(`/session/${sessionId}/url`)
+      .send({
+        url: 'foo://plumadriver.com',
+      });
+
+    expect(error).toBe('invalid argument');
+  });
+
+  it('throws error on timeout', async () => {
+    const sessionId = await createSession(request, app);
+    const requestedTimeouts = {
+      pageLoad: 0,
+    };
+
+    await request(app)
+      .post(`/session/${sessionId}/timeouts`)
+      .send(requestedTimeouts);
+
+    const {
+      body: {
+        value: { error },
+      },
+    } = await request(app)
+      .post(`/session/${sessionId}/url`)
+      .send({
+        url: 'http://plumadriver.com',
+      });
+
+    expect(error).toBe('invalid argument');
+  });
+});
