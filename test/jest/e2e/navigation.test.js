@@ -5,7 +5,9 @@ const { app } = require('../../../build/app');
 const { createSession } = require('./helpers');
 
 describe('Navigation', () => {
-  beforeEach(() => {
+  let sessionId;
+
+  beforeAll(async () => {
     nock(/plumadriver\.com/)
       .get('/')
       .delay(100)
@@ -17,10 +19,11 @@ describe('Navigation', () => {
         </head>
       </html>`,
       );
+
+    sessionId = await createSession(request, app);
   });
 
   it('navigates to a page and responds with null', async () => {
-    const sessionId = await createSession(request, app);
     const url = 'http://plumadriver.com';
     const { body } = await request(app)
       .post(`/session/${sessionId}/url`)
@@ -38,7 +41,6 @@ describe('Navigation', () => {
   });
 
   it('throws invalid argument on improperly formatted url', async () => {
-    const sessionId = await createSession(request, app);
     const {
       body: {
         value: { error },
@@ -53,7 +55,6 @@ describe('Navigation', () => {
   });
 
   it('throws error on timeout', async () => {
-    const sessionId = await createSession(request, app);
     const requestedTimeouts = {
       pageLoad: 0,
     };
