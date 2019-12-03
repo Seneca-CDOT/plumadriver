@@ -136,7 +136,7 @@ describe('Execute Script Sync', () => {
       });
 
     const { error } = await executeScript(sessionId, 'while (true) {}');
-    expect(error).toBe('timeout error');
+    expect(error).toBe('script timeout');
   });
 
   it('returns an array of HTMLElements', async () => {
