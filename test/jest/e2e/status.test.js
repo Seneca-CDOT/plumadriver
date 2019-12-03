@@ -6,7 +6,7 @@ describe('Status Endpoint', () => {
     const response = await request(app).get('/status');
     expect(response.statusCode).toBe(200);
     expect(response.body).toMatchObject({
-      value: { message: expect.any(String), ready: expect.any(Boolean) },
+      value: { message: expect.any(String), ready: true },
     });
   });
 });
