@@ -7,9 +7,8 @@ const { ELEMENT } = require('../../../build/constants/constants');
 
 describe('Execute Script Sync', () => {
   beforeAll(async () => {
-    const scope = nock(/plumadriver\.com/)
+    nock(/plumadriver\.com/)
       .get('/')
-      .delay(100)
       .reply(
         200,
         `<html>
