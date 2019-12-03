@@ -12,9 +12,6 @@ expressWinston.responseWhitelist.push('body');
 
 export const logger = expressWinston.logger({
   transports: [
-    ...(process.env.NODE_ENV === 'test'
-      ? [new winston.transports.Console({ level: 'info' })]
-      : []),
     new winston.transports.File({
       filename: `${LOG_FOLDER_NAME}/${FILENAMES.REQUESTS}`,
       level: 'info',
@@ -35,9 +32,6 @@ export const logger = expressWinston.logger({
 
 export const errorLogger = expressWinston.errorLogger({
   transports: [
-    ...(process.env.NODE_ENV === 'test'
-      ? [new winston.transports.Console({ level: 'error' })]
-      : []),
     new winston.transports.File({
       filename: `${LOG_FOLDER_NAME}/${FILENAMES.ERRORS}`,
       level: 'error',
