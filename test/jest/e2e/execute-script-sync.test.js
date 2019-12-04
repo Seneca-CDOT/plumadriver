@@ -71,9 +71,9 @@ describe('Execute Script Sync', () => {
 
   it('handles falsy values', async () => {
     expect(await executeScript('return false')).toBe(false);
-    expect(await executeScript('return NaN')).toBe(NaN);
     expect(await executeScript('return 0')).toBe(0);
     expect(await executeScript('return !!document.all')).toBe(false);
+    expect(await executeScript('return NaN')).toBe(null);
     expect(await executeScript('return null')).toBe(null);
     expect(await executeScript('return undefined')).toBe(null);
     expect(await executeScript('return;')).toBe(null);
