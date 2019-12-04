@@ -64,6 +64,7 @@ describe('Execute Script Sync', () => {
     expect(await executeScript('return 1')).toBe(1);
     expect(await executeScript('return "false"')).toBe('false');
     expect(await executeScript('return "0"')).toBe('0');
+    expect(await executeScript('return Infinity')).toBe(null);
     expect(
       await executeScript('return arguments[0]', [{ foo: 'bar' }]),
     ).toStrictEqual({ foo: 'bar' });
