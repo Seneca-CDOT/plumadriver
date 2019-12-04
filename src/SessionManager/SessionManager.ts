@@ -7,10 +7,10 @@ import { Pluma } from '../Types/types';
  * manages the life and death of all Session objects
  */
 class SessionManager {
-    /** the Active Plumadriver sessions */
-    sessions:Array<Session>;
-    /** plumadriver's [readiness state](https://w3c.github.io/webdriver/#nodes) */
-    readinessState: Pluma.ReadinessState;
+  /** the Active Plumadriver sessions */
+  sessions: Array<Session>;
+  /** plumadriver's [readiness state](https://w3c.github.io/webdriver/#nodes) */
+  readinessState: Pluma.ReadinessState;
   constructor() {
     this.sessions = [];
     this.readinessState = {
@@ -20,10 +20,10 @@ class SessionManager {
         os: {
           arch: os.arch(),
           name: os.platform(),
-          version: os.release()
+          version: os.release(),
         },
-        ready: true
-      }
+        ready: true,
+      },
     };
   }
 
@@ -45,13 +45,14 @@ class SessionManager {
           setWindowRect: false,
           pageLoadStrategy: session.pageLoadStrategy,
           'plm:plumaOptions': {
-            runScripts: session.browser.browserConfig.runScripts
+            runScripts: session.browser.browserConfig.runScripts,
           },
-          unhandledPromtBehaviour: session.browser.browserConfig.unhandledPromptBehaviour,
+          unhandledPromptBehaviour:
+            session.browser.browserConfig.unhandledPromptBehaviour,
           proxy: session.proxy ? session.proxy : {},
-          timeouts: session.timeouts
-        }
-      }
+          timeouts: session.timeouts,
+        },
+      },
     };
     return sessionConfig;
   }
@@ -59,9 +60,9 @@ class SessionManager {
   /**
    * find a session from a user specified uuid
    */
-  findSession(sessionId:string) {
+  findSession(sessionId: string) {
     const foundSession = this.sessions.find(
-      session => session.id === sessionId
+      session => session.id === sessionId,
     );
     if (!foundSession) {
       throw new NotFoundError();
@@ -69,11 +70,11 @@ class SessionManager {
       return foundSession;
     }
   }
- 
+
   /**
    * deletes a session from a user specified uuid
    */
-  async deleteSession(currentSession:Session, request:Pluma.Request) {
+  async deleteSession(currentSession: Session, request: Pluma.Request) {
     const index = this.sessions
       .map(session => session.id)
       .indexOf(currentSession.id);
