@@ -173,10 +173,11 @@ class Session {
               break;
             case COMMANDS.EXECUTE_SCRIPT:
               if (!this.browser.dom.window) throw new NoSuchWindow();
-              response = await this.executeScript(
+              const value: unknown = await this.executeScript(
                 parameters.script,
                 parameters.args,
               );
+              response = { value };
               break;
             case COMMANDS.ELEMENT_SEND_KEYS:
               await this.sendKeysToElement(
