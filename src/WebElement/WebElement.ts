@@ -304,7 +304,7 @@ class WebElement {
    * @returns {boolean}
    */
   public static isDisplayed(element: HTMLElement): boolean {
-    if (element.localName === 'body') {
+    if (element.localName === 'html' || element.localName === 'body') {
       return true;
     }
 
