@@ -299,11 +299,11 @@ class WebElement {
   }
 
   /**
-   * determines whether or not an element would be visible to a user
+   * returns whether or not the element is displayed on the page
    * based on: https://www.w3.org/TR/webdriver1/#element-displayedness
    * @returns {boolean}
    */
-  private isVisibleToUser(element: HTMLElement): boolean {
+  public static isDisplayed(element: HTMLElement): boolean {
     if (element.localName === 'body') {
       return true;
     }
@@ -335,19 +335,11 @@ class WebElement {
       return false;
     }
 
-    if (!this.isVisibleToUser(element.parentElement)) {
+    if (!WebElement.isDisplayed(element.parentElement)) {
       return false;
     }
 
     return true;
-  }
-
-  /**
-   * returns whether or not the element is displayed on the page
-   * @returns {boolean}
-   */
-  public isDisplayed(): boolean {
-    return this.isVisibleToUser(this.element);
   }
 }
 
