@@ -318,11 +318,17 @@ class WebElement {
       return false;
     }
 
-    const computedStyle = getComputedStyle(element);
+    const {
+      visibility,
+      opacity,
+      display,
+    }: CSSStyleDeclaration = getComputedStyle(element);
 
     if (
-      computedStyle.visibility === 'hidden' ||
-      computedStyle.visibility === 'collapsed'
+      visibility === 'hidden' ||
+      visibility === 'collapsed' ||
+      display === 'none' ||
+      Number(opacity) === 0
     ) {
       return false;
     }
