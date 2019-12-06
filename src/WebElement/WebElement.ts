@@ -299,13 +299,11 @@ class WebElement {
   }
 
   /**
-   * returns whether or not the element is displayed on the page
-   * https://www.w3.org/TR/webdriver1/#element-displayedness
+   * determines whether or not an element would be visible to a user
+   * based on: https://www.w3.org/TR/webdriver1/#element-displayedness
    * @returns {boolean}
    */
-  public isDisplayed(): boolean {
-    const { element } = this;
-
+  private isVisibleToUser(element: HTMLElement): boolean {
     if (element.localName === 'body') {
       return true;
     }
@@ -314,9 +312,13 @@ class WebElement {
       return false;
     }
 
-    if (isInputElement(element) && element.type == 'hidden') {
+    if (isInputElement(element) && element.type === 'hidden') {
       return false;
     }
+
+    // TODO: option and optgroup check
+
+    // TODO: imageMap check
 
     const {
       visibility,
@@ -332,6 +334,20 @@ class WebElement {
     ) {
       return false;
     }
+
+    if (!this.isVisibleToUser(element.parentElement)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * returns whether or not the element is displayed on the page
+   * @returns {boolean}
+   */
+  public isDisplayed(): boolean {
+    return this.isVisibleToUser(this.element);
   }
 }
 
