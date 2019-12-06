@@ -11,7 +11,7 @@ import {
 
 // TODO: find a more efficient way to import this
 import { JSDOM } from 'jsdom';
-const { MouseEvent } = new JSDOM().window;
+const { MouseEvent, getComputedStyle } = new JSDOM().window;
 
 class WebElement {
   readonly element: HTMLElement;
@@ -296,6 +296,36 @@ class WebElement {
     }
 
     return true;
+  }
+
+  /**
+   * returns whether or not the element is displayed on the page
+   * https://www.w3.org/TR/webdriver1/#element-displayedness
+   * @returns {boolean}
+   */
+  public isDisplayed(): boolean {
+    const { element } = this;
+
+    if (element.localName === 'body') {
+      return true;
+    }
+
+    if (element.localName === 'noscript') {
+      return false;
+    }
+
+    if (isInputElement(element) && element.type == 'hidden') {
+      return false;
+    }
+
+    const computedStyle = getComputedStyle(element);
+
+    if (
+      computedStyle.visibility === 'hidden' ||
+      computedStyle.visibility === 'collapsed'
+    ) {
+      return false;
+    }
   }
 }
 
