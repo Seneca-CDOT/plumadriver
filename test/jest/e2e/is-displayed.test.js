@@ -32,6 +32,7 @@ describe('Execute Script Sync', () => {
             <div id="collapsed" class="collapsed"></div>
             <div id="no-display" style="display: none;"></div>
             <div id="transparent" style="opacity: 0;"></div>
+            <div style="display: none;"><div id="ancestor-none"></div></div>
             <div id="visible"></div>
             <input type="hidden" />
             <input type="text" />
