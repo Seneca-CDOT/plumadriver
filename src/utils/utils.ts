@@ -2,7 +2,6 @@ import { Pluma } from '../Types/types';
 import * as PlumaError from '../Error/errors';
 import * as fs from 'fs';
 import { isDisplayedAtom } from '../constants/isdisplayed-atom';
-import { ELEMENT } from '../constants/constants';
 
 // credit where it's due: https://stackoverflow.com/questions/36836011/checking-validity-of-string-literal-union-type-at-runtime/43621735
 export const StringUnion = <UnionType extends string>(
@@ -115,7 +114,7 @@ export const handleSeleniumIsDisplayedRequest = (req, _res, next) => {
     req.body.script.replace(/(\n| )/g, '') ===
     isDisplayedAtom.replace(/(\n| )/g, '')
   ) {
-    req.url = `/session/${req.params.sessionId}/element/${req.body.args[ELEMENT]}/displayed`;
+    req.url = `/session/${req.params.sessionId}/element/${req.body.args['element-6066-11e4-a52e-4f735466cecf']}/displayed`;
     next('route');
   } else {
     next();
