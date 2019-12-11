@@ -349,7 +349,7 @@ class WebElement {
 
     if (
       visibility === 'hidden' ||
-      visibility === 'collapsed' ||
+      visibility === 'collapse' ||
       display === 'none'
     ) {
       return false;
