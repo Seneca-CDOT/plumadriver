@@ -303,7 +303,10 @@ class WebElement {
    * based on: https://www.w3.org/TR/webdriver1/#element-displayedness
    * @returns {boolean}
    */
-  public static isDisplayed(element: HTMLElement): boolean {
+  public static isDisplayed(
+    element: HTMLElement,
+    ignoreOpacity = false,
+  ): boolean {
     if (element.localName === 'html' || element.localName === 'body') {
       return true;
     }
@@ -312,13 +315,24 @@ class WebElement {
       return false;
     }
 
+    if (
+      (element.localName === 'option' || element.localName === 'optgroup') &&
+      element.parentElement.localName === 'select'
+    ) {
+      return WebElement.isDisplayed(element.parentElement, true);
+    }
+
     if (isInputElement(element) && element.type === 'hidden') {
       return false;
     }
 
-    // TODO: option and optgroup check
-
-    // TODO: imageMap check
+    if (element.localName === 'map') {
+      const { name, ownerDocument } = element as HTMLMapElement;
+      const imageUsingMap: HTMLElement = ownerDocument.querySelector(
+        `img[usemap=${name}`,
+      );
+      if (imageUsingMap) return WebElement.isDisplayed(imageUsingMap);
+    }
 
     const {
       visibility,
@@ -326,11 +340,14 @@ class WebElement {
       display,
     }: CSSStyleDeclaration = getComputedStyle(element);
 
+    if (!ignoreOpacity && Number(opacity) === 0) {
+      return false;
+    }
+
     if (
       visibility === 'hidden' ||
       visibility === 'collapsed' ||
-      display === 'none' ||
-      Number(opacity) === 0
+      display === 'none'
     ) {
       return false;
     }
