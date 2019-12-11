@@ -116,8 +116,10 @@ export const handleSeleniumIsDisplayedRequest = (req, _res, next) => {
     isDisplayedAtom.replace(/(\n| )/g, '')
   ) {
     req.url = `/session/${req.params.sessionId}/element/${req.body.args[ELEMENT]}/displayed`;
+    next('route');
+  } else {
+    next();
   }
-  next();
 };
 
 export const isInputElement = (
