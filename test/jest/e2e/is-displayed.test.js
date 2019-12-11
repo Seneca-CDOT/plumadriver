@@ -27,7 +27,7 @@ describe('Is Displayed', () => {
               }
             </style>
           </head>
-          <body>
+          <body style="visibility: hidden;">
             <div id="invisible" style="visibility: hidden;"></div>
             <div id="collapsed" class="collapsed"></div>
             <div id="no-display" style="display: none;"></div>
@@ -40,7 +40,7 @@ describe('Is Displayed', () => {
               <option value="foo" style="visibility: none;"></option>
             </select>
             <noscript></noscript>
-            <img usemap="#map" />
+            <img usemap="map" />
             <map name="map" style="visibility: none;"></map>
           </body>
         </html>`,
@@ -72,7 +72,22 @@ describe('Is Displayed', () => {
     return value;
   };
 
-  it('returns false on hidden and collapsed elements', async () => {
+  it('returns false on elements that are not displayed', async () => {
     expect(await isDisplayed('#invisible')).toBe(false);
+    expect(await isDisplayed('#collapsed')).toBe(false);
+    expect(await isDisplayed('#no-display')).toBe(false);
+    expect(await isDisplayed('#transparent')).toBe(false);
+    expect(await isDisplayed('#ancestor-none')).toBe(false);
+    expect(await isDisplayed('input[type="hidden"]')).toBe(false);
+    expect(await isDisplayed('noscript')).toBe(false);
+  });
+
+  it('returns true on displayed elements', async () => {
+    expect(await isDisplayed('#visible')).toBe(true);
+    expect(await isDisplayed('map')).toBe(true);
+    expect(await isDisplayed('option')).toBe(true);
+    expect(await isDisplayed('body')).toBe(true);
+    expect(await isDisplayed('select')).toBe(true);
+    expect(await isDisplayed('input[type="text"]')).toBe(true);
   });
 });
