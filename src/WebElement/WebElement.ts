@@ -307,30 +307,33 @@ class WebElement {
     element: HTMLElement,
     ignoreOpacity = false,
   ): boolean {
-    if (element.localName === 'html' || element.localName === 'body') {
+    const { localName, parentElement } = element;
+
+    if (localName === 'html' || localName === 'body') {
       return true;
     }
 
-    if (element.localName === 'noscript') {
+    if (localName === 'noscript') {
       return false;
     }
 
     if (
-      (element.localName === 'option' || element.localName === 'optgroup') &&
+      (localName === 'option' || localName === 'optgroup') &&
       element.parentElement.localName === 'select'
     ) {
-      return WebElement.isDisplayed(element.parentElement, true);
+      return WebElement.isDisplayed(parentElement, true);
     }
 
     if (isInputElement(element) && element.type === 'hidden') {
       return false;
     }
 
-    if (element.localName === 'map') {
+    if (localName === 'map') {
       const { name, ownerDocument } = element as HTMLMapElement;
       const imageUsingMap: HTMLElement = ownerDocument.querySelector(
         `img[usemap=${name}`,
       );
+
       if (imageUsingMap) return WebElement.isDisplayed(imageUsingMap);
     }
 
@@ -352,7 +355,7 @@ class WebElement {
       return false;
     }
 
-    if (!WebElement.isDisplayed(element.parentElement)) {
+    if (!WebElement.isDisplayed(parentElement)) {
       return false;
     }
 
