@@ -65,8 +65,9 @@ describe('Is Displayed', () => {
 
     const {
       body: { value },
-    } = await request(app)
-      .post(`/session/${sessionId}/element/${elementId}/displayed`)
+    } = await request(app).get(
+      `/session/${sessionId}/element/${elementId}/displayed`,
+    );
 
     return value;
   };
