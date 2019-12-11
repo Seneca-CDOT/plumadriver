@@ -207,7 +207,7 @@ class Session {
               const { element }: WebElement = this.browser.getKnownElement(
                 urlVariables.elementId,
               );
-              response = WebElement.isDisplayed(element);
+              response = { value: WebElement.isDisplayed(element) };
               break;
             default:
               break;
