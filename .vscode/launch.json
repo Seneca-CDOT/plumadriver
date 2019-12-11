@@ -22,13 +22,14 @@
       ]
     },
     {
-      "name": "Debug Jest Tests in Linux",
+      "name": "Debug Jest File in Linux",
       "type": "node",
       "request": "launch",
       "runtimeArgs": [
         "--inspect-brk",
         "${workspaceRoot}/node_modules/.bin/jest",
-        "--runInBand"
+        "--runInBand",
+        "${file}"
       ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
@@ -39,13 +40,14 @@
       ]
     },
     {
-      "name": "Debug Jest Tests in Windows",
+      "name": "Debug Jest File in Windows",
       "type": "node",
       "request": "launch",
       "runtimeArgs": [
         "--inspect-brk",
         "${workspaceRoot}/node_modules/jest/bin/jest.js",
-        "--runInBand"
+        "--runInBand",
+        "${file}"
       ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
