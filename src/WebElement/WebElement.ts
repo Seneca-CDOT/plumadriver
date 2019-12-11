@@ -331,7 +331,7 @@ class WebElement {
     if (localName === 'map') {
       const { name, ownerDocument } = element as HTMLMapElement;
       const imageUsingMap: HTMLElement = ownerDocument.querySelector(
-        `img[usemap=${name}`,
+        `img[usemap=${name}]`,
       );
 
       if (imageUsingMap) return WebElement.isDisplayed(imageUsingMap);
