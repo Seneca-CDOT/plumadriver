@@ -343,7 +343,7 @@ class WebElement {
       display,
     }: CSSStyleDeclaration = getComputedStyle(element);
 
-    if (!ignoreOpacity && Number(opacity) === 0) {
+    if (!ignoreOpacity && parseFloat(opacity) === 0) {
       return false;
     }
 
