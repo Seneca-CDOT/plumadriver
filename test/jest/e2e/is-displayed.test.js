@@ -5,7 +5,7 @@ const { app } = require('../../../build/app');
 const { createSession } = require('./helpers');
 const { ELEMENT } = require('../../../build/constants/constants');
 
-describe('Execute Script Sync', () => {
+describe('Is Displayed', () => {
   let sessionId;
 
   beforeAll(async () => {
@@ -67,7 +67,6 @@ describe('Execute Script Sync', () => {
       body: { value },
     } = await request(app)
       .post(`/session/${sessionId}/element/${elementId}/displayed`)
-      .send({ script, args });
 
     return value;
   };
