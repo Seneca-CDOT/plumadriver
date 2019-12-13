@@ -4,6 +4,7 @@ const nock = require('nock');
 const { app } = require('../../../build/app');
 const { createSession } = require('./helpers');
 const { ELEMENT } = require('../../../build/constants/constants');
+const isDisplayedAtom = require('../../../build/utils/isdisplayed-atom.json');
 
 describe('Is Displayed', () => {
   let sessionId;
@@ -54,7 +55,7 @@ describe('Is Displayed', () => {
       });
   });
 
-  const isDisplayed = async selector => {
+  const getElementId = async selector => {
     const {
       body: {
         value: { [ELEMENT]: elementId },
@@ -63,11 +64,26 @@ describe('Is Displayed', () => {
       .post(`/session/${sessionId}/element`)
       .send({ using: 'css selector', value: selector });
 
+    return elementId;
+  };
+
+  const isDisplayed = async selector => {
+    const elementId = await getElementId(selector);
     const {
       body: { value },
     } = await request(app).get(
       `/session/${sessionId}/element/${elementId}/displayed`,
     );
+
+    return value;
+  };
+
+  const seleniumIsDisplayedRequest = async elementId => {
+    const {
+      body: { value },
+    } = await request(app)
+      .post(`/session/${sessionId}/execute/sync`)
+      .send({ script: isDisplayedAtom, args: [{ [ELEMENT]: elementId }] });
 
     return value;
   };
@@ -89,5 +105,13 @@ describe('Is Displayed', () => {
     expect(await isDisplayed('body')).toBe(true);
     expect(await isDisplayed('select')).toBe(true);
     expect(await isDisplayed('input[type="text"]')).toBe(true);
+  });
+
+  it('forwards Selenium request from Execute Script to isDisplayed', async () => {
+    const visibleElementId = await getElementId('#visible');
+    const invisibleElementId = await getElementId('#invisible');
+
+    expect(await seleniumIsDisplayedRequest(visibleElementId)).toBe(true);
+    expect(await seleniumIsDisplayedRequest(invisibleElementId)).toBe(false);
   });
 });
