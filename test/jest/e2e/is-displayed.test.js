@@ -28,7 +28,7 @@ describe('Is Displayed', () => {
               }
             </style>
           </head>
-          <body style="visibility: hidden;">
+          <body>
             <div id="invisible" style="visibility: hidden;"></div>
             <div id="collapsed" class="collapsed"></div>
             <div id="no-display" style="display: none;"></div>
