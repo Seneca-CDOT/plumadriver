@@ -155,11 +155,20 @@ describe('Execute Script Sync', () => {
   });
 
   it('handles global functions', async () => {
-    expect(await executeScript('return getInputValue()')).toBe(
-      'baz',
+    expect(await executeScript('return getInputValue()')).toBe('baz');
+    expect(await executeScript('return getParagraphElement();')).toHaveProperty(
+      [ELEMENT],
+      expect.any(String),
     );
+  });
+
+  it('handles NodeList and HTMLCollection', async () => {
     expect(
-      await executeScript('return getParagraphElement();'),
-    ).toHaveProperty([ELEMENT], expect.any(String));
+      await executeScript('return document.querySelectorAll("input")'),
+    ).toStrictEqual([{ [ELEMENT]: expect.any(String) }]);
+
+    expect(
+      await executeScript('return document.getElementsByTagName("body")'),
+    ).toStrictEqual([{ [ELEMENT]: expect.any(String) }]);
   });
 });
