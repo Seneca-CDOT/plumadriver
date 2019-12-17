@@ -1,6 +1,7 @@
 import { Pluma } from '../Types/types';
 import * as PlumaError from '../Error/errors';
 import * as fs from 'fs';
+import * as isDisplayedAtom from './isdisplayed-atom.json';
 
 // credit where it's due: https://stackoverflow.com/questions/36836011/checking-validity-of-string-literal-union-type-at-runtime/43621735
 export const StringUnion = <UnionType extends string>(
@@ -106,6 +107,24 @@ export const endpoint = {
       res.send(response);
     }
   },
+};
+
+/**
+ * Selenium uses the Execute Script Sync endpoint to check for isDisplayed.
+ * This detects that request and forwards it to the appropriate W3C recommended endpoint.
+ */
+export const handleSeleniumIsDisplayedRequest = (req, _res, next) => {
+  if (req.body.script === isDisplayedAtom) {
+    const [
+      { ['element-6066-11e4-a52e-4f735466cecf']: elementId },
+    ] = req.body.args;
+
+    req.url = `/session/${req.params.sessionId}/element/${elementId}/displayed`;
+    req.method = 'GET';
+    next('route');
+  } else {
+    next();
+  }
 };
 
 export const isInputElement = (

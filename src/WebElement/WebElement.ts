@@ -11,7 +11,7 @@ import {
 
 // TODO: find a more efficient way to import this
 import { JSDOM } from 'jsdom';
-const { MouseEvent } = new JSDOM().window;
+const { MouseEvent, getComputedStyle } = new JSDOM().window;
 
 class WebElement {
   readonly element: HTMLElement;
@@ -293,6 +293,70 @@ class WebElement {
 
     if (['button', 'input', 'select', 'textarea'].includes(localName)) {
       return !(this.element as HTMLFormElement).disabled;
+    }
+
+    return true;
+  }
+
+  /**
+   * returns whether or not the element is displayed on the page
+   * based on: https://www.w3.org/TR/webdriver1/#element-displayedness
+   * @returns {boolean}
+   */
+  public static isDisplayed(
+    element: HTMLElement,
+    ignoreOpacity = false,
+  ): boolean {
+    const { localName, parentElement } = element;
+
+    if (localName === 'html' || localName === 'body') {
+      return true;
+    }
+
+    if (localName === 'noscript') {
+      return false;
+    }
+
+    if (
+      (localName === 'option' || localName === 'optgroup') &&
+      element.parentElement.localName === 'select'
+    ) {
+      return WebElement.isDisplayed(parentElement, true);
+    }
+
+    if (isInputElement(element) && element.type === 'hidden') {
+      return false;
+    }
+
+    if (localName === 'map') {
+      const { name, ownerDocument } = element as HTMLMapElement;
+      const imageUsingMap: HTMLElement = ownerDocument.querySelector(
+        `img[usemap='#${name}']`,
+      );
+
+      if (imageUsingMap) return WebElement.isDisplayed(imageUsingMap);
+    }
+
+    const {
+      visibility,
+      opacity,
+      display,
+    }: CSSStyleDeclaration = getComputedStyle(element);
+
+    if (!ignoreOpacity && parseFloat(opacity) === 0) {
+      return false;
+    }
+
+    if (
+      visibility === 'hidden' ||
+      visibility === 'collapse' ||
+      display === 'none'
+    ) {
+      return false;
+    }
+
+    if (!WebElement.isDisplayed(parentElement)) {
+      return false;
     }
 
     return true;

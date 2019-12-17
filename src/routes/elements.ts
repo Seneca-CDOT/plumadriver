@@ -55,7 +55,6 @@ element.get('/attribute/:name', (req, res, next) => {
   );
 });
 
-// click element
 element.post(
   '/click',
   sessionEndpointExceptionHandler(
@@ -64,7 +63,6 @@ element.post(
   ),
 );
 
-// clear element
 element.post(
   '/clear',
   sessionEndpointExceptionHandler(
@@ -78,6 +76,14 @@ element.get(
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
     COMMANDS.ELEMENT_ENABLED,
+  ),
+);
+
+element.get(
+  '/displayed',
+  sessionEndpointExceptionHandler(
+    defaultSessionEndpointLogic,
+    COMMANDS.ELEMENT_IS_DISPLAYED,
   ),
 );
 

@@ -7,7 +7,10 @@ import cookies from './cookies';
 import { Pluma } from '../Types/types';
 import * as Utils from '../utils/utils';
 
-const {sessionEndpointExceptionHandler, defaultSessionEndpointLogic} = Utils.endpoint;
+const {
+  sessionEndpointExceptionHandler,
+  defaultSessionEndpointLogic,
+} = Utils.endpoint;
 
 // pluma commands
 import { COMMANDS } from '../constants/constants';
@@ -30,8 +33,6 @@ router.use('/session/:sessionId', (req, res, next) => {
   next();
 });
 
-
-
 // New session
 router.post('/session', async (req, res, next) => {
   const sessionManager = req.app.get('sessionManager');
@@ -46,7 +47,6 @@ router.post('/session', async (req, res, next) => {
     next(error);
   }
 });
-
 
 router.delete('/session/:sessionId', async (req, res, next) => {
   const sessionManager = req.app.get('sessionManager');
@@ -63,12 +63,39 @@ router.delete('/session/:sessionId', async (req, res, next) => {
   }
 });
 
-router.get('/session/:sessionId/title', sessionEndpointExceptionHandler(defaultSessionEndpointLogic, COMMANDS.GET_TITLE));
-router.post('/session/:sessionId/execute/sync', sessionEndpointExceptionHandler(defaultSessionEndpointLogic, COMMANDS.EXECUTE_SCRIPT));
+router.get(
+  '/session/:sessionId/title',
+  sessionEndpointExceptionHandler(
+    defaultSessionEndpointLogic,
+    COMMANDS.GET_TITLE,
+  ),
+);
+
+router.post(
+  '/session/:sessionId/execute/sync',
+  Utils.handleSeleniumIsDisplayedRequest,
+  sessionEndpointExceptionHandler(
+    defaultSessionEndpointLogic,
+    COMMANDS.EXECUTE_SCRIPT,
+  ),
+);
 
 // element(s) routes
-router.post('/session/:sessionId/element', sessionEndpointExceptionHandler(defaultSessionEndpointLogic, COMMANDS.FIND_ELEMENT));
-router.post('/session/:sessionId/elements', sessionEndpointExceptionHandler(defaultSessionEndpointLogic, COMMANDS.FIND_ELEMENTS));
+router.post(
+  '/session/:sessionId/element',
+  sessionEndpointExceptionHandler(
+    defaultSessionEndpointLogic,
+    COMMANDS.FIND_ELEMENT,
+  ),
+);
+
+router.post(
+  '/session/:sessionId/elements',
+  sessionEndpointExceptionHandler(
+    defaultSessionEndpointLogic,
+    COMMANDS.FIND_ELEMENTS,
+  ),
+);
 
 // timeout routes
 router.use('/session/:sessionId/timeouts', timeouts);
@@ -78,6 +105,7 @@ router.use('/session/:sessionId/url', navigate);
 
 // cookies routes
 router.use('/session/:sessionId/cookie', cookies);
+
 router.use(
   '/session/:sessionId/element/:elementId',
   (req, res, next) => {

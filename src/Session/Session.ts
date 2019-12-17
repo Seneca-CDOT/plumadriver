@@ -202,6 +202,13 @@ class Session {
                 .isEnabled();
               response = { value: isEnabled };
               break;
+            case COMMANDS.ELEMENT_IS_DISPLAYED:
+              if (!this.browser.dom.window) throw new NoSuchWindow();
+              const { element }: WebElement = this.browser.getKnownElement(
+                urlVariables.elementId,
+              );
+              response = { value: WebElement.isDisplayed(element) };
+              break;
             default:
               break;
           }
