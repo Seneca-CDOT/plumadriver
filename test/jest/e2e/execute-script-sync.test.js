@@ -19,6 +19,7 @@ describe('Execute Script Sync', () => {
         </head>
         <body>
           <input type="text" value='baz' />
+          <input type="password" />
           <p id="foo">bar</p>
           <button onclick="clickAction(this)">
             not clicked
@@ -29,8 +30,8 @@ describe('Execute Script Sync', () => {
             }
           </script>
           <script>
-            function getInputValue() {
-              return document.querySelector('input').value;
+            function getTextInputValue() {
+              return document.querySelector('input[type="text"]').value;
             }
 
             function getParagraphElement() {
@@ -155,11 +156,23 @@ describe('Execute Script Sync', () => {
   });
 
   it('handles global functions', async () => {
-    expect(await executeScript('return getInputValue()')).toBe(
-      'baz',
+    expect(await executeScript('return getTextInputValue()')).toBe('baz');
+    expect(await executeScript('return getParagraphElement();')).toHaveProperty(
+      [ELEMENT],
+      expect.any(String),
     );
+  });
+
+  it('handles NodeList and HTMLCollection', async () => {
     expect(
-      await executeScript('return getParagraphElement();'),
-    ).toHaveProperty([ELEMENT], expect.any(String));
+      await executeScript('return document.querySelectorAll("input")'),
+    ).toStrictEqual([
+      { [ELEMENT]: expect.any(String) },
+      { [ELEMENT]: expect.any(String) },
+    ]);
+
+    expect(
+      await executeScript('return document.getElementsByTagName("body")'),
+    ).toStrictEqual([{ [ELEMENT]: expect.any(String) }]);
   });
 });
