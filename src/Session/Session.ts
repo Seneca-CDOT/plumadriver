@@ -712,6 +712,15 @@ class Session {
       this.handleSyncScriptError(error);
     }
 
+    const { NodeList, HTMLCollection } = window;
+
+    if (
+      vmReturnValue instanceof NodeList ||
+      vmReturnValue instanceof HTMLCollection
+    ) {
+      vmReturnValue = Array.from(vmReturnValue);
+    }
+
     if (Array.isArray(vmReturnValue)) {
       return vmReturnValue.map(value =>
         value instanceof HTMLElement
