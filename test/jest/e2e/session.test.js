@@ -106,4 +106,34 @@ describe('Session', () => {
 
     expect(error).toBe('session not created');
   });
+
+  it('throws invalid session id when accessing a deleted session', async () => {
+    const {
+      value: { sessionId },
+    } = await createSession({
+      capabilities: {
+        alwaysMatch: {
+          'plm:plumaOptions': {
+            runScripts: true,
+          },
+        },
+      },
+    });
+
+    expect(
+      await request(app)
+        .delete(`/session/${sessionId}`)
+        .expect('Content-Type', /json/)
+        .expect(200),
+    ).toStrictEqual({ value: null });
+
+    const {
+      value: { error },
+    } = await request(app)
+      .get(`/session/${sessionId}/title`)
+      .expect('Content-Type', /json/)
+      .expect(404);
+
+    expect(error).toBe('invalid session id');
+  });
 });
