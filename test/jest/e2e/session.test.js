@@ -1,13 +1,13 @@
 const request = require('supertest');
-const nock = require('nock');
-
 const { app } = require('../../../build/app');
 
 describe('Session', () => {
-  const createSession = async requestBody => {
+  const createSession = async (requestBody, expectedStatusCode = 200) => {
     const { body } = await request(app)
       .post('/session')
-      .send(requestBody);
+      .send(requestBody)
+      .expect('Content-Type', /json/)
+      .expect(expectedStatusCode);
 
     return body;
   };
@@ -33,7 +33,7 @@ describe('Session', () => {
     expect(await createSession(requestBody)).toMatchObject({
       value: {
         capabilities: {
-          acceptInsecureCerts: true,
+          acceptInsecureCerts: false,
           browserName: 'pluma',
           browserVersion: expect.any(String),
           pageLoadStrategy: 'normal',
@@ -53,5 +53,57 @@ describe('Session', () => {
     });
   });
 
-  it('finds matching capabilities', async () => {});
+  it('finds matching capabilities', async () => {
+    const requestBody = {
+      capabilities: {
+        alwaysMatch: {
+          'plm:plumaOptions': {
+            runScripts: true,
+          },
+        },
+        firstMatch: [
+          {
+            browserName: 'foo',
+          },
+          {
+            timeouts: {
+              implicit: 8000,
+            },
+          },
+          {
+            timeouts: {
+              implicit: 9000,
+            },
+          },
+        ],
+      },
+    };
+
+    expect(await createSession(requestBody)).toMatchObject({
+      value: {
+        capabilities: {
+          timeouts: {
+            implicit: 8000,
+          },
+        },
+      },
+    });
+  });
+
+  it('throws session not created on no matching capabilities', async () => {
+    const {
+      value: { error },
+    } = await createSession(
+      {
+        capabilities: {
+          alwaysMatch: {
+            browserName: 'foo',
+          },
+        },
+      },
+      500,
+    );
+
+    expect(error).toBe('session not created');
+  });
 });
