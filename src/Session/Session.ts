@@ -535,7 +535,7 @@ class Session {
   static matchCapabilities(capabilties) {
     const matchedCapabilities = {
       browserName: 'pluma',
-      browserVersion: 'v1.0',
+      browserVersion: utils.getVersion(),
       platformName: os.platform(),
       acceptInsecureCerts: false,
       setWindowRect: false,
