@@ -97,6 +97,14 @@ router.post(
   ),
 );
 
+router.get(
+  '/session/:sessionId/source',
+  sessionEndpointExceptionHandler(
+    defaultSessionEndpointLogic,
+    COMMANDS.GET_PAGE_SOURCE,
+  ),
+);
+
 // timeout routes
 router.use('/session/:sessionId/timeouts', timeouts);
 
