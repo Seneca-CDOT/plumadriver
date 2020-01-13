@@ -55,7 +55,6 @@ router.delete('/session/:sessionId', async (req, res, next) => {
     req.sessionRequest.command = COMMANDS.DELETE_SESSION;
     await sessionManager.deleteSession(req.session, req.sessionRequest);
     res.send(null);
-    if (sessionManager.sessions.length === 0) process.exit(0);
   } catch (error) {
     next(error);
   } finally {
@@ -122,5 +121,10 @@ router.use(
   },
   element,
 );
+
+router.get('/shutdown', (req, res) => {
+  res.json({ value: null });
+  process.exit(0);
+});
 
 export default router;
