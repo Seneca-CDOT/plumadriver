@@ -6,17 +6,12 @@ const { createSession } = require('./helpers');
 
 describe('Get Page Source', () => {
   it('returns the serialized DOM', async () => {
+    const testScript =
+      "<script>document.querySelector('body').appendChild(document.createElement('h1'));document.querySelector('h1').textContent='test';</script>";
+
     nock(/plumadriver\.com/)
       .get('/')
-      .reply(
-        200,
-        `<body>
-          <script>
-            document.querySelector('body').appendChild(document.createElement('h1'));
-            document.querySelector('h1').textContent = 'test';
-          </script>
-        </body>`,
-      );
+      .reply(200, `<body>${testScript}</body>`);
 
     const sessionId = await createSession(request, app);
     await request(app)
@@ -29,8 +24,8 @@ describe('Get Page Source', () => {
       body: { value },
     } = await request(app).get(`/session/${sessionId}/source`);
 
-    expect(value.replace(/ |\n/g, '')).toBe(
-      "<html><head></head><body><script>document.querySelector('body').appendChild(document.createElement('h1'));document.querySelector('h1').textContent='test';</script><h1>test</h1></body></html>",
-    );
+    const expectedValue = `<html><head></head><body>${testScript}<h1>test</h1></body></html>`;
+
+    expect(value).toBe(expectedValue);
   });
 });
