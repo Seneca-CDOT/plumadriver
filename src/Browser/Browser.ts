@@ -317,6 +317,13 @@ class Browser {
   }
 
   /**
+   * returns a string serialization of the DOM
+   */
+  getPageSource(): string {
+    return this.dom.serialize();
+  }
+
+  /**
    * terminates all scripts and timers initiated in jsdom vm
    */
   close() {

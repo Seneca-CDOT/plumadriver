@@ -209,6 +209,10 @@ class Session {
               );
               response = { value: WebElement.isDisplayed(element) };
               break;
+            case COMMANDS.GET_PAGE_SOURCE:
+              if (!this.browser.dom.window) throw new NoSuchWindow();
+              response = this.browser.getPageSource();
+              break;
             default:
               break;
           }
