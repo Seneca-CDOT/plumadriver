@@ -2,6 +2,7 @@ import * as os from 'os';
 import { Session } from '../Session/Session';
 import { NotFoundError } from '../Error/errors';
 import { Pluma } from '../Types/types';
+import { getVersion } from '../utils/utils';
 
 /**
  * manages the life and death of all Session objects
@@ -39,7 +40,7 @@ class SessionManager {
         sessionId: session.id,
         capabilities: {
           browserName: 'pluma',
-          browserVersion: 'v1.0',
+          browserVersion: getVersion(),
           platformName: os.platform(),
           acceptInsecureCerts: session.secureTLS,
           setWindowRect: false,

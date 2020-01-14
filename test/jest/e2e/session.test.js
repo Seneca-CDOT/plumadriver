@@ -35,7 +35,7 @@ describe('Session', () => {
         capabilities: {
           acceptInsecureCerts: false,
           browserName: 'pluma',
-          browserVersion: expect.any(String),
+          browserVersion: expect.stringMatching(/^v\d+(\.\d+)*$/),
           pageLoadStrategy: 'normal',
           platformName: expect.any(String),
           unhandledPromptBehaviour: 'ignore',
