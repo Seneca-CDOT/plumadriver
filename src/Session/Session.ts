@@ -690,9 +690,12 @@ class Session {
     });
 
     const { window } = this.browser.dom;
+    const scriptWithEscapedNewlines = script
+      .replace(/\r\n/g, '\\r\\n')
+      .replace(/\n/g, '\\n');
 
     const func = window
-      .eval(`(function() {${script}})`)
+      .eval(`(function() {${scriptWithEscapedNewlines}})`)
       .bind(null, ...argumentList);
 
     const vm = new VM({
