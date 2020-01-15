@@ -68,7 +68,7 @@
     "build:macos": "tsc && pkg . --target latest-mac-x64",
     "build:all": "tsc && pkg . --target latest-linux-x64,latest-win-x64,latest-mac-x64",
     "generate-docs": "./node_modules/.bin/typedoc --out docs ./src/ --options ./typedoc.json &>/dev/null",
-    "watch": "nodemon --watch src/ --exec 'npm run compile-ts && npm start' -e ts",
+    "watch": "nodemon --watch src/ --exec 'npm run compile && npm start' -e ts",
     "commit": "git cz",
     "lint": "eslint .",
     "lint:fix": "eslint --fix ."
