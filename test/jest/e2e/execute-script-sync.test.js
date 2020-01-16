@@ -175,10 +175,4 @@ describe('Execute Script Sync', () => {
       await executeScript('return document.getElementsByTagName("body")'),
     ).toStrictEqual([{ [ELEMENT]: expect.any(String) }]);
   });
-
-  it('handles returning newlines', async () => {
-    expect(await executeScript('return "\n"')).toBe('\n');
-    expect(await executeScript('return "\r\n"')).toBe('\r\n');
-    expect(await executeScript('return "\n\r\n\r\n";')).toBe('\n\r\n\r\n');
-  });
 });
