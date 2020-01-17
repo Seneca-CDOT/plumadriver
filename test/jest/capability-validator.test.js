@@ -1,16 +1,15 @@
-const chai = require('chai');
 const validator = require('validator');
 
-const {CapabilityValidator} = require('../../../build/CapabilityValidator/CapabilityValidator');
-
-const { expect } = chai;
+const {
+  CapabilityValidator,
+} = require('../../build/CapabilityValidator/CapabilityValidator');
 
 const testingData = [
   'asdfasdfasd',
   true,
   {},
   12345,
-  function () {},
+  function() {},
   false,
   'none',
   'eager',
@@ -26,8 +25,8 @@ const testingData = [
   'useable',
 ];
 
-const runTestAgainstTestData = (func) => {
-  testingData.forEach((data) => {
+const runTestAgainstTestData = func => {
+  testingData.forEach(data => {
     func(data);
   });
 };
@@ -42,11 +41,13 @@ describe('Testing CapabilityValidator class', () => {
     const capabilities = ['browserVersion', 'browserName', 'platformName'];
     let valid;
 
-    capabilities.forEach((capability) => {
+    capabilities.forEach(capability => {
       it(`${capability} should only accept string values`, () => {
-        runTestAgainstTestData((data) => {
-          if (data.constructor.name.toLowerCase() === 'string') expect(capabilityValidator.validate(data, capability)).to.be.true;
-          else expect(capabilityValidator.validate(data, capability)).to.be.false;
+        runTestAgainstTestData(data => {
+          if (data.constructor.name.toLowerCase() === 'string')
+            expect(capabilityValidator.validate(data, capability)).toBe(true);
+          else
+            expect(capabilityValidator.validate(data, capability)).toBe(false);
         });
       });
     });
@@ -54,38 +55,58 @@ describe('Testing CapabilityValidator class', () => {
 
   describe('Testing acceptInsecureCerts validation', () => {
     it('should only accept boolean values', () => {
-      runTestAgainstTestData((data) => {
-        if (data.constructor.name.toLowerCase() === 'boolean') expect(capabilityValidator.validate(data, 'acceptInsecureCerts')).to.be.true;
-        else expect(capabilityValidator.validate(data, 'acceptInsecureCerts')).to.be.false;
+      runTestAgainstTestData(data => {
+        if (data.constructor.name.toLowerCase() === 'boolean')
+          expect(
+            capabilityValidator.validate(data, 'acceptInsecureCerts'),
+          ).toBe(true);
+        else
+          expect(
+            capabilityValidator.validate(data, 'acceptInsecureCerts'),
+          ).toBe(false);
       });
     });
   });
 
   describe('Testing pageLoadStrategy validation', () => {
-    runTestAgainstTestData((data) => {
+    runTestAgainstTestData(data => {
       if (['normal', 'eager', 'none'].includes(data)) {
         it(`should accept ${data}`, () => {
-          expect(capabilityValidator.validate(data, 'pageLoadStrategy')).to.be.true;
+          expect(capabilityValidator.validate(data, 'pageLoadStrategy')).toBe(
+            true,
+          );
         });
       } else {
         it(`should reject ${data}`, () => {
-          expect(capabilityValidator.validate(data, 'pageLoadStrategy')).to.be.false;
+          expect(capabilityValidator.validate(data, 'pageLoadStrategy')).toBe(
+            false,
+          );
         });
       }
     });
   });
 
   describe('Testing unhandledPromptBehavior validation', () => {
-    runTestAgainstTestData((data) => {
+    runTestAgainstTestData(data => {
       if (
-        ['dismiss', 'accept', 'dismiss and notify', 'accept and notify', 'ignore'].includes(data)
+        [
+          'dismiss',
+          'accept',
+          'dismiss and notify',
+          'accept and notify',
+          'ignore',
+        ].includes(data)
       ) {
         it(`should accept ${data}`, () => {
-          expect(capabilityValidator.validate(data, 'unhandledPromptBehavior')).to.be.true;
+          expect(
+            capabilityValidator.validate(data, 'unhandledPromptBehavior'),
+          ).toBe(true);
         });
       } else {
         it(`should reject ${data}`, () => {
-          expect(capabilityValidator.validate(data, 'unhandledPromptBehavior')).to.be.false;
+          expect(
+            capabilityValidator.validate(data, 'unhandledPromptBehavior'),
+          ).toBe(false);
         });
       }
     });
@@ -170,17 +191,19 @@ describe('Testing CapabilityValidator class', () => {
       },
     ];
 
-    runTestAgainstTestData((data) => {
+    runTestAgainstTestData(data => {
       it(`should reject ${data}`, () => {
-        expect(capabilityValidator.validate(data, 'proxy')).to.be.false;
+        expect(capabilityValidator.validate(data, 'proxy')).toBe(false);
       });
     });
 
     let acceptReject;
-    proxyTypes.forEach((obj) => {
+    proxyTypes.forEach(obj => {
       acceptReject = obj.expectValid ? 'accept' : 'reject';
       it(`should ${acceptReject} ${obj.name}`, () => {
-        expect(capabilityValidator.validate(obj.value, 'proxy')).to.be[obj.expectValid.toString()];
+        expect(capabilityValidator.validate(obj.value, 'proxy')).toBe[
+          obj.expectValid.toString()
+        ];
       });
     });
   });
@@ -226,15 +249,18 @@ describe('Testing CapabilityValidator class', () => {
       },
     ];
 
-    timeoutsTestData.forEach((test) => {
+    timeoutsTestData.forEach(test => {
       const acceptReject = test.expectValid ? 'accept' : 'reject';
-      Object.keys(test.value).forEach((property) => {
+      Object.keys(test.value).forEach(property => {
         it(`should ${acceptReject} ${test.case}.
                     \ Property: ${property},
                     \ value: ${test.value[property].toString()},
                     \ type: ${test.value[property].constructor.name}`, () => {
-          const pass = capabilityValidator.validateTimeouts(property, test.value[property]);
-          expect(pass).to.be[test.expectValid.toString()];
+          const pass = capabilityValidator.validateTimeouts(
+            property,
+            test.value[property],
+          );
+          expect(pass).toBe[test.expectValid.toString()];
         });
       });
     });
@@ -261,9 +287,12 @@ describe('Testing CapabilityValidator class', () => {
       'resources',
     ];
 
-    options.forEach((option) => {
-      testData.forEach((data) => {
-        const valid = capabilityValidator.validate({ [option]: data }, 'plm:plumaOptions');
+    options.forEach(option => {
+      testData.forEach(data => {
+        const valid = capabilityValidator.validate(
+          { [option]: data },
+          'plm:plumaOptions',
+        );
         let expectValid = false;
         switch (option) {
           case 'url':
@@ -293,7 +322,7 @@ describe('Testing CapabilityValidator class', () => {
         const acceptReject = expectValid ? 'accept' : 'reject';
 
         it(`should ${acceptReject} ${option} with value ${data}`, () => {
-          expect(valid).to.be[expectValid.toString()];
+          expect(valid).toBe[expectValid.toString()];
         });
       });
     });
