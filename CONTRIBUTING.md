@@ -18,7 +18,7 @@ Here are some examples:
 
 ### Types
 
-These are some common _types_ you can use in your messages:
+The following _types_ can be used:
 
 - **feat**: A new feature
 - **fix**: A bug fix
@@ -29,5 +29,8 @@ These are some common _types_ you can use in your messages:
 - **test**: Adding missing tests
 - **chore**: Changes to the build process or auxiliary tools and libraries such as documentation
   generation
+- **perf**: A code change that improves performance
+- **ci**: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)
+- **revert**: Reverts a previous commit
 
 **Note:** You may use `npm run commit` to create commits interactively in the command line. You may find this easier if you have not used this type of commit formatting in the past.
