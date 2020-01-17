@@ -54,6 +54,7 @@
     ]
   },
   "scripts": {
+    "pretest": "npm run lint",
     "test": "jest",
     "test:compile": "tsc && jest",
     "start": "node ./build/index.js",
