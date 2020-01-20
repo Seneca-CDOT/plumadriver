@@ -23,7 +23,7 @@ describe('Navigation', () => {
     sessionId = await createSession(request, app);
   });
 
-  it('navigates to a page and responds with null', async () => {
+  it.skip('navigates to a page and responds with null', async () => {
     const url = 'http://plumadriver.com';
     const { body } = await request(app)
       .post(`/session/${sessionId}/url`)
@@ -54,7 +54,7 @@ describe('Navigation', () => {
     expect(error).toBe('invalid argument');
   });
 
-  it('throws error on timeout', async () => {
+  it.skip('throws error on timeout', async () => {
     const requestedTimeouts = {
       pageLoad: 0,
     };

@@ -3,7 +3,7 @@ const { app } = require('../../../build/app');
 const { createSession } = require('./helpers');
 
 describe('Timeouts', () => {
-  it('should respond with proper timeout defaults', async () => {
+  it.skip('should respond with proper timeout defaults', async () => {
     const sessionId = await createSession(request, app);
     const { body } = await request(app).get(`/session/${sessionId}/timeouts`);
 
@@ -16,7 +16,7 @@ describe('Timeouts', () => {
     });
   });
 
-  it('should set requested timeouts', async () => {
+  it.skip('should set requested timeouts', async () => {
     const sessionId = await createSession(request, app);
     const requestedTimeouts = {
       script: 0,

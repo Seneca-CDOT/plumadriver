@@ -12,7 +12,7 @@ describe('Session', () => {
     return body;
   };
 
-  it('creates a session with alwaysMatch capabilities', async () => {
+  it.skip('creates a session with alwaysMatch capabilities', async () => {
     const requestBody = {
       capabilities: {
         alwaysMatch: {
@@ -53,7 +53,7 @@ describe('Session', () => {
     });
   });
 
-  it('finds matching capabilities', async () => {
+  it.skip('finds matching capabilities', async () => {
     const requestBody = {
       capabilities: {
         alwaysMatch: {
@@ -107,7 +107,7 @@ describe('Session', () => {
     expect(error).toBe('session not created');
   });
 
-  it('throws invalid session id when accessing a deleted session', async () => {
+  it.skip('throws invalid session id when accessing a deleted session', async () => {
     const {
       value: { sessionId },
     } = await createSession({
