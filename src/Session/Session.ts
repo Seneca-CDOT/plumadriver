@@ -716,7 +716,7 @@ class Session {
       this.handleSyncScriptError(error);
     }
 
-    const { NodeList, HTMLCollection } = window;
+    const { NodeList, HTMLCollection, HTMLElement } = window;
 
     if (
       vmReturnValue instanceof NodeList ||
