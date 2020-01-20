@@ -54,8 +54,8 @@
     ]
   },
   "scripts": {
+    "pretest": "npm run lint && npm run compile",
     "test": "jest",
-    "test:compile": "tsc && jest",
     "start": "node ./build/index.js",
     "compile": "tsc",
     "build:linux": "tsc && pkg . --target latest-linux-x64",
