@@ -149,7 +149,10 @@ class Session {
               break;
             case COMMANDS.GET_NAMED_COOKIE:
               if (!this.browser.dom.window) throw new NoSuchWindow();
-              response = this.browser.getNamedCookie(urlVariables.cookieName);
+              const retrievedCookie = this.browser.getNamedCookie(
+                urlVariables.cookieName,
+              );
+              response = { value: retrievedCookie };
               break;
             case COMMANDS.DELETE_COOKIE:
               if (!this.browser.dom.window) throw new NoSuchWindow();
