@@ -134,7 +134,7 @@ describe('Cookies', () => {
     expect(error).toBe('invalid argument');
   });
 
-  it('handles .local', async () => {
+  it('handles .local top-level domains', async () => {
     nock(/foo/)
       .defaultReplyHeaders({
         'Set-Cookie': 'replyCookie=replyValue; Path=/',
@@ -203,8 +203,76 @@ describe('Cookies', () => {
     };
 
     await addCookie(requestCookie);
+    const { error } = await getNamedCookie(requestCookie.name, 404);
+    expect(error).toBe('no such cookie');
+  });
+
+  it('deletes an existing cookie by name', async () => {
+    await request(app)
+      .post(`/session/${sessionId}/url`)
+      .send({
+        url: 'http://plumadriver.com/',
+      })
+      .expect(200);
+
+    const requestCookie = {
+      name: 'delete',
+      value: 'true',
+    };
+
+    await addCookie(requestCookie);
+
+    await request(app)
+      .delete(`/session/${sessionId}/cookie/${requestCookie.name}`)
+      .expect(200);
 
     const { error } = await getNamedCookie(requestCookie.name, 404);
     expect(error).toBe('no such cookie');
+  });
+
+  it('deletes all associated cookies', async () => {
+    await request(app)
+      .post(`/session/${sessionId}/url`)
+      .send({
+        url: 'http://plumadriver.com/',
+      })
+      .expect(200);
+
+    await addCookie({
+      name: 'notAssociated',
+      value: 'true',
+      domain: '.pluma.com',
+      path: '/',
+    });
+
+    await addCookie({
+      name: 'alsoNotAssociated',
+      value: 'true',
+      domain: '.plumadriver.com',
+      path: '/plumadriver',
+    });
+
+    await addCookie({
+      name: 'associated',
+      value: 'true',
+      domain: '.plumadriver.com',
+      path: '/',
+    });
+
+    await addCookie({
+      name: 'alsoAssociated',
+      value: 'true',
+      domain: '.plumadriver.com',
+    });
+
+    // delete all cookies
+    await request(app)
+      .delete(`/session/${sessionId}/cookie`)
+      .expect(200);
+
+    // get all cookies
+    expect((await getNamedCookie('')).map(({ name }) => name)).toEqual(
+      expect.arrayContaining(['notAssociated', 'alsoNotAssociated']),
+    );
   });
 });
