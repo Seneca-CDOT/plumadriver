@@ -32,8 +32,6 @@ describe('Cookies', () => {
     } = await request(app)
       .get(`/session/${sessionId}/cookie/${name}`)
       .expect(200);
-
-    console.log(value);
     return value;
   };
 
@@ -109,33 +107,60 @@ describe('Cookies', () => {
     });
   });
 
-  it('throws InvalidArgument error on invalid fields', async () => {
+  it.each([
+    { value: 'foo' },
+    {
+      name: 'foo',
+      value: 'bar',
+      expiry: -1,
+    },
+    {
+      name: 'foo',
+      value: 'bar',
+      httpOnly: 'true',
+    },
+    {
+      name: 'foo',
+      value: 'bar',
+      secure: 'false',
+    },
+  ])('throws InvalidArgument error on invalid fields', async cookie => {
     await request(app)
       .post(`/session/${sessionId}/url`)
       .send({
         url: 'http://plumadriver.com/',
       });
 
-    await addCookie({ value: 'foo' });
+    const { error } = await addCookie(cookie, 400);
+    expect(error).toBe('invalid argument');
+  });
 
-    await addCookie({
-      name: 'foo',
-      value: 'bar',
-      expiry: -1,
-    }, 400);
+  it('handles .local', async () => {
+    nock(/foo/)
+      .defaultReplyHeaders({
+        'Set-Cookie': 'replyCookie=replyValue; Path=/',
+      })
+      .get('/')
+      .reply(200, '<html></html>');
 
-    await addCookie(
-      addCookieAndAssertError(browser, {
-        name: 'foo',
-        value: 'bar',
-        httpOnly: 'true',
-      }, 400),
-    );
+    await request(app)
+      .post(`/session/${sessionId}/url`)
+      .send({
+        url: 'http://bar.foo.local',
+      });
 
-    await addCookie({
-      name: 'foo',
-      value: 'bar',
-      secure: 'false',
-    }, 400);
+    await addCookie({ name: 'requestCookie', value: 'requestValue' });
+
+    expect(await getNamedCookie('requestCookie')).toMatchObject({
+      name: 'requestCookie',
+      value: 'requestValue',
+      domain: 'bar.foo.local',
+    });
+
+    expect(await getNamedCookie('replyCookie')).toMatchObject({
+      name: 'replyCookie',
+      value: 'replyValue',
+      domain: 'bar.foo.local',
+    });
   });
 });
