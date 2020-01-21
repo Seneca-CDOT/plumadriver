@@ -7,9 +7,9 @@ const { createSession } = require('./helpers');
 describe('Cookies', () => {
   let sessionId;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     nock(/plumadriver/)
-      .get('/')
+      .get(/.*/)
       .reply(200, '<html></html>');
 
     sessionId = await createSession(request, app);
@@ -22,16 +22,15 @@ describe('Cookies', () => {
       .post(`/session/${sessionId}/cookie`)
       .send({ cookie })
       .expect(expectedStatusCode);
-
     return value;
   };
 
-  const getNamedCookie = async name => {
+  const getNamedCookie = async (name, expectedStatusCode = 200) => {
     const {
       body: { value },
     } = await request(app)
       .get(`/session/${sessionId}/cookie/${name}`)
-      .expect(200);
+      .expect(expectedStatusCode);
     return value;
   };
 
@@ -90,7 +89,7 @@ describe('Cookies', () => {
     await request(app)
       .post(`/session/${sessionId}/url`)
       .send({
-        url: 'http://www.plumadriver.com/',
+        url: 'http://plumadriver.com/',
       });
 
     const requestCookie = {
@@ -162,5 +161,50 @@ describe('Cookies', () => {
       value: 'replyValue',
       domain: 'bar.foo.local',
     });
+  });
+
+  it('respects matching cookie paths', async () => {
+    await request(app)
+      .post(`/session/${sessionId}/url`)
+      .send({
+        url: 'http://plumadriver.com/a/b',
+      });
+
+    const requestCookie = {
+      name: 'someName',
+      value: 'someValue',
+      path: '/a',
+      domain: '.plumadriver.com',
+    };
+
+    await addCookie(requestCookie);
+
+    expect(await getNamedCookie(requestCookie.name)).toMatchObject({
+      name: requestCookie.name,
+      value: requestCookie.value,
+      domain: 'plumadriver.com',
+      path: requestCookie.path,
+    });
+  });
+
+  it('throws NoSuchCookie on mismatched path', async () => {
+    await request(app)
+      .post(`/session/${sessionId}/url`)
+      .send({
+        url: 'http://plumadriver.com/',
+      })
+      .expect(200);
+
+    const requestCookie = {
+      name: 'noCookie',
+      value: 'noValue',
+      domain: 'plumadriver.com',
+      path: '/baz',
+    };
+
+    await addCookie(requestCookie);
+
+    const { error } = await getNamedCookie(requestCookie.name, 404);
+    expect(error).toBe('no such cookie');
   });
 });
