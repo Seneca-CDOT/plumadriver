@@ -31,6 +31,24 @@ System.out.println(text);
 driver.quit();
 ```
 
+### WebDriver Options
+
+```java
+        PlumaOptions options = new PlumaOptions();
+
+        options.setAcceptInsecureCerts(false);
+        options.setRunScripts(true);
+        options.rejectPublicSuffixes(false);
+
+        PlumaDriver plumaDriver = new PlumaDriver(options);
+```
+
+The following options are available when creating a PlumaDriver instance:
+
+- `AcceptInsecureCerts`: Determines whether or not invalid SSL certificates are accepted.
+- `RunScripts`: Enables executing scripts inside the page. In most cases, you'll likely want to set this to `true`.
+- `RejectPublicSuffixes`: Determines whether or not cookies with domains like `com` and `co.uk` are rejected. See http://publicsuffix.org/ for more information.
+
 ### PlumaDriver Lifetime
 
 The PlumaDriver class will create a server instance at creation and destroy it when the `quit()` method is called. This means that for every instance of this class a separate server will be created resulting in a significant amount of resource usage. To reduce the resource consumption, the following options are available:
