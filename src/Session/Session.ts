@@ -84,147 +84,136 @@ class Session {
   }: Pluma.Request): Promise<string> {
     let response = null;
 
-    return new Promise(
-      async (resolve, reject): Promise<void> => {
-        try {
-          switch (command) {
-            case COMMANDS.DELETE_SESSION:
-              await this.browser.close();
-              break;
-            case COMMANDS.NAVIGATE_TO:
-              await this.navigateTo(parameters);
-              break;
-            case COMMANDS.GET_CURRENT_URL:
-              response = this.browser.getUrl();
-              break;
-            case COMMANDS.GET_TITLE:
-              response = this.browser.getTitle();
-              break;
-            case COMMANDS.FIND_ELEMENT:
-              response = this.elementRetrieval(
-                this.browser.dom.window.document,
-                parameters.using,
-                parameters.value,
-              )[0];
-              if (!response) throw new NoSuchElement();
-              break;
-            case COMMANDS.FIND_ELEMENTS:
-              response = this.elementRetrieval(
-                this.browser.dom.window.document,
-                parameters.using,
-                parameters.value,
-              );
-              if (response.length === 0) throw new NoSuchElement();
-              break;
-            case COMMANDS.GET_ELEMENT_TEXT:
-              response = this.browser
-                .getKnownElement(urlVariables.elementId)
-                .getText();
-              break;
-            case COMMANDS.FIND_ELEMENTS_FROM_ELEMENT:
-              response = this.elementRetrieval(
-                this.browser.getKnownElement(urlVariables.elementId).element,
-                parameters.using,
-                parameters.value,
-              );
-              if (response.length === 0) throw new NoSuchElement();
-              break;
-            case COMMANDS.FIND_ELEMENT_FROM_ELEMENT:
-              response = this.elementRetrieval(
-                this.browser.getKnownElement(urlVariables.elementId).element,
-                parameters.using,
-                parameters.value,
-              )[0];
-              if (!response) throw new NoSuchElement();
-              break;
-            case COMMANDS.SET_TIMEOUTS:
-              break;
-            case COMMANDS.GET_TIMEOUTS:
-              break;
-            case COMMANDS.GET_ALL_COOKIES:
-              response = this.browser.getCookies();
-              break;
-            case COMMANDS.ADD_COOKIE:
-              response = this.browser.addCookie(parameters.cookie);
-              break;
-            case COMMANDS.GET_NAMED_COOKIE:
-              if (!this.browser.dom.window) throw new NoSuchWindow();
-              const retrievedCookie = this.browser.getNamedCookie(
-                urlVariables.cookieName,
-              );
-              response = { value: retrievedCookie };
-              break;
-            case COMMANDS.DELETE_COOKIE:
-              if (!this.browser.dom.window) throw new NoSuchWindow();
-              await this.browser.deleteCookies(
-                new RegExp(`^${urlVariables.cookieName}$`),
-              );
-              break;
-            case COMMANDS.DELETE_ALL_COOKIES:
-              if (!this.browser.dom.window) throw new NoSuchWindow();
-              await this.browser.deleteCookies(/.*/);
-              break;
-            case COMMANDS.GET_ELEMENT_TAG_NAME:
-              response = this.browser
-                .getKnownElement(urlVariables.elementId)
-                .getTagName();
-              break;
-            case COMMANDS.GET_ELEMENT_ATTRIBUTE:
-              response = this.browser
-                .getKnownElement(urlVariables.elementId)
-                .getElementAttribute(urlVariables.attributeName);
-              break;
-            case COMMANDS.EXECUTE_SCRIPT:
-              if (!this.browser.dom.window) throw new NoSuchWindow();
-              const value: unknown = await this.executeScript(
-                parameters.script,
-                parameters.args,
-              );
-              response = { value };
-              break;
-            case COMMANDS.ELEMENT_SEND_KEYS:
-              await this.sendKeysToElement(
-                parameters.text,
-                urlVariables.elementId,
-              );
-              break;
-            case COMMANDS.ELEMENT_CLICK:
-              if (!this.browser.dom.window) throw new NoSuchWindow();
-              this.browser.getKnownElement(urlVariables.elementId).click();
-              response = { value: null };
-              break;
-            case COMMANDS.ELEMENT_CLEAR:
-              if (!this.browser.dom.window) throw new NoSuchWindow();
-              this.browser.getKnownElement(urlVariables.elementId).clear();
-              response = { value: null };
-              break;
-            case COMMANDS.ELEMENT_ENABLED:
-              if (!this.browser.dom.window) throw new NoSuchWindow();
-              const isEnabled = this.browser
-                .getKnownElement(urlVariables.elementId)
-                .isEnabled();
-              response = { value: isEnabled };
-              break;
-            case COMMANDS.ELEMENT_IS_DISPLAYED:
-              if (!this.browser.dom.window) throw new NoSuchWindow();
-              const { element }: WebElement = this.browser.getKnownElement(
-                urlVariables.elementId,
-              );
-              response = { value: WebElement.isDisplayed(element) };
-              break;
-            case COMMANDS.GET_PAGE_SOURCE:
-              if (!this.browser.dom.window) throw new NoSuchWindow();
-              response = this.browser.getPageSource();
-              break;
-            default:
-              break;
-          }
-          resolve(response);
-        } catch (err) {
-          reject(err);
-        }
-      },
-    );
+    switch (command) {
+      case COMMANDS.DELETE_SESSION:
+        await this.browser.close();
+        break;
+      case COMMANDS.NAVIGATE_TO:
+        await this.navigateTo(parameters);
+        break;
+      case COMMANDS.GET_CURRENT_URL:
+        response = this.browser.getUrl();
+        break;
+      case COMMANDS.GET_TITLE:
+        response = this.browser.getTitle();
+        break;
+      case COMMANDS.FIND_ELEMENT:
+        response = this.elementRetrieval(
+          this.browser.dom.window.document,
+          parameters.using,
+          parameters.value,
+        )[0];
+        if (!response) throw new NoSuchElement();
+        break;
+      case COMMANDS.FIND_ELEMENTS:
+        response = this.elementRetrieval(
+          this.browser.dom.window.document,
+          parameters.using,
+          parameters.value,
+        );
+        if (response.length === 0) throw new NoSuchElement();
+        break;
+      case COMMANDS.GET_ELEMENT_TEXT:
+        response = this.browser
+          .getKnownElement(urlVariables.elementId)
+          .getText();
+        break;
+      case COMMANDS.FIND_ELEMENTS_FROM_ELEMENT:
+        response = this.elementRetrieval(
+          this.browser.getKnownElement(urlVariables.elementId).element,
+          parameters.using,
+          parameters.value,
+        );
+        if (response.length === 0) throw new NoSuchElement();
+        break;
+      case COMMANDS.FIND_ELEMENT_FROM_ELEMENT:
+        response = this.elementRetrieval(
+          this.browser.getKnownElement(urlVariables.elementId).element,
+          parameters.using,
+          parameters.value,
+        )[0];
+        if (!response) throw new NoSuchElement();
+        break;
+      case COMMANDS.SET_TIMEOUTS:
+        break;
+      case COMMANDS.GET_TIMEOUTS:
+        break;
+      case COMMANDS.GET_ALL_COOKIES:
+        response = this.browser.getCookies();
+        break;
+      case COMMANDS.ADD_COOKIE:
+        response = this.browser.addCookie(parameters.cookie);
+        break;
+      case COMMANDS.GET_NAMED_COOKIE:
+        if (!this.browser.dom.window) throw new NoSuchWindow();
+        const retrievedCookie = this.browser.getNamedCookie(
+          urlVariables.cookieName,
+        );
+        response = { value: retrievedCookie };
+        break;
+      case COMMANDS.DELETE_COOKIE:
+        if (!this.browser.dom.window) throw new NoSuchWindow();
+        await this.browser.deleteCookies(
+          new RegExp(`^${urlVariables.cookieName}$`),
+        );
+        break;
+      case COMMANDS.DELETE_ALL_COOKIES:
+        if (!this.browser.dom.window) throw new NoSuchWindow();
+        await this.browser.deleteCookies(/.*/);
+        break;
+      case COMMANDS.GET_ELEMENT_TAG_NAME:
+        response = this.browser
+          .getKnownElement(urlVariables.elementId)
+          .getTagName();
+        break;
+      case COMMANDS.GET_ELEMENT_ATTRIBUTE:
+        response = this.browser
+          .getKnownElement(urlVariables.elementId)
+          .getElementAttribute(urlVariables.attributeName);
+        break;
+      case COMMANDS.EXECUTE_SCRIPT:
+        if (!this.browser.dom.window) throw new NoSuchWindow();
+        const value: unknown = await this.executeScript(
+          parameters.script,
+          parameters.args,
+        );
+        response = { value };
+        break;
+      case COMMANDS.ELEMENT_SEND_KEYS:
+        await this.sendKeysToElement(parameters.text, urlVariables.elementId);
+        break;
+      case COMMANDS.ELEMENT_CLICK:
+        if (!this.browser.dom.window) throw new NoSuchWindow();
+        this.browser.getKnownElement(urlVariables.elementId).click();
+        response = { value: null };
+        break;
+      case COMMANDS.ELEMENT_CLEAR:
+        if (!this.browser.dom.window) throw new NoSuchWindow();
+        this.browser.getKnownElement(urlVariables.elementId).clear();
+        response = { value: null };
+        break;
+      case COMMANDS.ELEMENT_ENABLED:
+        if (!this.browser.dom.window) throw new NoSuchWindow();
+        const isEnabled = this.browser
+          .getKnownElement(urlVariables.elementId)
+          .isEnabled();
+        response = { value: isEnabled };
+        break;
+      case COMMANDS.ELEMENT_IS_DISPLAYED:
+        if (!this.browser.dom.window) throw new NoSuchWindow();
+        const { element }: WebElement = this.browser.getKnownElement(
+          urlVariables.elementId,
+        );
+        response = { value: WebElement.isDisplayed(element) };
+        break;
+      case COMMANDS.GET_PAGE_SOURCE:
+        if (!this.browser.dom.window) throw new NoSuchWindow();
+        response = this.browser.getPageSource();
+        break;
+      default:
+        break;
+    }
+    return response;
   }
 
   /**
