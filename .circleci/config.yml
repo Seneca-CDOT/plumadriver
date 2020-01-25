@@ -1,6 +1,10 @@
 version: 2.1
+
+orbs:
+  win: circleci/windows@2.2.0
+
 jobs:
-  build:
+  build-linux:
     docker:
       - image: circleci/node:lts
 
@@ -8,11 +12,31 @@ jobs:
 
     steps:
       - checkout
-
       - run:
           name: Install dependencies
           command: npm install
-
       - run:
           name: Run tests
           command: npm test
+
+  build-windows:
+    executor:
+      name: win/default
+      shell: bash.exe
+    
+    working_directory: ~/plumadriver
+
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: npm install
+      - run:
+          name: Run tests
+          command: npm test
+
+workflows:
+  build:
+    jobs:
+    - build-windows
+    - build-linux
