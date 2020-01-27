@@ -2,13 +2,9 @@
 
 PlumaDriver is a Node.js implementation of the [W3C WebDriver Recommendation](https://www.w3.org/TR/webdriver1/#protocol) for the [jsdom](https://github.com/jsdom/jsdom) library. The goal of this project is to provide an automation tool for jsdom in order to test web applications without the overhead of modern web browsers.
 
-**Note:** This project is still in the development stage. You are welcome to use PlumaDriver, however, keep in mind that there are still unimplemented features and bugs to be fixed. If you would like to suggest a feature to implement or an issue that needs to be addressed, please create an issue and the team will address it as soon as possible.
-
 ## Getting Started
 
-PlumaDriver can be used with the Java language binding for [Selenium WebDriver](https://www.seleniumhq.org/projects/webdriver/) (additional language bindings will be developed in the future).
-
-Alternatively, as a RESTful API, PlumaDriver can be used with any HTTP request client (see [Using PlumaDriver Without Selenium](#using-plumadriver-without-selenium)).
+PlumaDriver can be used with the Java language binding for [Selenium WebDriver](https://www.seleniumhq.org/projects/webdriver/) (additional language bindings will be developed in the future). Alternatively, as a RESTful API, PlumaDriver can be used with any HTTP request client (see [Using PlumaDriver Without Selenium](#using-plumadriver-without-selenium)).
 
 ## Using PlumaDriver With Selenium Java
 
@@ -34,13 +30,13 @@ driver.quit();
 ### WebDriver Options
 
 ```java
-        PlumaOptions options = new PlumaOptions();
+PlumaOptions options = new PlumaOptions();
 
-        options.setAcceptInsecureCerts(false);
-        options.setRunScripts(true);
-        options.rejectPublicSuffixes(false);
+options.setAcceptInsecureCerts(false);
+options.setRunScripts(true);
+options.rejectPublicSuffixes(false);
 
-        PlumaDriver plumaDriver = new PlumaDriver(options);
+PlumaDriver plumaDriver = new PlumaDriver(options);
 ```
 
 The following options are available when creating a PlumaDriver instance:
