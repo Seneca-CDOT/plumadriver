@@ -210,6 +210,12 @@ class Session {
         if (!this.browser.dom.window) throw new NoSuchWindow();
         response = this.browser.getPageSource();
         break;
+      case COMMANDS.GET_ACTIVE_ELEMENT:
+        if (!this.browser.dom.window) throw new NoSuchWindow();
+        response = this.addElementToKnownElements(
+          this.browser.dom.window.document.activeElement,
+        );
+        break;
       default:
         break;
     }
@@ -669,6 +675,17 @@ class Session {
   }
 
   /**
+   * Adds an HTMLElement to the array of known elements
+   * @param {HTMLElement} element
+   * @returns {Object} the JSON representation of the WebElement
+   */
+  private addElementToKnownElements(element: HTMLElement) {
+    const webElement = new WebElement(element);
+    this.browser.knownElements.push(webElement);
+    return webElement.serialize();
+  }
+
+  /**
    * executes a user defined script within the context of the dom on a given set of user defined arguments
    */
   public executeScript(script: string, args: unknown[]): unknown {
@@ -694,12 +711,6 @@ class Session {
       },
     });
 
-    const createElementAndAddToKnownElements = value => {
-      const element = new WebElement(value);
-      this.browser.knownElements.push(element);
-      return element.serialize();
-    };
-
     let vmReturnValue;
 
     try {
@@ -720,11 +731,11 @@ class Session {
     if (Array.isArray(vmReturnValue)) {
       return vmReturnValue.map(value =>
         value instanceof HTMLElement
-          ? createElementAndAddToKnownElements(value)
+          ? this.addElementToKnownElements(value)
           : value,
       );
     } else if (vmReturnValue instanceof HTMLElement) {
-      return createElementAndAddToKnownElements(vmReturnValue);
+      return this.addElementToKnownElements(vmReturnValue);
     }
 
     // client will expect undefined return values to be null

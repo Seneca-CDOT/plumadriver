@@ -79,7 +79,6 @@ router.post(
   ),
 );
 
-// element(s) routes
 router.post(
   '/session/:sessionId/element',
   sessionEndpointExceptionHandler(
@@ -93,6 +92,14 @@ router.post(
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
     COMMANDS.FIND_ELEMENTS,
+  ),
+);
+
+router.get(
+  '/session/:sessionId/element/active',
+  sessionEndpointExceptionHandler(
+    defaultSessionEndpointLogic,
+    COMMANDS.GET_ACTIVE_ELEMENT,
   ),
 );
 
