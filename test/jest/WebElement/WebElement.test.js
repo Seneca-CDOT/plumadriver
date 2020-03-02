@@ -120,9 +120,9 @@ describe('Click Functionality', () => {
       document = await generateDom(PAGES.BUTTON);
     });
 
-    it('fires event sequence: mouseover, mouseenter, mousemove, mousedown, mouseup, click', () => {
+    it('fires event sequence: mouseover, mouseenter, mousemove, mousedown, focus, mouseup, click', () => {
       const EVENT_SEQUENCE =
-        'mouseover mouseenter mousemove mousedown mouseup click';
+        'mouseover mouseenter mousemove mousedown focus mouseup click';
       const button = document.querySelector('#enabled');
       const eventLog = document.querySelector('#event-log');
       const webElement = new WebElement(button);
@@ -139,6 +139,13 @@ describe('Click Functionality', () => {
       webElement.click();
       expect(eventLog.textContent).toEqual('');
     });
+
+    it('makes a button the active element after click', () => {
+      const button = document.querySelector('#enabled');
+      const webElement = new WebElement(button);
+      webElement.click();
+      expect(document.activeElement.id).toBe('enabled');
+    })
   });
 });
 
