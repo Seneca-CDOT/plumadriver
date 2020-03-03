@@ -107,7 +107,7 @@ class WebElement {
    * clicks an <option> element as outlined in the W3C specification.
    * @returns {string}
    */
-  optionElementClick(): void {
+  private optionElementClick(): void {
     const parentNode: HTMLElement = this.getContainer();
     const element = this.element as HTMLOptionElement;
 
@@ -143,7 +143,7 @@ class WebElement {
    * clicks the WebElement's HTML element.
    * @returns {string}
    */
-  click(): void {
+  public click(): void {
     const { element } = this;
     const isOptionElement = ({ tagName }: HTMLElement): boolean =>
       tagName.toLowerCase() === 'option';
@@ -163,9 +163,10 @@ class WebElement {
         'mouseenter',
         'mousemove',
         'mousedown',
-        'mouseup',
-        'click',
       ]);
+
+      element.focus();
+      this.dispatchMouseEvents(element, ['mouseup', 'click']);
     }
   }
 
@@ -173,10 +174,15 @@ class WebElement {
    * dispatches a series of MouseEvents
    * @returns {undefined}
    */
-  dispatchMouseEvents(element: HTMLElement, events: string[]): void {
+  private dispatchMouseEvents(element: HTMLElement, events: string[]): void {
     events.forEach(event => {
       element.dispatchEvent(
-        new MouseEvent(event, { bubbles: true, cancelable: true }),
+        new MouseEvent(event, {
+          bubbles: true,
+          cancelable: true,
+          composed: true,
+          which: 1,
+        }),
       );
     });
   }
