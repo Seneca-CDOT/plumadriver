@@ -176,9 +176,13 @@ class WebElement {
    */
   private dispatchMouseEvents(element: HTMLElement, events: string[]): void {
     events.forEach(event => {
+      // prevents call stack error in jsdom when clicking label element descendants
+      const bubbles =
+        event === 'click' && this.findAncestor('label') ? false : true;
+
       element.dispatchEvent(
         new MouseEvent(event, {
-          bubbles: true,
+          bubbles,
           cancelable: true,
           composed: true,
           which: 1,
