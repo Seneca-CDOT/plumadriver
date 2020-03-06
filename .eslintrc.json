@@ -11,5 +11,13 @@
   },
   "rules": {
     "@typescript-eslint/explicit-function-return-type": "off"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["scripts/**/*.js"],
+      "rules": {
+        "@typescript-eslint/no-var-requires": "off"
+      }
+    }
+  ]
 }
