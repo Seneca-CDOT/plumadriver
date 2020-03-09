@@ -173,3 +173,4 @@ It is important to keep in mind that jsdom is not intended to be a full renderin
 - [x] **Is Displayed:** GET /session/{session id}/element/{element id}/displayed
 - [x] **Get Page Source:** GET /session/{session id}/source
 - [x] **Shutdown:** GET /shutdown
+- [x] **Get Active Element:** GET /session/{session id}/element/active
