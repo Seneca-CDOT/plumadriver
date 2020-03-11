@@ -24,9 +24,6 @@ class Browser {
   /** the jsdom object */
   dom: JSDOM;
 
-  /** the user-agent's active element */
-  activeElement: HTMLElement | null;
-
   /** the Window of the current browsing context */
   currentBrowsingContextWindow: Window;
 
@@ -97,9 +94,12 @@ class Browser {
       });
     }
 
+    const { window } = this.dom;
+
     // webdriver-active property (W3C)
-    this.dom.window.navigator.webdriver = true;
-    this.activeElement = this.dom.window.document.activeElement;
+    window.navigator.webdriver = true;
+
+    this.currentBrowsingContextWindow = window;
   }
 
   /**
@@ -149,6 +149,15 @@ class Browser {
    */
   getUrl() {
     return this.dom.window.document.URL;
+  }
+
+  /**
+   * returns the currently focused element
+   * @returns {HTMLElement}
+   */
+  getActiveElement(): HTMLElement {
+    return this.currentBrowsingContextWindow.document
+      .activeElement as HTMLElement;
   }
 
   private createCookieJarOptions(

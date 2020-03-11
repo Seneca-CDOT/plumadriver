@@ -213,7 +213,7 @@ class Session {
       case COMMANDS.GET_ACTIVE_ELEMENT:
         if (!this.browser.dom.window) throw new NoSuchWindow();
         response = this.addElementToKnownElements(
-          this.browser.dom.window.document.activeElement,
+          this.browser.getActiveElement(),
         );
         break;
       default:
@@ -243,7 +243,9 @@ class Session {
         reject(new ElementNotInteractable()); // TODO: create new error class
       }
 
-      if (this.browser.activeElement !== element) element.focus();
+      const activeElement: HTMLElement = this.browser.getActiveElement();
+
+      if (activeElement !== element) element.focus();
 
       if (element.tagName.toLowerCase() === 'input') {
         if (text.constructor.name.toLowerCase() !== 'string')
