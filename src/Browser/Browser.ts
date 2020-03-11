@@ -17,12 +17,18 @@ import { Cookie } from '../jsdom_extensions/tough-cookie/lib/cookie';
 class Browser {
   /** contains the user-defined jsdom configuration object for the session */
   browserConfig: BrowserConfig;
+
   /** the [list of known elements](https://www.w3.org/TR/webdriver1/#elements) */
   knownElements: Array<WebElement> = [];
+
   /** the jsdom object */
   dom: JSDOM;
+
   /** the user-agent's active element */
   activeElement: HTMLElement | null;
+
+  /** the Window of the current browsing context */
+  currentBrowsingContextWindow: Window;
 
   /** accepts a capabilities object with jsdom and plumadriver specific options */
   constructor(capabilities: object) {
