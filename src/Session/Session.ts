@@ -99,7 +99,7 @@ class Session {
         break;
       case COMMANDS.FIND_ELEMENT:
         response = this.elementRetrieval(
-          this.browser.dom.window.document,
+          this.browser.currentBrowsingContextWindow.document,
           parameters.using,
           parameters.value,
         )[0];
@@ -107,7 +107,7 @@ class Session {
         break;
       case COMMANDS.FIND_ELEMENTS:
         response = this.elementRetrieval(
-          this.browser.dom.window.document,
+          this.browser.currentBrowsingContextWindow.document,
           parameters.using,
           parameters.value,
         );
@@ -243,9 +243,7 @@ class Session {
         reject(new ElementNotInteractable()); // TODO: create new error class
       }
 
-      const activeElement: HTMLElement = this.browser.getActiveElement();
-
-      if (activeElement !== element) element.focus();
+      if (this.browser.getActiveElement() !== element) element.focus();
 
       if (element.tagName.toLowerCase() === 'input') {
         if (text.constructor.name.toLowerCase() !== 'string')
@@ -636,7 +634,7 @@ class Session {
             break;
           case 'xpath':
             elements = locationStrategies.XPathSelector(
-              this.browser.dom.window.document,
+              this.browser.currentBrowsingContextWindow.document,
             );
             break;
           default:
@@ -700,7 +698,9 @@ class Session {
       }
     });
 
-    const { window } = this.browser.dom;
+    // eval is missing from the Window type in typescript
+    // TODO: attempt to fix this in the future by importing @types/jsdom
+    const window = this.browser.currentBrowsingContextWindow as any;
 
     const func = window
       .eval(`(function() {${script}})`)

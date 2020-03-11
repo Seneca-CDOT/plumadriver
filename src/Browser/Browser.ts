@@ -139,16 +139,16 @@ class Browser {
    * Returns the current page title
    * @returns {String}
    */
-  getTitle() {
-    return this.dom.window.document.title;
+  getTitle(): string {
+    return this.currentBrowsingContextWindow.document.title;
   }
 
   /**
    * returns the current page url
    * @returns {String}
    */
-  getUrl() {
-    return this.dom.window.document.URL;
+  getUrl(): string {
+    return this.currentBrowsingContextWindow.document.URL;
   }
 
   /**
