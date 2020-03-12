@@ -336,14 +336,33 @@ class Browser {
   }
 
   /**
-   * @param elementId @type {string} the id of a known element in the known element list
+   * Returns true if the element is not attached to the DOM.
+   * @param element - the HTMLElement to be checked
+   * @returns {boolean}
    */
-  getKnownElement(elementId: string): WebElement {
-    let foundElement = null;
-    this.knownElements.forEach(element => {
+  isStaleElement(element: HTMLElement): boolean {
+    const {
+      document: { body },
+    } = this.currentBrowsingContextWindow;
+    return !body.contains(element);
+  }
+
+  /**
+   * Find and return an known element by id
+   * @param elementId @type {string} the id of a known element in the known element list
+   * @throws {StaleElementReference}
+   * @throws {NoSuchElement}
+   * @returns {WebElement}
+   */
+  public getKnownElement(elementId: string): WebElement {
+    let foundElement: WebElement = null;
+    this.knownElements.forEach((element: WebElement) => {
       if (element[ELEMENT] === elementId) foundElement = element;
     });
     if (!foundElement) throw new PlumaError.NoSuchElement();
+    if (this.isStaleElement(foundElement.element)) {
+      throw new PlumaError.StaleElementReference();
+    }
     return foundElement;
   }
 
