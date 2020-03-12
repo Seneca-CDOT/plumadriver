@@ -99,7 +99,7 @@ class Session {
         break;
       case COMMANDS.FIND_ELEMENT:
         response = this.elementRetrieval(
-          this.browser.currentBrowsingContextWindow.document,
+          this.browser.getCurrentBrowsingContextWindow().document,
           parameters.using,
           parameters.value,
         )[0];
@@ -107,7 +107,7 @@ class Session {
         break;
       case COMMANDS.FIND_ELEMENTS:
         response = this.elementRetrieval(
-          this.browser.currentBrowsingContextWindow.document,
+          this.browser.getCurrentBrowsingContextWindow().document,
           parameters.using,
           parameters.value,
         );
@@ -634,7 +634,7 @@ class Session {
             break;
           case 'xpath':
             elements = locationStrategies.XPathSelector(
-              this.browser.currentBrowsingContextWindow.document,
+              this.browser.getCurrentBrowsingContextWindow().document,
             );
             break;
           default:
@@ -700,7 +700,7 @@ class Session {
 
     // eval is missing from the Window type in typescript
     // TODO: attempt to fix this in the future by importing @types/jsdom
-    const window = this.browser.currentBrowsingContextWindow as any;
+    const window = this.browser.getCurrentBrowsingContextWindow() as any;
 
     const func = window
       .eval(`(function() {${script}})`)

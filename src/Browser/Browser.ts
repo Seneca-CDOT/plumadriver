@@ -25,7 +25,7 @@ class Browser {
   dom: JSDOM;
 
   /** the Window of the current browsing context */
-  currentBrowsingContextWindow: Window;
+  private currentBrowsingContextWindow: Window;
 
   /** accepts a capabilities object with jsdom and plumadriver specific options */
   constructor(capabilities: object) {
@@ -99,7 +99,7 @@ class Browser {
     // webdriver-active property (W3C)
     window.navigator.webdriver = true;
 
-    this.currentBrowsingContextWindow = window;
+    this.setCurrentBrowsingContextWindow(window);
   }
 
   /**
@@ -136,26 +136,42 @@ class Browser {
   }
 
   /**
-   * Returns the current page title
+   * Get the current page title.
    * @returns {String}
    */
-  getTitle(): string {
+  public getTitle(): string {
     return this.currentBrowsingContextWindow.document.title;
   }
 
   /**
-   * returns the current page url
+   * Get the current page url.
    * @returns {String}
    */
-  getUrl(): string {
+  public getUrl(): string {
     return this.currentBrowsingContextWindow.document.URL;
   }
 
   /**
-   * returns the currently focused element
+   * Get the Window object associated with the current browsing context.
+   * @returns {Window}
+   */
+  public getCurrentBrowsingContextWindow(): Window {
+    return this.currentBrowsingContextWindow;
+  }
+
+  /**
+   * Set the Window for the current browsing context.
+   * @param {Window} window - the Window object
+   */
+  public setCurrentBrowsingContextWindow(window: Window) {
+    this.currentBrowsingContextWindow = window;
+  }
+
+  /**
+   * Get the currently focused element.
    * @returns {HTMLElement}
    */
-  getActiveElement(): HTMLElement {
+  public getActiveElement(): HTMLElement {
     return this.currentBrowsingContextWindow.document
       .activeElement as HTMLElement;
   }
