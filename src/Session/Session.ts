@@ -99,7 +99,7 @@ class Session {
         break;
       case COMMANDS.FIND_ELEMENT:
         response = this.elementRetrieval(
-          this.browser.dom.window.document,
+          this.browser.getCurrentBrowsingContextWindow().document,
           parameters.using,
           parameters.value,
         )[0];
@@ -107,7 +107,7 @@ class Session {
         break;
       case COMMANDS.FIND_ELEMENTS:
         response = this.elementRetrieval(
-          this.browser.dom.window.document,
+          this.browser.getCurrentBrowsingContextWindow().document,
           parameters.using,
           parameters.value,
         );
@@ -213,7 +213,7 @@ class Session {
       case COMMANDS.GET_ACTIVE_ELEMENT:
         if (!this.browser.dom.window) throw new NoSuchWindow();
         response = this.addElementToKnownElements(
-          this.browser.dom.window.document.activeElement,
+          this.browser.getActiveElement(),
         );
         break;
       default:
@@ -243,7 +243,7 @@ class Session {
         reject(new ElementNotInteractable()); // TODO: create new error class
       }
 
-      if (this.browser.activeElement !== element) element.focus();
+      if (this.browser.getActiveElement() !== element) element.focus();
 
       if (element.tagName.toLowerCase() === 'input') {
         if (text.constructor.name.toLowerCase() !== 'string')
@@ -634,7 +634,7 @@ class Session {
             break;
           case 'xpath':
             elements = locationStrategies.XPathSelector(
-              this.browser.dom.window.document,
+              this.browser.getCurrentBrowsingContextWindow().document,
             );
             break;
           default:
@@ -698,7 +698,9 @@ class Session {
       }
     });
 
-    const { window } = this.browser.dom;
+    // eval is missing from the Window type in typescript
+    // TODO: attempt to fix this in the future by importing @types/jsdom
+    const window = this.browser.getCurrentBrowsingContextWindow() as any;
 
     const func = window
       .eval(`(function() {${script}})`)

@@ -17,12 +17,15 @@ import { Cookie } from '../jsdom_extensions/tough-cookie/lib/cookie';
 class Browser {
   /** contains the user-defined jsdom configuration object for the session */
   browserConfig: BrowserConfig;
+
   /** the [list of known elements](https://www.w3.org/TR/webdriver1/#elements) */
   knownElements: Array<WebElement> = [];
+
   /** the jsdom object */
   dom: JSDOM;
-  /** the user-agent's active element */
-  activeElement: HTMLElement | null;
+
+  /** the Window of the current browsing context */
+  private currentBrowsingContextWindow: Window;
 
   /** accepts a capabilities object with jsdom and plumadriver specific options */
   constructor(capabilities: object) {
@@ -91,9 +94,12 @@ class Browser {
       });
     }
 
+    const { window } = this.dom;
+
     // webdriver-active property (W3C)
-    this.dom.window.navigator.webdriver = true;
-    this.activeElement = this.dom.window.document.activeElement;
+    window.navigator.webdriver = true;
+
+    this.setCurrentBrowsingContextWindow(window);
   }
 
   /**
@@ -130,19 +136,44 @@ class Browser {
   }
 
   /**
-   * Returns the current page title
+   * Get the current page title.
    * @returns {String}
    */
-  getTitle() {
-    return this.dom.window.document.title;
+  public getTitle(): string {
+    return this.currentBrowsingContextWindow.document.title;
   }
 
   /**
-   * returns the current page url
+   * Get the current page url.
    * @returns {String}
    */
-  getUrl() {
-    return this.dom.window.document.URL;
+  public getUrl(): string {
+    return this.currentBrowsingContextWindow.document.URL;
+  }
+
+  /**
+   * Get the Window object associated with the current browsing context.
+   * @returns {Window}
+   */
+  public getCurrentBrowsingContextWindow(): Window {
+    return this.currentBrowsingContextWindow;
+  }
+
+  /**
+   * Set the Window for the current browsing context.
+   * @param {Window} window - the Window object
+   */
+  public setCurrentBrowsingContextWindow(window: Window) {
+    this.currentBrowsingContextWindow = window;
+  }
+
+  /**
+   * Get the currently focused element.
+   * @returns {HTMLElement}
+   */
+  public getActiveElement(): HTMLElement {
+    return this.currentBrowsingContextWindow.document
+      .activeElement as HTMLElement;
   }
 
   private createCookieJarOptions(
