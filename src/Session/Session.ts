@@ -576,8 +576,6 @@ class Session {
    * attempts to find a [[WebElement]] from a given startNode, selection strategy and selector
    */
   elementRetrieval(startNode, strategy, selector) {
-    // TODO: check if element is connected (shadow-root) https://dom.spec.whatwg.org/#connected
-    // check W3C endpoint spec for details
     const endTime = new Date(new Date().getTime() + this.timeouts.implicit);
     let elements;
     const result = [];

@@ -11,6 +11,7 @@ import { UnableToSetCookie } from './UnableToSetCookie';
 import { JavaScriptError } from './JavaScriptError';
 import { ScriptTimeout } from './ScriptTimeout';
 import { NoSuchCookie } from './NoSuchCookie';
+import { StaleElementReference } from './StaleElementReference';
 
 export {
   MethodNotAllowed,
@@ -26,4 +27,5 @@ export {
   JavaScriptError,
   ScriptTimeout,
   NoSuchCookie,
+  StaleElementReference,
 };
