@@ -111,6 +111,14 @@ router.get(
   ),
 );
 
+router.post(
+  '/session/:sessionId/frame',
+  sessionEndpointExceptionHandler(
+    defaultSessionEndpointLogic,
+    COMMANDS.SWITCH_TO_FRAME,
+  ),
+);
+
 // timeout routes
 router.use('/session/:sessionId/timeouts', timeouts);
 

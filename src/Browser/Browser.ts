@@ -368,8 +368,8 @@ class Browser {
       }
 
       this.currentBrowsingContextWindow = frameWindow;
-    } else if (typeof id === 'string') {
-      const { element }: WebElement = this.getKnownElement(id);
+    } else if (typeof id[ELEMENT] === 'string') {
+      const { element }: WebElement = this.getKnownElement(id[ELEMENT]);
 
       if (this.isStaleElement(element)) {
         throw new PlumaError.StaleElementReference();

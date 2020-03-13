@@ -36,7 +36,7 @@ describe('Switch to Frame', () => {
           </head>
           <body>
             <h1>Test</h1>
-            <iframe ></iframe>
+            <iframe name="foo" src="frame_a.html"></iframe>
           </body>
         </html>
         `,
@@ -50,7 +50,7 @@ describe('Switch to Frame', () => {
       });
   });
 
-  it('switches to frames', async () => {
+  it('switches to frame by name', async () => {
     const {
       body: { value },
     } = await request(app)
