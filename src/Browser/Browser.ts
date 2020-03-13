@@ -340,11 +340,23 @@ class Browser {
    * @param element - the HTMLElement to be checked
    * @returns {boolean}
    */
-  isStaleElement(element: HTMLElement): boolean {
+  public isStaleElement(element: HTMLElement): boolean {
     const {
       document: { body },
     } = this.currentBrowsingContextWindow;
     return !body.contains(element);
+  }
+
+  public switchToFrame(id: number | WebElement | null): void {
+    if (typeof id === 'number') {
+      if (id < 0 || id > Number.MAX_SAFE_INTEGER) {
+        throw new PlumaError.InvalidArgument();
+      }
+      const frame: Window = this.currentBrowsingContextWindow.frames[id];
+      if (!(frame instanceof Window)) {
+        throw new PlumaError.NoSuchFrame();
+      }
+    }
   }
 
   /**
