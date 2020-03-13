@@ -347,15 +347,43 @@ class Browser {
     return !body.contains(element);
   }
 
-  public switchToFrame(id: number | WebElement | null): void {
+  /**
+   * Switches the current browsing context to an iframe/frame's browsing context
+   * or the top-level browsing context if id is null.
+   * @param id - the id parameter argument sent to the endpoint
+   * @throws {InvalidArgument}
+   * @throws {NoSuchFrame}
+   */
+  public switchToFrame(id: number | string | null): void {
     if (typeof id === 'number') {
       if (id < 0 || id > Number.MAX_SAFE_INTEGER) {
-        throw new PlumaError.InvalidArgument();
+        throw new PlumaError.InvalidArgument(
+          'Frame id number must be greater than 0 and less than 2^16 - 1.',
+        );
       }
-      const frame: Window = this.currentBrowsingContextWindow.frames[id];
-      if (!(frame instanceof Window)) {
-        throw new PlumaError.NoSuchFrame();
+
+      const frameWindow: Window = this.currentBrowsingContextWindow.frames[id];
+      if (!frameWindow) {
+        throw new PlumaError.NoSuchFrame(`No frame found at id ${id}.`);
       }
+
+      this.currentBrowsingContextWindow = frameWindow;
+    } else if (typeof id === 'string') {
+      const { element }: WebElement = this.getKnownElement(id);
+
+      if (this.isStaleElement(element)) {
+        throw new PlumaError.StaleElementReference();
+      }
+
+      if (Utils.isIframeElement(element) || Utils.isFrameElement(element)) {
+        this.currentBrowsingContextWindow = element.contentWindow;
+      } else {
+        throw new PlumaError.NoSuchFrame('Element must be an iframe or frame.');
+      }
+    } else if (id === null) {
+      this.currentBrowsingContextWindow = this.dom.window;
+    } else {
+      throw new PlumaError.NoSuchFrame('Type of id is invalid.');
     }
   }
 
