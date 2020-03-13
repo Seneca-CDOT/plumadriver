@@ -216,6 +216,9 @@ class Session {
           this.browser.getActiveElement(),
         );
         break;
+      case COMMANDS.SWITCH_TO_FRAME:
+        this.browser.switchToFrame(parameters.id);
+        response = { value: null };
       default:
         break;
     }
