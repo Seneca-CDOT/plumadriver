@@ -19,7 +19,7 @@ describe('Switch to Frame', () => {
           <title>Test Page</title>
         </head>
         <body>
-          <h1>Frame A</h1>
+          <h1>FrameA</h1>
         </body>
       </html>
       `,
@@ -50,16 +50,28 @@ describe('Switch to Frame', () => {
       });
   });
 
-  it('switches to frame by name', async () => {
+  it('switches to frame by number', async () => {
     const {
       body: { value },
     } = await request(app)
+      .post(`/session/${sessionId}/frame`)
+      .send({
+        id: 0,
+      })
+      .expect(200);
+
+    expect(value).toBe(null);
+
+    const {
+      body: { value: headerText },
+    } = await request(app)
       .post(`/session/${sessionId}/execute/sync`)
       .send({
-        script: "return document.body.outerHTML",
+        script: 'return document.querySelector("h1").textContent',
         args: [],
-      });
+      })
+      .expect(200);
 
-    console.log(value);
+    expect(headerText).toBe('FrameA');
   });
 });
