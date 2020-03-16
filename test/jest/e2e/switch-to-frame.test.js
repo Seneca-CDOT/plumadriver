@@ -50,7 +50,7 @@ describe('Switch to Frame', () => {
       });
   });
 
-  it('switches to frame by number', async () => {
+  it.skip('switches to frame by number', async () => {
     const {
       body: { value },
     } = await request(app)
@@ -61,6 +61,36 @@ describe('Switch to Frame', () => {
       .expect(200);
 
     expect(value).toBe(null);
+
+    const {
+      body: { value: headerText },
+    } = await request(app)
+      .post(`/session/${sessionId}/execute/sync`)
+      .send({
+        script: 'return document.querySelector("h1").textContent',
+        args: [],
+      })
+      .expect(200);
+
+    expect(headerText).toBe('FrameA');
+  });
+
+  it('switches to frame by element ID', async () => {
+    const {
+      body: {
+        value: { [ELEMENT]: elementId },
+      },
+    } = await request(app)
+      .post(`/session/${sessionId}/element`)
+      .send({ using: 'xpath', value: `/html/body/iframe` })
+      .expect(200);
+
+    await request(app)
+      .post(`/session/${sessionId}/frame`)
+      .send({
+        id: { [ELEMENT]: elementId },
+      })
+      .expect(200);
 
     const {
       body: { value: headerText },
