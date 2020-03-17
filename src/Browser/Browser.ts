@@ -368,6 +368,8 @@ class Browser {
       }
 
       this.currentBrowsingContextWindow = frameWindow;
+    } else if (id === null) {
+      this.currentBrowsingContextWindow = this.dom.window;
     } else if (typeof id[ELEMENT] === 'string') {
       const { element }: WebElement = this.getKnownElement(id[ELEMENT]);
 
@@ -380,8 +382,6 @@ class Browser {
       } else {
         throw new PlumaError.NoSuchFrame('Element must be an iframe or frame.');
       }
-    } else if (id === null) {
-      this.currentBrowsingContextWindow = this.dom.window;
     } else {
       throw new PlumaError.NoSuchFrame('Type of id is invalid.');
     }

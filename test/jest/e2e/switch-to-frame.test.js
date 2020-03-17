@@ -35,7 +35,7 @@ describe('Switch to Frame', () => {
             <title>Test Page</title>
           </head>
           <body>
-            <h1>Test</h1>
+            <h1>Top</h1>
             <iframe name="foo" src="frame_a.html"></iframe>
           </body>
         </html>
@@ -50,7 +50,21 @@ describe('Switch to Frame', () => {
       });
   });
 
-  it.skip('switches to frame by number', async () => {
+  const getHeaderText = async () => {
+    const {
+      body: { value: headerText },
+    } = await request(app)
+      .post(`/session/${sessionId}/execute/sync`)
+      .send({
+        script: 'return document.querySelector("h1").textContent',
+        args: [],
+      })
+      .expect(200);
+
+    return headerText;
+  };
+
+  it('switches to frame by number and null', async () => {
     const {
       body: { value },
     } = await request(app)
@@ -62,20 +76,19 @@ describe('Switch to Frame', () => {
 
     expect(value).toBe(null);
 
-    const {
-      body: { value: headerText },
-    } = await request(app)
-      .post(`/session/${sessionId}/execute/sync`)
+    expect(await getHeaderText()).toBe('FrameA');
+
+    await request(app)
+      .post(`/session/${sessionId}/frame`)
       .send({
-        script: 'return document.querySelector("h1").textContent',
-        args: [],
+        id: null,
       })
       .expect(200);
 
-    expect(headerText).toBe('FrameA');
+    expect(await getHeaderText()).toBe('Top');
   });
 
-  it('switches to frame by element ID', async () => {
+  it('switches to frame by elementId', async () => {
     const {
       body: {
         value: { [ELEMENT]: elementId },
@@ -92,16 +105,6 @@ describe('Switch to Frame', () => {
       })
       .expect(200);
 
-    const {
-      body: { value: headerText },
-    } = await request(app)
-      .post(`/session/${sessionId}/execute/sync`)
-      .send({
-        script: 'return document.querySelector("h1").textContent',
-        args: [],
-      })
-      .expect(200);
-
-    expect(headerText).toBe('FrameA');
+    expect(await getHeaderText()).toBe('FrameA');
   });
 });
