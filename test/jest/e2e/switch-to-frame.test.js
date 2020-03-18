@@ -107,4 +107,17 @@ describe('Switch to Frame', () => {
 
     expect(await getHeaderText()).toBe('FrameA');
   });
+
+  it('throws no such frame error on nonexistent frame', async () => {
+    const {
+      body: { value },
+    } = await request(app)
+      .post(`/session/${sessionId}/frame`)
+      .send({
+        id: 1,
+      })
+      .expect(404);
+
+    expect(value.error).toBe('no such frame');
+  });
 });
