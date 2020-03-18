@@ -10,13 +10,13 @@
     "express": "^4.17.1",
     "express-winston": "^3.4.0",
     "express_logger": "0.0.4",
-    "jsdom": "^16.2.0",
+    "jsdom": "^16.2.1",
     "mime-types": "^2.1.26",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.5",
     "os": "^0.1.1",
     "pjson": "^1.0.9",
     "request": "^2.88.2",
-    "selenium-webdriver": "^4.0.0-alpha.5",
+    "selenium-webdriver": "^4.0.0-alpha.7",
     "uuid": "^3.4.0",
     "validator": "^10.11.0",
     "validator-js": "^0.2.1",
@@ -26,8 +26,8 @@
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
-    "@typescript-eslint/eslint-plugin": "^2.20.0",
-    "@typescript-eslint/parser": "^2.20.0",
+    "@typescript-eslint/eslint-plugin": "^2.24.0",
+    "@typescript-eslint/parser": "^2.24.0",
     "adm-zip": "^0.4.14",
     "commitlint": "^8.3.5",
     "cz-conventional-changelog": "^3.1.0",
@@ -41,12 +41,12 @@
     "jsdoc": "^3.6.2",
     "lint-staged": "^9.5.0",
     "nock": "^11.9.1",
-    "nodemon": "^1.19.4",
-    "pkg": "^4.4.3",
+    "nodemon": "^2.0.2",
+    "pkg": "^4.4.4",
     "prettier": "^1.19.1",
     "supertest": "^4.0.2",
     "typedoc": "^0.15.8",
-    "typescript": "^3.8.2"
+    "typescript": "^3.8.3"
   },
   "jest": {
     "modulePathIgnorePatterns": [
