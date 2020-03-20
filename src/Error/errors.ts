@@ -12,6 +12,7 @@ import { JavaScriptError } from './JavaScriptError';
 import { ScriptTimeout } from './ScriptTimeout';
 import { NoSuchCookie } from './NoSuchCookie';
 import { StaleElementReference } from './StaleElementReference';
+import { NoSuchFrame } from './NoSuchFrame';
 
 export {
   MethodNotAllowed,
@@ -28,4 +29,5 @@ export {
   ScriptTimeout,
   NoSuchCookie,
   StaleElementReference,
+  NoSuchFrame,
 };

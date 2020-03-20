@@ -27,9 +27,11 @@ export const StringUnion = <UnionType extends string>(
   };
 
   const unionNamespace = { guard, check, values };
-  return Object.freeze(unionNamespace as typeof unionNamespace & {
-    type: UnionType;
-  });
+  return Object.freeze(
+    unionNamespace as typeof unionNamespace & {
+      type: UnionType;
+    },
+  );
 };
 
 export const isBrowserOptions = (obj: any): obj is Pluma.BrowserOptions => {
@@ -190,3 +192,15 @@ export const isBoolean = (candidateValue): boolean =>
 
 // Expose the version in package.json
 export const getVersion = (): string => `v${version}`;
+
+export const isIframeElement = (
+  element: HTMLElement,
+): element is HTMLIFrameElement => {
+  return element.localName === 'iframe';
+};
+
+export const isFrameElement = (
+  element: HTMLElement,
+): element is HTMLFrameElement => {
+  return element.localName === 'frame';
+};
