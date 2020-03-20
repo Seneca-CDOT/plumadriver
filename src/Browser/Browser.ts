@@ -388,6 +388,17 @@ class Browser {
   }
 
   /**
+   * Sets the current browsing context for future commands to the parent of the current browsing context.
+   */
+  public switchToParentFrame(): void {
+    if (!this.currentBrowsingContextWindow) {
+      throw new PlumaError.NoSuchWindow();
+    }
+
+    this.currentBrowsingContextWindow = this.currentBrowsingContextWindow.parent;
+  }
+
+  /**
    * Find and return an known element by id
    * @param elementId @type {string} the id of a known element in the known element list
    * @throws {StaleElementReference}
