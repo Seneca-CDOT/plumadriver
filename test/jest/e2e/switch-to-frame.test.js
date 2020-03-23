@@ -137,4 +137,10 @@ describe('Switch to Frame', () => {
 
     expect(await getHeaderText()).toBe('Top');
   });
+
+  it('does not throw an error when no parent frame exists', async () => {
+    await request(app)
+      .post(`/session/${sessionId}/frame/parent`)
+      .expect(200);
+  });
 });
