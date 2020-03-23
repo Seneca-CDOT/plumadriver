@@ -120,7 +120,7 @@ router.post(
 );
 
 router.post(
-  '/session/:sessionId/frame',
+  '/session/:sessionId/frame/parent',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
     COMMANDS.SWITCH_TO_PARENT_FRAME,

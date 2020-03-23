@@ -219,9 +219,11 @@ class Session {
       case COMMANDS.SWITCH_TO_FRAME:
         this.browser.switchToFrame(parameters.id);
         response = { value: null };
+        break;
       case COMMANDS.SWITCH_TO_PARENT_FRAME:
         this.browser.switchToParentFrame();
         response = { value: null };
+        break;
       default:
         break;
     }
