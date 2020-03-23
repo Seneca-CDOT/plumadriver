@@ -120,4 +120,27 @@ describe('Switch to Frame', () => {
 
     expect(value.error).toBe('no such frame');
   });
+
+  it('switches to parent frame', async () => {
+    await request(app)
+      .post(`/session/${sessionId}/frame`)
+      .send({
+        id: 0,
+      })
+      .expect(200);
+
+    expect(await getHeaderText()).toBe('FrameA');
+
+    await request(app)
+      .post(`/session/${sessionId}/frame/parent`)
+      .expect(200);
+
+    expect(await getHeaderText()).toBe('Top');
+  });
+
+  it('does not throw an error when no parent frame exists', async () => {
+    await request(app)
+      .post(`/session/${sessionId}/frame/parent`)
+      .expect(200);
+  });
 });

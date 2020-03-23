@@ -119,6 +119,14 @@ router.post(
   ),
 );
 
+router.post(
+  '/session/:sessionId/frame/parent',
+  sessionEndpointExceptionHandler(
+    defaultSessionEndpointLogic,
+    COMMANDS.SWITCH_TO_PARENT_FRAME,
+  ),
+);
+
 // timeout routes
 router.use('/session/:sessionId/timeouts', timeouts);
 
