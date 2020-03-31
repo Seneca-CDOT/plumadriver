@@ -85,4 +85,24 @@ export namespace Pluma {
       stacktrace: string;
     };
   }
+
+  interface Action {
+    type: string;
+    duration?: number;
+  }
+
+  interface KeyAction extends Action {
+    value: string;
+  }
+
+  interface PointerAction extends Action {
+    button?: number;
+    origin?: string;
+    x?: number;
+    y?: number;
+  }
+
+  interface NullAction extends Action {
+    type: 'pause';
+  }
 }
