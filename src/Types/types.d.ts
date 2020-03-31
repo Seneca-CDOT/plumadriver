@@ -87,22 +87,14 @@ export namespace Pluma {
   }
 
   interface Action {
-    type: string;
+    type: 'key' | 'pointer' | 'none';
+    id: string;
     duration?: number;
-  }
-
-  interface KeyAction extends Action {
-    value: string;
-  }
-
-  interface PointerAction extends Action {
+    source?: string;
     button?: number;
     origin?: string;
     x?: number;
     y?: number;
-  }
-
-  interface NullAction extends Action {
-    type: 'pause';
+    parameter?: string;
   }
 }
