@@ -3,7 +3,33 @@ import { InvalidArgument } from '../Error/errors';
 
 export class ActionHandler {
   private static processPointerParameters(parametersData) {
-    
+    const parameters = { pointerType: 'mouse' };
+
+    if (typeof parametersData === 'undefined') {
+      return parameters;
+    }
+
+    if (typeof parametersData !== 'object') {
+      throw new InvalidArgument('Pointer parameters data must be an object.');
+    }
+
+    const { pointerType } = parametersData;
+
+    if (typeof pointerType === 'undefined') {
+      return parameters;
+    }
+
+    if (
+      pointerType !== 'mouse' ||
+      pointerType !== 'pen' ||
+      pointerType !== 'touch'
+    ) {
+      throw new InvalidArgument('Pointer type must be mouse, pen, or touch.');
+    }
+
+    parameters.pointerType = pointerType;
+
+    return parameters;
   }
 
   private static processInputSourceActionSequence(
@@ -21,7 +47,8 @@ export class ActionHandler {
     }
 
     if (type === 'pointer') {
-      ActionHandler.processPointerParameters(parameter);
+      const parametersData = ActionHandler.processPointerParameters(parameter);
+      // TODO: process pointer parameters with argument parametersData
     }
   }
 
