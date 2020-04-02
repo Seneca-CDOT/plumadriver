@@ -36,6 +36,7 @@ import {
 } from '../Error/errors';
 
 import { CapabilityValidator } from '../CapabilityValidator/CapabilityValidator';
+import InputSourceContainer from './InputSourceContainer';
 
 /**
  * Represents the connection between a local end and a specific remote end. In this case, jsdom.
@@ -57,6 +58,7 @@ class Session {
    *  */
   mutex: Mutex;
   proxy: Record<string, unknown> | null;
+  private readonly activeInputs: InputSourceContainer;
 
   constructor(requestBody) {
     this.id = uuidv1();
@@ -68,6 +70,7 @@ class Session {
       script: 30000,
     };
     this.configureSession(requestBody);
+    this.activeInputs = new InputSourceContainer();
     this.mutex = new Mutex();
   }
 

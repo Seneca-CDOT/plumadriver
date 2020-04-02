@@ -55,7 +55,7 @@ export class ActionHandler {
   public static extractActionSequence(
     actions: Pluma.Action[],
     inputStateTable,
-  ): Pluma.Action[] {
+  ) {
     if (!Array.isArray(actions)) {
       throw new InvalidArgument('Action parameter must be an array.');
     }

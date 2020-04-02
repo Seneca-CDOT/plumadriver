@@ -1,4 +1,4 @@
-class ActiveInputSourceContainer {
+export default class InputSourceContainer {
   private readonly activeInputs = [];
 
   public getActiveInputs() {
@@ -9,7 +9,3 @@ class ActiveInputSourceContainer {
     this.activeInputs.push(input);
   }
 }
-
-const activeInputSourceContainer = new ActiveInputSourceContainer();
-
-export default activeInputSourceContainer;
