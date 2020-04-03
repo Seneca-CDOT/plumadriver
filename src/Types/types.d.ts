@@ -86,13 +86,17 @@ export namespace Pluma {
     };
   }
 
+  interface PointerInputParameters {
+    pointerType: 'mouse' | 'pen' | 'touch';
+  }
+
   interface InputSource {
     type: 'key' | 'pointer' | 'none';
     id: string;
-    parameters?: { pointerType: 'mouse' | 'pen' | 'touch' };
+    parameters?: PointerInputParameters;
   }
 
-  interface Action {
+  interface ActionItem {
     type: string;
     duration?: number;
     source?: string;
@@ -104,6 +108,6 @@ export namespace Pluma {
   }
 
   interface InputSourceAction extends InputSource {
-    actions: Action;
+    actions: ActionItem;
   }
 }

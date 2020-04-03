@@ -5,8 +5,8 @@ import InputSourceContainer from '../Session/InputSourceContainer';
 export class ActionHandler {
   private static processPointerParameters(
     parametersData,
-  ): { pointerType: 'mouse' | 'pen' | 'touch' } {
-    const parameters = { pointerType: 'mouse' };
+  ): Pluma.PointerInputParameters {
+    const parameters: Pluma.PointerInputParameters = { pointerType: 'mouse' };
 
     if (typeof parametersData === 'undefined') {
       return parameters;
@@ -36,12 +36,14 @@ export class ActionHandler {
   }
 
   private static processInputSourceActionSequence(
-    { type, id, parameter }: Pluma.InputSourceAction,
+    inputSourceAction: Pluma.InputSourceAction,
     inputSourceContainer: InputSourceContainer,
-  ) {
+  ): Pluma.InputSourceAction {
+    const { type, id, parameters, actions: actionItems } = inputSourceAction;
+
     if (type !== 'key' && type !== 'pointer' && type !== 'none') {
       throw new InvalidArgument(
-        'action type must be "key", "pointer", or "none".',
+        `Action type ${type} does not match "key", "pointer", or "none".`,
       );
     }
 
@@ -51,15 +53,48 @@ export class ActionHandler {
 
     const source = inputSourceContainer.findMatchingId(id);
 
+    let parameterData: Pluma.PointerInputParameters;
+
     if (typeof source === 'undefined') {
+      const inputSource: Pluma.InputSource = { id, type };
+
       if (type === 'pointer') {
-        const parameters = ActionHandler.processPointerParameters(parameter);
-        inputSourceContainer.addInputSource({ id, type, parameters });
+        parameterData = ActionHandler.processPointerParameters(parameters);
+        inputSource.parameters = parameterData;
         // TODO: process pointer parameters with argument parametersData
-      } else {
-        inputSourceContainer.addInputSource({ id, type });
       }
+
+      inputSourceContainer.addInputSource(inputSource);
+      // TODO: create input state table and add to it
     }
+
+    if (source.type !== type) {
+      throw new InvalidArgument(
+        `Source type ${source.type} does not match expected type ${type}.`,
+      );
+    }
+
+    if (!Array.isArray(actionItems)) {
+      throw new InvalidArgument('Action items must be an array.');
+    }
+
+    const actions = actionItems.map(actionItem => {
+      if (typeof actionItem !== 'object') {
+        throw new InvalidArgument('Action item must be an object');
+      }
+
+      switch (type) {
+        case 'none':
+          ActionHandler.processNullAction(id, actionItem);
+          break;
+        case 'key':
+          ActionHandler.processKeyAction(id, actionItem);
+          break;
+        case 'pointer':
+          ActionHandler.processPointerAction(id, parameterData, actionItem);
+          break;
+      }
+    });
   }
 
   public static extractActionSequence(
@@ -72,11 +107,17 @@ export class ActionHandler {
 
     const actionsByTick: Pluma.Action[] = [];
 
-    const InputSourceActions = actions.map(actionSequence =>
-      ActionHandler.processInputSourceActionSequence(
-        actionSequence,
-        inputSourceContainer,
-      ),
+    const InputSourceActions: Pluma.InputSourceAction[] = actions.map(
+      actionSequence =>
+        ActionHandler.processInputSourceActionSequence(
+          actionSequence,
+          inputSourceContainer,
+        ),
     );
+
+    InputSourceActions.forEach((inputSourceAction, i) => {
+      if (actionsByTick.length < i + 1) {
+      }
+    });
   }
 }
