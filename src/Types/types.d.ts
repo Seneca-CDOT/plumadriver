@@ -86,15 +86,24 @@ export namespace Pluma {
     };
   }
 
-  interface Action {
+  interface InputSource {
     type: 'key' | 'pointer' | 'none';
     id: string;
+    parameter?: { pointerType: 'mouse' | 'pen' | 'touch' };
+  }
+
+  interface Action {
+    type: string;
     duration?: number;
     source?: string;
     button?: number;
     origin?: string;
     x?: number;
     y?: number;
-    parameter?: string;
+    value?: string;
+  }
+
+  interface InputSourceAction extends InputSource {
+    actions: Action;
   }
 }

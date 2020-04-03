@@ -1,5 +1,6 @@
 import { Pluma } from '../Types/types';
 import { InvalidArgument } from '../Error/errors';
+import InputSourceContainer from '../Session/InputSourceContainer';
 
 export class ActionHandler {
   private static processPointerParameters(parametersData) {
@@ -33,8 +34,8 @@ export class ActionHandler {
   }
 
   private static processInputSourceActionSequence(
-    { type, id, source, parameter }: Pluma.Action,
-    inputStateTable,
+    { type, id, parameter }: Pluma.InputSourceAction,
+    inputSourceContainer: InputSourceContainer,
   ) {
     if (type !== 'key' && type !== 'pointer' && type !== 'none') {
       throw new InvalidArgument(
@@ -53,7 +54,7 @@ export class ActionHandler {
   }
 
   public static extractActionSequence(
-    actions: Pluma.Action[],
+    actions: Pluma.InputSourceAction[],
     inputStateTable,
   ) {
     if (!Array.isArray(actions)) {
