@@ -1,3 +1,5 @@
+import { Pluma } from '../Types/types';
+
 export default class InputSourceContainer {
   private readonly activeInputs = [];
 
@@ -5,7 +7,11 @@ export default class InputSourceContainer {
     return this.activeInputs;
   }
 
-  public addInput(input) {
-    this.activeInputs.push(input);
+  public addInputSource(inputSource: Pluma.InputSource) {
+    this.activeInputs.push(inputSource);
+  }
+
+  public findMatchingId(id: string) {
+    return this.activeInputs.find(activeInput => id === activeInput.id);
   }
 }

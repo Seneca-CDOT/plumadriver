@@ -89,7 +89,7 @@ export namespace Pluma {
   interface InputSource {
     type: 'key' | 'pointer' | 'none';
     id: string;
-    parameter?: { pointerType: 'mouse' | 'pen' | 'touch' };
+    parameters?: { pointerType: 'mouse' | 'pen' | 'touch' };
   }
 
   interface Action {

@@ -3,7 +3,9 @@ import { InvalidArgument } from '../Error/errors';
 import InputSourceContainer from '../Session/InputSourceContainer';
 
 export class ActionHandler {
-  private static processPointerParameters(parametersData) {
+  private static processPointerParameters(
+    parametersData,
+  ): { pointerType: 'mouse' | 'pen' | 'touch' } {
     const parameters = { pointerType: 'mouse' };
 
     if (typeof parametersData === 'undefined') {
@@ -47,15 +49,22 @@ export class ActionHandler {
       throw new InvalidArgument('id must be a string.');
     }
 
-    if (type === 'pointer') {
-      const parametersData = ActionHandler.processPointerParameters(parameter);
-      // TODO: process pointer parameters with argument parametersData
+    const source = inputSourceContainer.findMatchingId(id);
+
+    if (typeof source === 'undefined') {
+      if (type === 'pointer') {
+        const parameters = ActionHandler.processPointerParameters(parameter);
+        inputSourceContainer.addInputSource({ id, type, parameters });
+        // TODO: process pointer parameters with argument parametersData
+      } else {
+        inputSourceContainer.addInputSource({ id, type });
+      }
     }
   }
 
   public static extractActionSequence(
     actions: Pluma.InputSourceAction[],
-    inputStateTable,
+    inputSourceContainer: InputSourceContainer,
   ) {
     if (!Array.isArray(actions)) {
       throw new InvalidArgument('Action parameter must be an array.');
@@ -66,7 +75,7 @@ export class ActionHandler {
     const InputSourceActions = actions.map(actionSequence =>
       ActionHandler.processInputSourceActionSequence(
         actionSequence,
-        inputStateTable,
+        inputSourceContainer,
       ),
     );
   }
