@@ -4,6 +4,7 @@ export default class Action {
   private id: string;
   private type: string;
   private subtype: string;
+  private duration: number;
 
   constructor(id: string, type: string, subtype: string) {
     this.id = id;

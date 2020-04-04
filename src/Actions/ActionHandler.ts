@@ -9,7 +9,7 @@ export class ActionHandler {
     return action;
   }
 
-  private static processNullAction({ id, type: subtype, duration }) {
+  private static processNullAction({ id, type: subtype, duration }): Action {
     if (subtype !== 'pause') {
       throw new InvalidArgument(
         `Subtype for Null Action must be "pause". Received: ${subtype}`,
@@ -18,7 +18,7 @@ export class ActionHandler {
 
     const nullAction: Action = new Action(id, 'none', subtype);
 
-    ActionHandler.processPauseAction(duration, nullAction);
+    return ActionHandler.processPauseAction(duration, nullAction);
   }
 
   private static processPointerParameters(
@@ -56,7 +56,7 @@ export class ActionHandler {
   private static processInputSourceActionSequence(
     inputSourceAction: Pluma.InputSourceAction,
     inputSourceContainer: InputSourceContainer,
-  ): Pluma.InputSourceAction {
+  ): Action[] {
     const { type, id, parameters, actions: actionItems } = inputSourceAction;
 
     if (type !== 'key' && type !== 'pointer' && type !== 'none') {
@@ -96,21 +96,23 @@ export class ActionHandler {
       throw new InvalidArgument('Action items must be an array.');
     }
 
-    const actions = actionItems.map(actionItem => {
+    return actionItems.map(actionItem => {
       if (typeof actionItem !== 'object') {
         throw new InvalidArgument('Action item must be an object');
       }
 
       switch (type) {
         case 'none':
-          ActionHandler.processNullAction(id, actionItem);
-          break;
+          return ActionHandler.processNullAction(id, actionItem);
         case 'key':
-          ActionHandler.processKeyAction(id, actionItem);
-          break;
+          return ActionHandler.processKeyAction(id, actionItem);
+
         case 'pointer':
-          ActionHandler.processPointerAction(id, parameterData, actionItem);
-          break;
+          return ActionHandler.processPointerAction(
+            id,
+            parameterData,
+            actionItem,
+          );
       }
     });
   }
