@@ -3,7 +3,7 @@ import { InvalidArgument } from '../Error/errors';
 import Action from './Action';
 import InputSourceContainer from '../Session/InputSourceContainer';
 
-export class ActionHandler {
+export default class ActionHandler {
   private static processPointerAction(
     id: string,
     parameters: Pluma.PointerInputParameters,
