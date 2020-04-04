@@ -5,6 +5,7 @@ export default class Action {
   private type: string;
   private subtype: string;
   private duration: number;
+  private value: string;
 
   constructor(id: string, type: string, subtype: string) {
     this.id = id;
@@ -19,5 +20,10 @@ export default class Action {
       );
     }
     this.duration = duration;
+  }
+
+  public setValue(value: string): void {
+    // TODO: validate that value is a single unicode code point
+    this.value = value;
   }
 }

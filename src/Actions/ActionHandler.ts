@@ -4,6 +4,26 @@ import Action from './Action';
 import InputSourceContainer from '../Session/InputSourceContainer';
 
 export class ActionHandler {
+  private static processKeyAction(
+    id: string,
+    { type: subtype, duration, value },
+  ): Action {
+    if (subtype !== 'keyUp' && subtype !== 'keyDown' && subtype !== 'pause') {
+      throw new InvalidArgument(
+        `Subtype for Key Action must be keyUp, keyDown, or pause. Received: ${subtype}`,
+      );
+    }
+
+    const action = new Action(id, 'key', subtype);
+
+    if (subtype === 'pause') {
+      return ActionHandler.processPauseAction(duration, action);
+    }
+
+    action.setValue(value);
+    return action;
+  }
+
   private static processPauseAction(duration: number, action: Action): Action {
     action.setDuration(duration);
     return action;
@@ -79,7 +99,6 @@ export class ActionHandler {
       if (type === 'pointer') {
         parameterData = ActionHandler.processPointerParameters(parameters);
         inputSource.parameters = parameterData;
-        // TODO: process pointer parameters with argument parametersData
       }
 
       inputSourceContainer.addInputSource(inputSource);
