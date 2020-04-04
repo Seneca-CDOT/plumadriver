@@ -4,6 +4,29 @@ import Action from './Action';
 import InputSourceContainer from '../Session/InputSourceContainer';
 
 export class ActionHandler {
+  private static processPointerAction(
+    id: string,
+    parameters: Pluma.PointerInputParameters,
+    { type: subtype },
+  ) {
+    if (
+      ![
+        'pause',
+        'pointerUp',
+        'pointerDown',
+        'pointerMove',
+        'pointerCancel',
+      ].includes(subtype)
+    ) {
+      throw new InvalidArgument(
+        `Pointer Action must be of type "pause", "pointerUp", "pointerDown", "pointerMove", or "pointerCancel". Received ${subtype}`,
+      );
+    }
+
+    const action = new Action(id, 'pointer', subtype);
+    //TODO: setPointerType in Actions
+  }
+
   private static processKeyAction(
     id: string,
     { type: subtype, duration, value },
