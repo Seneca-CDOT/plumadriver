@@ -1,8 +1,25 @@
 import { Pluma } from '../Types/types';
 import { InvalidArgument } from '../Error/errors';
+import Action from './Action';
 import InputSourceContainer from '../Session/InputSourceContainer';
 
 export class ActionHandler {
+  private static processPauseAction(duration: number, action: Action): Action {
+    return action;
+  }
+
+  private static processNullAction({ id, type: subtype, duration }) {
+    if (subtype !== 'pause') {
+      throw new InvalidArgument(
+        `Subtype for Null Action must be "pause". Received: ${subtype}`,
+      );
+    }
+
+    const nullAction: Action = new Action(id, 'none', subtype);
+
+    ActionHandler.processPauseAction(duration, nullAction);
+  }
+
   private static processPointerParameters(
     parametersData,
   ): Pluma.PointerInputParameters {

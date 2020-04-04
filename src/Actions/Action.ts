@@ -1,6 +1,5 @@
-export abstract class Action {
-  abstract id;
-  abstract type;
-  abstract subtype;
-  abstract execute();
+export default class Action {
+  private id: string;
+  private type: string;
+  private subtype: string;
 }
