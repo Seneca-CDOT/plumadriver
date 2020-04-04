@@ -5,6 +5,7 @@ import InputSourceContainer from '../Session/InputSourceContainer';
 
 export class ActionHandler {
   private static processPauseAction(duration: number, action: Action): Action {
+    action.setDuration(duration);
     return action;
   }
 
