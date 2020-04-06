@@ -9,6 +9,7 @@ export default class Action {
   private value: string;
   private pointerType: string;
   private button: number;
+  private origin: HTMLElement | string;
 
   constructor(id: string, type: string, subtype: string) {
     this.id = id;
@@ -35,6 +36,28 @@ export default class Action {
   }
 
   public setButton(button: number): void {
+    if (!Number.isInteger(button) || button < 0) {
+      throw new InvalidArgument(
+        `Button must be an integer greater or equal to 0. Received ${button}.`,
+      );
+    }
+
     this.button = button;
+  }
+
+  public setOrigin(origin: HTMLElement | string): void {
+    if (typeof origin === 'undefined') {
+      this.origin = 'viewport';
+    } else if (
+      origin !== 'viewport' &&
+      origin !== 'pointer' &&
+      !(origin instanceof HTMLElement)
+    ) {
+      throw new InvalidArgument(
+        `Pointer move origin must be viewport, pointer, or an HTMLElement. Received ${origin}`,
+      );
+    } else {
+      this.origin = origin;
+    }
   }
 }

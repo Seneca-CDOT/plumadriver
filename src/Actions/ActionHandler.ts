@@ -4,20 +4,28 @@ import Action from './Action';
 import InputSourceContainer from '../Session/InputSourceContainer';
 
 export default class ActionHandler {
-  private static processPointerUpOrDownAction(button: number, action: Action) {
-    if (!Number.isInteger(button) || button < 0) {
-      throw new InvalidArgument(
-        `Button must be an integer greater or equal to 0. Received ${button}.`,
-      );
-    }
+  private static processPointerMoveAction(
+    duration: number,
+    x: number,
+    y: number,
+    origin: HTMLElement | string,
+    action: Action,
+  ): void {
+    action.setDuration(duration);
+    action.setOrigin(origin);
+  }
 
+  private static processPointerUpOrDownAction(
+    button: number,
+    action: Action,
+  ): void {
     action.setButton(button);
   }
 
   private static processPointerAction(
     id: string,
     parameters: Pluma.PointerInputParameters,
-    { type: subtype, duration, button },
+    { type: subtype, duration, button, x, y, origin },
   ): Action {
     if (
       ![
@@ -43,6 +51,10 @@ export default class ActionHandler {
 
     if (subtype === 'pointerUp' || subtype === 'pointerDown') {
       ActionHandler.processPointerUpOrDownAction(button, action);
+    }
+
+    if (subtype === 'pointerMove') {
+      ActionHandler.processPointerMoveAction(duration, x, y, origin, action);
     }
   }
 
