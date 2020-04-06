@@ -199,25 +199,30 @@ export default class ActionHandler {
   }
 
   public static extractActionSequence(
-    actions: Pluma.InputSourceAction[],
+    requestActions: Pluma.InputSourceAction[],
     inputSourceContainer: InputSourceContainer,
-  ) {
-    if (!Array.isArray(actions)) {
-      throw new InvalidArgument('Action parameter must be an array.');
+  ): Action[][] {
+    if (!Array.isArray(requestActions)) {
+      throw new InvalidArgument('Request action parameter must be an array.');
     }
 
-    const actionsByTick: Action[] = [];
+    const actionsByTick: Action[][] = [];
 
-    const InputSourceActions: Action[][] = actions.map(actionSequence =>
-      ActionHandler.processInputSourceActionSequence(
+    requestActions.forEach(actionSequence => {
+      const inputSourceActions: Action[] = ActionHandler.processInputSourceActionSequence(
         actionSequence,
         inputSourceContainer,
-      ),
-    );
+      );
 
-    InputSourceActions.forEach((inputSourceAction, i) => {
-      if (actionsByTick.length < i + 1) {
-      }
+      inputSourceActions.forEach((action, i) => {
+        if (actionsByTick.length < i + 1) {
+          actionsByTick.push([action]);
+        }
+
+        actionsByTick[i].push(action);
+      });
     });
+
+    return actionsByTick;
   }
 }
