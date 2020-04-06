@@ -3,7 +3,7 @@ import { InvalidArgument } from '../Error/errors';
 import Action from './Action';
 import InputSourceContainer from '../Session/InputSourceContainer';
 
-export default class ActionHandler {
+export default class ActionBuilder {
   private static processPointerMoveAction(
     duration: number,
     x: number,
@@ -52,9 +52,9 @@ export default class ActionHandler {
     action.setPointerType(parameters);
 
     if (subtype === 'pointerUp' || subtype === 'pointerDown') {
-      ActionHandler.processPointerUpOrDownAction(button, action);
+      ActionBuilder.processPointerUpOrDownAction(button, action);
     } else if (subtype === 'pointerMove') {
-      ActionHandler.processPointerMoveAction(duration, x, y, origin, action);
+      ActionBuilder.processPointerMoveAction(duration, x, y, origin, action);
     } else {
       // there is no specification for 'pointerCancel'
     }
@@ -75,7 +75,7 @@ export default class ActionHandler {
     const action = new Action(id, 'key', subtype);
 
     if (subtype === 'pause') {
-      return ActionHandler.processPauseAction(duration, action);
+      return ActionBuilder.processPauseAction(duration, action);
     }
 
     action.setValue(value);
@@ -96,7 +96,7 @@ export default class ActionHandler {
 
     const nullAction: Action = new Action(id, 'none', subtype);
 
-    return ActionHandler.processPauseAction(duration, nullAction);
+    return ActionBuilder.processPauseAction(duration, nullAction);
   }
 
   private static processPointerParameters(
@@ -155,7 +155,7 @@ export default class ActionHandler {
       const inputSource: Pluma.InputSource = { id, type };
 
       if (type === 'pointer') {
-        parameterData = ActionHandler.processPointerParameters(parameters);
+        parameterData = ActionBuilder.processPointerParameters(parameters);
         inputSource.parameters = parameterData;
       }
 
@@ -180,12 +180,12 @@ export default class ActionHandler {
 
       switch (type) {
         case 'none':
-          return ActionHandler.processNullAction(id, actionItem);
+          return ActionBuilder.processNullAction(id, actionItem);
         case 'key':
-          return ActionHandler.processKeyAction(id, actionItem);
+          return ActionBuilder.processKeyAction(id, actionItem);
 
         case 'pointer':
-          return ActionHandler.processPointerAction(
+          return ActionBuilder.processPointerAction(
             id,
             parameterData,
             actionItem,
@@ -209,7 +209,7 @@ export default class ActionHandler {
     const actionsByTick: Action[][] = [];
 
     requestActions.forEach(actionSequence => {
-      const inputSourceActions: Action[] = ActionHandler.processInputSourceActionSequence(
+      const inputSourceActions: Action[] = ActionBuilder.processInputSourceActionSequence(
         actionSequence,
         inputSourceContainer,
       );
