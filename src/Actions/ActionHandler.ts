@@ -7,7 +7,7 @@ export default class ActionHandler {
   private static processPointerAction(
     id: string,
     parameters: Pluma.PointerInputParameters,
-    { type: subtype },
+    { type: subtype, duration },
   ): Action {
     if (
       ![
@@ -24,7 +24,12 @@ export default class ActionHandler {
     }
 
     const action = new Action(id, 'pointer', subtype);
-    //TODO: setPointerType in Actions
+
+    if (subtype === 'pause') {
+      return this.processPauseAction(duration, action);
+    }
+
+    action.setPointerType(parameters);
   }
 
   private static processKeyAction(

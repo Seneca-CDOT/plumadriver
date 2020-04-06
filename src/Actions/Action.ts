@@ -1,4 +1,5 @@
 import { InvalidArgument } from '../Error/errors';
+import { Pluma } from '../Types/types';
 
 export default class Action {
   private id: string;
@@ -6,6 +7,7 @@ export default class Action {
   private subtype: string;
   private duration: number;
   private value: string;
+  private pointerType: string;
 
   constructor(id: string, type: string, subtype: string) {
     this.id = id;
@@ -25,5 +27,9 @@ export default class Action {
   public setValue(value: string): void {
     // TODO: validate that value is a single unicode code point
     this.value = value;
+  }
+
+  public setPointerType({ pointerType }: Pluma.PointerInputParameters) {
+    this.pointerType = pointerType;
   }
 }
