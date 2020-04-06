@@ -53,11 +53,13 @@ export default class ActionHandler {
 
     if (subtype === 'pointerUp' || subtype === 'pointerDown') {
       ActionHandler.processPointerUpOrDownAction(button, action);
+    } else if (subtype === 'pointerMove') {
+      ActionHandler.processPointerMoveAction(duration, x, y, origin, action);
+    } else {
+      // there is no specification for 'pointerCancel'
     }
 
-    if (subtype === 'pointerMove') {
-      ActionHandler.processPointerMoveAction(duration, x, y, origin, action);
-    }
+    return action;
   }
 
   private static processKeyAction(
