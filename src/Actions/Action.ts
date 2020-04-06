@@ -63,7 +63,7 @@ export default class Action {
     }
   }
 
-  public setX(x: number) {
+  public setX(x: number): void {
     if (x && !Number.isInteger(x)) {
       throw new InvalidArgument('X action value must be an integer.');
     }
@@ -71,7 +71,7 @@ export default class Action {
     this.x = x;
   }
 
-  public setY(y: number) {
+  public setY(y: number): void {
     if (y && !Number.isInteger(y)) {
       throw new InvalidArgument('Y action value must be an integer.');
     }
