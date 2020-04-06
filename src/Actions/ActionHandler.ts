@@ -8,7 +8,7 @@ export default class ActionHandler {
     id: string,
     parameters: Pluma.PointerInputParameters,
     { type: subtype },
-  ) {
+  ): Action {
     if (
       ![
         'pause',
@@ -52,7 +52,7 @@ export default class ActionHandler {
     return action;
   }
 
-  private static processNullAction({ id, type: subtype, duration }): Action {
+  private static processNullAction(id, { type: subtype, duration }): Action {
     if (subtype !== 'pause') {
       throw new InvalidArgument(
         `Subtype for Null Action must be "pause". Received: ${subtype}`,
@@ -154,6 +154,10 @@ export default class ActionHandler {
             id,
             parameterData,
             actionItem,
+          );
+        default:
+          throw new InvalidArgument(
+            `Type must be none, pointer, or key. Received ${type}.`,
           );
       }
     });
