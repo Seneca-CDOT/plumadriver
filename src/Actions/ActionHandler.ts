@@ -206,14 +206,13 @@ export default class ActionHandler {
       throw new InvalidArgument('Action parameter must be an array.');
     }
 
-    const actionsByTick: Pluma.Action[] = [];
+    const actionsByTick: Action[] = [];
 
-    const InputSourceActions: Pluma.InputSourceAction[] = actions.map(
-      actionSequence =>
-        ActionHandler.processInputSourceActionSequence(
-          actionSequence,
-          inputSourceContainer,
-        ),
+    const InputSourceActions: Action[][] = actions.map(actionSequence =>
+      ActionHandler.processInputSourceActionSequence(
+        actionSequence,
+        inputSourceContainer,
+      ),
     );
 
     InputSourceActions.forEach((inputSourceAction, i) => {
