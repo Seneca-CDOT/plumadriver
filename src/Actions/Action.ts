@@ -8,6 +8,7 @@ export default class Action {
   private duration: number;
   private value: string;
   private pointerType: string;
+  private button: number;
 
   constructor(id: string, type: string, subtype: string) {
     this.id = id;
@@ -29,7 +30,11 @@ export default class Action {
     this.value = value;
   }
 
-  public setPointerType({ pointerType }: Pluma.PointerInputParameters) {
+  public setPointerType({ pointerType }: Pluma.PointerInputParameters): void {
     this.pointerType = pointerType;
+  }
+
+  public setButton(button: number): void {
+    this.button = button;
   }
 }
