@@ -13,6 +13,8 @@ export default class ActionHandler {
   ): void {
     action.setDuration(duration);
     action.setOrigin(origin);
+    action.setX(x);
+    action.setY(y);
   }
 
   private static processPointerUpOrDownAction(

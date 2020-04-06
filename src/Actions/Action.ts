@@ -9,7 +9,9 @@ export default class Action {
   private value: string;
   private pointerType: string;
   private button: number;
-  private origin: HTMLElement | string;
+  private origin: HTMLElement | 'viewport' | 'pointer';
+  private x: number;
+  private y: number;
 
   constructor(id: string, type: string, subtype: string) {
     this.id = id;
@@ -18,7 +20,7 @@ export default class Action {
   }
 
   public setDuration(duration: number): void {
-    if (!Number.isInteger(duration) || duration < 0) {
+    if (duration && (!Number.isInteger(duration) || duration < 0)) {
       throw new InvalidArgument(
         `duration must be an integer greater than or equal to zero.`,
       );
@@ -59,5 +61,21 @@ export default class Action {
     } else {
       this.origin = origin;
     }
+  }
+
+  public setX(x: number) {
+    if (x && !Number.isInteger(x)) {
+      throw new InvalidArgument('X action value must be an integer.');
+    }
+
+    this.x = x;
+  }
+
+  public setY(y: number) {
+    if (y && !Number.isInteger(y)) {
+      throw new InvalidArgument('Y action value must be an integer.');
+    }
+
+    this.x = y;
   }
 }
