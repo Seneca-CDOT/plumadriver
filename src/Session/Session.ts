@@ -358,7 +358,7 @@ class Session {
   /** configures session properties*/
   configureSession(requestedCapabilities) {
     // configure Session object capabilties
-    const configuredCapabilities = this.configureCapabilties(
+    const configuredCapabilities = this.configureCapabilities(
       requestedCapabilities,
     );
     // extract browser specific data
@@ -391,7 +391,7 @@ class Session {
   }
 
   // configures session object capabilties
-  configureCapabilties(requestedCapabilities) {
+  configureCapabilities(requestedCapabilities) {
     const capabilities = Session.processCapabilities(requestedCapabilities);
     if (capabilities === null)
       throw new SessionNotCreated('capabilities object is null');
@@ -477,10 +477,10 @@ class Session {
       throw new InvalidArgument();
     }
     /**
-     * @param {Array[Capability]} validatedFirstMatchCapabilties contains
+     * @param {Array[Capability]} validatedFirstMatchCapabilities contains
      * a list of all the validated firstMatch capabilties requested by the client
      */
-    const validatedFirstMatchCapabilties = [];
+    const validatedFirstMatchCapabilities = [];
 
     allMatchedCapabilities.forEach(indexedFirstMatchCapability => {
       const validatedFirstMatchCapability = {};
@@ -493,13 +493,13 @@ class Session {
           validatedFirstMatchCapability[key] = indexedFirstMatchCapability[key];
         }
       });
-      validatedFirstMatchCapabilties.push(validatedFirstMatchCapability);
+      validatedFirstMatchCapabilities.push(validatedFirstMatchCapability);
     });
 
     // attempt merging capabilities
     const mergedCapabilities = [];
 
-    validatedFirstMatchCapabilties.forEach(firstMatch => {
+    validatedFirstMatchCapabilities.forEach(firstMatch => {
       const merged = Session.mergeCapabilities(
         requiredCapabilities,
         firstMatch,
