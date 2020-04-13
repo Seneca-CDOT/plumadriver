@@ -1,9 +1,6 @@
 import { ResourceLoader } from 'jsdom';
 import { Pluma } from '../Types/types';
-import {
-  CookieJar,
-  MemoryCookieStore,
-} from '../jsdom_extensions/tough-cookie/lib/cookie';
+import { CookieJar, MemoryCookieStore } from 'tough-cookie';
 import { InvalidArgument } from '../Error/errors';
 
 import * as Utils from '../utils/utils';
@@ -65,6 +62,7 @@ export class BrowserConfig {
     });
 
     this.jar = new CookieJar(new MemoryCookieStore(), {
+      allowSpecialUseDomain: true,
       looseMode: true,
       rejectPublicSuffixes:
         typeof options.rejectPublicSuffixes === 'boolean'
