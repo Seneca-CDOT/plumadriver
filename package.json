@@ -17,6 +17,7 @@
     "pjson": "^1.0.9",
     "request": "^2.88.2",
     "selenium-webdriver": "^4.0.0-alpha.7",
+    "tough-cookie": "^4.0.0",
     "uuid": "^3.4.0",
     "validator": "^10.11.0",
     "validator-js": "^0.2.1",
