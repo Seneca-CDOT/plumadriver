@@ -1,6 +1,6 @@
-import * as uuidv1 from 'uuid/v1';
+import uuidv1 from 'uuid/v1';
 import validator from 'validator';
-import * as os from 'os';
+import os from 'os';
 import { Mutex } from 'async-mutex';
 import { VM } from 'vm2';
 import { JSDOM } from 'jsdom';

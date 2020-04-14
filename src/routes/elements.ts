@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 import { COMMANDS } from '../constants/constants';
 import * as utils from '../utils/utils';
 

@@ -10,7 +10,8 @@
     "target": "es2018",
     "watch": false,
     "esModuleInterop": true,
-    "moduleResolution": "Node"
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node"
   },
   "include": ["./src"]
 }

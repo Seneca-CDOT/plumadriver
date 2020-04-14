@@ -1,4 +1,4 @@
-import * as os from 'os';
+import os from 'os';
 import { Session } from '../Session/Session';
 import { NotFoundError } from '../Error/errors';
 import { Pluma } from '../Types/types';

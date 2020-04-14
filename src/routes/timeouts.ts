@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 import { InvalidArgument } from '../Error/errors';
 import { COMMANDS } from '../constants/constants';
 
@@ -15,4 +15,4 @@ timeouts.post('/', (req, res, next) => {
   res.send(null);
 });
 
-export default timeouts; 
+export default timeouts;

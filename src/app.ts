@@ -1,5 +1,5 @@
-import * as express from 'express';
-import * as bodyParser from 'body-parser';
+import express from 'express';
+import bodyParser from 'body-parser';
 import { logger, errorLogger } from './logger';
 import { Pluma } from './Types/types';
 
