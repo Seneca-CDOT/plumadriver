@@ -1,4 +1,5 @@
 import validator from 'validator';
+import has from 'has';
 import { validate } from '../utils/utils';
 import {
   UnhandledPromptBehaviourValues,
@@ -87,7 +88,7 @@ class CapabilityValidator {
       'noProxy',
       'sslProxy',
       'socksProxy',
-      'socksVersion'
+      'socksVersion',
     ];
 
     let validProxy = true;
@@ -103,10 +104,7 @@ class CapabilityValidator {
             switch (key) {
               case 'proxyType':
                 if (reqProxy[key] === 'pac') {
-                  validProxy = Object.prototype.hasOwnProperty.call(
-                    reqProxy,
-                    'proxyAutoConfigUrl'
-                  );
+                  validProxy = has(reqProxy, 'proxyAutoConfigUrl');
                 } else if (
                   reqProxy[key] !== 'direct' &&
                   reqProxy[key] !== 'autodetect' &&
@@ -132,10 +130,7 @@ class CapabilityValidator {
               case 'socksProxy':
                 validProxy = reqProxy.proxyType === 'manual';
                 validProxy = validProxy
-                  ? Object.prototype.hasOwnProperty.call(
-                      reqProxy,
-                      'socksVersion'
-                    )
+                  ? has(reqProxy, 'socksVersion')
                   : validProxy;
 
                 validProxy = validProxy
@@ -151,7 +146,7 @@ class CapabilityValidator {
                   : validProxy;
                 break;
               case 'noProxy':
-                validProxy = reqProxy[key] instanceof Array
+                validProxy = reqProxy[key] instanceof Array;
                 if (validProxy) {
                   reqProxy[key].forEach(url => {
                     if (validProxy) validProxy = validator.isURL(url);
@@ -173,17 +168,15 @@ class CapabilityValidator {
    * @param key the type of timeout to validate
    * @param value the value of the given timeout
    */
-  validateTimeouts(key, value) :boolean {
+  validateTimeouts(key, value): boolean {
     this.valid = TimeoutValues.guard(key);
-    this.valid = this.valid
-      ? (Number.isInteger(value) && value > 0)
-      : this.valid;
+    this.valid = this.valid ? Number.isInteger(value) && value > 0 : this.valid;
     return this.valid;
   }
 
   /**
-   * Validates plumadriver specific options 
-   * @param options vendor (plumadriver) specific options 
+   * Validates plumadriver specific options
+   * @param options vendor (plumadriver) specific options
    */
   static validatePlumaOptions(options) {
     let validatedOptions = true;
@@ -203,8 +196,8 @@ class CapabilityValidator {
         else valid = false;
 
         if (
-          validTypes.includes(contentType)
-          || contentType.substr(contentType.length - 4) === '+xml'
+          validTypes.includes(contentType) ||
+          contentType.substr(contentType.length - 4) === '+xml'
         ) {
           valid = true;
         } else valid = false;
@@ -221,14 +214,14 @@ class CapabilityValidator {
         return value.constructor === Boolean;
       },
       resources(resources) {
-        return (resources.constructor === String && resources === 'useable');
+        return resources.constructor === String && resources === 'useable';
       },
       rejectPublicSuffixes(value) {
         return value.constructor === Boolean;
       },
     };
 
-    Object.keys(options).forEach((key) => {
+    Object.keys(options).forEach(key => {
       if (!Object.keys(allowedOptions).includes(key)) validatedOptions = false;
       if (validatedOptions) {
         try {

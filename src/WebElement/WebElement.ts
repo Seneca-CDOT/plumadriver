@@ -1,4 +1,5 @@
 import uuidv1 from 'uuid/v1';
+import has from 'has';
 import { isFocusableAreaElement } from 'jsdom/lib/jsdom/living/helpers/focusing';
 import { implSymbol } from 'jsdom/lib/jsdom/living/generated/utils';
 import { ELEMENT, ElementBooleanAttributeValues } from '../constants/constants';
@@ -211,10 +212,7 @@ class WebElement {
   ): void {
     let isEmpty: boolean;
 
-    if (
-      isInputElement(element) &&
-      Object.prototype.hasOwnProperty.call(element, 'files')
-    ) {
+    if (isInputElement(element) && has(element, 'files')) {
       isEmpty = element.files.length === 0;
     } else {
       isEmpty = element.value === '';
