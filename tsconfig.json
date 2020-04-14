@@ -8,7 +8,9 @@
     "rootDir": "./src",
     "sourceMap": true,
     "target": "es2018",
-    "watch": false
+    "watch": false,
+    "esModuleInterop": true,
+    "moduleResolution": "Node"
   },
   "include": ["./src"]
 }
