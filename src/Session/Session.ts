@@ -64,7 +64,7 @@ class Session {
     this.secureTLS = true;
     this.timeouts = {
       implicit: 0,
-      pageLoad: 30000,
+      pageLoad: 300000,
       script: 30000,
     };
     this.configureSession(requestBody);
