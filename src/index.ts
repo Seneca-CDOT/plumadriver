@@ -1,4 +1,4 @@
-import * as argv from 'minimist';
+import argv from 'minimist';
 import { app } from './app';
 
 const args = argv(process.argv.slice(2));

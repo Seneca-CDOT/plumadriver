@@ -1,5 +1,5 @@
 // routers
-import * as express from 'express';
+import express from 'express';
 import element from './elements';
 import timeouts from './timeouts';
 import navigate from './navigate';

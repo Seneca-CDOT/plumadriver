@@ -1,7 +1,7 @@
 import { Pluma } from '../Types/types';
 import * as PlumaError from '../Error/errors';
-import * as fs from 'fs';
-import * as isDisplayedAtom from './isdisplayed-atom.json';
+import fs from 'fs';
+import isDisplayedAtom from './isdisplayed-atom.json';
 import { version } from 'pjson';
 
 // credit where it's due: https://stackoverflow.com/questions/36836011/checking-validity-of-string-literal-union-type-at-runtime/43621735

@@ -1,5 +1,5 @@
-import * as winston from 'winston';
-import * as expressWinston from 'express-winston';
+import winston from 'winston';
+import expressWinston from 'express-winston';
 
 const LOG_FOLDER_NAME = 'pluma-logs';
 const FILENAMES = {
