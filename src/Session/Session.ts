@@ -50,7 +50,7 @@ class Session {
   /** */
   pageLoadStrategy: Pluma.PageLoadStrategy = 'normal';
   /** indicated wherher untrusted or self-signed TLS certificates should be trusted for the duration of the webdrive session */
-  secureTLS: boolean;
+  acceptInsecureCerts: boolean;
   /** records the timeout duration values used to control the behaviour of script evaluation, navigation and element retrieval */
   timeouts: Pluma.Timeouts;
   /**
@@ -62,7 +62,7 @@ class Session {
   constructor(requestBody) {
     this.id = uuidv1();
     this.pageLoadStrategy = 'normal';
-    this.secureTLS = true;
+    this.acceptInsecureCerts = true;
     this.timeouts = {
       implicit: 0,
       pageLoad: 300000,
@@ -362,7 +362,8 @@ class Session {
     // extract browser specific data
     const browserConfig = configuredCapabilities['plm:plumaOptions'];
     if (has(configuredCapabilities, 'acceptInsecureCerts')) {
-      browserConfig.strictSSL = !configuredCapabilities.acceptInsecureCerts;
+      this.acceptInsecureCerts = configuredCapabilities.acceptInsecureCerts;
+      browserConfig.strictSSL = !this.acceptInsecureCerts;
     }
 
     if (has(configuredCapabilities, 'rejectPublicSuffixes')) {
