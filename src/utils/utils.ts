@@ -1,6 +1,7 @@
 import { Pluma } from '../Types/types';
 import * as PlumaError from '../Error/errors';
 import fs from 'fs';
+import has from 'has';
 import isDisplayedAtom from './isdisplayed-atom.json';
 import { version } from 'pjson';
 
@@ -102,9 +103,7 @@ export const endpoint = {
     let response = null;
     const result = await req.session.process(req.sessionRequest);
     if (result) {
-      response = Object.prototype.hasOwnProperty.call(result, 'value')
-        ? result
-        : { value: result };
+      response = has(result, 'value') ? result : { value: result };
       res.json(response);
     } else {
       res.send(response);

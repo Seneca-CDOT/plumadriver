@@ -4,6 +4,7 @@ import os from 'os';
 import { Mutex } from 'async-mutex';
 import { VM } from 'vm2';
 import { JSDOM } from 'jsdom';
+import has from 'has';
 
 import { WebElement } from '../WebElement/WebElement';
 import { COMMANDS, ELEMENT } from '../constants/constants';
@@ -281,10 +282,7 @@ class Session {
           if (!validator.isHexColor(text)) throw new InvalidArgument();
           (element as HTMLInputElement).value = text;
         } else {
-          if (
-            !Object.prototype.hasOwnProperty.call(element, 'value') ||
-            element.getAttribute('readonly')
-          )
+          if (!has(element, 'value') || element.getAttribute('readonly'))
             throw new Error('element not interactable'); // TODO: create error class
           // TODO: add check to see if element is mutable, reject with element not interactable
           (element as HTMLInputElement).value = text;
@@ -363,21 +361,11 @@ class Session {
     );
     // extract browser specific data
     const browserConfig = configuredCapabilities['plm:plumaOptions'];
-    if (
-      Object.prototype.hasOwnProperty.call(
-        configuredCapabilities,
-        'acceptInsecureCerts',
-      )
-    ) {
+    if (has(configuredCapabilities, 'acceptInsecureCerts')) {
       browserConfig.strictSSL = !configuredCapabilities.acceptInsecureCerts;
     }
 
-    if (
-      Object.prototype.hasOwnProperty.call(
-        configuredCapabilities,
-        'rejectPublicSuffixes',
-      )
-    ) {
+    if (has(configuredCapabilities, 'rejectPublicSuffixes')) {
       browserConfig.rejectPublicSuffixes =
         configuredCapabilities.rejectPublicSuffixes;
     }
@@ -398,7 +386,7 @@ class Session {
 
     // configure pageLoadStrategy
     if (
-      Object.prototype.hasOwnProperty.call(capabilities, 'pageLoadStrategy') &&
+      has(capabilities, 'pageLoadStrategy') &&
       typeof capabilities.pageLoadStrategy === 'string'
     ) {
       this.pageLoadStrategy = capabilities.pageLoadStrategy;
@@ -406,13 +394,13 @@ class Session {
       capabilities.pageLoadStrategy = 'normal';
     }
 
-    if (Object.prototype.hasOwnProperty.call(capabilities, 'proxy')) {
+    if (has(capabilities, 'proxy')) {
       // TODO: set JSDOM proxy address
     } else {
       capabilities.proxy = {};
     }
 
-    if (Object.prototype.hasOwnProperty.call(capabilities, 'timeouts')) {
+    if (has(capabilities, 'timeouts')) {
       this.setTimeouts(capabilities.timeouts);
     }
     capabilities.timeouts = this.timeouts;
@@ -450,9 +438,7 @@ class Session {
     const requiredCapabilities = {};
     if (capabilities.alwaysMatch !== undefined) {
       defaultCapabilities.forEach(key => {
-        if (
-          Object.prototype.hasOwnProperty.call(capabilities.alwaysMatch, key)
-        ) {
+        if (has(capabilities.alwaysMatch, key)) {
           const validatedCapability = capabilityValidator.validate(
             capabilities.alwaysMatch[key],
             key,
@@ -530,7 +516,7 @@ class Session {
     if (secondary === undefined) return result;
 
     Object.keys(secondary).forEach(property => {
-      if (Object.prototype.hasOwnProperty.call(primary, property)) {
+      if (has(primary, property)) {
         throw new InvalidArgument();
       }
       result[property] = secondary[property];
