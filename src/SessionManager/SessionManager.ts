@@ -42,7 +42,7 @@ class SessionManager {
           browserName: 'pluma',
           browserVersion: getVersion(),
           platformName: os.platform(),
-          acceptInsecureCerts: session.secureTLS,
+          acceptInsecureCerts: session.acceptInsecureCerts,
           setWindowRect: false,
           pageLoadStrategy: session.pageLoadStrategy,
           'plm:plumaOptions': {
