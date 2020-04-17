@@ -49,12 +49,12 @@ class Session {
   browser: Browser;
   /** */
   pageLoadStrategy: Pluma.PageLoadStrategy = 'normal';
-  /** indicated wherher untrusted or self-signed TLS certificates should be trusted for the duration of the webdrive session */
+  /** indicated whether untrusted or self-signed TLS certificates should be trusted for the duration of the webdriver session */
   acceptInsecureCerts: boolean;
-  /** records the timeout duration values used to control the behaviour of script evaluation, navigation and element retrieval */
+  /** records the timeout duration values used to control the behavior of script evaluation, navigation and element retrieval */
   timeouts: Pluma.Timeouts;
   /**
-   * a queue of [[Pluma.Request]] currently awaiting processsing
+   * a queue of [[Pluma.Request]] currently awaiting processing
    *  */
   mutex: Mutex;
   proxy: Record<string, unknown> | null;
@@ -423,7 +423,7 @@ class Session {
       'pageLoadStrategy',
       'proxy',
       'timeouts',
-      'unhandledPromptBehaviour',
+      'unhandledPromptBehavior',
       'plm:plumaOptions',
     ];
 

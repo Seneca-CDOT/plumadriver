@@ -12,7 +12,7 @@ describe('Session', () => {
     return body;
   };
 
-  it.skip('creates a session with alwaysMatch capabilities', async () => {
+  it('creates a session with alwaysMatch capabilities', async () => {
     const requestBody = {
       capabilities: {
         alwaysMatch: {
@@ -38,7 +38,7 @@ describe('Session', () => {
           browserVersion: expect.stringMatching(/^v\d+(\.\d+)*$/),
           pageLoadStrategy: 'normal',
           platformName: expect.any(String),
-          unhandledPromptBehaviour: 'ignore',
+          unhandledPromptBehavior: 'ignore',
           timeouts: {
             implicit: 100,
             pageLoad: 200,

@@ -2,7 +2,7 @@ import validator from 'validator';
 import has from 'has';
 import { validate } from '../utils/utils';
 import {
-  UnhandledPromptBehaviourValues,
+  unhandledPromptBehaviorValues,
   PageLoadStrategyValues,
   TimeoutValues,
 } from '../constants/constants';
@@ -46,7 +46,7 @@ class CapabilityValidator {
       case 'unhandledPromptBehavior':
         this.valid = typeof capability === 'string';
         this.valid = this.valid
-          ? UnhandledPromptBehaviourValues.guard(capability)
+          ? unhandledPromptBehaviorValues.guard(capability)
           : this.valid;
         break;
       case 'proxy':

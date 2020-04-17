@@ -48,8 +48,8 @@ class SessionManager {
           'plm:plumaOptions': {
             runScripts: session.browser.browserConfig.runScripts,
           },
-          unhandledPromptBehaviour:
-            session.browser.browserConfig.unhandledPromptBehaviour,
+          unhandledPromptBehavior:
+            session.browser.browserConfig.unhandledPromptBehavior,
           proxy: session.proxy ? session.proxy : {},
           timeouts: session.timeouts,
         },

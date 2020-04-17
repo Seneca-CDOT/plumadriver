@@ -39,7 +39,7 @@ export const isBrowserOptions = (obj: any): obj is Pluma.BrowserOptions => {
   if (
     obj.runScripts === undefined ||
     obj.strictSSL === undefined ||
-    obj.unhandledPromptBehaviour === undefined ||
+    obj.unhandledPromptBehavior === undefined ||
     obj.rejectPublicSuffixes === undefined
   )
     return false;
