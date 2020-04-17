@@ -12,7 +12,7 @@ describe('Session', () => {
     return body;
   };
 
-  it.skip('creates a session with alwaysMatch capabilities', async () => {
+  it('creates a session with alwaysMatch capabilities', async () => {
     const requestBody = {
       capabilities: {
         alwaysMatch: {
