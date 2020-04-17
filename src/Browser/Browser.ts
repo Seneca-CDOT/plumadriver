@@ -31,7 +31,7 @@ class Browser {
     const browserOptions: Pluma.BrowserOptions = {
       runScripts: '',
       strictSSL: true,
-      unhandledPromptBehaviour: 'dismiss and notify',
+      unhandledPromptBehavior: 'dismiss and notify',
       rejectPublicSuffixes: false,
     };
 

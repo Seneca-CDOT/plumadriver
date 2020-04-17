@@ -38,7 +38,7 @@ describe('Session', () => {
           browserVersion: expect.stringMatching(/^v\d+(\.\d+)*$/),
           pageLoadStrategy: 'normal',
           platformName: expect.any(String),
-          unhandledPromptBehaviour: 'ignore',
+          unhandledPromptBehavior: 'ignore',
           timeouts: {
             implicit: 100,
             pageLoad: 200,

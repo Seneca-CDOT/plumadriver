@@ -1,16 +1,16 @@
 import {
   ElementBooleanAttributeValues,
-  UnhandledPromptBehaviourValues,
+  unhandledPromptBehaviorValues,
   RunScriptsValues,
   PageLoadStrategyValues,
 } from '../constants/constants';
 
 /**
- * contains interfaces paticular to plumadriver
+ * contains interfaces particular to plumadriver
  */
 export namespace Pluma {
   type RunScripts = typeof RunScriptsValues.type;
-  type UnhandledPromptBehaviour = typeof UnhandledPromptBehaviourValues.type;
+  type unhandledPromptBehavior = typeof unhandledPromptBehaviorValues.type;
   type BeforeParse = (window) => void;
   type UserPrompt = (message?: string) => boolean;
   type ElementBooleanAttribute = typeof ElementBooleanAttributeValues.type;
@@ -22,7 +22,7 @@ export namespace Pluma {
   interface BrowserOptions {
     runScripts: RunScripts;
     strictSSL: boolean;
-    unhandledPromptBehaviour: UnhandledPromptBehaviour;
+    unhandledPromptBehavior: unhandledPromptBehavior;
     rejectPublicSuffixes: boolean;
   }
 
@@ -53,7 +53,7 @@ export namespace Pluma {
   }
 
   /**
-   * The timeouts object which records the timeout duration values used to control the behaviour of script evaluation
+   * The timeouts object which records the timeout duration values used to control the behavior of script evaluation
    * navigation and element retrieval
    */
   interface Timeouts {

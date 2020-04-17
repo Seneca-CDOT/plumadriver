@@ -15,11 +15,11 @@ export class BrowserConfig {
   /** defines whether self-signed or insecure SSL certificates should be trusted */
   strictSSL = true;
 
-  /** defines the type of behaviour when a user prompt is encountered see [W3C unhandledPromptBehaviour](https://w3c.github.io/webdriver/#dfn-unhandled-prompt-behavior) */
-  readonly unhandledPromptBehaviour: Pluma.UnhandledPromptBehaviour = 'dismiss';
+  /** defines the type of behavior when a user prompt is encountered see [W3C unhandledPromptBehavior](https://w3c.github.io/webdriver/#dfn-unhandled-prompt-behavior) */
+  readonly unhandledPromptBehavior: Pluma.unhandledPromptBehavior = 'dismiss';
 
   /** the jsdom [resource loader](https://github.com/jsdom/jsdom#loading-subresources)
-   * allows a more comprehensive customization of jsdom resource-loading behaviour
+   * allows a more comprehensive customization of jsdom resource-loading behavior
    */
   readonly resourceLoader: ResourceLoader;
 
@@ -70,7 +70,7 @@ export class BrowserConfig {
           : true,
     });
 
-    switch (options.unhandledPromptBehaviour) {
+    switch (options.unhandledPromptBehavior) {
       case 'accept':
         this.beforeParse = this.beforeParseFactory(() => true);
         break;
@@ -90,6 +90,7 @@ export class BrowserConfig {
         });
         break;
       case 'ignore':
+        this.beforeParse = window => this.injectAPIs(window);
         break;
       default:
         break;

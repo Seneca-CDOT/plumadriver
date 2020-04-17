@@ -44,8 +44,8 @@ export const ElementBooleanAttributeValues = StringUnion(
 /** W3C webdriver valid session [timeout types](https://w3c.github.io/webdriver/#timeouts)*/
 export const TimeoutValues = StringUnion('script', 'pageLoad', 'implicit');
 
-/** W3C webdriver valid [unhandled prompt behaviour](https://w3c.github.io/webdriver/#dfn-unhandled-prompt-behavior) values */
-export const UnhandledPromptBehaviourValues = StringUnion(
+/** W3C webdriver valid [unhandled prompt behavior](https://w3c.github.io/webdriver/#dfn-unhandled-prompt-behavior) values */
+export const unhandledPromptBehaviorValues = StringUnion(
   'accept',
   'dismiss',
   'dismiss and notify',
