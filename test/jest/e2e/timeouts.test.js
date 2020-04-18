@@ -16,7 +16,7 @@ describe('Timeouts', () => {
     });
   });
 
-  it.skip('should set requested timeouts', async () => {
+  it('should set requested timeouts', async () => {
     const sessionId = await createSession(request, app);
     const requestedTimeouts = {
       script: 0,

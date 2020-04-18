@@ -169,8 +169,11 @@ class CapabilityValidator {
    * @param value the value of the given timeout
    */
   validateTimeouts(key, value): boolean {
-    this.valid = TimeoutValues.guard(key);
-    this.valid = this.valid ? Number.isInteger(value) && value > 0 : this.valid;
+    this.valid =
+      TimeoutValues.guard(key) && Number.isInteger(value) && value >= 0
+        ? true
+        : false;
+
     return this.valid;
   }
 
