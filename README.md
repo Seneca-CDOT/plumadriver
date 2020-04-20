@@ -146,33 +146,33 @@ These scripts will transpile all the typescript code found within src directory 
 
 It is important to keep in mind that jsdom is not intended to be a full rendering browser but rather emulate enough of a browser to be useful for testing and web scraping applications. As a result, W3C WebDriver endpoints which require browser rendering capabilities will not be implemented at this time.
 
-- [x] **New Session:** POST /session
-- [x] **Delete Session:** DELETE /session/{session id}
-- [x] **Get Status:** GET /status
-- [x] **Get Timeouts:** GET /session/{session id}/timeouts
-- [x] **Set Timeouts:** POST /session/{session id}/timeouts
-- [x] **Navigate To:** POST /session/{session id}/url
-- [x] **Get Current URL:** GET /session/{session id}/url
-- [x] **Get Title:** GET /session/{session id}/title
-- [x] **Find Elements:** POST /session/{session id}/elements
-- [x] **Find Element:** POST /session/{session id}/element
-- [x] **Find Element from Element:** POST /session/{session id}/element/{element id}/element
-- [x] **Find Elements from Element:** POST /session/{session id}/element/{element id}/elements
-- [x] **Get Element Text:** GET /session/{session id}/element/{element id}/text
-- [x] **Get Element Tag Name:** POST /session/{session id}/element/{element id}/{name}
-- [x] **Get All Cookies:** GET /session/{session id}/cookie
-- [x] **Add Cookie:** POST /session/{session id}/cookie
-- [x] **Get Named Cookie:** GET /session/{session id}/cookie/{name}
-- [x] **Delete Cookie:** DELETE /session/{session id}/cookie/{name}
-- [x] **Delete All Cookies:** DELETE /session/{session id)/cookie
-- [x] **Execute Script:** POST /session/{session id}/execute/sync
-- [x] **Get Element Attribute:** POST /session/{session id}/element/{element id}/attribute/{name}
-- [x] **Element Click:** POST /session/{session id}/element/{element id}/click
-- [x] **Element Clear:** POST /session/{session id}/element/{element id}/clear
-- [x] **Is Element Enabled:** GET /session/{session id}/element/{element id}/enabled
-- [x] **Is Displayed:** GET /session/{session id}/element/{element id}/displayed
-- [x] **Get Page Source:** GET /session/{session id}/source
-- [x] **Shutdown:** GET /shutdown
-- [x] **Get Active Element:** GET /session/{session id}/element/active
-- [x] **Switch To Frame:** POST /session/{session id}/frame
-- [x] **Switch To Parent Frame:** POST /session/{session id}/frame/parent
+- [x] [**New Session:**](https://www.w3.org/TR/webdriver1/#dfn-creating-a-new-session) POST /session
+- [x] [**Delete Session:**](https://www.w3.org/TR/webdriver1/#dfn-delete-session) DELETE /session/{session id}
+- [x] [**Get Status:**](https://www.w3.org/TR/webdriver1/#dfn-status) GET /status
+- [x] [**Get Timeouts:**](https://www.w3.org/TR/webdriver1/#dfn-get-timeouts) GET /session/{session id}/timeouts
+- [x] [**Set Timeouts:**](https://www.w3.org/TR/webdriver1/#dfn-timeouts) POST /session/{session id}/timeouts
+- [x] [**Navigate To:**](https://www.w3.org/TR/webdriver1/#dfn-navigate-to) POST /session/{session id}/url
+- [x] [**Get Current URL:**](https://www.w3.org/TR/webdriver1/#dfn-get-current-url) GET /session/{session id}/url
+- [x] [**Get Title:**](https://www.w3.org/TR/webdriver1/#dfn-get-title) GET /session/{session id}/title
+- [x] [**Find Elements:**](https://www.w3.org/TR/webdriver1/#dfn-find-elements) POST /session/{session id}/elements
+- [x] [**Find Element:**](https://www.w3.org/TR/webdriver1/#dfn-find-element) POST /session/{session id}/element
+- [x] [**Find Element from Element:**](https://www.w3.org/TR/webdriver1/#dfn-find-element-from-element) POST /session/{session id}/element/{element id}/element
+- [x] [**Find Elements from Element:**](https://www.w3.org/TR/webdriver1/#dfn-find-elements-from-element) POST /session/{session id}/element/{element id}/elements
+- [x] [**Get Element Text:**](https://www.w3.org/TR/webdriver1/#dfn-get-element-text) GET /session/{session id}/element/{element id}/text
+- [x] [**Get Element Tag Name:**](https://www.w3.org/TR/webdriver1/#dfn-get-element-tag-name) POST /session/{session id}/element/{element id}/{name}
+- [x] [**Get All Cookies:**](https://www.w3.org/TR/webdriver1/#dfn-get-all-cookies) GET /session/{session id}/cookie
+- [x] [**Add Cookie:**](https://www.w3.org/TR/webdriver1/#dfn-adding-a-cookie) POST /session/{session id}/cookie
+- [x] [**Get Named Cookie:**](https://www.w3.org/TR/webdriver1/#dfn-get-named-cookie) GET /session/{session id}/cookie/{name}
+- [x] [**Delete Cookie:**](https://www.w3.org/TR/webdriver1/#dfn-delete-cookie) DELETE /session/{session id}/cookie/{name}
+- [x] [**Delete All Cookies:**](https://www.w3.org/TR/webdriver1/#dfn-delete-all-cookies) DELETE /session/{session id)/cookie
+- [x] [**Execute Script:**](https://www.w3.org/TR/webdriver1/#dfn-execute-script) POST /session/{session id}/execute/sync
+- [x] [**Get Element Attribute:**](https://www.w3.org/TR/webdriver1/#dfn-get-element-attribute) POST /session/{session id}/element/{element id}/attribute/{name}
+- [x] [**Element Click:**](https://www.w3.org/TR/webdriver1/#dfn-element-click) POST /session/{session id}/element/{element id}/click
+- [x] [**Element Clear:**](https://www.w3.org/TR/webdriver1/#dfn-element-clear) POST /session/{session id}/element/{element id}/clear
+- [x] [**Is Element Enabled:**](https://www.w3.org/TR/webdriver1/#dfn-is-element-enabled) GET /session/{session id}/element/{element id}/enabled
+- [x] [**Is Displayed:**](https://www.w3.org/TR/webdriver1/#element-displayedness) GET /session/{session id}/element/{element id}/displayed
+- [x] [**Get Page Source:**](https://www.w3.org/TR/webdriver1/#dfn-get-page-source) GET /session/{session id}/source
+- [x] **Shutdown:** GET /shutdown (Non-W3C)
+- [x] [**Get Active Element:**](https://www.w3.org/TR/webdriver1/#dfn-get-active-element) GET /session/{session id}/element/active
+- [x] [**Switch To Frame:**](https://www.w3.org/TR/webdriver1/#dfn-switch-to-frame) POST /session/{session id}/frame
+- [x] [**Switch To Parent Frame:**](https://www.w3.org/TR/webdriver1/#dfn-switch-to-parent-frame) POST /session/{session id}/frame/parent
