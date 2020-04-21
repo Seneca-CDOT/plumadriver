@@ -49,7 +49,8 @@ describe('Navigation', () => {
       .post(`/session/${sessionId}/url`)
       .send({
         url: 'foo://plumadriver.com',
-      });
+      })
+      .expect(400);
 
     expect(error).toBe('invalid argument');
   });
@@ -61,7 +62,8 @@ describe('Navigation', () => {
 
     await request(app)
       .post(`/session/${sessionId}/timeouts`)
-      .send(requestedTimeouts);
+      .send(requestedTimeouts)
+      .expect(200);
 
     const {
       body: {
@@ -71,7 +73,8 @@ describe('Navigation', () => {
       .post(`/session/${sessionId}/url`)
       .send({
         url: 'http://plumadriver.com',
-      });
+      })
+      .expect(200);
 
     expect(error).toBe('invalid argument');
   });

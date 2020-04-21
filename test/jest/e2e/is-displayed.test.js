@@ -62,7 +62,8 @@ describe('Is Displayed', () => {
       },
     } = await request(app)
       .post(`/session/${sessionId}/element`)
-      .send({ using: 'css selector', value: selector });
+      .send({ using: 'css selector', value: selector })
+      .expect(200);
 
     return elementId;
   };
@@ -71,9 +72,9 @@ describe('Is Displayed', () => {
     const elementId = await getElementId(selector);
     const {
       body: { value },
-    } = await request(app).get(
-      `/session/${sessionId}/element/${elementId}/displayed`,
-    );
+    } = await request(app)
+      .get(`/session/${sessionId}/element/${elementId}/displayed`)
+      .expect(200);
 
     return value;
   };
@@ -83,7 +84,8 @@ describe('Is Displayed', () => {
       body: { value },
     } = await request(app)
       .post(`/session/${sessionId}/execute/sync`)
-      .send({ script: isDisplayedAtom, args: [{ [ELEMENT]: elementId }] });
+      .send({ script: isDisplayedAtom, args: [{ [ELEMENT]: elementId }] })
+      .expect(200);
 
     return value;
   };

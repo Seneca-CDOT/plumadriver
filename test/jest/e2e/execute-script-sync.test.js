@@ -47,15 +47,17 @@ describe('Execute Script Sync', () => {
       .post(`/session/${sessionId}/url`)
       .send({
         url: 'http://plumadriver.com',
-      });
+      })
+      .expect(200);
   });
 
-  const executeScript = async (script, args = []) => {
+  const executeScript = async (script, args = [], expectedStatusCode = 200) => {
     const {
       body: { value },
     } = await request(app)
       .post(`/session/${sessionId}/execute/sync`)
-      .send({ script, args });
+      .send({ script, args })
+      .expect(expectedStatusCode);
 
     return value;
   };
@@ -114,7 +116,7 @@ describe('Execute Script Sync', () => {
   });
 
   it('throws a JavaScriptError on an invalid script body', async () => {
-    const { error } = await executeScript('return null.foo');
+    const { error } = await executeScript('return null.foo', [], 500);
     expect(error).toBe('javascript error');
   });
 
@@ -125,7 +127,7 @@ describe('Execute Script Sync', () => {
         script: 50,
       });
 
-    const { error } = await executeScript('while (true) {}');
+    const { error } = await executeScript('while (true) {}', [], 408);
     expect(error).toBe('script timeout');
   });
 

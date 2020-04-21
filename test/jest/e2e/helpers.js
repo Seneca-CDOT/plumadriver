@@ -1,4 +1,3 @@
-
 exports.createSession = async (request, app) => {
   const requestBody = {
     desiredCapabilities: {
@@ -16,14 +15,15 @@ exports.createSession = async (request, app) => {
       ],
     },
   };
-  
+
   const {
     body: {
       value: { sessionId },
     },
   } = await request(app)
     .post('/session')
-    .send(requestBody);
+    .send(requestBody)
+    .expect(200);
 
   return sessionId;
 };

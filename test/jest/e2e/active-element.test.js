@@ -31,7 +31,8 @@ describe('Get Active Element', () => {
       .post(`/session/${sessionId}/url`)
       .send({
         url: 'http://plumadriver.com',
-      });
+      })
+      .expect(200);
   });
 
   it('returns body as default active element', async () => {
@@ -45,9 +46,9 @@ describe('Get Active Element', () => {
 
     const {
       body: { value: tagName },
-    } = await request(app).get(
-      `/session/${sessionId}/element/${elementId}/name`,
-    );
+    } = await request(app)
+      .get(`/session/${sessionId}/element/${elementId}/name`)
+      .expect(200);
 
     expect(tagName).toBe('BODY');
   });
@@ -59,7 +60,8 @@ describe('Get Active Element', () => {
       },
     } = await request(app)
       .post(`/session/${sessionId}/element`)
-      .send({ using: 'css selector', value: 'option' });
+      .send({ using: 'css selector', value: 'option' })
+      .expect(200);
 
     await request(app).post(`/session/${sessionId}/element/${elementId}/click`);
 
@@ -73,9 +75,9 @@ describe('Get Active Element', () => {
 
     const {
       body: { value: localName },
-    } = await request(app).get(
-      `/session/${sessionId}/element/${activeElementId}/name`,
-    );
+    } = await request(app)
+      .get(`/session/${sessionId}/element/${activeElementId}/name`)
+      .expect(200);
 
     expect(localName).toBe('SELECT');
   });
