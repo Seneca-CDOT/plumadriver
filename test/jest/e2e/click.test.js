@@ -48,7 +48,8 @@ describe('Click Element', () => {
       .post(`/session/${sessionId}/url`)
       .send({
         url: 'http://plumadriver.com',
-      });
+      })
+      .expect(200);
   });
 
   const getElement = async cssSelector => {
@@ -73,7 +74,7 @@ describe('Click Element', () => {
   it('does not cause call stack error when clicking label descendant', async () => {
     const optionElementId = await getElement('#overflow-option');
     await clickElement(optionElementId);
-    
+
     const textareaElementId = await getElement('#overflow-textarea');
     await clickElement(textareaElementId);
   });
@@ -84,9 +85,9 @@ describe('Click Element', () => {
 
     const {
       body: { value },
-    } = await request(app).get(
-      `/session/${sessionId}/element/${buttonElementId}/text`,
-    );
+    } = await request(app)
+      .get(`/session/${sessionId}/element/${buttonElementId}/text`)
+      .expect(200);
 
     expect(value).toBe('bubbled=true');
   });

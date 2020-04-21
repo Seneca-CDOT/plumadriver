@@ -128,7 +128,8 @@ describe('Cookies', () => {
       .post(`/session/${sessionId}/url`)
       .send({
         url: 'http://plumadriver.com/',
-      });
+      })
+      .expect(200);
 
     const { error } = await addCookie(cookie, 400);
     expect(error).toBe('invalid argument');
@@ -146,7 +147,8 @@ describe('Cookies', () => {
       .post(`/session/${sessionId}/url`)
       .send({
         url: 'http://bar.foo.local',
-      });
+      })
+      .expect(200);
 
     await addCookie({ name: 'requestCookie', value: 'requestValue' });
 
@@ -168,7 +170,8 @@ describe('Cookies', () => {
       .post(`/session/${sessionId}/url`)
       .send({
         url: 'http://plumadriver.com/a/b',
-      });
+      })
+      .expect(200);
 
     const requestCookie = {
       name: 'someName',
