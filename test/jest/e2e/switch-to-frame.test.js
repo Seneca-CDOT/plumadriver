@@ -47,7 +47,8 @@ describe('Switch to Frame', () => {
       .post(`/session/${sessionId}/url`)
       .send({
         url: 'http://plumadriver.com',
-      });
+      })
+      .expect(200);
   });
 
   const getHeaderText = async () => {

@@ -26,7 +26,8 @@ describe('Timeouts', () => {
 
     const timeoutPostResponse = await request(app)
       .post(`/session/${sessionId}/timeouts`)
-      .send(requestedTimeouts);
+      .send(requestedTimeouts)
+      .expect(200);
 
     expect(timeoutPostResponse.body).toStrictEqual({
       value: null,
@@ -49,7 +50,8 @@ describe('Timeouts', () => {
       .post(`/session/${sessionId}/timeouts`)
       .send({
         foo: 2000,
-      });
+      })
+      .expect(400);
 
     expect(error).toBe('invalid argument');
   });
@@ -66,7 +68,8 @@ describe('Timeouts', () => {
         script: 1000,
         pageLoad: -2000,
         implicit: 3000,
-      });
+      })
+      .expect(400);
 
     expect(error).toBe('invalid argument');
   });
