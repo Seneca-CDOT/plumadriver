@@ -18,11 +18,14 @@ describe('Get Page Source', () => {
       .post(`/session/${sessionId}/url`)
       .send({
         url: 'http://plumadriver.com',
-      });
+      })
+      .expect(200);
 
     const {
       body: { value },
-    } = await request(app).get(`/session/${sessionId}/source`);
+    } = await request(app)
+      .get(`/session/${sessionId}/source`)
+      .expect(200);
 
     const expectedValue = `<html><head></head><body>${testScript}<h1>test</h1></body></html>`;
 
