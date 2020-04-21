@@ -255,8 +255,7 @@ class Session {
       if (this.browser.getActiveElement() !== element) element.focus();
 
       if (element.tagName.toLowerCase() === 'input') {
-        if (text.constructor.name.toLowerCase() !== 'string')
-          reject(new InvalidArgument());
+        if (typeof text === 'string') reject(new InvalidArgument());
         // file input
         if (element.getAttribute('type') === 'file') {
           files = text.split('\n');
@@ -458,7 +457,7 @@ class Session {
     if (allMatchedCapabilities === undefined) {
       allMatchedCapabilities = [{}];
     } else if (
-      allMatchedCapabilities.constructor.name.toLowerCase() !== 'array' ||
+      !Array.isArray(allMatchedCapabilities) ||
       allMatchedCapabilities.length === 0
     ) {
       throw new InvalidArgument();

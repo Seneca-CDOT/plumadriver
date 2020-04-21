@@ -44,7 +44,7 @@ describe('Testing CapabilityValidator class', () => {
     capabilities.forEach(capability => {
       it(`${capability} should only accept string values`, () => {
         runTestAgainstTestData(data => {
-          if (data.constructor.name.toLowerCase() === 'string')
+          if (typeof data === 'string')
             expect(capabilityValidator.validate(data, capability)).toBe(true);
           else
             expect(capabilityValidator.validate(data, capability)).toBe(false);
@@ -56,7 +56,7 @@ describe('Testing CapabilityValidator class', () => {
   describe('Testing acceptInsecureCerts validation', () => {
     it('should only accept boolean values', () => {
       runTestAgainstTestData(data => {
-        if (data.constructor.name.toLowerCase() === 'boolean')
+        if (typeof data === 'boolean')
           expect(
             capabilityValidator.validate(data, 'acceptInsecureCerts'),
           ).toBe(true);
