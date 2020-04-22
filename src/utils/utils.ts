@@ -99,15 +99,10 @@ export const endpoint = {
         release();
       });
   },
-  async defaultSessionEndpointLogic(req, res, additionalLogic = null) {
-    let response = null;
+
+  async defaultSessionEndpointLogic(req, res) {
     const result = await req.session.process(req.sessionRequest);
-    if (result) {
-      response = has(result, 'value') ? result : { value: result };
-      res.json(response);
-    } else {
-      res.send(response);
-    }
+    res.json(has(result, 'value') ? result : { value: result });
   },
 };
 

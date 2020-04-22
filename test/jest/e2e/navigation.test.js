@@ -23,8 +23,8 @@ describe('Navigation', () => {
     sessionId = await createSession(request, app);
   });
 
-  it.skip('navigates to a page and responds with null', async () => {
-    const url = 'http://plumadriver.com';
+  it('navigates to a page and responds with null', async () => {
+    const url = 'http://plumadriver.com/';
     const { body } = await request(app)
       .post(`/session/${sessionId}/url`)
       .send({
