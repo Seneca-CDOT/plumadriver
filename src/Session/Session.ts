@@ -228,7 +228,7 @@ class Session {
       default:
         break;
     }
-    return response;
+    return response || { value: null };
   }
 
   /**
