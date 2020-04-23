@@ -268,29 +268,34 @@ class Browser {
   /**
    * returns all cookies in the cookie jar
    */
-  getCookies(): Pluma.Cookie[] {
-    const cookies = [];
+  public getAllCookies(): Promise<Pluma.Cookie[]> {
+    return new Promise((resolve, reject) => {
+      this.dom.cookieJar.serialize((err, serializedJar) => {
+        if (err) {
+          reject(err);
+        }
 
-    this.dom.cookieJar.serialize((err, serializedJar) => {
-      if (err) throw err;
-      serializedJar.cookies.forEach(cookie => {
-        const currentCookie: Pluma.Cookie = { name: '', value: '' };
-        Object.keys(cookie).forEach(key => {
-          // renames 'key' property to 'name' for W3C compliance and selenium functionality
-          if (key === 'key') currentCookie.name = cookie[key];
-          else if (key === 'expires') {
-            // sets the expiry time in seconds form epoch time
-            // renames property for selenium functionality
-            const seconds = new Date(currentCookie[key]).getTime();
-            currentCookie.expiry = seconds;
-          } else currentCookie[key] = cookie[key];
-        });
-        delete currentCookie.creation;
-        cookies.push(currentCookie);
+        const cookies: Cookie[] = serializedJar.cookies
+          .map((cookie: Pluma.Cookie) => {
+            const currentCookie: Pluma.Cookie = { name: '', value: '' };
+            Object.keys(cookie).forEach(key => {
+              // renames 'key' property to 'name' for W3C compliance and selenium functionality
+              if (key === 'key') currentCookie.name = cookie[key];
+              else if (key === 'expires') {
+                // sets the expiry time in seconds form epoch time
+                // renames property for selenium functionality
+                const seconds = new Date(currentCookie[key]).getTime();
+                currentCookie.expiry = seconds;
+              } else currentCookie[key] = cookie[key];
+            });
+            delete currentCookie.creation;
+            return currentCookie;
+          })
+          .filter((cookie: Pluma.Cookie) => this.isAssociatedCookie(cookie));
+
+        resolve(cookies);
       });
     });
-
-    return cookies;
   }
 
   /**
@@ -305,8 +310,9 @@ class Browser {
   /**
    * returns the cookie in the cookie jar matching the requested name
    */
-  public getNamedCookie(requestedName: string): Pluma.Cookie {
-    const requestedCookie = this.getCookies().find(
+  public async getNamedCookie(requestedName: string): Promise<Pluma.Cookie> {
+    const allCookies: Cookie[] = await this.getAllCookies();
+    const requestedCookie = allCookies.find(
       (cookie: Pluma.Cookie): boolean =>
         cookie.name === requestedName && this.isAssociatedCookie(cookie),
     );
@@ -318,20 +324,16 @@ class Browser {
   /**
    * delete associated cookies from the cookie jar matching a regexp pattern
    */
-  public deleteCookies(pattern: RegExp): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      this.getCookies()
-        .filter(
-          (cookie: Pluma.Cookie): boolean =>
-            pattern.test(cookie.name) && this.isAssociatedCookie(cookie),
-        )
-        .forEach(({ domain, path, name }: Pluma.Cookie): void => {
-          this.dom.cookieJar.store.removeCookie(domain, path, name, err => {
-            if (err) reject(err);
-          });
+  public async deleteCookies(pattern: RegExp): Promise<void> {
+    const allCookies: Pluma.Cookie[] = await this.getAllCookies();
+
+    allCookies
+      .filter((cookie: Pluma.Cookie): boolean => pattern.test(cookie.name))
+      .forEach(({ domain, path, name }: Pluma.Cookie): void => {
+        this.dom.cookieJar.store.removeCookie(domain, path, name, err => {
+          if (err) throw err;
         });
-      resolve();
-    });
+      });
   }
 
   /**

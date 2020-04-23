@@ -140,14 +140,14 @@ class Session {
       case COMMANDS.GET_TIMEOUTS:
         break;
       case COMMANDS.GET_ALL_COOKIES:
-        response = this.browser.getCookies();
+        response = await this.browser.getAllCookies();
         break;
       case COMMANDS.ADD_COOKIE:
         response = this.browser.addCookie(parameters.cookie);
         break;
       case COMMANDS.GET_NAMED_COOKIE:
         if (!this.browser.dom.window) throw new NoSuchWindow();
-        const retrievedCookie = this.browser.getNamedCookie(
+        const retrievedCookie = await this.browser.getNamedCookie(
           urlVariables.cookieName,
         );
         response = { value: retrievedCookie };

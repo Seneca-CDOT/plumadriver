@@ -274,8 +274,39 @@ describe('Cookies', () => {
       .expect(200);
 
     // get all cookies
-    expect((await getNamedCookie('')).map(({ name }) => name)).toEqual(
-      expect.arrayContaining(['notAssociated', 'alsoNotAssociated']),
+    expect((await getNamedCookie('')).map(({ name }) => name)).toStrictEqual(
+      [],
     );
+  });
+
+  it('gets all associated cookies', async () => {
+    await addCookie({
+      name: 'notAssociated',
+      value: 'true',
+      domain: '.anotherwebsite.com',
+      path: '/',
+    });
+
+    await request(app)
+      .post(`/session/${sessionId}/url`)
+      .send({
+        url: 'http://plumadriver.com/',
+      })
+      .expect(200);
+
+    const plumadriverCookie = {
+      name: 'associated',
+      value: 'true',
+      domain: 'plumadriver.com',
+      path: '/',
+    };
+
+    await addCookie(plumadriverCookie);
+
+    const {
+      body: { value: cookies },
+    } = await request(app).get(`/session/${sessionId}/cookie`);
+
+    expect(cookies).toStrictEqual([plumadriverCookie]);
   });
 });
