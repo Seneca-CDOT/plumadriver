@@ -10,7 +10,7 @@ import { getVersion } from '../utils/utils';
 class SessionManager {
   /** the Active Plumadriver sessions */
   sessions: Array<Session>;
-  /** plumadriver's [readiness state](https://w3c.github.io/webdriver/#nodes) */
+  /** Plumadriver's [readiness state](https://w3c.github.io/webdriver/#nodes) */
   readinessState: Pluma.ReadinessState;
   constructor() {
     this.sessions = [];
@@ -32,9 +32,10 @@ class SessionManager {
    * Creates a new @type {Session}
    * from a user defined session configuration object
    */
-  createSession(requestBody) {
+  createSession(requestBody): Pluma.SessionConfig {
     const session = new Session(requestBody);
     this.sessions.push(session);
+
     const sessionConfig = {
       value: {
         sessionId: session.id,
@@ -61,7 +62,7 @@ class SessionManager {
   /**
    * find a session from a user specified uuid
    */
-  findSession(sessionId: string) {
+  findSession(sessionId: string): Session {
     const foundSession = this.sessions.find(
       session => session.id === sessionId,
     );
@@ -75,7 +76,10 @@ class SessionManager {
   /**
    * deletes a session from a user specified uuid
    */
-  async deleteSession(currentSession: Session, request: Pluma.Request) {
+  async deleteSession(
+    currentSession: Session,
+    request: Pluma.Request,
+  ): Promise<void> {
     const index = this.sessions
       .map(session => session.id)
       .indexOf(currentSession.id);
@@ -86,7 +90,7 @@ class SessionManager {
   /**
    * updates and then returns the drivers readiness state
    */
-  getReadinessState() {
+  getReadinessState(): Pluma.ReadinessState {
     this.readinessState.status = this.sessions.length;
     return this.readinessState;
   }

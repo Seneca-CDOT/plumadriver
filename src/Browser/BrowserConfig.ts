@@ -10,7 +10,7 @@ import * as Utils from '../utils/utils';
  */
 export class BrowserConfig {
   /** defines the context under which scripts can run, if at all */
-  runScripts: Pluma.RunScripts | null;
+  runScripts: Pluma.RunScripts;
 
   /** defines whether self-signed or insecure SSL certificates should be trusted */
   strictSSL = true;
@@ -90,7 +90,7 @@ export class BrowserConfig {
         });
         break;
       case 'ignore':
-        this.beforeParse = window => this.injectAPIs(window);
+        this.beforeParse = (window): void => this.injectAPIs(window);
         break;
       default:
         break;
@@ -101,7 +101,7 @@ export class BrowserConfig {
    * Accepts a [[Pluma.UserPrompt]] object
    * to define the window.alert, window.prompt and window.confirm methods */
   private beforeParseFactory = (func: Pluma.UserPrompt) => {
-    return window => {
+    return (window): void => {
       ['confirm', 'alert', 'prompt'].forEach(method => {
         window[method] = func;
       });
@@ -114,14 +114,14 @@ export class BrowserConfig {
    * Injects missing APIs into jsdom for better compatibility.
    */
   private injectAPIs(window): void {
-    window.HTMLElement.prototype.scrollIntoView = () => undefined;
+    window.HTMLElement.prototype.scrollIntoView = (): void => undefined;
 
     window.performance.timing = {
       navigationStart: window.performance.timeOrigin,
     };
 
     window.SVGRectElement = Object.create(window.SVGElement);
-    window.SVGRectElement.prototype.getBBox = () => ({
+    window.SVGRectElement.prototype.getBBox = (): Pluma.SVGRectElement => ({
       x: 1,
       y: 1,
       width: 1,

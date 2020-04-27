@@ -24,12 +24,12 @@ class Browser {
   dom: JSDOM;
 
   /** the Window of the current browsing context */
-  private currentBrowsingContextWindow: Window;
+  private currentBrowsingContextWindow: Pluma.DOMWindow;
 
   /** accepts a capabilities object with jsdom and plumadriver specific options */
   constructor(capabilities: object) {
     const browserOptions: Pluma.BrowserOptions = {
-      runScripts: '',
+      runScripts: 'dangerously',
       strictSSL: true,
       unhandledPromptBehavior: 'dismiss and notify',
       rejectPublicSuffixes: false,
@@ -49,9 +49,9 @@ class Browser {
    */
   async configureBrowser(
     config: BrowserConfig,
-    url: URL | null,
+    url: string,
     pathType = 'url',
-  ) {
+  ): Promise<void> {
     let dom;
 
     if (url !== null) {
@@ -75,7 +75,7 @@ class Browser {
 
       /*  promise resolves after load event has fired. Allows onload events to execute
       before the DOM object can be manipulated  */
-      const loadEvent = () =>
+      const loadEvent = (): Promise<JSDOM> =>
         new Promise(resolve => {
           dom.window.addEventListener('load', () => {
             resolve(dom);
@@ -104,7 +104,7 @@ class Browser {
   /**
    * handles errors thrown by the navigation function
    */
-  private handleNavigationError(error, config) {
+  private handleNavigationError(error, config): void {
     // the jsdom instance will otherwise crash on a 401
     if (error.statusCode === 401) {
       this.dom = new JSDOM(' ', {
@@ -123,7 +123,7 @@ class Browser {
    * accepts a url and pathType @type {String} from which to instantiate the
    * jsdom object
    */
-  async navigate(path: URL, pathType) {
+  async navigate(path: string, pathType): Promise<boolean> {
     if (path) {
       try {
         await this.configureBrowser(this.browserConfig, path, pathType);
@@ -154,7 +154,7 @@ class Browser {
    * Get the Window object associated with the current browsing context.
    * @returns {Window}
    */
-  public getCurrentBrowsingContextWindow(): Window {
+  public getCurrentBrowsingContextWindow(): Pluma.DOMWindow {
     return this.currentBrowsingContextWindow;
   }
 
@@ -162,7 +162,7 @@ class Browser {
    * Set the Window for the current browsing context.
    * @param {Window} window - the Window object
    */
-  public setCurrentBrowsingContextWindow(window: Window) {
+  public setCurrentBrowsingContextWindow(window: Pluma.DOMWindow): void {
     this.currentBrowsingContextWindow = window;
   }
 
@@ -428,7 +428,7 @@ class Browser {
   /**
    * terminates all scripts and timers initiated in jsdom vm
    */
-  close() {
+  close(): void {
     this.dom.window.close();
   }
 }

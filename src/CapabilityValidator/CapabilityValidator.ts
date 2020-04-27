@@ -26,7 +26,7 @@ class CapabilityValidator {
    * @param capability the capability object
    * @param capabilityName the name of the capability to be validated
    */
-  validate(capability, capabilityName) {
+  validate(capability, capabilityName): boolean {
     switch (capabilityName) {
       case 'browserName':
       case 'browserVersion':
@@ -79,7 +79,7 @@ class CapabilityValidator {
   /**
    * validates proxy for session
    */
-  static validateProxy(reqProxy) {
+  static validateProxy(reqProxy): boolean {
     const proxyProperties = [
       'proxyType',
       'proxyAutoConfigUrl',
@@ -181,17 +181,17 @@ class CapabilityValidator {
    * Validates plumadriver specific options
    * @param options vendor (plumadriver) specific options
    */
-  static validatePlumaOptions(options) {
+  static validatePlumaOptions(options): boolean {
     let validatedOptions = true;
 
     const allowedOptions = {
-      url(url) {
+      url(url): boolean {
         return validator.isURL(url);
       },
-      referrer(referrer) {
+      referrer(referrer): boolean {
         return validator.isURL(referrer);
       },
-      contentType(contentType) {
+      contentType(contentType): boolean {
         let valid;
         const validTypes = ['text/html', 'application/xml'];
 
@@ -207,19 +207,19 @@ class CapabilityValidator {
 
         return valid;
       },
-      includeNodeLocations(value) {
+      includeNodeLocations(value): boolean {
         return value.constructor === Boolean;
       },
-      storageQuota(quota) {
+      storageQuota(quota): boolean {
         return Number.isInteger(quota);
       },
-      runScripts(value) {
+      runScripts(value): boolean {
         return value.constructor === Boolean;
       },
-      resources(resources) {
+      resources(resources): boolean {
         return resources.constructor === String && resources === 'useable';
       },
-      rejectPublicSuffixes(value) {
+      rejectPublicSuffixes(value): boolean {
         return value.constructor === Boolean;
       },
     };

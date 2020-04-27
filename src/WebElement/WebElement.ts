@@ -12,6 +12,7 @@ import {
 
 // TODO: find a more efficient way to import this
 import { JSDOM } from 'jsdom';
+import { Pluma } from '../Types/types';
 const { MouseEvent, getComputedStyle } = new JSDOM().window;
 
 class WebElement {
@@ -249,7 +250,7 @@ class WebElement {
    * returns the JSON representation of the WebElement
    * @returns {Object}
    */
-  public serialize() {
+  public serialize(): Pluma.SerializedWebElement {
     return { [ELEMENT]: this[ELEMENT] };
   }
 
