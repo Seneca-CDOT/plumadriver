@@ -57,7 +57,7 @@ class Session {
    * a queue of [[Pluma.Request]] currently awaiting processing
    *  */
   mutex: Mutex;
-  proxy: Record<string, unknown> | null;
+  proxy: string;
 
   constructor(requestBody) {
     this.id = uuidv1();
@@ -90,7 +90,7 @@ class Session {
         await this.browser.close();
         break;
       case COMMANDS.NAVIGATE_TO:
-        await this.navigateTo(parameters);
+        await this.navigateTo(parameters.url);
         break;
       case COMMANDS.GET_CURRENT_URL:
         response = this.browser.getUrl();
@@ -237,7 +237,7 @@ class Session {
    * sets a user defined value on a given HTML element
    * TODO: this method needs to be updated to incorporate the action Object
    */
-  sendKeysToElement(text: string, elementId: string) {
+  sendKeysToElement(text: string, elementId: string): Promise<void> {
     return new Promise(async (resolve, reject) => {
       const webElement = this.browser.getKnownElement(elementId);
       const element: HTMLElement = webElement.element;
@@ -302,8 +302,8 @@ class Session {
    * navigates to a specified url
    * sets timers according to session config
    */
-  async navigateTo({ url }) {
-    let pathType;
+  async navigateTo(url: string): Promise<void> {
+    let pathType: string;
 
     try {
       if (validator.isURL(url)) pathType = 'url';
@@ -315,7 +315,7 @@ class Session {
 
     // pageload timer
     let timer;
-    const startTimer = () => {
+    const startTimer = (): void => {
       timer = setTimeout(() => {
         throw new Error('timeout'); // TODO: create timeout error class
       }, this.timeouts.pageLoad);
@@ -332,7 +332,7 @@ class Session {
    * sets and validates the [[timeouts]] object
    * */
 
-  setTimeouts(timeouts) {
+  setTimeouts(timeouts): void {
     const capabilityValidator = new CapabilityValidator();
     let valid = true;
     Object.keys(timeouts).forEach(key => {
@@ -353,8 +353,8 @@ class Session {
   }
 
   /** configures session properties*/
-  configureSession(requestedCapabilities) {
-    // configure Session object capabilties
+  configureSession(requestedCapabilities): void {
+    // configure Session object capabilities
     const configuredCapabilities = this.configureCapabilities(
       requestedCapabilities,
     );
@@ -378,8 +378,8 @@ class Session {
     this.browser = new Browser(browserConfig);
   }
 
-  // configures session object capabilties
-  configureCapabilities(requestedCapabilities) {
+  // configures session object capabilities
+  configureCapabilities(requestedCapabilities): Pluma.Capabilities {
     const capabilities = Session.processCapabilities(requestedCapabilities);
     if (capabilities === null)
       throw new SessionNotCreated('capabilities object is null');
@@ -409,9 +409,9 @@ class Session {
   }
 
   /**
-   * processes and validates the user defined capabilties
+   * processes and validates the user defined capabilities
    */
-  static processCapabilities({ capabilities }) {
+  static processCapabilities({ capabilities }): Pluma.Capabilities {
     const capabilityValidator = new CapabilityValidator();
 
     const defaultCapabilities = [
@@ -434,7 +434,7 @@ class Session {
       throw new InvalidArgument();
     }
 
-    // validate alwaysMatch capabilties
+    // validate alwaysMatch capabilities
     const requiredCapabilities = {};
     if (capabilities.alwaysMatch !== undefined) {
       defaultCapabilities.forEach(key => {
@@ -464,7 +464,7 @@ class Session {
     }
     /**
      * @param {Array[Capability]} validatedFirstMatchCapabilities contains
-     * a list of all the validated firstMatch capabilties requested by the client
+     * a list of all the validated firstMatch capabilities requested by the client
      */
     const validatedFirstMatchCapabilities = [];
 
@@ -504,10 +504,10 @@ class Session {
   }
 
   /**
-   * accepts required primary and secondary capabilties
-   * merges any overlapping capabilties
+   * accepts required primary and secondary capabilities
+   * merges any overlapping capabilities
    */
-  static mergeCapabilities(primary, secondary) {
+  static mergeCapabilities(primary, secondary): Pluma.Capabilities | {} {
     const result = {};
     Object.keys(primary).forEach(key => {
       result[key] = primary[key];
@@ -526,9 +526,9 @@ class Session {
   }
 
   /**
-   * matches implementation capabilties with the merged capabilties
+   * matches implementation capabilities with the merged capabilities
    * */
-  static matchCapabilities(capabilties) {
+  static matchCapabilities(capabilities): Pluma.Capabilities {
     const matchedCapabilities = {
       browserName: 'pluma',
       browserVersion: utils.getVersion(),
@@ -539,26 +539,26 @@ class Session {
 
     // TODO: add extension capabilities here in the future
     let flag = true;
-    Object.keys(capabilties).forEach(property => {
+    Object.keys(capabilities).forEach(property => {
       switch (property) {
         case 'browserName':
         case 'platformName':
-          if (capabilties[property] !== matchedCapabilities[property])
+          if (capabilities[property] !== matchedCapabilities[property])
             flag = false;
           break;
         case 'browserVersion':
           // TODO: change to comparison algorith once more versions are released
-          if (capabilties[property] !== matchedCapabilities[property])
+          if (capabilities[property] !== matchedCapabilities[property])
             flag = false;
           break;
         case 'setWindowRect':
-          if (capabilties[property]) throw new InvalidArgument();
+          if (capabilities[property]) throw new InvalidArgument();
           break;
         // TODO: add proxy matching in the future
         default:
           break;
       }
-      if (flag) matchedCapabilities[property] = capabilties[property];
+      if (flag) matchedCapabilities[property] = capabilities[property];
     });
 
     if (flag) return matchedCapabilities;
@@ -569,7 +569,11 @@ class Session {
   /**
    * attempts to find a [[WebElement]] from a given startNode, selection strategy and selector
    */
-  elementRetrieval(startNode, strategy, selector) {
+  elementRetrieval(
+    startNode,
+    strategy,
+    selector,
+  ): NodeList | HTMLCollection | HTMLElement[] {
     const endTime = new Date(new Date().getTime() + this.timeouts.implicit);
     let elements;
     const result = [];
@@ -578,10 +582,10 @@ class Session {
     if (!startNode) throw new NoSuchElement();
 
     const locationStrategies = {
-      cssSelector() {
+      cssSelector(): NodeList {
         return startNode.querySelectorAll(selector);
       },
-      linkTextSelector(partial = false) {
+      linkTextSelector(partial = false): HTMLElement[] {
         const linkElements = startNode.querySelectorAll('a');
         const strategyResult = [];
 
@@ -594,10 +598,10 @@ class Session {
         });
         return result;
       },
-      tagName() {
+      tagName(): HTMLCollection {
         return startNode.getElementsByTagName(selector);
       },
-      XPathSelector(document) {
+      XPathSelector(document): HTMLElement[] {
         const evaluateResult = document.evaluate(selector, startNode, null, 7);
         const length = evaluateResult.snapshotLength;
         const xPathResult = []; // according to W3C this should be a NodeList
@@ -671,7 +675,9 @@ class Session {
    * @param {HTMLElement} element
    * @returns {Object} the JSON representation of the WebElement
    */
-  private addElementToKnownElements(element: HTMLElement) {
+  private addElementToKnownElements(
+    element: HTMLElement,
+  ): Pluma.SerializedWebElement {
     const webElement = new WebElement(element);
     this.browser.knownElements.push(webElement);
     return webElement.serialize();
@@ -690,9 +696,7 @@ class Session {
       }
     });
 
-    // eval is missing from the Window type in typescript
-    // TODO: attempt to fix this in the future by importing @types/jsdom
-    const window = this.browser.getCurrentBrowsingContextWindow() as any;
+    const window = this.browser.getCurrentBrowsingContextWindow();
 
     const func = window
       .eval(`(function() {${script}})`)
@@ -713,7 +717,9 @@ class Session {
       this.handleSyncScriptError(error);
     }
 
-    const { NodeList, HTMLCollection, HTMLElement } = window;
+    // TODO: incorporate @types/jsdom to resolve typescript instanceof errors
+    // eslint-disable-next-line
+    const { NodeList, HTMLCollection, HTMLElement } = window as any;
 
     if (
       vmReturnValue instanceof NodeList ||

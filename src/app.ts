@@ -28,8 +28,7 @@ app.use('/', router);
 app.use(errorLogger);
 
 // error handler
-// eslint-disable-next-line no-unused-vars
-app.use((err, req, res, next) => {
+app.use((err, req, res, _next) => {
   const errorResponse: Pluma.ErrorResponse = {
     value: {
       error: err.JSONCodeError,

@@ -8,7 +8,9 @@ import { version } from 'pjson';
 // credit where it's due: https://stackoverflow.com/questions/36836011/checking-validity-of-string-literal-union-type-at-runtime/43621735
 export const StringUnion = <UnionType extends string>(
   ...values: UnionType[]
-) => {
+): { guard; check; values } & {
+  type: UnionType;
+} => {
   Object.freeze(values);
   const valueSet: Set<string> = new Set(values);
 
@@ -35,7 +37,9 @@ export const StringUnion = <UnionType extends string>(
   );
 };
 
-export const isBrowserOptions = (obj: any): obj is Pluma.BrowserOptions => {
+export const isBrowserOptions = (
+  obj: Pluma.BrowserOptions,
+): obj is Pluma.BrowserOptions => {
   if (
     obj.runScripts === undefined ||
     obj.strictSSL === undefined ||
@@ -47,14 +51,14 @@ export const isBrowserOptions = (obj: any): obj is Pluma.BrowserOptions => {
 };
 
 export const validate = {
-  requestBodyType(incomingMessage, type) {
+  requestBodyType(incomingMessage, type): boolean {
     if (incomingMessage.headers['content-type'].includes(type)) {
       return true;
     }
     return false;
   },
 
-  objectPropertiesAreInArray(object, array) {
+  objectPropertiesAreInArray(object, array): boolean {
     let validObject = true;
 
     Object.keys(object).forEach(key => {
@@ -66,13 +70,13 @@ export const validate = {
 
     return validObject;
   },
-  isEmpty(obj) {
+  isEmpty(obj): boolean {
     return Object.keys(obj).length === 0;
   },
 };
 
 export const fileSystem = {
-  pathExists(path) {
+  pathExists(path): Promise<boolean> {
     return new Promise((res, rej) => {
       fs.access(path, fs.constants.F_OK, err => {
         if (err) rej(new PlumaError.InvalidArgument());
@@ -87,7 +91,7 @@ export const endpoint = {
     req,
     res,
     next,
-  ) => {
+  ): Promise<void> => {
     req.sessionRequest.command = plumaCommand;
     const release = await req.session.mutex.acquire();
     endpointLogic(req, res)
@@ -100,7 +104,7 @@ export const endpoint = {
       });
   },
 
-  async defaultSessionEndpointLogic(req, res) {
+  async defaultSessionEndpointLogic(req, res): Promise<void> {
     const result = await req.session.process(req.sessionRequest);
     res.json(has(result, 'value') ? result : { value: result });
   },
@@ -110,7 +114,7 @@ export const endpoint = {
  * Selenium uses the Execute Script Sync endpoint to check for isDisplayed.
  * This detects that request and forwards it to the appropriate W3C recommended endpoint.
  */
-export const handleSeleniumIsDisplayedRequest = (req, _res, next) => {
+export const handleSeleniumIsDisplayedRequest = (req, _res, next): void => {
   if (req.body.script === isDisplayedAtom) {
     const [
       { ['element-6066-11e4-a52e-4f735466cecf']: elementId },

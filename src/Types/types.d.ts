@@ -45,9 +45,23 @@ export namespace Pluma {
    */
   interface Request {
     /** the http url variables */
-    urlVariables: any;
+    urlVariables: {
+      elementId?: string;
+      attributeName?: string;
+      cookieName?: string;
+    };
     /** the parameters passed inside the body of the http request */
-    parameters: any;
+    parameters: {
+      id?: string;
+      args?: unknown[];
+      script?: string;
+      text?: string;
+      cookieName?: string;
+      value?: string;
+      cookie?: Pluma.Cookie;
+      using?: string;
+      url?: string;
+    };
     /** the specific webdriver command to be executed */
     command: string;
   }
@@ -83,6 +97,52 @@ export namespace Pluma {
       error: string;
       message: string;
       stacktrace: string;
+    };
+  }
+
+  interface SVGRectElement {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }
+
+  interface PlumaOptions {
+    runScripts: RunScripts;
+    unhandledPromptBehavior?: unhandledPromptBehavior;
+    rejectPublicSuffixes?: boolean;
+    strictSSL?: boolean;
+  }
+
+  interface Capabilities {
+    pageLoadStrategy?: PageLoadStrategy;
+    proxy?: string | {};
+    timeouts?: Timeouts;
+    rejectPublicSuffixes?: boolean;
+    unhandledPromptBehavior?: unhandledPromptBehavior;
+    acceptInsecureCerts: boolean;
+    browserName: string;
+    browserVersion: string;
+    platformName: NodeJS.Platform;
+    setWindowRect: boolean;
+    'plm:plumaOptions'?: PlumaOptions;
+  }
+
+  interface SerializedWebElement {
+    'element-6066-11e4-a52e-4f735466cecf': string;
+  }
+
+  interface DOMWindow extends Window {
+    eval?: (script: string) => (...args: unknown[]) => unknown;
+    NodeList?: [];
+    HTMLCollection?: [];
+    HTMLElement?: [];
+  }
+
+  interface SessionConfig {
+    value: {
+      sessionId: string;
+      capabilities: Capabilities;
     };
   }
 }

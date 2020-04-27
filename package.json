@@ -66,7 +66,7 @@
     "build:zip": "run-s build:all build:script",
     "generate-docs": "./node_modules/.bin/typedoc --out docs ./src/ --options ./typedoc.json &>/dev/null",
     "commit": "git cz",
-    "lint": "eslint .",
+    "lint": "eslint . --ext .js,.ts",
     "lint:fix": "eslint --fix ."
   },
   "bin": "bin.js",
