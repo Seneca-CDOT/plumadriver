@@ -1,3 +1,10 @@
+Notes for this branch:
+
+- This branch contains the start of the work on the [Perform Actions endpoint](https://www.w3.org/TR/webdriver1/#dfn-perform-actions).
+- The added classes and functions implement the algorithms for [extracting an action sequence](https://www.w3.org/TR/webdriver1/#dfn-extract-an-action-sequence).
+- The algorithms for [dispatching actions](https://www.w3.org/TR/webdriver1/#dfn-dispatch-actions), as well as setting up the Express routes remains to be completed.
+- After Perform Actions is completed, (Release Actions)[https://www.w3.org/TR/webdriver1/#release-actions] will need to be implemented as well to cover all of the functionality used by Selenium.
+
 # PlumaDriver
 
 PlumaDriver is a Node.js implementation of the [W3C WebDriver Recommendation](https://www.w3.org/TR/webdriver1/#protocol) for the [jsdom](https://github.com/jsdom/jsdom) library. The goal of this project is to provide an automation tool for jsdom in order to test web applications without the overhead of modern web browsers.
