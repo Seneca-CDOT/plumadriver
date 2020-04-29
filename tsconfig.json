@@ -7,7 +7,7 @@
     "resolveJsonModule": true,
     "rootDir": "./src",
     "sourceMap": true,
-    "target": "es2018",
+    "target": "ESNext",
     "watch": false,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
