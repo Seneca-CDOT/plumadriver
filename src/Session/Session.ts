@@ -493,14 +493,14 @@ class Session {
       mergedCapabilities.push(merged);
     });
 
-    let matchedCapabilities;
-    mergedCapabilities.forEach(capabilites => {
-      matchedCapabilities = Session.matchCapabilities(capabilites);
-      if (matchedCapabilities === null)
-        throw new SessionNotCreated('Capabilities could not be matched');
-    });
+    for (const capabilites of mergedCapabilities) {
+      const matchedCapabilities = Session.matchCapabilities(capabilites);
+      if (matchedCapabilities !== null) {
+        return matchedCapabilities;
+      }
+    }
 
-    return matchedCapabilities;
+    throw new SessionNotCreated('Capabilities could not be matched');
   }
 
   /**
