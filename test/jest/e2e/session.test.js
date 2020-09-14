@@ -53,7 +53,7 @@ describe('Session', () => {
     });
   });
 
-  it.skip('finds matching capabilities', async () => {
+  it('finds matching capabilities', async () => {
     const requestBody = {
       capabilities: {
         alwaysMatch: {
