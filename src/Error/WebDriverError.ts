@@ -2,7 +2,7 @@ export class WebDriverError extends Error {
   command!: string;
   code!: number;
   JSONCodeError = '';
-  constructor(code) {
+  constructor(code: number) {
     super();
 
     if (Error.captureStackTrace) {

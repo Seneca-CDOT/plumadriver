@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+//TODO: Install library on line 4 and add the rest of the noImplicitAny support
 import uuidv1 from 'uuid/v1';
 import validator from 'validator';
 import os from 'os';
@@ -59,7 +62,7 @@ class Session {
   mutex: Mutex;
   proxy = '';
 
-  constructor(requestBody) {
+  constructor(requestBody: Record<string, unknown>) {
     this.id = uuidv1();
     this.pageLoadStrategy = 'normal';
     this.acceptInsecureCerts = true;
@@ -90,7 +93,7 @@ class Session {
         await this.browser.close();
         break;
       case COMMANDS.NAVIGATE_TO:
-        await this.navigateTo(parameters.url);
+        await this.navigateTo(parameters.url as string);
         break;
       case COMMANDS.GET_CURRENT_URL:
         response = this.browser.getUrl();
@@ -116,12 +119,13 @@ class Session {
         break;
       case COMMANDS.GET_ELEMENT_TEXT:
         response = this.browser
-          .getKnownElement(urlVariables.elementId)
+          .getKnownElement(urlVariables.elementId as string)
           .getText();
         break;
       case COMMANDS.FIND_ELEMENTS_FROM_ELEMENT:
         response = this.elementRetrieval(
-          this.browser.getKnownElement(urlVariables.elementId).element,
+          this.browser.getKnownElement(urlVariables.elementId as string)
+            .element,
           parameters.using,
           parameters.value,
         );
@@ -129,7 +133,8 @@ class Session {
         break;
       case COMMANDS.FIND_ELEMENT_FROM_ELEMENT:
         response = this.elementRetrieval(
-          this.browser.getKnownElement(urlVariables.elementId).element,
+          this.browser.getKnownElement(urlVariables.elementId as string)
+            .element,
           parameters.using,
           parameters.value,
         )[0];
@@ -164,7 +169,7 @@ class Session {
         break;
       case COMMANDS.GET_ELEMENT_TAG_NAME:
         response = this.browser
-          .getKnownElement(urlVariables.elementId)
+          .getKnownElement(urlVariables.elementId as string)
           .getTagName();
         break;
       case COMMANDS.GET_ELEMENT_ATTRIBUTE:
@@ -188,25 +193,25 @@ class Session {
         break;
       case COMMANDS.ELEMENT_CLICK:
         if (!this.browser.dom.window) throw new NoSuchWindow();
-        this.browser.getKnownElement(urlVariables.elementId).click();
+        this.browser.getKnownElement(urlVariables.elementId as string).click();
         response = { value: null };
         break;
       case COMMANDS.ELEMENT_CLEAR:
         if (!this.browser.dom.window) throw new NoSuchWindow();
-        this.browser.getKnownElement(urlVariables.elementId).clear();
+        this.browser.getKnownElement(urlVariables.elementId as string).clear();
         response = { value: null };
         break;
       case COMMANDS.ELEMENT_ENABLED:
         if (!this.browser.dom.window) throw new NoSuchWindow();
         const isEnabled = this.browser
-          .getKnownElement(urlVariables.elementId)
+          .getKnownElement(urlVariables.elementId as string)
           .isEnabled();
         response = { value: isEnabled };
         break;
       case COMMANDS.ELEMENT_IS_DISPLAYED:
         if (!this.browser.dom.window) throw new NoSuchWindow();
         const { element }: WebElement = this.browser.getKnownElement(
-          urlVariables.elementId,
+          urlVariables.elementId as string,
         );
         response = { value: WebElement.isDisplayed(element) };
         break;
@@ -317,7 +322,8 @@ class Session {
 
     try {
       if (validator.isURL(url)) pathType = 'url';
-      else if (await utils.fileSystem.pathExists(url)) pathType = 'file';
+      else if (await utils.fileSystem.pathExists(url as string))
+        pathType = 'file';
       else throw new InvalidArgument();
     } catch (e) {
       throw new InvalidArgument();
@@ -342,16 +348,20 @@ class Session {
    * sets and validates the [[timeouts]] object
    * */
 
-  setTimeouts(timeouts): void {
+  setTimeouts(timeouts: Pluma.Timeouts): void {
     const capabilityValidator = new CapabilityValidator();
     let valid = true;
     Object.keys(timeouts).forEach(key => {
-      valid = capabilityValidator.validateTimeouts(key, timeouts[key]);
+      valid = capabilityValidator.validateTimeouts(
+        key,
+        timeouts[key as keyof typeof timeouts],
+      );
       if (!valid) throw new InvalidArgument();
     });
 
     Object.keys(timeouts).forEach(validTimeout => {
-      this.timeouts[validTimeout] = timeouts[validTimeout];
+      this.timeouts[validTimeout as keyof typeof timeouts] =
+        timeouts[validTimeout as keyof typeof timeouts];
     });
   }
 
@@ -363,7 +373,7 @@ class Session {
   }
 
   /** configures session properties*/
-  configureSession(requestedCapabilities): void {
+  configureSession(requestedCapabilities: any): void {
     // configure Session object capabilities
     const configuredCapabilities = this.configureCapabilities(
       requestedCapabilities,
@@ -390,7 +400,7 @@ class Session {
   }
 
   // configures session object capabilities
-  configureCapabilities(requestedCapabilities): Pluma.Capabilities {
+  configureCapabilities(requestedCapabilities: any): Pluma.Capabilities {
     const capabilities = Session.processCapabilities(requestedCapabilities);
     if (capabilities === null)
       throw new SessionNotCreated('capabilities object is null');
@@ -412,7 +422,7 @@ class Session {
     }
 
     if (has(capabilities, 'timeouts')) {
-      this.setTimeouts(capabilities.timeouts);
+      this.setTimeouts(capabilities.timeouts as Pluma.Timeouts);
     }
     capabilities.timeouts = this.timeouts;
 
@@ -422,7 +432,11 @@ class Session {
   /**
    * processes and validates the user defined capabilities
    */
-  static processCapabilities({ capabilities }): Pluma.Capabilities {
+  static processCapabilities({
+    capabilities,
+  }: {
+    capabilities: any;
+  }): Pluma.Capabilities {
     const capabilityValidator = new CapabilityValidator();
 
     const defaultCapabilities = [
@@ -446,7 +460,7 @@ class Session {
     }
 
     // validate alwaysMatch capabilities
-    const requiredCapabilities = {};
+    const requiredCapabilities: Record<string, unknown> = {};
     if (capabilities.alwaysMatch !== undefined) {
       defaultCapabilities.forEach(key => {
         if (has(capabilities.alwaysMatch, key)) {
@@ -455,7 +469,8 @@ class Session {
             key,
           );
           if (validatedCapability)
-            requiredCapabilities[key] = capabilities.alwaysMatch[key];
+            requiredCapabilities[key as keyof typeof requiredCapabilities] =
+              capabilities.alwaysMatch[key];
           else {
             throw new InvalidArgument();
           }
@@ -518,10 +533,13 @@ class Session {
    * accepts required primary and secondary capabilities
    * merges any overlapping capabilities
    */
-  static mergeCapabilities(primary, secondary): Record<string, unknown> {
-    const result = {};
+  static mergeCapabilities(
+    primary: Record<string, unknown>,
+    secondary: any,
+  ): Record<string, unknown> {
+    const result: Record<string, unknown> = {};
     Object.keys(primary).forEach(key => {
-      result[key] = primary[key];
+      result[key as keyof typeof result] = primary[key as keyof typeof primary];
     });
 
     if (secondary === undefined) return result;
@@ -530,7 +548,7 @@ class Session {
       if (has(primary, property)) {
         throw new InvalidArgument();
       }
-      result[property] = secondary[property];
+      result[property] = secondary[property as keyof typeof secondary];
     });
 
     return result;
@@ -596,25 +614,25 @@ class Session {
         const linkElements = startNode.querySelectorAll('a');
         const strategyResult: HTMLElement[] = [];
 
-        linkElements.forEach(element => {
+        linkElements.forEach((element: { innerHTML: any }) => {
           const renderedText = element.innerHTML;
           if (!partial && renderedText.trim() === selector)
-            strategyResult.push(element);
+            strategyResult.push(element.innerHTML);
           else if (partial && renderedText.includes(selector))
-            strategyResult.push(element);
+            strategyResult.push(element.innerHTML);
         });
         return result;
       },
       tagName(): HTMLCollection {
         return startNode.getElementsByTagName(selector);
       },
-      XPathSelector(document): HTMLElement[] {
+      XPathSelector(document: Document): HTMLElement[] {
         const evaluateResult = document.evaluate(selector, startNode, null, 7);
         const length = evaluateResult.snapshotLength;
         const xPathResult: HTMLElement[] = []; // according to W3C this should be a NodeList
         for (let i = 0; i < length; i++) {
           const node = evaluateResult.snapshotItem(i);
-          xPathResult.push(node);
+          xPathResult.push(node as HTMLElement);
         }
         return xPathResult;
       },
@@ -655,7 +673,7 @@ class Session {
       }
     } while (endTime > new Date() && elements.length < 1);
 
-    elements.forEach(element => {
+    elements.forEach((element: HTMLElement) => {
       const foundElement = new WebElement(element);
       result.push(foundElement);
       this.browser.knownElements.push(foundElement);

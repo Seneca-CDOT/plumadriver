@@ -16,7 +16,7 @@ import { WebElement } from '../WebElement/WebElement';
  */
 export namespace Pluma {
   type unhandledPromptBehavior = typeof unhandledPromptBehaviorValues.type;
-  type BeforeParse = (window) => void;
+  type BeforeParse = (window: DOMWindow) => void;
   type UserPrompt = (message?: string) => boolean;
   type ElementBooleanAttribute = typeof ElementBooleanAttributeValues.type;
   type PageLoadStrategy = typeof PageLoadStrategyValues.type;
@@ -53,6 +53,7 @@ export namespace Pluma {
    * Expected cookie shape
    */
   interface Cookie {
+    [key: string]: any;
     name: string;
     value: string;
     domain?: string;
@@ -151,6 +152,17 @@ export namespace Pluma {
     'plm:plumaOptions'?: PlumaOptions;
   }
 
+  interface Proxy {
+    proxyType?: string;
+    proxyAutoConfigUrl?: string;
+    ftpProxy?: string;
+    httpProxy?: string;
+    noProxy?: string[];
+    sslProxy?: string;
+    socksProxy?: string;
+    socksVersion?: number;
+  }
+
   interface SerializedWebElement {
     'element-6066-11e4-a52e-4f735466cecf': string;
   }
@@ -182,7 +194,7 @@ declare global {
   }
 }
 
-declare module 'jsdom' {
+declare module 'tough-cookie' {
   interface CookieJar {
     store: Store;
   }
