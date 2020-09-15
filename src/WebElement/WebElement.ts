@@ -370,6 +370,28 @@ class WebElement {
 
     return true;
   }
+
+  /**
+   * returns true if WebElement's HTML element is selected, otherwise returns false.
+   * @returns {boolean}
+   */
+  isSelected(): boolean {
+    const { localName } = this.element;
+    let selected: boolean;
+
+    if (
+      isInputElement(this.element) &&
+      ['checkbox', 'radio'].includes(this.element.type)
+    ) {
+      selected = this.element.checked;
+    } else if (localName === 'option') {
+      selected = (this.element as HTMLOptionElement).selected;
+    } else {
+      selected = false;
+    }
+
+    return selected;
+  }
 }
 
 export { WebElement };

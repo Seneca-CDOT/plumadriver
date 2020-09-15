@@ -87,4 +87,12 @@ element.get(
   ),
 );
 
+element.get(
+  '/selected',
+  sessionEndpointExceptionHandler(
+    defaultSessionEndpointLogic,
+    COMMANDS.ELEMENT_SELECTED,
+  ),
+);
+
 export default element;
