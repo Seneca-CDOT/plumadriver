@@ -176,3 +176,4 @@ It is important to keep in mind that jsdom is not intended to be a full renderin
 - [x] [**Get Active Element:**](https://www.w3.org/TR/webdriver1/#dfn-get-active-element) GET /session/{session id}/element/active
 - [x] [**Switch To Frame:**](https://www.w3.org/TR/webdriver1/#dfn-switch-to-frame) POST /session/{session id}/frame
 - [x] [**Switch To Parent Frame:**](https://www.w3.org/TR/webdriver1/#dfn-switch-to-parent-frame) POST /session/{session id}/frame/parent
+- [x] [**Is Element Selected:**](https://www.w3.org/TR/webdriver/#dfn-is-element-selected) GET /session/{session id}/element/{element id}/selected

@@ -225,6 +225,13 @@ class Session {
         this.browser.switchToParentFrame();
         response = { value: null };
         break;
+      case COMMANDS.ELEMENT_SELECTED:
+        if (!this.browser.dom.window) throw new NoSuchWindow();
+        const isSelected = this.browser
+          .getKnownElement(urlVariables.elementId)
+          .isSelected();
+        response = { value: isSelected };
+        break;
       default:
         break;
     }
