@@ -5,6 +5,10 @@ import {
   PageLoadStrategyValues,
 } from '../constants/constants';
 
+// TODO: probably update eslint to avoid the disabled rule below
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Session } from '../Session/Session';
+
 /**
  * contains interfaces particular to plumadriver
  */
@@ -144,5 +148,15 @@ export namespace Pluma {
       sessionId: string;
       capabilities: Capabilities;
     };
+  }
+}
+
+declare global {
+  namespace Express {
+    interface Request {
+      sessionId: string;
+      session: Session;
+      sessionRequest: Pluma.Request;
+    }
   }
 }
