@@ -14,7 +14,8 @@
     "moduleResolution": "node",
     "noImplicitThis": true,
     "strictBindCallApply": true,
-    "strictFunctionTypes": true
+    "strictFunctionTypes": true,
+    "alwaysStrict": true
   },
   "include": ["./src"]
 }
