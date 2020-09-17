@@ -13,7 +13,8 @@
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "noImplicitThis": true,
-    "strictBindCallApply": true
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true
   },
   "include": ["./src"]
 }
