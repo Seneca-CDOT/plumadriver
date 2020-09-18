@@ -116,7 +116,7 @@ export namespace Pluma {
 
   interface Capabilities {
     pageLoadStrategy?: PageLoadStrategy;
-    proxy?: string | {};
+    proxy?: string | Record<string, unknown>;
     timeouts?: Timeouts;
     rejectPublicSuffixes?: boolean;
     unhandledPromptBehavior?: unhandledPromptBehavior;
