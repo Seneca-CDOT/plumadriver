@@ -53,9 +53,6 @@ export const unhandledPromptBehaviorValues = StringUnion(
   'ignore',
 );
 
-/** JSDOM specific option defining which scripts will execute. More information [here](https://github.com/jsdom/jsdom#executing-scripts) */
-export const RunScriptsValues = StringUnion('dangerously', 'outside-only');
-
 /** W3C specific user agent [page loading strategies](https://w3c.github.io/webdriver/#dfn-page-loading-strategy) */
 export const PageLoadStrategyValues = StringUnion('none', 'eager', 'normal');
 

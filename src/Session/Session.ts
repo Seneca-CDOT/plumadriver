@@ -3,7 +3,7 @@ import validator from 'validator';
 import os from 'os';
 import { Mutex } from 'async-mutex';
 import { VM } from 'vm2';
-import { JSDOM } from 'jsdom';
+import { DOMWindow, JSDOM } from 'jsdom';
 import has from 'has';
 
 import { WebElement } from '../WebElement/WebElement';
@@ -705,7 +705,7 @@ class Session {
 
     const window = this.browser.getCurrentBrowsingContextWindow();
 
-    const func = window
+    const func = (window as DOMWindow)
       .eval(`(function() {${script}})`)
       .bind(null, ...argumentList);
 

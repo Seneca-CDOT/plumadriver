@@ -1,7 +1,8 @@
+import { BaseOptions, DOMWindow as JSDOMDOMWindow } from 'jsdom';
+import { Store } from 'tough-cookie';
 import {
   ElementBooleanAttributeValues,
   unhandledPromptBehaviorValues,
-  RunScriptsValues,
   PageLoadStrategyValues,
 } from '../constants/constants';
 
@@ -13,7 +14,6 @@ import { Session } from '../Session/Session';
  * contains interfaces particular to plumadriver
  */
 export namespace Pluma {
-  type RunScripts = typeof RunScriptsValues.type;
   type unhandledPromptBehavior = typeof unhandledPromptBehaviorValues.type;
   type BeforeParse = (window) => void;
   type UserPrompt = (message?: string) => boolean;
@@ -24,7 +24,7 @@ export namespace Pluma {
    * Client defined options for jsdom
    */
   interface BrowserOptions {
-    runScripts: RunScripts;
+    runScripts: BaseOptions['runScripts'];
     strictSSL: boolean;
     unhandledPromptBehavior: unhandledPromptBehavior;
     rejectPublicSuffixes: boolean;
@@ -112,7 +112,7 @@ export namespace Pluma {
   }
 
   interface PlumaOptions {
-    runScripts: RunScripts;
+    runScripts: BaseOptions['runScripts'];
     unhandledPromptBehavior?: unhandledPromptBehavior;
     rejectPublicSuffixes?: boolean;
     strictSSL?: boolean;
@@ -136,12 +136,7 @@ export namespace Pluma {
     'element-6066-11e4-a52e-4f735466cecf': string;
   }
 
-  interface DOMWindow extends Window {
-    eval?: (script: string) => (...args: unknown[]) => unknown;
-    NodeList?: [];
-    HTMLCollection?: [];
-    HTMLElement?: [];
-  }
+  type DOMWindow = Window | JSDOMDOMWindow;
 
   interface SessionConfig {
     value: {
@@ -153,10 +148,23 @@ export namespace Pluma {
 
 declare global {
   namespace Express {
+    /**
+     * Additional properties of the request object
+     */
     interface Request {
-      sessionId: string;
-      session: Session;
-      sessionRequest: Pluma.Request;
+      sessionId?: string;
+      session?: Session;
+      sessionRequest?: Pluma.Request;
     }
+  }
+
+  interface MouseEventInit {
+    which?: number;
+  }
+}
+
+declare module 'jsdom' {
+  interface CookieJar {
+    store: Store;
   }
 }
