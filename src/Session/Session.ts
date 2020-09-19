@@ -514,7 +514,7 @@ class Session {
    * accepts required primary and secondary capabilities
    * merges any overlapping capabilities
    */
-  static mergeCapabilities(primary, secondary): Pluma.Capabilities | {} {
+  static mergeCapabilities(primary, secondary): Record<string, unknown> {
     const result = {};
     Object.keys(primary).forEach(key => {
       result[key] = primary[key];

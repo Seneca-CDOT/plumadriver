@@ -27,7 +27,7 @@ class Browser {
   private currentBrowsingContextWindow: Pluma.DOMWindow;
 
   /** accepts a capabilities object with jsdom and plumadriver specific options */
-  constructor(capabilities: object) {
+  constructor(capabilities: Pluma.PlumaOptions) {
     const browserOptions: Pluma.BrowserOptions = {
       runScripts: 'dangerously',
       strictSSL: true,
