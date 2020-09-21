@@ -96,6 +96,7 @@ class Browser {
     const { window } = this.dom;
 
     // webdriver-active property (W3C)
+    // @ts-expect-error: force setting readonly property
     window.navigator.webdriver = true;
 
     this.setCurrentBrowsingContextWindow(window);
@@ -259,7 +260,7 @@ class Browser {
       }),
       err => {
         if (err) {
-          throw new PlumaError.UnableToSetCookie(err);
+          throw new PlumaError.UnableToSetCookie(err && err.message);
         }
       },
     );
@@ -275,8 +276,8 @@ class Browser {
           reject(err);
         }
 
-        const cookies: Cookie[] = serializedJar.cookies
-          .map((cookie: Pluma.Cookie) => {
+        const cookies: Pluma.Cookie[] = serializedJar.cookies
+          .map(cookie => {
             const currentCookie: Pluma.Cookie = { name: '', value: '' };
             Object.keys(cookie).forEach(key => {
               // renames 'key' property to 'name' for W3C compliance and selenium functionality
@@ -311,7 +312,7 @@ class Browser {
    * returns the cookie in the cookie jar matching the requested name
    */
   public async getNamedCookie(requestedName: string): Promise<Pluma.Cookie> {
-    const allCookies: Cookie[] = await this.getAllCookies();
+    const allCookies = await this.getAllCookies();
     const requestedCookie = allCookies.find(
       (cookie: Pluma.Cookie): boolean =>
         cookie.name === requestedName && this.isAssociatedCookie(cookie),

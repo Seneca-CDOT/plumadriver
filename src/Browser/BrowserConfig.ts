@@ -1,4 +1,4 @@
-import { ResourceLoader } from 'jsdom';
+import { ResourceLoader, BaseOptions } from 'jsdom';
 import { Pluma } from '../Types/types';
 import { CookieJar, MemoryCookieStore } from 'tough-cookie';
 import { InvalidArgument } from '../Error/errors';
@@ -10,7 +10,7 @@ import * as Utils from '../utils/utils';
  */
 export class BrowserConfig {
   /** defines the context under which scripts can run, if at all */
-  runScripts: Pluma.RunScripts;
+  runScripts: BaseOptions['runScripts'];
 
   /** defines whether self-signed or insecure SSL certificates should be trusted */
   strictSSL = true;
