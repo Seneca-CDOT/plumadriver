@@ -49,7 +49,7 @@ class Browser {
    */
   async configureBrowser(
     config: BrowserConfig,
-    url: string,
+    url: string | null,
     pathType = 'url',
   ): Promise<void> {
     let dom;
@@ -199,7 +199,7 @@ class Browser {
   ): Pluma.Cookie {
     return {
       ...cookie,
-      domain: cookie.domain.replace(/^\./, ''),
+      domain: (cookie.domain as string).replace(/^\./, ''),
     };
   }
 
@@ -207,7 +207,7 @@ class Browser {
    * returns true if the cookie domain is prefixed with a dot
    */
   private isCookieDomainDotPrefixed(cookie: Pluma.Cookie): boolean {
-    return cookie.domain && cookie.domain.charAt(0) === '.';
+    return !!cookie.domain && cookie.domain.charAt(0) === '.';
   }
 
   /*
@@ -305,7 +305,10 @@ class Browser {
    */
   private isAssociatedCookie({ path, domain }: Pluma.Cookie): boolean {
     const { pathname, hostname }: URL = new URL(this.getUrl());
-    return new RegExp(`^${path}`).test(pathname) && hostname.includes(domain);
+    return (
+      new RegExp(`^${path}`).test(pathname) &&
+      hostname.includes(domain as string)
+    );
   }
 
   /**
@@ -331,9 +334,14 @@ class Browser {
     allCookies
       .filter((cookie: Pluma.Cookie): boolean => pattern.test(cookie.name))
       .forEach(({ domain, path, name }: Pluma.Cookie): void => {
-        this.dom.cookieJar.store.removeCookie(domain, path, name, err => {
-          if (err) throw err;
-        });
+        this.dom.cookieJar.store.removeCookie(
+          domain as string,
+          path as string,
+          name,
+          err => {
+            if (err) throw err;
+          },
+        );
       });
   }
 
@@ -380,7 +388,7 @@ class Browser {
       }
 
       if (Utils.isIframeElement(element) || Utils.isFrameElement(element)) {
-        this.currentBrowsingContextWindow = element.contentWindow;
+        this.currentBrowsingContextWindow = element.contentWindow as Window;
       } else {
         throw new PlumaError.NoSuchFrame('Element must be an iframe or frame.');
       }
@@ -408,12 +416,12 @@ class Browser {
    * @returns {WebElement}
    */
   public getKnownElement(elementId: string): WebElement {
-    let foundElement: WebElement = null;
+    let foundElement: WebElement | null = null;
     this.knownElements.forEach((element: WebElement) => {
       if (element[ELEMENT] === elementId) foundElement = element;
     });
     if (!foundElement) throw new PlumaError.NoSuchElement();
-    if (this.isStaleElement(foundElement.element)) {
+    if (this.isStaleElement((foundElement as WebElement).element)) {
       throw new PlumaError.StaleElementReference();
     }
     return foundElement;

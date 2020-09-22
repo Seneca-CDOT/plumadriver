@@ -35,7 +35,7 @@ class WebElement {
    * returns the textContent of the WebElement's HTML element
    * @returns {String}
    */
-  getText(): string {
+  getText(): string | null {
     return this.element.textContent;
   }
 
@@ -53,7 +53,7 @@ class WebElement {
    * @param name the name of the element attribute
    * @returns {String | null}
    */
-  getElementAttribute(name: string): string {
+  getElementAttribute(name: string): string | null {
     if (ElementBooleanAttributeValues.guard(name))
       return this.element.hasAttribute(name).toString(); // returns 'true' (string) or null
     return this.element.getAttribute(name);
@@ -63,7 +63,7 @@ class WebElement {
    * returns the type attribute of the WebElement's HTML element
    * @returns {String}
    */
-  getType(): string {
+  getType(): string | null {
     return this.element.getAttribute('type');
   }
 
@@ -79,7 +79,7 @@ class WebElement {
       !nextParent || nextParent.tagName.toLowerCase() === tagName.toLowerCase();
 
     while (!isMatchingOrFalsy()) {
-      const { parentElement } = nextParent;
+      const { parentElement } = nextParent as HTMLElement;
       nextParent = parentElement;
     }
 
@@ -97,8 +97,8 @@ class WebElement {
       tagName.toLowerCase() === 'optgroup';
 
     if (isOptionOrOptgroupElement(element)) {
-      const datalistParent: HTMLElement = this.findAncestor('datalist');
-      const selectParent: HTMLElement = this.findAncestor('select');
+      const datalistParent: HTMLElement | null = this.findAncestor('datalist');
+      const selectParent: HTMLElement | null = this.findAncestor('select');
       return datalistParent || selectParent || element;
     }
 
@@ -214,7 +214,7 @@ class WebElement {
     let isEmpty: boolean;
 
     if (isInputElement(element) && has(element, 'files')) {
-      isEmpty = element.files.length === 0;
+      isEmpty = (element.files as FileList).length === 0;
     } else {
       isEmpty = element.value === '';
     }
@@ -268,7 +268,7 @@ class WebElement {
       return false;
     }
 
-    const fieldsetAncestorFirstLegendChild: HTMLLegendElement = fieldsetAncestor.querySelector(
+    const fieldsetAncestorFirstLegendChild: HTMLLegendElement | null = fieldsetAncestor.querySelector(
       'legend',
     );
 
@@ -292,7 +292,7 @@ class WebElement {
       ownerDocument: { doctype },
     } = this.element;
 
-    if (doctype.name === 'xml') {
+    if ((doctype as DocumentType).name === 'xml') {
       return false;
     }
 
@@ -328,9 +328,9 @@ class WebElement {
 
     if (
       (localName === 'option' || localName === 'optgroup') &&
-      element.parentElement.localName === 'select'
+      (element.parentElement as HTMLElement).localName === 'select'
     ) {
-      return WebElement.isDisplayed(parentElement, true);
+      return WebElement.isDisplayed(parentElement as HTMLElement, true);
     }
 
     if (isInputElement(element) && element.type === 'hidden') {
@@ -339,7 +339,7 @@ class WebElement {
 
     if (localName === 'map') {
       const { name, ownerDocument } = element as HTMLMapElement;
-      const imageUsingMap: HTMLElement = ownerDocument.querySelector(
+      const imageUsingMap: HTMLElement | null = ownerDocument.querySelector(
         `img[usemap='#${name}']`,
       );
 
@@ -364,7 +364,7 @@ class WebElement {
       return false;
     }
 
-    if (!WebElement.isDisplayed(parentElement)) {
+    if (!WebElement.isDisplayed(parentElement as HTMLElement)) {
       return false;
     }
 

@@ -5,6 +5,7 @@ import timeouts from './timeouts';
 import navigate from './navigate';
 import cookies from './cookies';
 import { Pluma } from '../Types/types';
+import { Session } from '../Session/Session';
 import * as Utils from '../utils/utils';
 
 const {
@@ -50,9 +51,9 @@ router.post('/session', async (req, res, next) => {
 
 router.delete('/session/:sessionId', async (req, res, next) => {
   const sessionManager = req.app.get('sessionManager');
-  const release = await req.session.mutex.acquire();
+  const release = await (req.session as Session).mutex.acquire();
   try {
-    req.sessionRequest.command = COMMANDS.DELETE_SESSION;
+    (req.sessionRequest as Pluma.Request).command = COMMANDS.DELETE_SESSION;
     await sessionManager.deleteSession(req.session, req.sessionRequest);
     res.send(null);
   } catch (error) {
@@ -139,7 +140,8 @@ router.use('/session/:sessionId/cookie', cookies);
 router.use(
   '/session/:sessionId/element/:elementId',
   (req, res, next) => {
-    req.sessionRequest.urlVariables.elementId = req.params.elementId;
+    (req.sessionRequest as Pluma.Request).urlVariables.elementId =
+      req.params.elementId;
     next();
   },
   element,

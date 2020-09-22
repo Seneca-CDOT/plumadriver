@@ -35,9 +35,9 @@ export class CookieValidator {
     }
 
     return (
-      this.isValidHttpOnly(httpOnly) &&
-      this.isValidSecure(secure) &&
-      this.isValidExpiry(expiry)
+      this.isValidHttpOnly(httpOnly as boolean) &&
+      this.isValidSecure(secure as boolean) &&
+      this.isValidExpiry(expiry as number)
     );
   }
 }
