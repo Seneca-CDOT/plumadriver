@@ -90,7 +90,7 @@ class Session {
         await this.browser.close();
         break;
       case COMMANDS.NAVIGATE_TO:
-        await this.navigateTo(parameters.url as string);
+        await this.navigateTo(parameters.url);
         break;
       case COMMANDS.GET_CURRENT_URL:
         response = this.browser.getUrl();
@@ -116,13 +116,12 @@ class Session {
         break;
       case COMMANDS.GET_ELEMENT_TEXT:
         response = this.browser
-          .getKnownElement(urlVariables.elementId as string)
+          .getKnownElement(urlVariables.elementId)
           .getText();
         break;
       case COMMANDS.FIND_ELEMENTS_FROM_ELEMENT:
         response = this.elementRetrieval(
-          this.browser.getKnownElement(urlVariables.elementId as string)
-            .element,
+          this.browser.getKnownElement(urlVariables.elementId).element,
           parameters.using,
           parameters.value,
         );
@@ -130,8 +129,7 @@ class Session {
         break;
       case COMMANDS.FIND_ELEMENT_FROM_ELEMENT:
         response = this.elementRetrieval(
-          this.browser.getKnownElement(urlVariables.elementId as string)
-            .element,
+          this.browser.getKnownElement(urlVariables.elementId).element,
           parameters.using,
           parameters.value,
         )[0];
@@ -166,12 +164,12 @@ class Session {
         break;
       case COMMANDS.GET_ELEMENT_TAG_NAME:
         response = this.browser
-          .getKnownElement(urlVariables.elementId as string)
+          .getKnownElement(urlVariables.elementId)
           .getTagName();
         break;
       case COMMANDS.GET_ELEMENT_ATTRIBUTE:
         response = this.browser
-          .getKnownElement(urlVariables.elementId as string)
+          .getKnownElement(urlVariables.elementId)
           .getElementAttribute(urlVariables.attributeName as string);
         break;
       case COMMANDS.EXECUTE_SCRIPT:
@@ -190,25 +188,25 @@ class Session {
         break;
       case COMMANDS.ELEMENT_CLICK:
         if (!this.browser.dom.window) throw new NoSuchWindow();
-        this.browser.getKnownElement(urlVariables.elementId as string).click();
+        this.browser.getKnownElement(urlVariables.elementId).click();
         response = { value: null };
         break;
       case COMMANDS.ELEMENT_CLEAR:
         if (!this.browser.dom.window) throw new NoSuchWindow();
-        this.browser.getKnownElement(urlVariables.elementId as string).clear();
+        this.browser.getKnownElement(urlVariables.elementId).clear();
         response = { value: null };
         break;
       case COMMANDS.ELEMENT_ENABLED:
         if (!this.browser.dom.window) throw new NoSuchWindow();
         const isEnabled = this.browser
-          .getKnownElement(urlVariables.elementId as string)
+          .getKnownElement(urlVariables.elementId)
           .isEnabled();
         response = { value: isEnabled };
         break;
       case COMMANDS.ELEMENT_IS_DISPLAYED:
         if (!this.browser.dom.window) throw new NoSuchWindow();
         const { element }: WebElement = this.browser.getKnownElement(
-          urlVariables.elementId as string,
+          urlVariables.elementId,
         );
         response = { value: WebElement.isDisplayed(element) };
         break;
@@ -233,7 +231,7 @@ class Session {
       case COMMANDS.ELEMENT_SELECTED:
         if (!this.browser.dom.window) throw new NoSuchWindow();
         const isSelected = this.browser
-          .getKnownElement(urlVariables.elementId as string)
+          .getKnownElement(urlVariables.elementId)
           .isSelected();
         response = { value: isSelected };
         break;
@@ -314,7 +312,7 @@ class Session {
    * navigates to a specified url
    * sets timers according to session config
    */
-  async navigateTo(url: string): Promise<void> {
+  async navigateTo(url?: string): Promise<void> {
     let pathType: string;
 
     try {
@@ -701,7 +699,7 @@ class Session {
         return arg;
       } else {
         const { element } = this.browser.getKnownElement(
-          (arg as string)[ELEMENT],
+          (arg as Record<string, string>)[ELEMENT],
         );
         return element;
       }

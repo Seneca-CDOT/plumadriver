@@ -10,15 +10,15 @@ export class CookieValidator {
     return isString(value);
   }
 
-  static isValidSecure(secure: boolean): boolean {
+  static isValidSecure(secure?: boolean): boolean {
     return secure === undefined || isBoolean(secure);
   }
 
-  static isValidHttpOnly(httpOnly: boolean): boolean {
+  static isValidHttpOnly(httpOnly?: boolean): boolean {
     return httpOnly === undefined || isBoolean(httpOnly);
   }
 
-  static isValidExpiry(expiry: number): boolean {
+  static isValidExpiry(expiry?: number): boolean {
     return (
       expiry === undefined ||
       (Number.isInteger(expiry) &&
@@ -35,9 +35,9 @@ export class CookieValidator {
     }
 
     return (
-      this.isValidHttpOnly(httpOnly as boolean) &&
-      this.isValidSecure(secure as boolean) &&
-      this.isValidExpiry(expiry as number)
+      this.isValidHttpOnly(httpOnly) &&
+      this.isValidSecure(secure) &&
+      this.isValidExpiry(expiry)
     );
   }
 }

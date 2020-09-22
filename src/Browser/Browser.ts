@@ -124,7 +124,7 @@ class Browser {
    * accepts a url and pathType @type {String} from which to instantiate the
    * jsdom object
    */
-  async navigate(path: string, pathType): Promise<boolean> {
+  async navigate(path?: string, pathType?): Promise<boolean> {
     if (path) {
       try {
         await this.configureBrowser(this.browserConfig, path, pathType);
@@ -415,7 +415,7 @@ class Browser {
    * @throws {NoSuchElement}
    * @returns {WebElement}
    */
-  public getKnownElement(elementId: string): WebElement {
+  public getKnownElement(elementId?: string): WebElement {
     let foundElement: WebElement | null = null;
     this.knownElements.forEach((element: WebElement) => {
       if (element[ELEMENT] === elementId) foundElement = element;
