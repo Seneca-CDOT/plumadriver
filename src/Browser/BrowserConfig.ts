@@ -26,7 +26,7 @@ export class BrowserConfig {
   /** allows modification of the jsdom environment after the Window and Document
    * objects have been created but before any HTML is parsed
    */
-  readonly beforeParse: Pluma.BeforeParse;
+  readonly beforeParse!: Pluma.BeforeParse;
 
   /** a modified tough-cookie cookie jar. Allows '.local' domains to be used for testing purposes
    * by setting the rejectPublicSuffixes option
@@ -34,7 +34,7 @@ export class BrowserConfig {
   readonly jar;
 
   /** tough-cookie cookieJar option. Prevents public suffixes from being rejected by tough cookie */
-  readonly rejectPublicSuffixes: boolean;
+  readonly rejectPublicSuffixes!: boolean;
 
   /**
    * Accepts a [[Pluma.BrowserOptions]] object

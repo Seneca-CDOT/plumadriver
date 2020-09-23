@@ -1,6 +1,6 @@
 export class WebDriverError extends Error {
-  command: string;
-  code: number;
+  command!: string;
+  code!: number;
   JSONCodeError = '';
   constructor(code) {
     super();
