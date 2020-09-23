@@ -46,7 +46,7 @@ class Session {
   /** the session id */
   readonly id: string;
   /** the user agent */
-  browser: Browser;
+  browser!: Browser;
   /** */
   pageLoadStrategy: Pluma.PageLoadStrategy = 'normal';
   /** indicated whether untrusted or self-signed TLS certificates should be trusted for the duration of the webdriver session */
@@ -57,7 +57,7 @@ class Session {
    * a queue of [[Pluma.Request]] currently awaiting processing
    *  */
   mutex: Mutex;
-  proxy: string;
+  proxy = '';
 
   constructor(requestBody) {
     this.id = uuidv1();

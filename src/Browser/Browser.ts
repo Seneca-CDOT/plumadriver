@@ -21,10 +21,10 @@ class Browser {
   knownElements: Array<WebElement> = [];
 
   /** the jsdom object */
-  dom: JSDOM;
+  dom!: JSDOM;
 
   /** the Window of the current browsing context */
-  private currentBrowsingContextWindow: Pluma.DOMWindow;
+  private currentBrowsingContextWindow!: Pluma.DOMWindow;
 
   /** accepts a capabilities object with jsdom and plumadriver specific options */
   constructor(capabilities: Pluma.PlumaOptions) {
