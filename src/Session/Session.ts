@@ -82,8 +82,8 @@ class Session {
     command,
     parameters,
     urlVariables,
-  }: Pluma.Request): Promise<string> {
-    let response = null;
+  }: Pluma.Request): Promise<Pluma.Response> {
+    let response: Pluma.Response = null;
 
     switch (command) {
       case COMMANDS.DELETE_SESSION:
@@ -143,12 +143,12 @@ class Session {
         response = await this.browser.getAllCookies();
         break;
       case COMMANDS.ADD_COOKIE:
-        response = this.browser.addCookie(parameters.cookie);
+        response = this.browser.addCookie(parameters.cookie as Pluma.Cookie);
         break;
       case COMMANDS.GET_NAMED_COOKIE:
         if (!this.browser.dom.window) throw new NoSuchWindow();
         const retrievedCookie = await this.browser.getNamedCookie(
-          urlVariables.cookieName,
+          urlVariables.cookieName as string,
         );
         response = { value: retrievedCookie };
         break;
@@ -170,18 +170,21 @@ class Session {
       case COMMANDS.GET_ELEMENT_ATTRIBUTE:
         response = this.browser
           .getKnownElement(urlVariables.elementId)
-          .getElementAttribute(urlVariables.attributeName);
+          .getElementAttribute(urlVariables.attributeName as string);
         break;
       case COMMANDS.EXECUTE_SCRIPT:
         if (!this.browser.dom.window) throw new NoSuchWindow();
         const value: unknown = await this.executeScript(
-          parameters.script,
-          parameters.args,
+          parameters.script as string,
+          parameters.args as unknown[],
         );
         response = { value };
         break;
       case COMMANDS.ELEMENT_SEND_KEYS:
-        await this.sendKeysToElement(parameters.text, urlVariables.elementId);
+        await this.sendKeysToElement(
+          parameters.text as string,
+          urlVariables.elementId as string,
+        );
         break;
       case COMMANDS.ELEMENT_CLICK:
         if (!this.browser.dom.window) throw new NoSuchWindow();
@@ -218,7 +221,7 @@ class Session {
         );
         break;
       case COMMANDS.SWITCH_TO_FRAME:
-        this.browser.switchToFrame(parameters.id);
+        this.browser.switchToFrame(parameters.id as string);
         response = { value: null };
         break;
       case COMMANDS.SWITCH_TO_PARENT_FRAME:
@@ -244,11 +247,11 @@ class Session {
    * sets a user defined value on a given HTML element
    * TODO: this method needs to be updated to incorporate the action Object
    */
-  sendKeysToElement(text: string, elementId: string): Promise<void> {
+  sendKeysToElement(text: string, elementId: string): Promise<void | null> {
     return new Promise(async (resolve, reject) => {
       const webElement = this.browser.getKnownElement(elementId);
       const element: HTMLElement = webElement.element;
-      let files = [];
+      let files: string[] = [];
 
       if (text === undefined) reject(new InvalidArgument());
 
@@ -309,7 +312,7 @@ class Session {
    * navigates to a specified url
    * sets timers according to session config
    */
-  async navigateTo(url: string): Promise<void> {
+  async navigateTo(url?: string): Promise<void> {
     let pathType: string;
 
     try {
@@ -369,20 +372,21 @@ class Session {
     const browserConfig = configuredCapabilities['plm:plumaOptions'];
     if (has(configuredCapabilities, 'acceptInsecureCerts')) {
       this.acceptInsecureCerts = configuredCapabilities.acceptInsecureCerts;
-      browserConfig.strictSSL = !this.acceptInsecureCerts;
+      (browserConfig as Pluma.PlumaOptions).strictSSL = !this
+        .acceptInsecureCerts;
     }
 
     if (has(configuredCapabilities, 'rejectPublicSuffixes')) {
-      browserConfig.rejectPublicSuffixes =
+      (browserConfig as Pluma.PlumaOptions).rejectPublicSuffixes =
         configuredCapabilities.rejectPublicSuffixes;
     }
 
     if (configuredCapabilities.unhandledPromptBehavior) {
-      browserConfig.unhandledPromptBehavior =
+      (browserConfig as Pluma.PlumaOptions).unhandledPromptBehavior =
         configuredCapabilities.unhandledPromptBehavior;
     }
 
-    this.browser = new Browser(browserConfig);
+    this.browser = new Browser(browserConfig as Pluma.PlumaOptions);
   }
 
   // configures session object capabilities
@@ -473,7 +477,7 @@ class Session {
      * @param {Array[Capability]} validatedFirstMatchCapabilities contains
      * a list of all the validated firstMatch capabilities requested by the client
      */
-    const validatedFirstMatchCapabilities = [];
+    const validatedFirstMatchCapabilities: unknown[] = [];
 
     allMatchedCapabilities.forEach(indexedFirstMatchCapability => {
       const validatedFirstMatchCapability = {};
@@ -490,7 +494,7 @@ class Session {
     });
 
     // attempt merging capabilities
-    const mergedCapabilities = [];
+    const mergedCapabilities: unknown[] = [];
 
     validatedFirstMatchCapabilities.forEach(firstMatch => {
       const merged = Session.mergeCapabilities(
@@ -535,7 +539,7 @@ class Session {
   /**
    * matches implementation capabilities with the merged capabilities
    * */
-  static matchCapabilities(capabilities): Pluma.Capabilities {
+  static matchCapabilities(capabilities): Pluma.Capabilities | null {
     const matchedCapabilities = {
       browserName: 'pluma',
       browserVersion: utils.getVersion(),
@@ -576,14 +580,10 @@ class Session {
   /**
    * attempts to find a [[WebElement]] from a given startNode, selection strategy and selector
    */
-  elementRetrieval(
-    startNode,
-    strategy,
-    selector,
-  ): NodeList | HTMLCollection | HTMLElement[] {
+  elementRetrieval(startNode, strategy, selector): WebElement[] {
     const endTime = new Date(new Date().getTime() + this.timeouts.implicit);
     let elements;
-    const result = [];
+    const result: WebElement[] = [];
 
     if (!strategy || !selector) throw new InvalidArgument();
     if (!startNode) throw new NoSuchElement();
@@ -592,9 +592,9 @@ class Session {
       cssSelector(): NodeList {
         return startNode.querySelectorAll(selector);
       },
-      linkTextSelector(partial = false): HTMLElement[] {
+      linkTextSelector(partial = false) {
         const linkElements = startNode.querySelectorAll('a');
-        const strategyResult = [];
+        const strategyResult: HTMLElement[] = [];
 
         linkElements.forEach(element => {
           const renderedText = element.innerHTML;
@@ -611,7 +611,7 @@ class Session {
       XPathSelector(document): HTMLElement[] {
         const evaluateResult = document.evaluate(selector, startNode, null, 7);
         const length = evaluateResult.snapshotLength;
-        const xPathResult = []; // according to W3C this should be a NodeList
+        const xPathResult: HTMLElement[] = []; // according to W3C this should be a NodeList
         for (let i = 0; i < length; i++) {
           const node = evaluateResult.snapshotItem(i);
           xPathResult.push(node);
@@ -695,10 +695,12 @@ class Session {
    */
   public executeScript(script: string, args: unknown[]): unknown {
     const argumentList = args.map(arg => {
-      if (arg[ELEMENT] == null) {
+      if ((arg as Record<string, unknown>)[ELEMENT] == null) {
         return arg;
       } else {
-        const { element } = this.browser.getKnownElement(arg[ELEMENT]);
+        const { element } = this.browser.getKnownElement(
+          (arg as Record<string, string>)[ELEMENT],
+        );
         return element;
       }
     });

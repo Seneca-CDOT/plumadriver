@@ -1,5 +1,6 @@
 import express from 'express';
 import { COMMANDS } from '../constants/constants';
+import { Pluma } from '../Types/types';
 import * as utils from '../utils/utils';
 const {
   defaultSessionEndpointLogic,
@@ -33,7 +34,8 @@ cookies.delete(
 );
 
 cookies.use('/:name', (req, res, next) => {
-  req.sessionRequest.urlVariables.cookieName = req.params.name;
+  (req.sessionRequest as Pluma.Request).urlVariables.cookieName =
+    req.params.name;
   next();
 });
 

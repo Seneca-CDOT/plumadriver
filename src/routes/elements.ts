@@ -1,5 +1,6 @@
 import express from 'express';
 import { COMMANDS } from '../constants/constants';
+import { Pluma } from '../Types/types';
 import * as utils from '../utils/utils';
 
 const element = express.Router();
@@ -48,7 +49,8 @@ element.post(
 // get element attribute name
 // this endpoint has not been tested as selenium calls execute script instead. Neded to test
 element.get('/attribute/:name', (req, _res, _next) => {
-  req.sessionRequest.urlVariables.attributeName = req.params.name;
+  (req.sessionRequest as Pluma.Request).urlVariables.attributeName =
+    req.params.name;
   return sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
     COMMANDS.GET_ELEMENT_ATTRIBUTE,
