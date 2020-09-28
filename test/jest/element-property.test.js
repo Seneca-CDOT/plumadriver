@@ -29,13 +29,14 @@ describe('Is Element Selected', () => {
     return elementId;
   };
 
-  const checkSelected = async (selector, expectation) => {
+  const elementProperty = async (selector,property,expectation) => {
     const elementId = await findElement(selector);
-    const { value } = await session.process({
-      command: COMMANDS.ELEMENT_SELECTED,
-      urlVariables: { elementId },
+    const propertyName = property;
+    const  value  = await session.process({
+      command: COMMANDS.GET_ELEMENT_PROPERTY,
+      urlVariables: { elementId,propertyName},
     });
-    expect(value).toBe(expectation);
+    expect(value).toStrictEqual(expectation);
   };
 
   beforeAll(async () => {
@@ -60,41 +61,8 @@ describe('Is Element Selected', () => {
     session = new Session(requestBody);
   });
 
-  it('returns checkbox\'s checkedness', async () => {
-    const pageSource = `<!DOCTYPE html>
-    <html>
-    <head>
-      <title>Test Page</title>
-    </head>
-    <body>
-      <input type='checkbox' value='foo' checked>
-      <input type='checkbox' value='bar'>
-    </body>
-    </html>`;
 
-    await setScopeAndNavigate(pageSource);
-    await checkSelected('input:checked', true);
-    await checkSelected('input:not(:checked)', false);
-  });
-
-  it('returns radio button\'s checkedness', async () => {
-    const pageSource = `<!DOCTYPE html>
-    <html>
-    <head>
-      <title>Test Page</title>
-    </head>
-    <body>
-      <input type='radio' name='test' value='foo' checked>
-      <input type='radio' name='test' value='bar'>
-    </body>
-    </html>`;
-
-    await setScopeAndNavigate(pageSource);
-    await checkSelected('input:checked', true);
-    await checkSelected('input:not(:checked)', false);
-  });
-
-  it('returns option\'s selectedness', async () => {
+  it('returns tagName property from option element ', async () => {
     const pageSource = `<!DOCTYPE html>
     <html>
     <head>
@@ -102,31 +70,47 @@ describe('Is Element Selected', () => {
     </head>
     <body>
       <select>
-        <option value='foo' selected>foo<option>
+        <option value='foo' selected id="baz">foo<option>
         <option value='bar'>bar<option>
       </select>
     </body>
     </html>`;
 
     await setScopeAndNavigate(pageSource);
-    await checkSelected('option:checked', true);
-    await checkSelected('option:not(:checked)', false);
+    await elementProperty('#baz',"tagName" ,'OPTION');
   });
 
-  it('returns false for other elements', async () => {
+  it('returns href property from the a element', async () => {
     const pageSource = `<!DOCTYPE html>
     <html>
     <head>
       <title>Test Page</title>
     </head>
     <body>
-      <input type='text' value='foo'>
-      <h1>bar</h1>
+    <a href= 'https://www.google.com/' id="link"> </a>
     </body>
     </html>`;
 
     await setScopeAndNavigate(pageSource);
-    await checkSelected('input', false);
-    await checkSelected('h1', false);
+    await elementProperty('#link',"href" ,'https://www.google.com/');
   });
+
+  it('returns null when property not found ', async () => {
+    const pageSource = `<!DOCTYPE html>
+    <html>
+    <head>
+      <title>Test Page</title>
+    </head>
+    <body>
+      <select>
+        <option value='foo' selected id="bar">foo<option>
+        <option value='bar'>bar<option>
+      </select>
+    </body>
+    </html>`;
+
+    await setScopeAndNavigate(pageSource);
+    await elementProperty('#bar',"asdad" ,{"value": null});
+  });
+ 
 });

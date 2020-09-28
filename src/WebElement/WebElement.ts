@@ -59,6 +59,14 @@ class WebElement {
   }
 
   /**
+   *returns the property attribute of the WebElement's HTML element
+   @returns {String | null} 
+   */
+  getProperty(property: string): string | null {
+    return this.element[property];
+  }
+
+  /**
    * returns the type attribute of the WebElement's HTML element
    * @returns {String}
    */

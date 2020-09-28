@@ -44,6 +44,13 @@ element.post(
     COMMANDS.ELEMENT_SEND_KEYS,
   ),
 );
+element.get(
+  '/property/:propertyName',
+  sessionEndpointExceptionHandler(
+    defaultSessionEndpointLogic,
+    COMMANDS.GET_ELEMENT_PROPERTY,
+  ),
+);
 
 // get element attribute name
 // this endpoint has not been tested as selenium calls execute script instead. Neded to test

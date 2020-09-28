@@ -172,6 +172,12 @@ class Session {
           .getKnownElement(urlVariables.elementId)
           .getElementAttribute(urlVariables.attributeName);
         break;
+      case COMMANDS.GET_ELEMENT_PROPERTY:
+        if (!this.browser.dom.window) throw new NoSuchWindow();
+        response = this.browser
+          .getKnownElement(urlVariables.elementId)
+          .getProperty(urlVariables.propertyName as string);
+        break;
       case COMMANDS.EXECUTE_SCRIPT:
         if (!this.browser.dom.window) throw new NoSuchWindow();
         const value: unknown = await this.executeScript(
