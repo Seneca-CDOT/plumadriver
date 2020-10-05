@@ -53,7 +53,6 @@ export namespace Pluma {
    * Expected cookie shape
    */
   interface Cookie {
-    [key: string]: any;
     name: string;
     value: string;
     domain?: string;

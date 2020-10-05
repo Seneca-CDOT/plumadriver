@@ -6,42 +6,7 @@ import has from 'has';
 import isDisplayedAtom from './isdisplayed-atom.json';
 import { version } from 'pjson';
 import { Session } from '../Session/Session';
-
-// credit where it's due: https://stackoverflow.com/questions/36836011/checking-validity-of-string-literal-union-type-at-runtime/43621735
-export const StringUnion = <UnionType extends string>(
-  ...values: UnionType[]
-): {
-  guard: (value: string) => value is UnionType;
-  check: (value: string) => UnionType;
-  values: UnionType[];
-} & {
-  type: UnionType;
-} => {
-  Object.freeze(values);
-  const valueSet: Set<string> = new Set(values);
-
-  const guard = (value: string): value is UnionType => {
-    return valueSet.has(value);
-  };
-
-  const check = (value: string): UnionType => {
-    if (!guard(value)) {
-      const actual = JSON.stringify(value);
-      const expected = values.map(s => JSON.stringify(s)).join(' | ');
-      throw new TypeError(
-        `Value '${actual}' is not assignable to type '${expected}'.`,
-      );
-    }
-    return value;
-  };
-
-  const unionNamespace = { guard, check, values };
-  return Object.freeze(
-    unionNamespace as typeof unionNamespace & {
-      type: UnionType;
-    },
-  );
-};
+import { ELEMENT } from '../constants/constants';
 
 export const isBrowserOptions = (
   obj: Pluma.BrowserOptions,
@@ -97,7 +62,7 @@ export const fileSystem = {
 
 export const endpoint = {
   sessionEndpointExceptionHandler: (
-    endpointLogic: any,
+    endpointLogic: (req: Request, res: Response) => Promise<unknown>,
     plumaCommand: string,
   ) => async (
     req: Request,
@@ -211,9 +176,12 @@ export const isString = (candidateValue: unknown): candidateValue is string =>
 export const isBoolean = (candidateValue: unknown): candidateValue is boolean =>
   typeof candidateValue === 'boolean';
 
+export const isNumber = (candidateValue: unknown): candidateValue is number =>
+  typeof candidateValue === 'number';
+
 export const isObject = (
   candidateValue: unknown,
-): candidateValue is Record<string, any> => {
+): candidateValue is Record<string, unknown> => {
   return typeof candidateValue === 'object' && candidateValue !== null;
 };
 // Expose the version in package.json
@@ -230,6 +198,11 @@ export const isFrameElement = (
 ): element is HTMLFrameElement => {
   return element.localName === 'frame';
 };
+
+export const isJsonWebElement = (
+  value: unknown,
+): value is { [ELEMENT]: string } =>
+  isObject(value) && isString(value[ELEMENT]);
 
 /** Work-around function for https://github.com/microsoft/TypeScript/issues/31445#issuecomment-576929044 */
 export const copyProperty = <T>(target: T, src: T, prop: keyof T): void => {

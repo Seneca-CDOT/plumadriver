@@ -1,4 +1,4 @@
-import { StringUnion } from '../utils/utils';
+import { StringUnion } from '../utils/StringUnion';
 
 /** Boolean attributes [WHATWG](https://html.spec.whatwg.org/#boolean-attribute) */
 export const ElementBooleanAttributeValues = StringUnion(
