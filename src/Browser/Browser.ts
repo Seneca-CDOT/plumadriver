@@ -7,7 +7,6 @@ import * as Utils from '../utils/utils';
 import * as PlumaError from '../Error/errors';
 import { CookieValidator } from './CookieValidator';
 import { Cookie } from 'tough-cookie';
-import { isObject } from '../utils/utils';
 
 /**
  * Plumadriver browser with jsdom at its core.
@@ -288,7 +287,7 @@ class Browser {
                 // renames property for selenium functionality
                 const seconds = new Date(cookie[key]).getTime();
                 currentCookie.expiry = seconds;
-              } else currentCookie[key] = cookie[key];
+              } else Utils.copyProperty(currentCookie, cookie, key);
             });
             delete currentCookie.creation;
             return currentCookie;
@@ -383,7 +382,7 @@ class Browser {
       this.currentBrowsingContextWindow = frameWindow;
     } else if (id === null) {
       this.currentBrowsingContextWindow = this.dom.window;
-    } else if (isObject(id) && typeof id[ELEMENT] === 'string') {
+    } else if (Utils.isJsonWebElement(id)) {
       const { element }: WebElement = this.getKnownElement(id[ELEMENT]);
 
       if (this.isStaleElement(element)) {

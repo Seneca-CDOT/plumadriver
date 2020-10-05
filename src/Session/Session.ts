@@ -461,9 +461,9 @@ class Session {
     const requiredCapabilities: Partial<Pluma.Capabilities> = {};
     if (utils.isObject(alwaysMatch)) {
       defaultCapabilities.forEach(key => {
-        if (has(capabilities.alwaysMatch, key)) {
+        if (key in alwaysMatch) {
           const validatedCapability = capabilityValidator.validate(
-            capabilities.alwaysMatch[key],
+            alwaysMatch[key],
             key,
           );
           if (validatedCapability) {
@@ -475,12 +475,13 @@ class Session {
       });
     }
 
-    // validate first match capabilities
-    let allMatchedCapabilities: Record<string, unknown>[] | undefined =
-      capabilities.firstMatch;
-    if (allMatchedCapabilities === undefined) {
-      allMatchedCapabilities = [{}];
-    } else if (
+    // validate first match capabilities:
+    const allMatchedCapabilities =
+      typeof capabilities.firstMatch === 'undefined'
+        ? [{}]
+        : capabilities.firstMatch;
+
+    if (
       !Array.isArray(allMatchedCapabilities) ||
       allMatchedCapabilities.length === 0
     ) {
