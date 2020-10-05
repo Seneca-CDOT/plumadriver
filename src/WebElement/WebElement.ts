@@ -1,7 +1,4 @@
-/* eslint-disable */
-// @ts-nocheck
-//TODO: Install libraries and fix errors for line 3,6 and 7
-import uuidv1 from 'uuid/v1';
+import { v1 as uuidv1 } from 'uuid';
 import has from 'has';
 import { isFocusableAreaElement } from 'jsdom/lib/jsdom/living/helpers/focusing';
 import { implSymbol } from 'jsdom/lib/jsdom/living/generated/utils';

@@ -230,3 +230,8 @@ export const isFrameElement = (
 ): element is HTMLFrameElement => {
   return element.localName === 'frame';
 };
+
+/** Work-around function for https://github.com/microsoft/TypeScript/issues/31445#issuecomment-576929044 */
+export const copyProperty = <T>(target: T, src: T, prop: keyof T): void => {
+  target[prop] = src[prop];
+};
