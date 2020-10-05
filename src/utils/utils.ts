@@ -69,15 +69,15 @@ export const endpoint = {
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
-    req.sessionRequest!.command = plumaCommand;
-    const release = await req.session!.mutex.acquire();
+    if (req.sessionRequest) req.sessionRequest.command = plumaCommand;
+    const release = await req.session?.mutex.acquire();
     endpointLogic(req, res)
       .catch((e: Pluma.Request) => {
         e.command = req.sessionRequest?.command || ' ';
         next(e);
       })
       .finally(() => {
-        release();
+        release?.();
       });
   },
 
