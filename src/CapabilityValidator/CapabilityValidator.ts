@@ -6,6 +6,8 @@ import {
   PageLoadStrategyValues,
   TimeoutValues,
 } from '../constants/constants';
+import { isObject } from '../utils/utils';
+//import { isObject } from '../Browser/Browser';
 
 /**
  * Validates webdriver and jsdom capabilities before they are used to configure a given session and/or user agent
@@ -26,7 +28,7 @@ class CapabilityValidator {
    * @param capability the capability object
    * @param capabilityName the name of the capability to be validated
    */
-  validate(capability, capabilityName): boolean {
+  validate(capability: unknown, capabilityName: string): boolean {
     switch (capabilityName) {
       case 'browserName':
       case 'browserVersion':
@@ -39,35 +41,29 @@ class CapabilityValidator {
       case 'pageLoadStrategy':
         this.valid = typeof capability === 'string';
         this.valid = this.valid
-          ? PageLoadStrategyValues.guard(capability)
+          ? PageLoadStrategyValues.guard(capability as string)
           : this.valid;
 
         break;
       case 'unhandledPromptBehavior':
         this.valid = typeof capability === 'string';
         this.valid = this.valid
-          ? unhandledPromptBehaviorValues.guard(capability)
+          ? unhandledPromptBehaviorValues.guard(capability as string)
           : this.valid;
         break;
       case 'proxy':
-        this.valid = capability.constructor === Object;
-
-        if (!this.valid || !CapabilityValidator.validateProxy(capability))
-          this.valid = false;
+        this.valid =
+          isObject(capability) && CapabilityValidator.validateProxy(capability);
         break;
       case 'timeouts':
-        this.valid = capability.constructor === Object;
-
-        Object.keys(capability).forEach(key => {
-          if (this.valid && !this.validateTimeouts(key, capability[key]))
-            this.valid = false;
-        });
+        this.valid =
+          isObject(capability) &&
+          Object.entries(capability).every(e => this.validateTimeouts(...e));
         break;
       case 'plm:plumaOptions':
-        this.valid = capability.constructor === Object;
-
-        if (this.valid && !CapabilityValidator.validatePlumaOptions(capability))
-          this.valid = false;
+        this.valid =
+          isObject(capability) &&
+          CapabilityValidator.validatePlumaOptions(capability);
         break;
       default:
         this.valid = false;
@@ -79,7 +75,7 @@ class CapabilityValidator {
   /**
    * validates proxy for session
    */
-  static validateProxy(reqProxy): boolean {
+  static validateProxy(reqProxy: Record<string, any>): boolean {
     const proxyProperties = [
       'proxyType',
       'proxyAutoConfigUrl',
@@ -148,7 +144,7 @@ class CapabilityValidator {
               case 'noProxy':
                 validProxy = reqProxy[key] instanceof Array;
                 if (validProxy) {
-                  reqProxy[key].forEach(url => {
+                  (reqProxy[key] as string[]).forEach((url: string) => {
                     if (validProxy) validProxy = validator.isURL(url);
                   });
                 }
@@ -168,7 +164,7 @@ class CapabilityValidator {
    * @param key the type of timeout to validate
    * @param value the value of the given timeout
    */
-  validateTimeouts(key, value): boolean {
+  validateTimeouts(key: string, value: number): boolean {
     this.valid =
       TimeoutValues.guard(key) && Number.isInteger(value) && value >= 0
         ? true
@@ -181,17 +177,17 @@ class CapabilityValidator {
    * Validates plumadriver specific options
    * @param options vendor (plumadriver) specific options
    */
-  static validatePlumaOptions(options): boolean {
+  static validatePlumaOptions(options: Record<string, any>): boolean {
     let validatedOptions = true;
 
-    const allowedOptions = {
-      url(url): boolean {
+    const allowedOptions: Record<string, any> = {
+      url(url: string): boolean {
         return validator.isURL(url);
       },
-      referrer(referrer): boolean {
+      referrer(referrer: string): boolean {
         return validator.isURL(referrer);
       },
-      contentType(contentType): boolean {
+      contentType(contentType: string): boolean {
         let valid;
         const validTypes = ['text/html', 'application/xml'];
 
@@ -207,19 +203,19 @@ class CapabilityValidator {
 
         return valid;
       },
-      includeNodeLocations(value): boolean {
+      includeNodeLocations(value: Record<string, unknown>): boolean {
         return value.constructor === Boolean;
       },
-      storageQuota(quota): boolean {
+      storageQuota(quota: number): boolean {
         return Number.isInteger(quota);
       },
-      runScripts(value): boolean {
+      runScripts(value: Record<string, any>): boolean {
         return value.constructor === Boolean;
       },
-      resources(resources): boolean {
+      resources(resources: string): boolean {
         return resources.constructor === String && resources === 'useable';
       },
-      rejectPublicSuffixes(value): boolean {
+      rejectPublicSuffixes(value: Record<string, any>): boolean {
         return value.constructor === Boolean;
       },
     };

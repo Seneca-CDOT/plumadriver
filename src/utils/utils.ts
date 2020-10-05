@@ -1,14 +1,20 @@
+import { Request, Response, NextFunction } from 'express';
 import { Pluma } from '../Types/types';
 import * as PlumaError from '../Error/errors';
 import fs from 'fs';
 import has from 'has';
 import isDisplayedAtom from './isdisplayed-atom.json';
 import { version } from 'pjson';
+import { Session } from '../Session/Session';
 
 // credit where it's due: https://stackoverflow.com/questions/36836011/checking-validity-of-string-literal-union-type-at-runtime/43621735
 export const StringUnion = <UnionType extends string>(
   ...values: UnionType[]
-): { guard; check; values } & {
+): {
+  guard: (value: string) => value is UnionType;
+  check: (value: string) => UnionType;
+  values: UnionType[];
+} & {
   type: UnionType;
 } => {
   Object.freeze(values);
@@ -51,14 +57,17 @@ export const isBrowserOptions = (
 };
 
 export const validate = {
-  requestBodyType(incomingMessage, type): boolean {
-    if (incomingMessage.headers['content-type'].includes(type)) {
+  requestBodyType(incomingMessage: Request, type: string): boolean {
+    if ((incomingMessage.headers['content-type'] as string).includes(type)) {
       return true;
     }
     return false;
   },
 
-  objectPropertiesAreInArray(object, array): boolean {
+  objectPropertiesAreInArray(
+    object: Record<string, unknown>,
+    array: string | string[],
+  ): boolean {
     let validObject = true;
 
     Object.keys(object).forEach(key => {
@@ -70,13 +79,13 @@ export const validate = {
 
     return validObject;
   },
-  isEmpty(obj): boolean {
+  isEmpty(obj: Record<string, unknown>): boolean {
     return Object.keys(obj).length === 0;
   },
 };
 
 export const fileSystem = {
-  pathExists(path): Promise<boolean> {
+  pathExists(path: fs.PathLike): Promise<boolean> {
     return new Promise((res, rej) => {
       fs.access(path, fs.constants.F_OK, err => {
         if (err) rej(new PlumaError.InvalidArgument());
@@ -87,16 +96,19 @@ export const fileSystem = {
 };
 
 export const endpoint = {
-  sessionEndpointExceptionHandler: (endpointLogic, plumaCommand) => async (
-    req,
-    res,
-    next,
+  sessionEndpointExceptionHandler: (
+    endpointLogic: any,
+    plumaCommand: string,
+  ) => async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
   ): Promise<void> => {
-    req.sessionRequest.command = plumaCommand;
-    const release = await req.session.mutex.acquire();
+    req.sessionRequest!.command = plumaCommand;
+    const release = await req.session!.mutex.acquire();
     endpointLogic(req, res)
-      .catch(e => {
-        e.command = req.sessionRequest.command;
+      .catch((e: Pluma.Request) => {
+        e.command = req.sessionRequest?.command || ' ';
         next(e);
       })
       .finally(() => {
@@ -104,9 +116,16 @@ export const endpoint = {
       });
   },
 
-  async defaultSessionEndpointLogic(req, res): Promise<void> {
-    const result = await req.session.process(req.sessionRequest);
-    res.json(has(result, 'value') ? result : { value: result });
+  async defaultSessionEndpointLogic(
+    req: Request,
+    res: Response,
+  ): Promise<void> {
+    const result = await (req.session as Session).process(
+      req.sessionRequest as Pluma.Request,
+    );
+    if (result != null) {
+      res.json(has(result, 'value') ? result : { value: result });
+    }
   },
 };
 
@@ -114,7 +133,11 @@ export const endpoint = {
  * Selenium uses the Execute Script Sync endpoint to check for isDisplayed.
  * This detects that request and forwards it to the appropriate W3C recommended endpoint.
  */
-export const handleSeleniumIsDisplayedRequest = (req, _res, next): void => {
+export const handleSeleniumIsDisplayedRequest = (
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+): void => {
   if (req.body.script === isDisplayedAtom) {
     const [
       { ['element-6066-11e4-a52e-4f735466cecf']: elementId },
@@ -182,12 +205,17 @@ export const extractDomainFromUrl = (url: string): string => {
   return new URL(url).hostname;
 };
 
-export const isString = (candidateValue): boolean =>
+export const isString = (candidateValue: unknown): candidateValue is string =>
   typeof candidateValue === 'string';
 
-export const isBoolean = (candidateValue): boolean =>
+export const isBoolean = (candidateValue: unknown): candidateValue is boolean =>
   typeof candidateValue === 'boolean';
 
+export const isObject = (
+  candidateValue: unknown,
+): candidateValue is Record<string, any> => {
+  return typeof candidateValue === 'object' && candidateValue !== null;
+};
 // Expose the version in package.json
 export const getVersion = (): string => `v${version}`;
 

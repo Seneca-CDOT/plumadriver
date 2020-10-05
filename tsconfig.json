@@ -7,7 +7,7 @@
     "resolveJsonModule": true,
     "rootDir": "./src",
     "sourceMap": true,
-    "target": "ESNext",
+    "target": "ES2019",
     "watch": false,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -17,7 +17,8 @@
     "strictFunctionTypes": true,
     "alwaysStrict": true,
     "strictNullChecks": true,
-    "strictPropertyInitialization": true
+    "strictPropertyInitialization": true,
+    "noImplicitAny": true
   },
   "include": ["./src"]
 }

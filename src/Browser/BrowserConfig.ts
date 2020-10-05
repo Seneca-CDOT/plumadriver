@@ -1,4 +1,4 @@
-import { ResourceLoader, BaseOptions } from 'jsdom';
+import { ResourceLoader, BaseOptions, DOMWindow } from 'jsdom';
 import { Pluma } from '../Types/types';
 import { CookieJar, MemoryCookieStore } from 'tough-cookie';
 import { InvalidArgument } from '../Error/errors';
@@ -43,7 +43,7 @@ export class BrowserConfig {
     if (!Utils.isBrowserOptions(options))
       throw new Error('Invalid jsdom options');
 
-    Object.keys(options).forEach(option => {
+    for (const option in options) {
       if (option === 'strictSSL' && typeof options[option] !== 'boolean')
         throw new InvalidArgument();
       else if (
@@ -54,8 +54,11 @@ export class BrowserConfig {
       else if (option === 'runScripts')
         this[option] = options[option] ? 'dangerously' : undefined;
       else if (option === 'strictSSL') this[option] = !options[option];
-      else this[option] = options[option];
-    });
+      else if (option === 'unhandledPromptBehavior')
+        this[option] = options[option];
+      else if (option === 'rejectPublicSuffixes')
+        this[option] = options[option];
+    }
 
     this.resourceLoader = new ResourceLoader({
       strictSSL: this.strictSSL,
@@ -90,7 +93,8 @@ export class BrowserConfig {
         });
         break;
       case 'ignore':
-        this.beforeParse = (window): void => this.injectAPIs(window);
+        this.beforeParse = (window): void =>
+          this.injectAPIs(window as DOMWindow);
         break;
       default:
         break;
@@ -101,21 +105,21 @@ export class BrowserConfig {
    * Accepts a [[Pluma.UserPrompt]] object
    * to define the window.alert, window.prompt and window.confirm methods */
   private beforeParseFactory = (func: Pluma.UserPrompt) => {
-    return (window): void => {
+    return (window: Pluma.DOMWindow): void => {
       ['confirm', 'alert', 'prompt'].forEach(method => {
-        window[method] = func;
+        (window as DOMWindow)[method] = func;
       });
 
-      this.injectAPIs(window);
+      this.injectAPIs(window as DOMWindow);
     };
   };
 
   /**
    * Injects missing APIs into jsdom for better compatibility.
    */
-  private injectAPIs(window): void {
+  private injectAPIs(window: DOMWindow): void {
     window.HTMLElement.prototype.scrollIntoView = (): void => undefined;
-
+    // @ts-expect-error Window.Performance.timing no longer exists
     window.performance.timing = {
       navigationStart: window.performance.timeOrigin,
     };

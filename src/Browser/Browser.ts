@@ -7,6 +7,7 @@ import * as Utils from '../utils/utils';
 import * as PlumaError from '../Error/errors';
 import { CookieValidator } from './CookieValidator';
 import { Cookie } from 'tough-cookie';
+import { isObject } from '../utils/utils';
 
 /**
  * Plumadriver browser with jsdom at its core.
@@ -33,11 +34,8 @@ class Browser {
       strictSSL: true,
       unhandledPromptBehavior: 'dismiss and notify',
       rejectPublicSuffixes: false,
+      ...capabilities,
     };
-
-    Object.keys(browserOptions).forEach(option => {
-      if (capabilities[option]) browserOptions[option] = capabilities[option];
-    });
 
     this.browserConfig = new BrowserConfig(browserOptions);
     this.configureBrowser(this.browserConfig, null);
@@ -52,7 +50,7 @@ class Browser {
     url: string | null,
     pathType = 'url',
   ): Promise<void> {
-    let dom;
+    let dom: JSDOM;
 
     if (url !== null) {
       if (pathType === 'url') {
@@ -105,7 +103,10 @@ class Browser {
   /**
    * handles errors thrown by the navigation function
    */
-  private handleNavigationError(error, config): void {
+  private handleNavigationError(
+    error: { statusCode: number },
+    config: BrowserConfig,
+  ): void {
     // the jsdom instance will otherwise crash on a 401
     if (error.statusCode === 401) {
       this.dom = new JSDOM(' ', {
@@ -124,7 +125,7 @@ class Browser {
    * accepts a url and pathType @type {String} from which to instantiate the
    * jsdom object
    */
-  async navigate(path?: string, pathType?): Promise<boolean> {
+  async navigate(path?: string, pathType?: string): Promise<boolean> {
     if (path) {
       try {
         await this.configureBrowser(this.browserConfig, path, pathType);
@@ -285,7 +286,7 @@ class Browser {
               else if (key === 'expires') {
                 // sets the expiry time in seconds form epoch time
                 // renames property for selenium functionality
-                const seconds = new Date(currentCookie[key]).getTime();
+                const seconds = new Date(cookie[key]).getTime();
                 currentCookie.expiry = seconds;
               } else currentCookie[key] = cookie[key];
             });
@@ -364,7 +365,9 @@ class Browser {
    * @throws {InvalidArgument}
    * @throws {NoSuchFrame}
    */
-  public switchToFrame(id: number | string | null): void {
+  public switchToFrame(id: unknown): void {
+    if (typeof id === 'string' && id.length != 0 && !isNaN(Number(id)))
+      id = Number(id);
     if (typeof id === 'number') {
       if (id < 0 || id > Number.MAX_SAFE_INTEGER) {
         throw new PlumaError.InvalidArgument(
@@ -380,7 +383,7 @@ class Browser {
       this.currentBrowsingContextWindow = frameWindow;
     } else if (id === null) {
       this.currentBrowsingContextWindow = this.dom.window;
-    } else if (typeof id[ELEMENT] === 'string') {
+    } else if (isObject(id) && typeof id[ELEMENT] === 'string') {
       const { element }: WebElement = this.getKnownElement(id[ELEMENT]);
 
       if (this.isStaleElement(element)) {
@@ -441,5 +444,4 @@ class Browser {
     this.dom.window.close();
   }
 }
-
 export { Browser };

@@ -32,7 +32,7 @@ class SessionManager {
    * Creates a new @type {Session}
    * from a user defined session configuration object
    */
-  createSession(requestBody): Pluma.SessionConfig {
+  createSession(requestBody: Record<string, unknown>): Pluma.SessionConfig {
     const session = new Session(requestBody);
     this.sessions.push(session);
 
