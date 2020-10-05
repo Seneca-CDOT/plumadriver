@@ -1,7 +1,4 @@
-/* eslint-disable */
-// @ts-nocheck
-//TODO: Install library on line 4 and add the rest of the noImplicitAny support
-import uuidv1 from 'uuid/v1';
+import { v1 as uuidv1 } from 'uuid';
 import validator from 'validator';
 import os from 'os';
 import { Mutex } from 'async-mutex';
@@ -317,7 +314,7 @@ class Session {
    * navigates to a specified url
    * sets timers according to session config
    */
-  async navigateTo(url?: string): Promise<void> {
+  async navigateTo(url = ''): Promise<void> {
     let pathType: string;
 
     try {
@@ -373,7 +370,7 @@ class Session {
   }
 
   /** configures session properties*/
-  configureSession(requestedCapabilities: any): void {
+  configureSession(requestedCapabilities: Record<string, unknown>): void {
     // configure Session object capabilities
     const configuredCapabilities = this.configureCapabilities(
       requestedCapabilities,
@@ -400,7 +397,9 @@ class Session {
   }
 
   // configures session object capabilities
-  configureCapabilities(requestedCapabilities: any): Pluma.Capabilities {
+  configureCapabilities(
+    requestedCapabilities: Record<string, unknown>,
+  ): Pluma.Capabilities {
     const capabilities = Session.processCapabilities(requestedCapabilities);
     if (capabilities === null)
       throw new SessionNotCreated('capabilities object is null');
@@ -432,14 +431,13 @@ class Session {
   /**
    * processes and validates the user defined capabilities
    */
-  static processCapabilities({
-    capabilities,
-  }: {
-    capabilities: any;
-  }): Pluma.Capabilities {
+  static processCapabilities(
+    params: Record<string, unknown>,
+  ): Pluma.Capabilities {
+    const { capabilities } = params;
     const capabilityValidator = new CapabilityValidator();
 
-    const defaultCapabilities = [
+    const defaultCapabilities: (keyof Pluma.Capabilities)[] = [
       'acceptInsecureCerts',
       'browserName',
       'browserVersion',
@@ -452,26 +450,25 @@ class Session {
     ];
 
     if (
-      !capabilities ||
-      capabilities.constructor !== Object ||
+      !utils.isObject(capabilities) ||
       Object.keys(capabilities).length === 0
     ) {
       throw new InvalidArgument();
     }
 
     // validate alwaysMatch capabilities
-    const requiredCapabilities: Record<string, unknown> = {};
-    if (capabilities.alwaysMatch !== undefined) {
+    const { alwaysMatch } = capabilities;
+    const requiredCapabilities: Partial<Pluma.Capabilities> = {};
+    if (utils.isObject(alwaysMatch)) {
       defaultCapabilities.forEach(key => {
         if (has(capabilities.alwaysMatch, key)) {
           const validatedCapability = capabilityValidator.validate(
             capabilities.alwaysMatch[key],
             key,
           );
-          if (validatedCapability)
-            requiredCapabilities[key as keyof typeof requiredCapabilities] =
-              capabilities.alwaysMatch[key];
-          else {
+          if (validatedCapability) {
+            utils.copyProperty(requiredCapabilities, alwaysMatch, key);
+          } else {
             throw new InvalidArgument();
           }
         }
@@ -479,7 +476,8 @@ class Session {
     }
 
     // validate first match capabilities
-    let allMatchedCapabilities = capabilities.firstMatch;
+    let allMatchedCapabilities: Record<string, unknown>[] | undefined =
+      capabilities.firstMatch;
     if (allMatchedCapabilities === undefined) {
       allMatchedCapabilities = [{}];
     } else if (
@@ -492,10 +490,10 @@ class Session {
      * @param {Array[Capability]} validatedFirstMatchCapabilities contains
      * a list of all the validated firstMatch capabilities requested by the client
      */
-    const validatedFirstMatchCapabilities: unknown[] = [];
+    const validatedFirstMatchCapabilities: Partial<Pluma.Capabilities>[] = [];
 
     allMatchedCapabilities.forEach(indexedFirstMatchCapability => {
-      const validatedFirstMatchCapability = {};
+      const validatedFirstMatchCapability: Record<string, unknown> = {};
       Object.keys(indexedFirstMatchCapability).forEach(key => {
         const validatedCapability = capabilityValidator.validate(
           indexedFirstMatchCapability[key],
@@ -509,7 +507,7 @@ class Session {
     });
 
     // attempt merging capabilities
-    const mergedCapabilities: unknown[] = [];
+    const mergedCapabilities: Partial<Pluma.Capabilities>[] = [];
 
     validatedFirstMatchCapabilities.forEach(firstMatch => {
       const merged = Session.mergeCapabilities(
@@ -534,8 +532,8 @@ class Session {
    * merges any overlapping capabilities
    */
   static mergeCapabilities(
-    primary: Record<string, unknown>,
-    secondary: any,
+    primary: Partial<Pluma.Capabilities>,
+    secondary?: Partial<Pluma.Capabilities>,
   ): Record<string, unknown> {
     const result: Record<string, unknown> = {};
     Object.keys(primary).forEach(key => {
@@ -557,8 +555,10 @@ class Session {
   /**
    * matches implementation capabilities with the merged capabilities
    * */
-  static matchCapabilities(capabilities): Pluma.Capabilities | null {
-    const matchedCapabilities = {
+  static matchCapabilities(
+    capabilities: Partial<Pluma.Capabilities>,
+  ): Pluma.Capabilities | null {
+    const matchedCapabilities: Pluma.Capabilities = {
       browserName: 'pluma',
       browserVersion: utils.getVersion(),
       platformName: os.platform(),
@@ -568,7 +568,8 @@ class Session {
 
     // TODO: add extension capabilities here in the future
     let flag = true;
-    Object.keys(capabilities).forEach(property => {
+    const keys = Object.keys(capabilities) as Array<keyof Pluma.Capabilities>;
+    keys.forEach(property => {
       switch (property) {
         case 'browserName':
         case 'platformName':
@@ -587,7 +588,7 @@ class Session {
         default:
           break;
       }
-      if (flag) matchedCapabilities[property] = capabilities[property];
+      utils.copyProperty(matchedCapabilities, capabilities, property);
     });
 
     if (flag) return matchedCapabilities;
@@ -598,7 +599,11 @@ class Session {
   /**
    * attempts to find a [[WebElement]] from a given startNode, selection strategy and selector
    */
-  elementRetrieval(startNode, strategy, selector): WebElement[] {
+  elementRetrieval(
+    startNode: HTMLDocument | HTMLElement,
+    strategy?: string,
+    selector?: string,
+  ): WebElement[] {
     const endTime = new Date(new Date().getTime() + this.timeouts.implicit);
     let elements;
     const result: WebElement[] = [];
@@ -607,26 +612,26 @@ class Session {
     if (!startNode) throw new NoSuchElement();
 
     const locationStrategies = {
-      cssSelector(): NodeList {
+      cssSelector() {
         return startNode.querySelectorAll(selector);
       },
       linkTextSelector(partial = false) {
         const linkElements = startNode.querySelectorAll('a');
         const strategyResult: HTMLElement[] = [];
 
-        linkElements.forEach((element: { innerHTML: any }) => {
+        linkElements.forEach(element => {
           const renderedText = element.innerHTML;
           if (!partial && renderedText.trim() === selector)
-            strategyResult.push(element.innerHTML);
+            strategyResult.push(element);
           else if (partial && renderedText.includes(selector))
-            strategyResult.push(element.innerHTML);
+            strategyResult.push(element);
         });
-        return result;
+        return strategyResult;
       },
-      tagName(): HTMLCollection {
+      tagName() {
         return startNode.getElementsByTagName(selector);
       },
-      XPathSelector(document: Document): HTMLElement[] {
+      XPathSelector(document: Document) {
         const evaluateResult = document.evaluate(selector, startNode, null, 7);
         const length = evaluateResult.snapshotLength;
         const xPathResult: HTMLElement[] = []; // according to W3C this should be a NodeList
@@ -642,7 +647,7 @@ class Session {
       try {
         switch (strategy) {
           case 'css selector':
-            elements = locationStrategies.cssSelector();
+            elements = Array.from(locationStrategies.cssSelector());
             break;
           case 'link text':
             elements = locationStrategies.linkTextSelector();
@@ -651,7 +656,7 @@ class Session {
             elements = locationStrategies.linkTextSelector(true);
             break;
           case 'tag name':
-            elements = locationStrategies.tagName();
+            elements = Array.from(locationStrategies.tagName());
             break;
           case 'xpath':
             elements = locationStrategies.XPathSelector(
@@ -671,10 +676,10 @@ class Session {
         // else throw new UnknownError(); // TODO: add unknown error class
         console.log(error);
       }
-    } while (endTime > new Date() && elements.length < 1);
+    } while (endTime > new Date() && elements && elements.length < 1);
 
-    elements.forEach((element: HTMLElement) => {
-      const foundElement = new WebElement(element);
+    elements?.forEach(element => {
+      const foundElement = new WebElement(element as HTMLElement);
       result.push(foundElement);
       this.browser.knownElements.push(foundElement);
     });
