@@ -1,4 +1,4 @@
-import { BaseOptions, DOMWindow as JSDOMDOMWindow } from 'jsdom';
+import { BaseOptions, DOMWindow, DOMWindow as JSDOMDOMWindow } from 'jsdom';
 import { Store } from 'tough-cookie';
 import {
   ElementBooleanAttributeValues,
@@ -131,7 +131,7 @@ export namespace Pluma {
   }
 
   interface PlumaOptions {
-    runScripts: BaseOptions['runScripts'];
+    runScripts?: BaseOptions['runScripts'];
     unhandledPromptBehavior?: unhandledPromptBehavior;
     rejectPublicSuffixes?: boolean;
     strictSSL?: boolean;
@@ -190,6 +190,15 @@ declare global {
 
   interface MouseEventInit {
     which?: number;
+  }
+
+  interface Window {
+    [k: string]: unknown;
+    eval: typeof eval;
+    HTMLElement: typeof HTMLElement;
+    SVGElement: typeof SVGElement;
+    NodeList: typeof NodeList;
+    HTMLCollection: typeof HTMLCollection;
   }
 }
 

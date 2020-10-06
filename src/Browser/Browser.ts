@@ -93,7 +93,6 @@ class Browser {
     const { window } = this.dom;
 
     // webdriver-active property (W3C)
-    // @ts-expect-error: force setting readonly property
     window.navigator.webdriver = true;
 
     this.setCurrentBrowsingContextWindow(window);
@@ -199,7 +198,7 @@ class Browser {
   ): Pluma.Cookie {
     return {
       ...cookie,
-      domain: (cookie.domain as string).replace(/^\./, ''),
+      domain: cookie.domain?.replace(/^\./, ''),
     };
   }
 
@@ -307,7 +306,8 @@ class Browser {
     const { pathname, hostname }: URL = new URL(this.getUrl());
     return (
       new RegExp(`^${path}`).test(pathname) &&
-      hostname.includes(domain as string)
+      !!domain &&
+      hostname.includes(domain)
     );
   }
 
@@ -334,14 +334,11 @@ class Browser {
     allCookies
       .filter((cookie: Pluma.Cookie): boolean => pattern.test(cookie.name))
       .forEach(({ domain, path, name }: Pluma.Cookie): void => {
-        this.dom.cookieJar.store.removeCookie(
-          domain as string,
-          path as string,
-          name,
-          err => {
+        if (domain && path) {
+          this.dom.cookieJar.store.removeCookie(domain, path, name, err => {
             if (err) throw err;
-          },
-        );
+          });
+        }
       });
   }
 
@@ -418,12 +415,15 @@ class Browser {
    * @returns {WebElement}
    */
   public getKnownElement(elementId?: string): WebElement {
-    let foundElement: WebElement | null = null;
-    this.knownElements.forEach((element: WebElement) => {
-      if (element[ELEMENT] === elementId) foundElement = element;
-    });
+    let foundElement;
+    for (const element of this.knownElements) {
+      if (element[ELEMENT] === elementId) {
+        foundElement = element;
+        break;
+      }
+    }
     if (!foundElement) throw new PlumaError.NoSuchElement();
-    if (this.isStaleElement((foundElement as WebElement).element)) {
+    if (this.isStaleElement(foundElement.element)) {
       throw new PlumaError.StaleElementReference();
     }
     return foundElement;

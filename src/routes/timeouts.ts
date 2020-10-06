@@ -1,16 +1,15 @@
 import express from 'express';
-import { Session } from '../Session/Session';
 
 const timeouts = express.Router();
 
 timeouts.get('/', (req, res) => {
-  const response = { value: (req.session as Session).getTimeouts() };
+  const response = { value: req.session?.getTimeouts() };
   res.json(response);
 });
 
 // set timeouts
 timeouts.post('/', (req, res) => {
-  (req.session as Session).setTimeouts(req.body);
+  req.session?.setTimeouts(req.body);
   res.send({ value: null });
 });
 
