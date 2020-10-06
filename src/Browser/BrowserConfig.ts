@@ -93,8 +93,7 @@ export class BrowserConfig {
         });
         break;
       case 'ignore':
-        this.beforeParse = (window): void =>
-          this.injectAPIs(window as DOMWindow);
+        this.beforeParse = window => this.injectAPIs(window);
         break;
       default:
         break;
@@ -107,19 +106,18 @@ export class BrowserConfig {
   private beforeParseFactory = (func: Pluma.UserPrompt) => {
     return (window: Pluma.DOMWindow): void => {
       ['confirm', 'alert', 'prompt'].forEach(method => {
-        (window as DOMWindow)[method] = func;
+        window[method] = func;
       });
 
-      this.injectAPIs(window as DOMWindow);
+      this.injectAPIs(window);
     };
   };
 
   /**
    * Injects missing APIs into jsdom for better compatibility.
    */
-  private injectAPIs(window: DOMWindow): void {
+  private injectAPIs(window: Pluma.DOMWindow): void {
     window.HTMLElement.prototype.scrollIntoView = (): void => undefined;
-    // @ts-expect-error Window.Performance.timing no longer exists
     window.performance.timing = {
       navigationStart: window.performance.timeOrigin,
     };

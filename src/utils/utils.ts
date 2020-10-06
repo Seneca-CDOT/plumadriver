@@ -5,7 +5,6 @@ import fs from 'fs';
 import has from 'has';
 import isDisplayedAtom from './isdisplayed-atom.json';
 import { version } from 'pjson';
-import { Session } from '../Session/Session';
 import { ELEMENT } from '../constants/constants';
 
 export const isBrowserOptions = (
@@ -23,7 +22,7 @@ export const isBrowserOptions = (
 
 export const validate = {
   requestBodyType(incomingMessage: Request, type: string): boolean {
-    if ((incomingMessage.headers['content-type'] as string).includes(type)) {
+    if (incomingMessage.headers['content-type']?.includes(type)) {
       return true;
     }
     return false;
@@ -50,7 +49,7 @@ export const validate = {
 };
 
 export const fileSystem = {
-  pathExists(path: fs.PathLike): Promise<boolean> {
+  pathExists(path = ''): Promise<boolean> {
     return new Promise((res, rej) => {
       fs.access(path, fs.constants.F_OK, err => {
         if (err) rej(new PlumaError.InvalidArgument());
@@ -85,9 +84,8 @@ export const endpoint = {
     req: Request,
     res: Response,
   ): Promise<void> {
-    const result = await (req.session as Session).process(
-      req.sessionRequest as Pluma.Request,
-    );
+    const result =
+      req.sessionRequest && (await req.session?.process(req.sessionRequest));
     if (result != null) {
       res.json(has(result, 'value') ? result : { value: result });
     }
@@ -134,7 +132,9 @@ export const isEditableFormControlElement = (
   return !element.hidden && !element.readOnly && !element.disabled;
 };
 
-export const isMutableFormControlElement = (element: HTMLElement): boolean => {
+export const isMutableFormControlElement = (
+  element: HTMLElement,
+): element is HTMLInputElement | HTMLTextAreaElement => {
   let isMutable: boolean;
 
   if (isTextAreaElement(element)) {

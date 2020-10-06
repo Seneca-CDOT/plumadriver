@@ -1,5 +1,4 @@
 import { v1 as uuidv1 } from 'uuid';
-import has from 'has';
 import { isFocusableAreaElement } from 'jsdom/lib/jsdom/living/helpers/focusing';
 import { implSymbol } from 'jsdom/lib/jsdom/living/generated/utils';
 import { ELEMENT, ElementBooleanAttributeValues } from '../constants/constants';
@@ -53,7 +52,7 @@ class WebElement {
    * @param name the name of the element attribute
    * @returns {String | null}
    */
-  getElementAttribute(name: string): string | null {
+  getElementAttribute(name = ''): string | null {
     if (ElementBooleanAttributeValues.guard(name))
       return this.element.hasAttribute(name).toString(); // returns 'true' (string) or null
     return this.element.getAttribute(name);
@@ -72,18 +71,20 @@ class WebElement {
    * Returns the element if found, otherwise returns null if the root of the tree is reached.
    * @returns {HTMLElement | null}
    */
-  findAncestor(tagName: string): HTMLElement | null {
+  findAncestor<T extends keyof HTMLElementTagNameMap>(
+    tagName: T,
+  ): HTMLElementTagNameMap[T] | null {
     let { parentElement: nextParent } = this.element;
-
-    const isMatchingOrFalsy = (): boolean =>
-      !nextParent || nextParent.tagName.toLowerCase() === tagName.toLowerCase();
-
-    while (!isMatchingOrFalsy()) {
-      const { parentElement } = nextParent as HTMLElement;
+    document.createElement;
+    while (
+      nextParent &&
+      nextParent.tagName.toLowerCase() !== tagName.toLowerCase()
+    ) {
+      const { parentElement } = nextParent;
       nextParent = parentElement;
     }
 
-    return nextParent;
+    return nextParent as HTMLElementTagNameMap[T];
   }
 
   /**
@@ -97,8 +98,8 @@ class WebElement {
       tagName.toLowerCase() === 'optgroup';
 
     if (isOptionOrOptgroupElement(element)) {
-      const datalistParent: HTMLElement | null = this.findAncestor('datalist');
-      const selectParent: HTMLElement | null = this.findAncestor('select');
+      const datalistParent = this.findAncestor('datalist');
+      const selectParent = this.findAncestor('select');
       return datalistParent || selectParent || element;
     }
 
@@ -150,10 +151,10 @@ class WebElement {
     const isOptionElement = ({ tagName }: HTMLElement): boolean =>
       tagName.toLowerCase() === 'option';
 
-    const isInUploadState = (element: HTMLInputElement): boolean =>
-      element.tagName.toLowerCase() === 'input' && element.type === 'file';
+    const isInUploadState = (element: HTMLElement): boolean =>
+      isInputElement(element) && element.type === 'file';
 
-    if (isInUploadState(element as HTMLInputElement)) {
+    if (isInUploadState(element)) {
       throw new InvalidArgument();
     }
 
@@ -213,8 +214,8 @@ class WebElement {
   ): void {
     let isEmpty: boolean;
 
-    if (isInputElement(element) && has(element, 'files')) {
-      isEmpty = (element.files as FileList).length === 0;
+    if (isInputElement(element) && element.files) {
+      isEmpty = element.files.length === 0;
     } else {
       isEmpty = element.value === '';
     }
@@ -234,11 +235,7 @@ class WebElement {
     const { element } = this;
 
     if (isMutableFormControlElement(element)) {
-      this.clearResettableElement(
-        isInputElement(element)
-          ? (element as HTMLInputElement)
-          : (element as HTMLTextAreaElement),
-      );
+      this.clearResettableElement(element);
     } else if (isMutableElement(element)) {
       this.clearContentEditableElement(element);
     } else {
@@ -260,9 +257,7 @@ class WebElement {
    * @returns {boolean}
    */
   private isDisabledFieldsetDescendant = (): boolean => {
-    const fieldsetAncestor = this.findAncestor(
-      'fieldset',
-    ) as HTMLFieldSetElement;
+    const fieldsetAncestor = this.findAncestor('fieldset');
 
     if (!fieldsetAncestor || !fieldsetAncestor.disabled) {
       return false;
@@ -292,7 +287,7 @@ class WebElement {
       ownerDocument: { doctype },
     } = this.element;
 
-    if ((doctype as DocumentType).name === 'xml') {
+    if (doctype?.name === 'xml') {
       return false;
     }
 
@@ -328,9 +323,10 @@ class WebElement {
 
     if (
       (localName === 'option' || localName === 'optgroup') &&
-      (element.parentElement as HTMLElement).localName === 'select'
+      parentElement &&
+      parentElement.localName === 'select'
     ) {
-      return WebElement.isDisplayed(parentElement as HTMLElement, true);
+      return WebElement.isDisplayed(parentElement, true);
     }
 
     if (isInputElement(element) && element.type === 'hidden') {

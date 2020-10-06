@@ -33,23 +33,19 @@ class CapabilityValidator {
       case 'browserName':
       case 'browserVersion':
       case 'platformName':
-        this.valid = typeof capability === 'string';
+        this.valid = isString(capability);
         break;
       case 'acceptInsecureCerts':
-        this.valid = typeof capability === 'boolean';
+        this.valid = isBoolean(capability);
         break;
       case 'pageLoadStrategy':
-        this.valid = typeof capability === 'string';
-        this.valid = this.valid
-          ? PageLoadStrategyValues.guard(capability as string)
-          : this.valid;
-
+        this.valid =
+          isString(capability) && PageLoadStrategyValues.guard(capability);
         break;
       case 'unhandledPromptBehavior':
-        this.valid = typeof capability === 'string';
-        this.valid = this.valid
-          ? unhandledPromptBehaviorValues.guard(capability as string)
-          : this.valid;
+        this.valid =
+          isString(capability) &&
+          unhandledPromptBehaviorValues.guard(capability);
         break;
       case 'proxy':
         this.valid =
@@ -145,11 +141,12 @@ class CapabilityValidator {
                   : validProxy;
                 break;
               case 'noProxy':
-                validProxy = value instanceof Array;
-                if (validProxy) {
-                  (value as string[]).forEach((url: string) => {
+                if (Array.isArray(value)) {
+                  value.forEach(url => {
                     if (validProxy) validProxy = validator.isURL(url);
                   });
+                } else {
+                  validProxy = false;
                 }
                 break;
               default:
