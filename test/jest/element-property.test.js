@@ -1,10 +1,15 @@
 const nock = require('nock');
+const request = require('supertest');
+const app  = require('../../src/app');
 
 const { Session } = require('../../build/Session/Session');
 const { COMMANDS, ELEMENT } = require('../../build/constants/constants');
 
-describe('Is Element Selected', () => {
-  let session;
+
+
+
+
+
 
   const setScopeAndNavigate = async pageSource => {
     nock(/plumadriver\.com/)
@@ -112,5 +117,11 @@ describe('Is Element Selected', () => {
     await setScopeAndNavigate(pageSource);
     await elementProperty('#bar',"asdad" ,{"value": null});
   });
- 
-});
+  it('test if supertest can find the routes successfully',function(done){
+    request(app)
+    .get("/")
+        .then(response => {
+          expect(response.status).toBe(0);
+          done();
+  })
+})
