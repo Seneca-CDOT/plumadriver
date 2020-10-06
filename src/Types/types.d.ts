@@ -1,4 +1,4 @@
-import { BaseOptions, DOMWindow, DOMWindow as JSDOMDOMWindow } from 'jsdom';
+import { BaseOptions, DOMWindow as JSDOMDOMWindow } from 'jsdom';
 import { Store } from 'tough-cookie';
 import {
   ElementBooleanAttributeValues,

@@ -211,7 +211,7 @@ class CapabilityValidator {
       },
       runScripts: isBoolean,
       resources(resources): boolean {
-        return resources === 'useable';
+        return resources === 'usable';
       },
       rejectPublicSuffixes: isBoolean,
     };
