@@ -1,12 +1,9 @@
-/* eslint-disable */
-// @ts-nocheck
-//TODO: Install library on line 4 and add the rest of the noImplicitAny support
-import uuidv1 from 'uuid/v1';
+import { v1 as uuidv1 } from 'uuid';
 import validator from 'validator';
 import os from 'os';
 import { Mutex } from 'async-mutex';
 import { VM } from 'vm2';
-import { DOMWindow, JSDOM } from 'jsdom';
+import { JSDOM } from 'jsdom';
 import has from 'has';
 
 import { WebElement } from '../WebElement/WebElement';
@@ -93,7 +90,7 @@ class Session {
         await this.browser.close();
         break;
       case COMMANDS.NAVIGATE_TO:
-        await this.navigateTo(parameters.url as string);
+        await this.navigateTo(parameters.url);
         break;
       case COMMANDS.GET_CURRENT_URL:
         response = this.browser.getUrl();
@@ -119,13 +116,12 @@ class Session {
         break;
       case COMMANDS.GET_ELEMENT_TEXT:
         response = this.browser
-          .getKnownElement(urlVariables.elementId as string)
+          .getKnownElement(urlVariables.elementId)
           .getText();
         break;
       case COMMANDS.FIND_ELEMENTS_FROM_ELEMENT:
         response = this.elementRetrieval(
-          this.browser.getKnownElement(urlVariables.elementId as string)
-            .element,
+          this.browser.getKnownElement(urlVariables.elementId).element,
           parameters.using,
           parameters.value,
         );
@@ -133,8 +129,7 @@ class Session {
         break;
       case COMMANDS.FIND_ELEMENT_FROM_ELEMENT:
         response = this.elementRetrieval(
-          this.browser.getKnownElement(urlVariables.elementId as string)
-            .element,
+          this.browser.getKnownElement(urlVariables.elementId).element,
           parameters.using,
           parameters.value,
         )[0];
@@ -169,49 +164,46 @@ class Session {
         break;
       case COMMANDS.GET_ELEMENT_TAG_NAME:
         response = this.browser
-          .getKnownElement(urlVariables.elementId as string)
+          .getKnownElement(urlVariables.elementId)
           .getTagName();
         break;
       case COMMANDS.GET_ELEMENT_ATTRIBUTE:
         response = this.browser
           .getKnownElement(urlVariables.elementId)
-          .getElementAttribute(urlVariables.attributeName as string);
+          .getElementAttribute(urlVariables.attributeName);
         break;
       case COMMANDS.EXECUTE_SCRIPT:
         if (!this.browser.dom.window) throw new NoSuchWindow();
         const value: unknown = await this.executeScript(
-          parameters.script as string,
-          parameters.args as unknown[],
+          parameters.script,
+          parameters.args,
         );
         response = { value };
         break;
       case COMMANDS.ELEMENT_SEND_KEYS:
-        await this.sendKeysToElement(
-          parameters.text as string,
-          urlVariables.elementId as string,
-        );
+        await this.sendKeysToElement(parameters.text, urlVariables.elementId);
         break;
       case COMMANDS.ELEMENT_CLICK:
         if (!this.browser.dom.window) throw new NoSuchWindow();
-        this.browser.getKnownElement(urlVariables.elementId as string).click();
+        this.browser.getKnownElement(urlVariables.elementId).click();
         response = { value: null };
         break;
       case COMMANDS.ELEMENT_CLEAR:
         if (!this.browser.dom.window) throw new NoSuchWindow();
-        this.browser.getKnownElement(urlVariables.elementId as string).clear();
+        this.browser.getKnownElement(urlVariables.elementId).clear();
         response = { value: null };
         break;
       case COMMANDS.ELEMENT_ENABLED:
         if (!this.browser.dom.window) throw new NoSuchWindow();
         const isEnabled = this.browser
-          .getKnownElement(urlVariables.elementId as string)
+          .getKnownElement(urlVariables.elementId)
           .isEnabled();
         response = { value: isEnabled };
         break;
       case COMMANDS.ELEMENT_IS_DISPLAYED:
         if (!this.browser.dom.window) throw new NoSuchWindow();
-        const { element }: WebElement = this.browser.getKnownElement(
-          urlVariables.elementId as string,
+        const { element } = this.browser.getKnownElement(
+          urlVariables.elementId,
         );
         response = { value: WebElement.isDisplayed(element) };
         break;
@@ -226,7 +218,7 @@ class Session {
         );
         break;
       case COMMANDS.SWITCH_TO_FRAME:
-        this.browser.switchToFrame(parameters.id as string);
+        this.browser.switchToFrame(parameters.id);
         response = { value: null };
         break;
       case COMMANDS.SWITCH_TO_PARENT_FRAME:
@@ -252,13 +244,16 @@ class Session {
    * sets a user defined value on a given HTML element
    * TODO: this method needs to be updated to incorporate the action Object
    */
-  sendKeysToElement(text: string, elementId: string): Promise<void | null> {
+  sendKeysToElement(text?: string, elementId?: string): Promise<void | null> {
     return new Promise(async (resolve, reject) => {
       const webElement = this.browser.getKnownElement(elementId);
       const element: HTMLElement = webElement.element;
       let files: string[] = [];
 
-      if (text === undefined) reject(new InvalidArgument());
+      if (text === undefined) {
+        reject(new InvalidArgument());
+        return;
+      }
 
       if (
         !webElement.isInteractable() &&
@@ -269,7 +264,7 @@ class Session {
 
       if (this.browser.getActiveElement() !== element) element.focus();
 
-      if (element.tagName.toLowerCase() === 'input') {
+      if (utils.isInputElement(element)) {
         if (typeof text === 'string') reject(new InvalidArgument());
         // file input
         if (element.getAttribute('type') === 'file') {
@@ -289,17 +284,17 @@ class Session {
           element.getAttribute('type') === 'text' ||
           element.getAttribute('type') === 'email'
         ) {
-          (element as HTMLInputElement).value += text;
+          element.value += text;
           element.dispatchEvent(new Event('input'));
           element.dispatchEvent(new Event('change'));
         } else if (element.getAttribute('type') === 'color') {
           if (!validator.isHexColor(text)) throw new InvalidArgument();
-          (element as HTMLInputElement).value = text;
+          element.value = text;
         } else {
           if (!has(element, 'value') || element.getAttribute('readonly'))
             throw new Error('element not interactable'); // TODO: create error class
           // TODO: add check to see if element is mutable, reject with element not interactable
-          (element as HTMLInputElement).value = text;
+          element.value = text;
         }
         element.dispatchEvent(new Event('input'));
         element.dispatchEvent(new Event('change'));
@@ -317,13 +312,12 @@ class Session {
    * navigates to a specified url
    * sets timers according to session config
    */
-  async navigateTo(url?: string): Promise<void> {
+  async navigateTo(url = ''): Promise<void> {
     let pathType: string;
 
     try {
       if (validator.isURL(url)) pathType = 'url';
-      else if (await utils.fileSystem.pathExists(url as string))
-        pathType = 'file';
+      else if (await utils.fileSystem.pathExists(url)) pathType = 'file';
       else throw new InvalidArgument();
     } catch (e) {
       throw new InvalidArgument();
@@ -354,14 +348,17 @@ class Session {
     Object.keys(timeouts).forEach(key => {
       valid = capabilityValidator.validateTimeouts(
         key,
-        timeouts[key as keyof typeof timeouts],
+        timeouts[key as keyof Pluma.Timeouts],
       );
       if (!valid) throw new InvalidArgument();
     });
 
     Object.keys(timeouts).forEach(validTimeout => {
-      this.timeouts[validTimeout as keyof typeof timeouts] =
-        timeouts[validTimeout as keyof typeof timeouts];
+      utils.copyProperty(
+        this.timeouts,
+        timeouts,
+        validTimeout as keyof Pluma.Timeouts,
+      );
     });
   }
 
@@ -373,34 +370,36 @@ class Session {
   }
 
   /** configures session properties*/
-  configureSession(requestedCapabilities: any): void {
+  configureSession(requestedCapabilities: Record<string, unknown>): void {
     // configure Session object capabilities
     const configuredCapabilities = this.configureCapabilities(
       requestedCapabilities,
     );
     // extract browser specific data
-    const browserConfig = configuredCapabilities['plm:plumaOptions'];
+    const browserConfig: Pluma.PlumaOptions =
+      configuredCapabilities['plm:plumaOptions'] || {};
     if (has(configuredCapabilities, 'acceptInsecureCerts')) {
       this.acceptInsecureCerts = configuredCapabilities.acceptInsecureCerts;
-      (browserConfig as Pluma.PlumaOptions).strictSSL = !this
-        .acceptInsecureCerts;
+      browserConfig.strictSSL = !this.acceptInsecureCerts;
     }
 
     if (has(configuredCapabilities, 'rejectPublicSuffixes')) {
-      (browserConfig as Pluma.PlumaOptions).rejectPublicSuffixes =
+      browserConfig.rejectPublicSuffixes =
         configuredCapabilities.rejectPublicSuffixes;
     }
 
     if (configuredCapabilities.unhandledPromptBehavior) {
-      (browserConfig as Pluma.PlumaOptions).unhandledPromptBehavior =
+      browserConfig.unhandledPromptBehavior =
         configuredCapabilities.unhandledPromptBehavior;
     }
 
-    this.browser = new Browser(browserConfig as Pluma.PlumaOptions);
+    this.browser = new Browser(browserConfig);
   }
 
   // configures session object capabilities
-  configureCapabilities(requestedCapabilities: any): Pluma.Capabilities {
+  configureCapabilities(
+    requestedCapabilities: Record<string, unknown>,
+  ): Pluma.Capabilities {
     const capabilities = Session.processCapabilities(requestedCapabilities);
     if (capabilities === null)
       throw new SessionNotCreated('capabilities object is null');
@@ -421,8 +420,8 @@ class Session {
       capabilities.proxy = {};
     }
 
-    if (has(capabilities, 'timeouts')) {
-      this.setTimeouts(capabilities.timeouts as Pluma.Timeouts);
+    if (has(capabilities, 'timeouts') && capabilities.timeouts) {
+      this.setTimeouts(capabilities.timeouts);
     }
     capabilities.timeouts = this.timeouts;
 
@@ -432,14 +431,13 @@ class Session {
   /**
    * processes and validates the user defined capabilities
    */
-  static processCapabilities({
-    capabilities,
-  }: {
-    capabilities: any;
-  }): Pluma.Capabilities {
+  static processCapabilities(
+    params: Record<string, unknown>,
+  ): Pluma.Capabilities {
+    const { capabilities } = params;
     const capabilityValidator = new CapabilityValidator();
 
-    const defaultCapabilities = [
+    const defaultCapabilities: (keyof Pluma.Capabilities)[] = [
       'acceptInsecureCerts',
       'browserName',
       'browserVersion',
@@ -452,37 +450,38 @@ class Session {
     ];
 
     if (
-      !capabilities ||
-      capabilities.constructor !== Object ||
+      !utils.isObject(capabilities) ||
       Object.keys(capabilities).length === 0
     ) {
       throw new InvalidArgument();
     }
 
     // validate alwaysMatch capabilities
-    const requiredCapabilities: Record<string, unknown> = {};
-    if (capabilities.alwaysMatch !== undefined) {
+    const { alwaysMatch } = capabilities;
+    const requiredCapabilities: Partial<Pluma.Capabilities> = {};
+    if (utils.isObject(alwaysMatch)) {
       defaultCapabilities.forEach(key => {
-        if (has(capabilities.alwaysMatch, key)) {
+        if (key in alwaysMatch) {
           const validatedCapability = capabilityValidator.validate(
-            capabilities.alwaysMatch[key],
+            alwaysMatch[key],
             key,
           );
-          if (validatedCapability)
-            requiredCapabilities[key as keyof typeof requiredCapabilities] =
-              capabilities.alwaysMatch[key];
-          else {
+          if (validatedCapability) {
+            utils.copyProperty(requiredCapabilities, alwaysMatch, key);
+          } else {
             throw new InvalidArgument();
           }
         }
       });
     }
 
-    // validate first match capabilities
-    let allMatchedCapabilities = capabilities.firstMatch;
-    if (allMatchedCapabilities === undefined) {
-      allMatchedCapabilities = [{}];
-    } else if (
+    // validate first match capabilities:
+    const allMatchedCapabilities =
+      typeof capabilities.firstMatch === 'undefined'
+        ? [{}]
+        : capabilities.firstMatch;
+
+    if (
       !Array.isArray(allMatchedCapabilities) ||
       allMatchedCapabilities.length === 0
     ) {
@@ -492,10 +491,10 @@ class Session {
      * @param {Array[Capability]} validatedFirstMatchCapabilities contains
      * a list of all the validated firstMatch capabilities requested by the client
      */
-    const validatedFirstMatchCapabilities: unknown[] = [];
+    const validatedFirstMatchCapabilities: Partial<Pluma.Capabilities>[] = [];
 
     allMatchedCapabilities.forEach(indexedFirstMatchCapability => {
-      const validatedFirstMatchCapability = {};
+      const validatedFirstMatchCapability: Record<string, unknown> = {};
       Object.keys(indexedFirstMatchCapability).forEach(key => {
         const validatedCapability = capabilityValidator.validate(
           indexedFirstMatchCapability[key],
@@ -509,7 +508,7 @@ class Session {
     });
 
     // attempt merging capabilities
-    const mergedCapabilities: unknown[] = [];
+    const mergedCapabilities: Partial<Pluma.Capabilities>[] = [];
 
     validatedFirstMatchCapabilities.forEach(firstMatch => {
       const merged = Session.mergeCapabilities(
@@ -535,11 +534,11 @@ class Session {
    */
   static mergeCapabilities(
     primary: Record<string, unknown>,
-    secondary: any,
+    secondary?: Record<string, unknown>,
   ): Record<string, unknown> {
     const result: Record<string, unknown> = {};
     Object.keys(primary).forEach(key => {
-      result[key as keyof typeof result] = primary[key as keyof typeof primary];
+      result[key] = primary[key];
     });
 
     if (secondary === undefined) return result;
@@ -548,7 +547,7 @@ class Session {
       if (has(primary, property)) {
         throw new InvalidArgument();
       }
-      result[property] = secondary[property as keyof typeof secondary];
+      result[property] = secondary[property];
     });
 
     return result;
@@ -557,8 +556,10 @@ class Session {
   /**
    * matches implementation capabilities with the merged capabilities
    * */
-  static matchCapabilities(capabilities): Pluma.Capabilities | null {
-    const matchedCapabilities = {
+  static matchCapabilities(
+    capabilities: Partial<Pluma.Capabilities>,
+  ): Pluma.Capabilities | null {
+    const matchedCapabilities: Pluma.Capabilities = {
       browserName: 'pluma',
       browserVersion: utils.getVersion(),
       platformName: os.platform(),
@@ -568,7 +569,8 @@ class Session {
 
     // TODO: add extension capabilities here in the future
     let flag = true;
-    Object.keys(capabilities).forEach(property => {
+    const keys = Object.keys(capabilities) as Array<keyof Pluma.Capabilities>;
+    keys.forEach(property => {
       switch (property) {
         case 'browserName':
         case 'platformName':
@@ -587,7 +589,7 @@ class Session {
         default:
           break;
       }
-      if (flag) matchedCapabilities[property] = capabilities[property];
+      utils.copyProperty(matchedCapabilities, capabilities, property);
     });
 
     if (flag) return matchedCapabilities;
@@ -598,7 +600,11 @@ class Session {
   /**
    * attempts to find a [[WebElement]] from a given startNode, selection strategy and selector
    */
-  elementRetrieval(startNode, strategy, selector): WebElement[] {
+  elementRetrieval(
+    startNode: HTMLDocument | HTMLElement,
+    strategy?: string,
+    selector?: string,
+  ): WebElement[] {
     const endTime = new Date(new Date().getTime() + this.timeouts.implicit);
     let elements;
     const result: WebElement[] = [];
@@ -607,26 +613,26 @@ class Session {
     if (!startNode) throw new NoSuchElement();
 
     const locationStrategies = {
-      cssSelector(): NodeList {
+      cssSelector() {
         return startNode.querySelectorAll(selector);
       },
       linkTextSelector(partial = false) {
         const linkElements = startNode.querySelectorAll('a');
         const strategyResult: HTMLElement[] = [];
 
-        linkElements.forEach((element: { innerHTML: any }) => {
+        linkElements.forEach(element => {
           const renderedText = element.innerHTML;
           if (!partial && renderedText.trim() === selector)
-            strategyResult.push(element.innerHTML);
+            strategyResult.push(element);
           else if (partial && renderedText.includes(selector))
-            strategyResult.push(element.innerHTML);
+            strategyResult.push(element);
         });
-        return result;
+        return strategyResult;
       },
-      tagName(): HTMLCollection {
+      tagName() {
         return startNode.getElementsByTagName(selector);
       },
-      XPathSelector(document: Document): HTMLElement[] {
+      XPathSelector(document: Document) {
         const evaluateResult = document.evaluate(selector, startNode, null, 7);
         const length = evaluateResult.snapshotLength;
         const xPathResult: HTMLElement[] = []; // according to W3C this should be a NodeList
@@ -642,7 +648,7 @@ class Session {
       try {
         switch (strategy) {
           case 'css selector':
-            elements = locationStrategies.cssSelector();
+            elements = Array.from(locationStrategies.cssSelector());
             break;
           case 'link text':
             elements = locationStrategies.linkTextSelector();
@@ -651,7 +657,7 @@ class Session {
             elements = locationStrategies.linkTextSelector(true);
             break;
           case 'tag name':
-            elements = locationStrategies.tagName();
+            elements = Array.from(locationStrategies.tagName());
             break;
           case 'xpath':
             elements = locationStrategies.XPathSelector(
@@ -671,10 +677,10 @@ class Session {
         // else throw new UnknownError(); // TODO: add unknown error class
         console.log(error);
       }
-    } while (endTime > new Date() && elements.length < 1);
+    } while (endTime > new Date() && elements && elements.length < 1);
 
-    elements.forEach((element: HTMLElement) => {
-      const foundElement = new WebElement(element);
+    elements?.forEach(element => {
+      const foundElement = new WebElement(element as HTMLElement);
       result.push(foundElement);
       this.browser.knownElements.push(foundElement);
     });
@@ -711,21 +717,18 @@ class Session {
   /**
    * executes a user defined script within the context of the dom on a given set of user defined arguments
    */
-  public executeScript(script: string, args: unknown[]): unknown {
+  public executeScript(script = '', args = [] as unknown[]): unknown {
     const argumentList = args.map(arg => {
-      if ((arg as Record<string, unknown>)[ELEMENT] == null) {
-        return arg;
-      } else {
-        const { element } = this.browser.getKnownElement(
-          (arg as Record<string, string>)[ELEMENT],
-        );
+      if (utils.isJsonWebElement(arg)) {
+        const { element } = this.browser.getKnownElement(arg[ELEMENT]);
         return element;
       }
+      return arg;
     });
 
     const window = this.browser.getCurrentBrowsingContextWindow();
 
-    const func = (window as DOMWindow)
+    const func = window
       .eval(`(function() {${script}})`)
       .bind(null, ...argumentList);
 
@@ -744,9 +747,7 @@ class Session {
       this.handleSyncScriptError(error);
     }
 
-    // TODO: incorporate @types/jsdom to resolve typescript instanceof errors
-    // eslint-disable-next-line
-    const { NodeList, HTMLCollection, HTMLElement } = window as any;
+    const { NodeList, HTMLCollection, HTMLElement } = window;
 
     if (
       vmReturnValue instanceof NodeList ||

@@ -1,6 +1,6 @@
 import validator from 'validator';
 import has from 'has';
-import { validate } from '../utils/utils';
+import { isBoolean, isNumber, isString, validate } from '../utils/utils';
 import {
   unhandledPromptBehaviorValues,
   PageLoadStrategyValues,
@@ -33,23 +33,19 @@ class CapabilityValidator {
       case 'browserName':
       case 'browserVersion':
       case 'platformName':
-        this.valid = typeof capability === 'string';
+        this.valid = isString(capability);
         break;
       case 'acceptInsecureCerts':
-        this.valid = typeof capability === 'boolean';
+        this.valid = isBoolean(capability);
         break;
       case 'pageLoadStrategy':
-        this.valid = typeof capability === 'string';
-        this.valid = this.valid
-          ? PageLoadStrategyValues.guard(capability as string)
-          : this.valid;
-
+        this.valid =
+          isString(capability) && PageLoadStrategyValues.guard(capability);
         break;
       case 'unhandledPromptBehavior':
-        this.valid = typeof capability === 'string';
-        this.valid = this.valid
-          ? unhandledPromptBehaviorValues.guard(capability as string)
-          : this.valid;
+        this.valid =
+          isString(capability) &&
+          unhandledPromptBehaviorValues.guard(capability);
         break;
       case 'proxy':
         this.valid =
@@ -75,7 +71,7 @@ class CapabilityValidator {
   /**
    * validates proxy for session
    */
-  static validateProxy(reqProxy: Record<string, any>): boolean {
+  static validateProxy(reqProxy: Record<string, unknown>): boolean {
     const proxyProperties = [
       'proxyType',
       'proxyAutoConfigUrl',
@@ -93,25 +89,27 @@ class CapabilityValidator {
 
     if (validProxy) {
       Object.keys(reqProxy).forEach(key => {
+        const value = reqProxy[key];
+
         if (validProxy) {
           if (!proxyProperties.includes(key)) {
             validProxy = false;
           } else {
             switch (key) {
               case 'proxyType':
-                if (reqProxy[key] === 'pac') {
+                if (value === 'pac') {
                   validProxy = has(reqProxy, 'proxyAutoConfigUrl');
                 } else if (
-                  reqProxy[key] !== 'direct' &&
-                  reqProxy[key] !== 'autodetect' &&
-                  reqProxy[key] !== 'system' &&
-                  reqProxy[key] !== 'manual'
+                  value !== 'direct' &&
+                  value !== 'autodetect' &&
+                  value !== 'system' &&
+                  value !== 'manual'
                 )
                   validProxy = false;
                 break;
               case 'proxyAutoConfigUrl':
                 validProxy = validProxy
-                  ? validator.isURL(reqProxy[key])
+                  ? isString(value) && validator.isURL(value)
                   : validProxy;
                 break;
               case 'ftpProxy':
@@ -119,7 +117,7 @@ class CapabilityValidator {
               case 'sslProxy':
                 validProxy = reqProxy.proxyType === 'manual';
                 validProxy = validProxy
-                  ? validator.isURL(reqProxy[key])
+                  ? isString(value) && validator.isURL(value)
                   : validProxy;
 
                 break;
@@ -130,23 +128,25 @@ class CapabilityValidator {
                   : validProxy;
 
                 validProxy = validProxy
-                  ? validator.isURL(reqProxy[key])
+                  ? isString(value) && validator.isURL(value)
                   : validProxy;
                 break;
               case 'socksVersion':
                 validProxy = reqProxy.proxyType === 'manual';
                 validProxy = validProxy
-                  ? Number.isInteger(reqProxy[key]) &&
-                    reqProxy[key] > -1 &&
-                    reqProxy[key] < 256
+                  ? isNumber(value) &&
+                    Number.isInteger(value) &&
+                    value > -1 &&
+                    value < 256
                   : validProxy;
                 break;
               case 'noProxy':
-                validProxy = reqProxy[key] instanceof Array;
-                if (validProxy) {
-                  (reqProxy[key] as string[]).forEach((url: string) => {
+                if (Array.isArray(value)) {
+                  value.forEach(url => {
                     if (validProxy) validProxy = validator.isURL(url);
                   });
+                } else {
+                  validProxy = false;
                 }
                 break;
               default:
@@ -164,9 +164,12 @@ class CapabilityValidator {
    * @param key the type of timeout to validate
    * @param value the value of the given timeout
    */
-  validateTimeouts(key: string, value: number): boolean {
+  validateTimeouts(key: string, value: unknown): boolean {
     this.valid =
-      TimeoutValues.guard(key) && Number.isInteger(value) && value >= 0
+      isNumber(value) &&
+      TimeoutValues.guard(key) &&
+      Number.isInteger(value) &&
+      value >= 0
         ? true
         : false;
 
@@ -177,22 +180,21 @@ class CapabilityValidator {
    * Validates plumadriver specific options
    * @param options vendor (plumadriver) specific options
    */
-  static validatePlumaOptions(options: Record<string, any>): boolean {
+  static validatePlumaOptions(options: Record<string, unknown>): boolean {
     let validatedOptions = true;
 
-    const allowedOptions: Record<string, any> = {
-      url(url: string): boolean {
-        return validator.isURL(url);
+    const allowedOptions: Record<string, (value: unknown) => boolean> = {
+      url(url): boolean {
+        return isString(url) && validator.isURL(url);
       },
-      referrer(referrer: string): boolean {
-        return validator.isURL(referrer);
+      referrer(referrer): boolean {
+        return isString(referrer) && validator.isURL(referrer);
       },
-      contentType(contentType: string): boolean {
+      contentType(contentType): boolean {
         let valid;
         const validTypes = ['text/html', 'application/xml'];
 
-        if (contentType.constructor === String) valid = true;
-        else valid = false;
+        if (!isString(contentType)) return false;
 
         if (
           validTypes.includes(contentType) ||
@@ -203,21 +205,15 @@ class CapabilityValidator {
 
         return valid;
       },
-      includeNodeLocations(value: Record<string, unknown>): boolean {
-        return value.constructor === Boolean;
-      },
-      storageQuota(quota: number): boolean {
+      includeNodeLocations: isBoolean,
+      storageQuota(quota): boolean {
         return Number.isInteger(quota);
       },
-      runScripts(value: Record<string, any>): boolean {
-        return value.constructor === Boolean;
+      runScripts: isBoolean,
+      resources(resources): boolean {
+        return resources === 'usable';
       },
-      resources(resources: string): boolean {
-        return resources.constructor === String && resources === 'useable';
-      },
-      rejectPublicSuffixes(value: Record<string, any>): boolean {
-        return value.constructor === Boolean;
-      },
+      rejectPublicSuffixes: isBoolean,
     };
 
     Object.keys(options).forEach(key => {

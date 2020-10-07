@@ -7,7 +7,6 @@ import * as Utils from '../utils/utils';
 import * as PlumaError from '../Error/errors';
 import { CookieValidator } from './CookieValidator';
 import { Cookie } from 'tough-cookie';
-import { isObject } from '../utils/utils';
 
 /**
  * Plumadriver browser with jsdom at its core.
@@ -94,7 +93,6 @@ class Browser {
     const { window } = this.dom;
 
     // webdriver-active property (W3C)
-    // @ts-expect-error: force setting readonly property
     window.navigator.webdriver = true;
 
     this.setCurrentBrowsingContextWindow(window);
@@ -200,7 +198,7 @@ class Browser {
   ): Pluma.Cookie {
     return {
       ...cookie,
-      domain: (cookie.domain as string).replace(/^\./, ''),
+      domain: cookie.domain?.replace(/^\./, ''),
     };
   }
 
@@ -288,7 +286,7 @@ class Browser {
                 // renames property for selenium functionality
                 const seconds = new Date(cookie[key]).getTime();
                 currentCookie.expiry = seconds;
-              } else currentCookie[key] = cookie[key];
+              } else Utils.copyProperty(currentCookie, cookie, key);
             });
             delete currentCookie.creation;
             return currentCookie;
@@ -308,7 +306,8 @@ class Browser {
     const { pathname, hostname }: URL = new URL(this.getUrl());
     return (
       new RegExp(`^${path}`).test(pathname) &&
-      hostname.includes(domain as string)
+      !!domain &&
+      hostname.includes(domain)
     );
   }
 
@@ -335,14 +334,11 @@ class Browser {
     allCookies
       .filter((cookie: Pluma.Cookie): boolean => pattern.test(cookie.name))
       .forEach(({ domain, path, name }: Pluma.Cookie): void => {
-        this.dom.cookieJar.store.removeCookie(
-          domain as string,
-          path as string,
-          name,
-          err => {
+        if (domain && path) {
+          this.dom.cookieJar.store.removeCookie(domain, path, name, err => {
             if (err) throw err;
-          },
-        );
+          });
+        }
       });
   }
 
@@ -383,7 +379,7 @@ class Browser {
       this.currentBrowsingContextWindow = frameWindow;
     } else if (id === null) {
       this.currentBrowsingContextWindow = this.dom.window;
-    } else if (isObject(id) && typeof id[ELEMENT] === 'string') {
+    } else if (Utils.isJsonWebElement(id)) {
       const { element }: WebElement = this.getKnownElement(id[ELEMENT]);
 
       if (this.isStaleElement(element)) {
@@ -419,12 +415,15 @@ class Browser {
    * @returns {WebElement}
    */
   public getKnownElement(elementId?: string): WebElement {
-    let foundElement: WebElement | null = null;
-    this.knownElements.forEach((element: WebElement) => {
-      if (element[ELEMENT] === elementId) foundElement = element;
-    });
+    let foundElement;
+    for (const element of this.knownElements) {
+      if (element[ELEMENT] === elementId) {
+        foundElement = element;
+        break;
+      }
+    }
     if (!foundElement) throw new PlumaError.NoSuchElement();
-    if (this.isStaleElement((foundElement as WebElement).element)) {
+    if (this.isStaleElement(foundElement.element)) {
       throw new PlumaError.StaleElementReference();
     }
     return foundElement;

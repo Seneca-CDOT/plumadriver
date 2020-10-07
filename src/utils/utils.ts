@@ -5,43 +5,7 @@ import fs from 'fs';
 import has from 'has';
 import isDisplayedAtom from './isdisplayed-atom.json';
 import { version } from 'pjson';
-import { Session } from '../Session/Session';
-
-// credit where it's due: https://stackoverflow.com/questions/36836011/checking-validity-of-string-literal-union-type-at-runtime/43621735
-export const StringUnion = <UnionType extends string>(
-  ...values: UnionType[]
-): {
-  guard: (value: string) => value is UnionType;
-  check: (value: string) => UnionType;
-  values: UnionType[];
-} & {
-  type: UnionType;
-} => {
-  Object.freeze(values);
-  const valueSet: Set<string> = new Set(values);
-
-  const guard = (value: string): value is UnionType => {
-    return valueSet.has(value);
-  };
-
-  const check = (value: string): UnionType => {
-    if (!guard(value)) {
-      const actual = JSON.stringify(value);
-      const expected = values.map(s => JSON.stringify(s)).join(' | ');
-      throw new TypeError(
-        `Value '${actual}' is not assignable to type '${expected}'.`,
-      );
-    }
-    return value;
-  };
-
-  const unionNamespace = { guard, check, values };
-  return Object.freeze(
-    unionNamespace as typeof unionNamespace & {
-      type: UnionType;
-    },
-  );
-};
+import { ELEMENT } from '../constants/constants';
 
 export const isBrowserOptions = (
   obj: Pluma.BrowserOptions,
@@ -58,7 +22,7 @@ export const isBrowserOptions = (
 
 export const validate = {
   requestBodyType(incomingMessage: Request, type: string): boolean {
-    if ((incomingMessage.headers['content-type'] as string).includes(type)) {
+    if (incomingMessage.headers['content-type']?.includes(type)) {
       return true;
     }
     return false;
@@ -85,7 +49,7 @@ export const validate = {
 };
 
 export const fileSystem = {
-  pathExists(path: fs.PathLike): Promise<boolean> {
+  pathExists(path = ''): Promise<boolean> {
     return new Promise((res, rej) => {
       fs.access(path, fs.constants.F_OK, err => {
         if (err) rej(new PlumaError.InvalidArgument());
@@ -97,22 +61,22 @@ export const fileSystem = {
 
 export const endpoint = {
   sessionEndpointExceptionHandler: (
-    endpointLogic: any,
+    endpointLogic: (req: Request, res: Response) => Promise<unknown>,
     plumaCommand: string,
   ) => async (
     req: Request,
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
-    req.sessionRequest!.command = plumaCommand;
-    const release = await req.session!.mutex.acquire();
+    if (req.sessionRequest) req.sessionRequest.command = plumaCommand;
+    const release = await req.session?.mutex.acquire();
     endpointLogic(req, res)
       .catch((e: Pluma.Request) => {
         e.command = req.sessionRequest?.command || ' ';
         next(e);
       })
       .finally(() => {
-        release();
+        release?.();
       });
   },
 
@@ -120,9 +84,8 @@ export const endpoint = {
     req: Request,
     res: Response,
   ): Promise<void> {
-    const result = await (req.session as Session).process(
-      req.sessionRequest as Pluma.Request,
-    );
+    const result =
+      req.sessionRequest && (await req.session?.process(req.sessionRequest));
     if (result != null) {
       res.json(has(result, 'value') ? result : { value: result });
     }
@@ -169,7 +132,9 @@ export const isEditableFormControlElement = (
   return !element.hidden && !element.readOnly && !element.disabled;
 };
 
-export const isMutableFormControlElement = (element: HTMLElement): boolean => {
+export const isMutableFormControlElement = (
+  element: HTMLElement,
+): element is HTMLInputElement | HTMLTextAreaElement => {
   let isMutable: boolean;
 
   if (isTextAreaElement(element)) {
@@ -211,9 +176,12 @@ export const isString = (candidateValue: unknown): candidateValue is string =>
 export const isBoolean = (candidateValue: unknown): candidateValue is boolean =>
   typeof candidateValue === 'boolean';
 
+export const isNumber = (candidateValue: unknown): candidateValue is number =>
+  typeof candidateValue === 'number';
+
 export const isObject = (
   candidateValue: unknown,
-): candidateValue is Record<string, any> => {
+): candidateValue is Record<string, unknown> => {
   return typeof candidateValue === 'object' && candidateValue !== null;
 };
 // Expose the version in package.json
@@ -229,4 +197,14 @@ export const isFrameElement = (
   element: HTMLElement,
 ): element is HTMLFrameElement => {
   return element.localName === 'frame';
+};
+
+export const isJsonWebElement = (
+  value: unknown,
+): value is { [ELEMENT]: string } =>
+  isObject(value) && isString(value[ELEMENT]);
+
+/** Work-around function for https://github.com/microsoft/TypeScript/issues/31445#issuecomment-576929044 */
+export const copyProperty = <T>(target: T, src: T, prop: keyof T): void => {
+  target[prop] = src[prop];
 };

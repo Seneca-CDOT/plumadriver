@@ -53,7 +53,6 @@ export namespace Pluma {
    * Expected cookie shape
    */
   interface Cookie {
-    [key: string]: any;
     name: string;
     value: string;
     domain?: string;
@@ -132,7 +131,7 @@ export namespace Pluma {
   }
 
   interface PlumaOptions {
-    runScripts: BaseOptions['runScripts'];
+    runScripts?: BaseOptions['runScripts'];
     unhandledPromptBehavior?: unhandledPromptBehavior;
     rejectPublicSuffixes?: boolean;
     strictSSL?: boolean;
@@ -191,6 +190,15 @@ declare global {
 
   interface MouseEventInit {
     which?: number;
+  }
+
+  interface Window {
+    [k: string]: unknown;
+    eval: typeof eval;
+    HTMLElement: typeof HTMLElement;
+    SVGElement: typeof SVGElement;
+    NodeList: typeof NodeList;
+    HTMLCollection: typeof HTMLCollection;
   }
 }
 
