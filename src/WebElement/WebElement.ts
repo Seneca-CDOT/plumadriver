@@ -75,7 +75,7 @@ class WebElement {
     tagName: T,
   ): HTMLElementTagNameMap[T] | null {
     let { parentElement: nextParent } = this.element;
-    document.createElement;
+
     while (
       nextParent &&
       nextParent.tagName.toLowerCase() !== tagName.toLowerCase()
