@@ -62,7 +62,9 @@ class WebElement {
    *returns the property attribute of the WebElement's HTML element
    @returns {String | null} 
    */
-  getProperty(property: string): string | null {
+  getProperty(property = ''): string | null {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
     return this.element[property];
   }
 

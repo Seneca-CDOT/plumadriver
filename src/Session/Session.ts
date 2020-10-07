@@ -176,7 +176,7 @@ class Session {
         if (!this.browser.dom.window) throw new NoSuchWindow();
         response = this.browser
           .getKnownElement(urlVariables.elementId)
-          .getProperty(urlVariables.propertyName as string);
+          .getProperty(urlVariables.propertyName);
         break;
       case COMMANDS.EXECUTE_SCRIPT:
         if (!this.browser.dom.window) throw new NoSuchWindow();
