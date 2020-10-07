@@ -19,13 +19,8 @@ describe('Get Active Element', () => {
             <title>Test Page</title>
           </head>
           <body>
-          <div id="invisible" style="visibility: hidden;"></div>
-          <div id="collapsed" class="collapsed"></div>
-          <div id="no-display" style="display: none;"></div>
-          <div id="transparent" style="opacity: 0;"></div>
-          <div style="display: none;"><div id="ancestor-none"></div></div>
-          <div id="visible"></div>
-          <input type="hidden" />
+          <div id="divtest" title="baz" ></div>
+          <input id="test": type="hidden" />
           <input type="text" />
           <select>
             <option value="foo" style="visibility: none;"></option>
@@ -52,7 +47,7 @@ describe('Get Active Element', () => {
       body: { value },
     } = await request(app)
       .get(`/session/${sessionId}/element/${elementId}/property/${propertyName}`)
-      .expect(200);
+      
 
     return value;
   };
@@ -64,13 +59,17 @@ describe('Get Active Element', () => {
     } = await request(app)
       .post(`/session/${sessionId}/element`)
       .send({ using: 'css selector', value: selector })
-      .expect(200);
+      
 
     return elementId;
   };
 
-  it('checks property that does exist', async()=>
+  it('checks property that does exist', async(done)=>
   {
-expect(elementProperty('#no-display','style')).toBe("foo")
+expect(await elementProperty('#test','type')).toBe("hidden")
+expect(await elementProperty('option','value')).toBe("foo")
+expect(await elementProperty('#divtest','title')).toBe("baz")
+
+done()
   })
 });

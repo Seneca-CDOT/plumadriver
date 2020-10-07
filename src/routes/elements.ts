@@ -44,13 +44,15 @@ element.post(
     COMMANDS.ELEMENT_SEND_KEYS,
   ),
 );
-element.get(
-  '/property/:propertyName',
-  sessionEndpointExceptionHandler(
+element.get('/property/:propertyName', (req, res, next) => {
+  if (req.sessionRequest) {
+    req.sessionRequest.urlVariables.propertyName = req.params.propertyName;
+  }
+  return sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
     COMMANDS.GET_ELEMENT_PROPERTY,
-  ),
-);
+  )(req, res, next);
+});
 
 // get element attribute name
 // this endpoint has not been tested as selenium calls execute script instead. Neded to test
