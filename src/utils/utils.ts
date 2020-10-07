@@ -86,9 +86,9 @@ export const endpoint = {
   ): Promise<void> {
     const result =
       req.sessionRequest && (await req.session?.process(req.sessionRequest));
-    if (result != null) {
-      res.json(has(result, 'value') ? result : { value: result });
-    }
+    res.json(
+      isObject(result) && has(result, 'value') ? result : { value: result },
+    );
   },
 };
 
