@@ -6,10 +6,7 @@ import {
   PageLoadStrategyValues,
 } from '../constants/constants';
 
-// TODO: probably update eslint to avoid the disabled rule below
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Session } from '../Session/Session';
-import { WebElement } from '../WebElement/WebElement';
 
 /**
  * contains interfaces particular to plumadriver
@@ -20,24 +17,6 @@ export namespace Pluma {
   type UserPrompt = (message?: string) => boolean;
   type ElementBooleanAttribute = typeof ElementBooleanAttributeValues.type;
   type PageLoadStrategy = typeof PageLoadStrategyValues.type;
-
-  /**
-   * All the possible return types for a response
-   */
-  type Response =
-    | string
-    | NodeList
-    | Node
-    | NodeList
-    | HTMLCollection
-    | WebElement[]
-    | null
-    | void
-    | Pluma.Cookie[]
-    | {
-        value: boolean | null | Pluma.Cookie | unknown;
-      }
-    | Pluma.SerializedWebElement;
 
   /**
    * Client defined options for jsdom
@@ -174,6 +153,10 @@ export namespace Pluma {
       sessionId: string;
       capabilities: Capabilities;
     };
+  }
+
+  interface CommandHandler {
+    (params: Request & { session: Session }): Promise<unknown>;
   }
 }
 
