@@ -57,6 +57,16 @@ element.get('/attribute/:name', (req, _res, _next) => {
   );
 });
 
+element.get('/property/:propertyName', (req, res, next) => {
+  if (req.sessionRequest) {
+    req.sessionRequest.urlVariables.propertyName = req.params.propertyName;
+  }
+  return sessionEndpointExceptionHandler(
+    defaultSessionEndpointLogic,
+    COMMANDS.GET_ELEMENT_PROPERTY,
+  )(req, res, next);
+});
+
 element.post(
   '/click',
   sessionEndpointExceptionHandler(
