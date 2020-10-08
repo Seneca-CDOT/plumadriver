@@ -67,4 +67,13 @@ describe('Get Active Element', () => {
     expect(await elementProperty('#divtest', 'title')).toBe('baz');
     done();
   });
+
+  it('checks property that does not exist', async done => {
+    expect(await elementProperty('#test', 'foo')).toBe(null);
+    expect(await elementProperty('option', 'vsad')).toBe(null);
+    expect(await elementProperty('#divtest', 'dive')).toBe(null);
+    done();
+  });
+
+  
 });
