@@ -68,13 +68,12 @@ class WebElement {
 
   /**
    *returns the property attribute of the WebElement's HTML element
-   @returns {String | null} 
+   @returns {unknown}
    */
   getProperty(property?: string): unknown {
-    if (!property) {
-      return null;
-    }
-    return this.element[property as keyof HTMLElement];
+    return this.element[property as keyof HTMLElement] == undefined
+      ? null
+      : this.element[property as keyof HTMLElement];
   }
 
   /**
