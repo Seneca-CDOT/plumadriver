@@ -175,7 +175,7 @@ class Browser {
       .activeElement as HTMLElement;
   }
 
-  private createCookieJarOptions(
+  private static createCookieJarOptions(
     cookie: Pluma.Cookie,
     activeDomain: string,
   ): Pluma.Cookie {
@@ -193,7 +193,7 @@ class Browser {
   /**
    * clones a cookie removing the dot prefix in the domain field
    */
-  private cloneCookieWithoutDomainDotPrefix(
+  private static cloneCookieWithoutDomainDotPrefix(
     cookie: Pluma.Cookie,
   ): Pluma.Cookie {
     return {
@@ -205,14 +205,14 @@ class Browser {
   /*
    * returns true if the cookie domain is prefixed with a dot
    */
-  private isCookieDomainDotPrefixed(cookie: Pluma.Cookie): boolean {
+  private static isCookieDomainDotPrefixed(cookie: Pluma.Cookie): boolean {
     return !!cookie.domain && cookie.domain.charAt(0) === '.';
   }
 
   /*
    * returns true if the scheme is in an allowed format
    */
-  private isValidScheme(scheme: string): boolean {
+  private static isValidScheme(scheme: string): boolean {
     /* include 'about' (the default JSDOM scheme) to allow
      * priming cookies prior to visiting a site
      */
@@ -232,12 +232,12 @@ class Browser {
     const activeDomain: string = Utils.extractDomainFromUrl(activeUrl);
     const scheme = activeUrl.substr(0, activeUrl.indexOf(':'));
 
-    if (!this.isValidScheme(scheme)) {
+    if (!Browser.isValidScheme(scheme)) {
       throw new PlumaError.InvalidArgument(`scheme "${scheme}" is invalid.`);
     }
 
-    const shallowClonedCookie = this.isCookieDomainDotPrefixed(cookie)
-      ? this.cloneCookieWithoutDomainDotPrefix(cookie)
+    const shallowClonedCookie = Browser.isCookieDomainDotPrefixed(cookie)
+      ? Browser.cloneCookieWithoutDomainDotPrefix(cookie)
       : { ...cookie };
 
     if (!CookieValidator.isValidCookie(shallowClonedCookie)) {
@@ -248,7 +248,7 @@ class Browser {
       name: key,
       expiry: expires,
       ...remainingFields
-    } = this.createCookieJarOptions(shallowClonedCookie, activeDomain);
+    } = Browser.createCookieJarOptions(shallowClonedCookie, activeDomain);
 
     this.dom.cookieJar.store.putCookie(
       new Cookie({

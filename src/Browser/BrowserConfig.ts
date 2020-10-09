@@ -93,7 +93,7 @@ export default class BrowserConfig {
         });
         break;
       case 'ignore':
-        this.beforeParse = window => this.injectAPIs(window);
+        this.beforeParse = window => BrowserConfig.injectAPIs(window);
         break;
       default:
         break;
@@ -109,14 +109,14 @@ export default class BrowserConfig {
         window[method] = func;
       });
 
-      this.injectAPIs(window);
+      BrowserConfig.injectAPIs(window);
     };
   };
 
   /**
    * Injects missing APIs into jsdom for better compatibility.
    */
-  private injectAPIs(window: Pluma.DOMWindow): void {
+  private static injectAPIs(window: Pluma.DOMWindow): void {
     window.HTMLElement.prototype.scrollIntoView = (): void => undefined;
     window.performance.timing = {
       navigationStart: window.performance.timeOrigin,
