@@ -362,8 +362,6 @@ class Browser {
    * @throws {NoSuchFrame}
    */
   public switchToFrame(id: unknown): void {
-    if (typeof id === 'string' && id.length != 0 && !isNaN(Number(id)))
-      id = Number(id);
     if (typeof id === 'number') {
       if (id < 0 || id > Number.MAX_SAFE_INTEGER) {
         throw new PlumaError.InvalidArgument(
