@@ -162,8 +162,8 @@ class WebElement {
     const isOptionElement = ({ tagName }: HTMLElement): boolean =>
       tagName.toLowerCase() === 'option';
 
-    const isInUploadState = (element: HTMLElement): boolean =>
-      isInputElement(element) && element.type === 'file';
+    const isInUploadState = (el: HTMLElement): boolean =>
+      isInputElement(el) && el.type === 'file';
 
     if (isInUploadState(element)) {
       throw new InvalidArgument();

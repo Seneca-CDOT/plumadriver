@@ -1,6 +1,7 @@
 import express from 'express';
 import { COMMANDS } from '../constants/constants';
 import * as utils from '../utils/utils';
+
 const {
   defaultSessionEndpointLogic,
   sessionEndpointExceptionHandler,
