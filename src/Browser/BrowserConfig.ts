@@ -82,13 +82,13 @@ export default class BrowserConfig {
         break;
       case 'dismiss and notify':
         this.beforeParse = this.beforeParseFactory(message => {
-          console.log(message);
+          console.info(message);
           return false;
         });
         break;
       case 'accept and notify':
         this.beforeParse = this.beforeParseFactory(message => {
-          console.log(message);
+          console.info(message);
           return true;
         });
         break;

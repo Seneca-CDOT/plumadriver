@@ -22,7 +22,13 @@
     ],
     "no-unused-expressions": "off",
     "@typescript-eslint/no-unused-expressions": "error",
-    "no-param-reassign": ["error", { "props": false }]
+    "no-param-reassign": ["error", { "props": false }],
+    "no-console": [
+      "error",
+      {
+        "allow": ["warn", "error", "info"]
+      }
+    ]
   },
   "overrides": [
     {

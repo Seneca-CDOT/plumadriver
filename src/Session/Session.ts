@@ -417,7 +417,7 @@ class Session {
         // ) throw new Error('invalid selector');
         // // TODO: add invalidSelector error class
         // else throw new UnknownError(); // TODO: add unknown error class
-        console.log(error);
+        console.error(error);
       }
     } while (endTime > new Date() && elements && elements.length < 1);
 
