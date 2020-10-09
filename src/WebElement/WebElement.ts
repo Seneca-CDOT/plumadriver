@@ -71,9 +71,8 @@ class WebElement {
    @returns {unknown}
    */
   getProperty(property?: string): unknown {
-    return this.element[property as keyof HTMLElement] == undefined
-      ? null
-      : this.element[property as keyof HTMLElement];
+    const value = this.element[property as keyof HTMLElement];
+    return typeof value !== 'undefined' ? value : null;
   }
 
   /**

@@ -6,5 +6,9 @@ export const getElementProperty: Pluma.CommandHandler = async ({
 }) => {
   return session.browser
     .getKnownElement(urlVariables.elementId)
-    .getProperty(urlVariables.propertyName);
+    .getProperty(
+      typeof urlVariables.propertyName === 'string'
+        ? urlVariables.propertyName
+        : undefined,
+    );
 };
