@@ -74,7 +74,6 @@
     "generate-docs": "./node_modules/.bin/typedoc --out docs ./src/ --options ./typedoc.json &>/dev/null",
     "commit": "git cz",
     "lint": "eslint . --ext .js,.ts",
-    "lint:test": "eslint \"{src,apps,libs,test}/**/*.ts\" --max-warnings=0",
     "lint:fix": "eslint --fix ."
   },
   "bin": "bin.js",
