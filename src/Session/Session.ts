@@ -378,7 +378,7 @@ class Session {
         const evaluateResult = document.evaluate(selector, startNode, null, 7);
         const length = evaluateResult.snapshotLength;
         const xPathResult: HTMLElement[] = []; // according to W3C this should be a NodeList
-        for (let i = 0; i < length; i++) {
+        for (let i = 0; i < length; i += 1) {
           const node = evaluateResult.snapshotItem(i);
           xPathResult.push(node as HTMLElement);
         }
