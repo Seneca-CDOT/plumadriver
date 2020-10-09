@@ -1,6 +1,6 @@
-import { BadRequest } from './BadRequest';
+import BadRequest from './BadRequest';
 
-export class ElementNotInteractable extends BadRequest {
+export default class ElementNotInteractable extends BadRequest {
   constructor() {
     super();
     this.name = 'ElementNotInteractableError';

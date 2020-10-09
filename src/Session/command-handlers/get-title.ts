@@ -1,5 +1,7 @@
-import { Pluma } from '../../Types/types';
+import Pluma from '../../Types/types';
 
-export const getTitle: Pluma.CommandHandler = async ({ session }) => {
+const getTitle: Pluma.CommandHandler = async ({ session }) => {
   return session.browser.getTitle();
 };
+
+export default getTitle;

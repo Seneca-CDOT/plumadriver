@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
-import { Pluma } from '../Types/types';
-import * as PlumaError from '../Error/errors';
 import fs from 'fs';
 import has from 'has';
-import isDisplayedAtom from './isdisplayed-atom.json';
 import { version } from 'pjson';
+import Pluma from '../Types/types';
+import * as PlumaError from '../Error/errors';
+import isDisplayedAtom from './isdisplayed-atom.json';
 import { ELEMENT } from '../constants/constants';
 
 export const isBrowserOptions = (
@@ -103,7 +103,7 @@ export const handleSeleniumIsDisplayedRequest = (
 ): void => {
   if (req.body.script === isDisplayedAtom) {
     const [
-      { ['element-6066-11e4-a52e-4f735466cecf']: elementId },
+      { 'element-6066-11e4-a52e-4f735466cecf': elementId },
     ] = req.body.args;
 
     req.url = `/session/${req.params.sessionId}/element/${elementId}/displayed`;

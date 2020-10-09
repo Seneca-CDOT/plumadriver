@@ -1,7 +1,7 @@
 import os from 'os';
-import { Session } from '../Session/Session';
+import Session from '../Session/Session';
 import { NotFoundError } from '../Error/errors';
-import { Pluma } from '../Types/types';
+import Pluma from '../Types/types';
 import { getVersion } from '../utils/utils';
 
 /**
@@ -10,8 +10,10 @@ import { getVersion } from '../utils/utils';
 class SessionManager {
   /** the Active Plumadriver sessions */
   sessions: Array<Session>;
+
   /** Plumadriver's [readiness state](https://w3c.github.io/webdriver/#nodes) */
   readinessState: Pluma.ReadinessState;
+
   constructor() {
     this.sessions = [];
     this.readinessState = {
@@ -96,4 +98,4 @@ class SessionManager {
   }
 }
 
-export { SessionManager };
+export default SessionManager;

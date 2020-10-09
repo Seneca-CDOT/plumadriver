@@ -4,19 +4,19 @@ import element from './elements';
 import timeouts from './timeouts';
 import navigate from './navigate';
 import cookies from './cookies';
-import { Pluma } from '../Types/types';
+import Pluma from '../Types/types';
 import * as Utils from '../utils/utils';
-
-const {
-  sessionEndpointExceptionHandler,
-  defaultSessionEndpointLogic,
-} = Utils.endpoint;
 
 // pluma commands
 import { COMMANDS } from '../constants/constants';
 
 // errors
 import { InvalidArgument } from '../Error/errors';
+
+const {
+  sessionEndpointExceptionHandler,
+  defaultSessionEndpointLogic,
+} = Utils.endpoint;
 
 const router = express.Router();
 

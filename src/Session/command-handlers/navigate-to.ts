@@ -1,16 +1,13 @@
 import validator from 'validator';
 import { InvalidArgument } from '../../Error/errors';
-import { Pluma } from '../../Types/types';
+import Pluma from '../../Types/types';
 import { fileSystem } from '../../utils/utils';
 
 /**
  * navigates to a specified url
  * sets timers according to session config
  */
-export const navigateTo: Pluma.CommandHandler = async ({
-  session,
-  parameters,
-}) => {
+const navigateTo: Pluma.CommandHandler = async ({ session, parameters }) => {
   const { url = '' } = parameters;
   let pathType: string;
 
@@ -36,3 +33,5 @@ export const navigateTo: Pluma.CommandHandler = async ({
     clearTimeout(timer);
   }
 };
+
+export default navigateTo;

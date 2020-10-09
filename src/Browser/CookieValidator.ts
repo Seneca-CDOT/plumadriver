@@ -1,7 +1,7 @@
-import { Pluma } from '../Types/types';
+import Pluma from '../Types/types';
 import { isBoolean, isString } from '../utils/utils';
 
-export class CookieValidator {
+export default class CookieValidator {
   static isValidName(name: string): boolean {
     return isString(name) && name !== '';
   }

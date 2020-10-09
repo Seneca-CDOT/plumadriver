@@ -1,6 +1,6 @@
-import { BadRequest } from './BadRequest';
+import BadRequest from './BadRequest';
 
-export class InvalidElementState extends BadRequest {
+export default class InvalidElementState extends BadRequest {
   constructor() {
     super();
     this.message =

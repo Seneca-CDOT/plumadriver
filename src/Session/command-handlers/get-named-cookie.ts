@@ -1,7 +1,7 @@
 import { NoSuchWindow } from '../../Error/errors';
-import { Pluma } from '../../Types/types';
+import Pluma from '../../Types/types';
 
-export const getNamedCoookie: Pluma.CommandHandler = async ({
+const getNamedCoookie: Pluma.CommandHandler = async ({
   session,
   urlVariables,
 }) => {
@@ -11,3 +11,5 @@ export const getNamedCoookie: Pluma.CommandHandler = async ({
   );
   return { value: retrievedCookie };
 };
+
+export default getNamedCoookie;

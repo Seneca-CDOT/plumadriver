@@ -1,6 +1,6 @@
-import { InternalServerError } from './InternalServerError';
+import InternalServerError from './InternalServerError';
 
-export class SessionNotCreated extends InternalServerError {
+export default class SessionNotCreated extends InternalServerError {
   constructor(reason?: string) {
     super();
     this.name = 'SessionNotCreatedError';

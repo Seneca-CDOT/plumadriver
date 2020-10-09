@@ -6,12 +6,12 @@ import {
   PageLoadStrategyValues,
 } from '../constants/constants';
 
-import { Session } from '../Session/Session';
+import Session from '../Session/Session';
 
 /**
  * contains interfaces particular to plumadriver
  */
-export namespace Pluma {
+declare namespace Pluma {
   type unhandledPromptBehavior = typeof unhandledPromptBehaviorValues.type;
   type BeforeParse = (window: DOMWindow) => void;
   type UserPrompt = (message?: string) => boolean;
@@ -178,7 +178,7 @@ declare global {
 
   interface Window {
     [k: string]: unknown;
-    eval: typeof eval;
+    eval: typeof global.eval;
     HTMLElement: typeof HTMLElement;
     SVGElement: typeof SVGElement;
     NodeList: typeof NodeList;
@@ -191,3 +191,5 @@ declare module 'tough-cookie' {
     store: Store;
   }
 }
+
+export default Pluma;

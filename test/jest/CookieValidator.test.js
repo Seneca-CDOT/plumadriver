@@ -1,4 +1,4 @@
-const { CookieValidator } = require('../../build/Browser/CookieValidator');
+const { default: CookieValidator } = require('../../build/Browser/CookieValidator');
 
 describe('CookieValidator Class', () => {
   it('validates names', () => {

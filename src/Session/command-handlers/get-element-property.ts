@@ -1,6 +1,6 @@
-import { Pluma } from '../../Types/types';
+import Pluma from '../../Types/types';
 
-export const getElementProperty: Pluma.CommandHandler = async ({
+const getElementProperty: Pluma.CommandHandler = async ({
   session,
   urlVariables,
 }) => {
@@ -12,3 +12,5 @@ export const getElementProperty: Pluma.CommandHandler = async ({
         : undefined,
     );
 };
+
+export default getElementProperty;

@@ -1,12 +1,12 @@
-import express from 'express';
-import { Request, Response, NextFunction } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
+
 import bodyParser from 'body-parser';
 import { logger, errorLogger } from './logger';
-import { Pluma } from './Types/types';
+import Pluma from './Types/types';
 
-import { SessionManager } from './SessionManager/SessionManager';
+import SessionManager from './SessionManager/SessionManager';
 import router from './routes/index';
-import { WebDriverError } from './Error/WebDriverError';
+import WebDriverError from './Error/WebDriverError';
 
 const app = express();
 const sessionManager = new SessionManager();
@@ -43,4 +43,4 @@ app.use(
   },
 );
 
-export { app };
+export default app;

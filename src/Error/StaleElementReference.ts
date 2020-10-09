@@ -1,6 +1,6 @@
-import { NotFoundError } from './NotFoundError';
+import NotFoundError from './NotFoundError';
 
-export class StaleElementReference extends NotFoundError {
+export default class StaleElementReference extends NotFoundError {
   constructor() {
     super();
     this.message =

@@ -1,6 +1,6 @@
 import { ResourceLoader, BaseOptions, DOMWindow } from 'jsdom';
-import { Pluma } from '../Types/types';
 import { CookieJar, MemoryCookieStore } from 'tough-cookie';
+import Pluma from '../Types/types';
 import { InvalidArgument } from '../Error/errors';
 
 import * as Utils from '../utils/utils';
@@ -8,7 +8,7 @@ import * as Utils from '../utils/utils';
 /**
  * Stores jsdom configuration based on user defined BrowserOptions object for future use
  */
-export class BrowserConfig {
+export default class BrowserConfig {
   /** defines the context under which scripts can run, if at all */
   runScripts: BaseOptions['runScripts'];
 

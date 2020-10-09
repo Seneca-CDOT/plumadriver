@@ -1,7 +1,7 @@
 const validator = require('validator');
 
 const {
-  CapabilityValidator,
+  default: CapabilityValidator,
 } = require('../../build/CapabilityValidator/CapabilityValidator');
 
 const testingData = [

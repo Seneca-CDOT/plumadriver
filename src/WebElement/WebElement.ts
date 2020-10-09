@@ -1,6 +1,7 @@
 import { v1 as uuidv1 } from 'uuid';
 import { isFocusableAreaElement } from 'jsdom/lib/jsdom/living/helpers/focusing';
 import { implSymbol } from 'jsdom/lib/jsdom/living/generated/utils';
+import { JSDOM } from 'jsdom';
 import { ELEMENT, ElementBooleanAttributeValues } from '../constants/constants';
 import { InvalidArgument, InvalidElementState } from '../Error/errors';
 import {
@@ -10,12 +11,13 @@ import {
 } from '../utils/utils';
 
 // TODO: find a more efficient way to import this
-import { JSDOM } from 'jsdom';
-import { Pluma } from '../Types/types';
+import Pluma from '../Types/types';
+
 const { MouseEvent, getComputedStyle } = new JSDOM().window;
 
 class WebElement {
   readonly element: HTMLElement;
+
   readonly [ELEMENT]: string;
 
   constructor(element: HTMLElement) {
@@ -189,8 +191,7 @@ class WebElement {
   private dispatchMouseEvents(element: HTMLElement, events: string[]): void {
     events.forEach(event => {
       // prevents call stack error in jsdom when clicking label element descendants
-      const bubbles =
-        event === 'click' && this.findAncestor('label') ? false : true;
+      const bubbles = !(event === 'click' && this.findAncestor('label'));
 
       element.dispatchEvent(
         new MouseEvent(event, {
@@ -399,4 +400,4 @@ class WebElement {
   }
 }
 
-export { WebElement };
+export default WebElement;

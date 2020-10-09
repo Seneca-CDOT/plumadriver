@@ -1,12 +1,12 @@
 import { JSDOM } from 'jsdom';
-import { BrowserConfig } from './BrowserConfig';
-import { Pluma } from '../Types/types';
+import { Cookie } from 'tough-cookie';
+import BrowserConfig from './BrowserConfig';
+import Pluma from '../Types/types';
 import { ELEMENT } from '../constants/constants';
-import { WebElement } from '../WebElement/WebElement';
+import WebElement from '../WebElement/WebElement';
 import * as Utils from '../utils/utils';
 import * as PlumaError from '../Error/errors';
-import { CookieValidator } from './CookieValidator';
-import { Cookie } from 'tough-cookie';
+import CookieValidator from './CookieValidator';
 
 /**
  * Plumadriver browser with jsdom at its core.
@@ -443,4 +443,4 @@ class Browser {
     this.dom.window.close();
   }
 }
-export { Browser };
+export default Browser;

@@ -1,6 +1,6 @@
 const request = require('supertest');
 
-const { app } = require('../../../build/app');
+const { default: app } = require('../../../build/app');
 const { createSession } = require('./helpers');
 
 describe('Shutdown', () => {

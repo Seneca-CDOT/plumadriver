@@ -1,4 +1,4 @@
-import { StringUnion } from '../utils/StringUnion';
+import StringUnion from '../utils/StringUnion';
 
 /** Boolean attributes [WHATWG](https://html.spec.whatwg.org/#boolean-attribute) */
 export const ElementBooleanAttributeValues = StringUnion(
@@ -41,7 +41,7 @@ export const ElementBooleanAttributeValues = StringUnion(
   'translate',
 );
 
-/** W3C webdriver valid session [timeout types](https://w3c.github.io/webdriver/#timeouts)*/
+/** W3C webdriver valid session [timeout types](https://w3c.github.io/webdriver/#timeouts) */
 export const TimeoutValues = StringUnion('script', 'pageLoad', 'implicit');
 
 /** W3C webdriver valid [unhandled prompt behavior](https://w3c.github.io/webdriver/#dfn-unhandled-prompt-behavior) values */

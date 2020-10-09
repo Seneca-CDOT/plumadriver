@@ -1,13 +1,19 @@
 import validator from 'validator';
 import has from 'has';
-import { isBoolean, isNumber, isString, validate } from '../utils/utils';
+import {
+  isBoolean,
+  isNumber,
+  isString,
+  validate,
+  isObject,
+} from '../utils/utils';
 import {
   unhandledPromptBehaviorValues,
   PageLoadStrategyValues,
   TimeoutValues,
 } from '../constants/constants';
-import { isObject } from '../utils/utils';
-//import { isObject } from '../Browser/Browser';
+
+// import { isObject } from '../Browser/Browser';
 
 /**
  * Validates webdriver and jsdom capabilities before they are used to configure a given session and/or user agent
@@ -165,13 +171,12 @@ class CapabilityValidator {
    * @param value the value of the given timeout
    */
   validateTimeouts(key: string, value: unknown): boolean {
-    this.valid =
+    this.valid = !!(
       isNumber(value) &&
       TimeoutValues.guard(key) &&
       Number.isInteger(value) &&
       value >= 0
-        ? true
-        : false;
+    );
 
     return this.valid;
   }
@@ -230,4 +235,4 @@ class CapabilityValidator {
   }
 }
 
-export { CapabilityValidator };
+export default CapabilityValidator;

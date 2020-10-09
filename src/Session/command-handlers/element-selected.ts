@@ -1,7 +1,7 @@
 import { NoSuchWindow } from '../../Error/errors';
-import { Pluma } from '../../Types/types';
+import Pluma from '../../Types/types';
 
-export const elementSelected: Pluma.CommandHandler = async ({
+const elementSelected: Pluma.CommandHandler = async ({
   session,
   urlVariables,
 }) => {
@@ -11,3 +11,5 @@ export const elementSelected: Pluma.CommandHandler = async ({
     .isSelected();
   return { value: isEnabled };
 };
+
+export default elementSelected;

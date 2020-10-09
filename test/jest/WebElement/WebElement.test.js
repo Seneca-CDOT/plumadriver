@@ -1,5 +1,5 @@
 const { JSDOM } = require('jsdom');
-const { WebElement } = require('../../../build/WebElement/WebElement');
+const { default: WebElement } = require('../../../build/WebElement/WebElement');
 const path = require('path');
 const { InvalidElementState } = require('../../../build/Error/errors');
 const PAGES = {

@@ -1,10 +1,7 @@
 import { NoSuchElement } from '../../Error/errors';
-import { Pluma } from '../../Types/types';
+import Pluma from '../../Types/types';
 
-export const findElement: Pluma.CommandHandler = async ({
-  session,
-  parameters,
-}) => {
+const findElement: Pluma.CommandHandler = async ({ session, parameters }) => {
   const element = session.elementRetrieval(
     session.browser.getCurrentBrowsingContextWindow().document,
     parameters.using,
@@ -13,3 +10,5 @@ export const findElement: Pluma.CommandHandler = async ({
   if (!element) throw new NoSuchElement();
   return element;
 };
+
+export default findElement;
