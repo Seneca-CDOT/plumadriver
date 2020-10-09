@@ -413,13 +413,9 @@ class Browser {
    * @returns {WebElement}
    */
   public getKnownElement(elementId?: string): WebElement {
-    let foundElement;
-    for (const element of this.knownElements) {
-      if (element[ELEMENT] === elementId) {
-        foundElement = element;
-        break;
-      }
-    }
+    const foundElement = this.knownElements.find(
+      element => element[ELEMENT] === elementId,
+    );
     if (!foundElement) throw new PlumaError.NoSuchElement();
     if (this.isStaleElement(foundElement.element)) {
       throw new PlumaError.StaleElementReference();

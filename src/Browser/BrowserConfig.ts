@@ -43,22 +43,19 @@ export default class BrowserConfig {
     if (!Utils.isBrowserOptions(options))
       throw new Error('Invalid jsdom options');
 
-    for (const option in options) {
-      if (option === 'strictSSL' && typeof options[option] !== 'boolean')
+    const instanceOptions: Record<string, unknown> = {};
+    Object.entries(options).forEach(([option, value]) => {
+      if (option === 'strictSSL' && !Utils.isBoolean(value))
         throw new InvalidArgument();
-      else if (
-        option === 'rejectPublicSuffixes' &&
-        typeof options[option] !== 'boolean'
-      )
+      else if (option === 'rejectPublicSuffixes' && !Utils.isBoolean(value))
         throw new InvalidArgument();
-      else if (option === 'runScripts')
-        this[option] = options[option] ? 'dangerously' : undefined;
-      else if (option === 'strictSSL') this[option] = !options[option];
-      else if (option === 'unhandledPromptBehavior')
-        this[option] = options[option];
-      else if (option === 'rejectPublicSuffixes')
-        this[option] = options[option];
-    }
+
+      if (option === 'runScripts')
+        instanceOptions[option] = value ? 'dangerously' : undefined;
+      else if (option === 'strictSSL') instanceOptions[option] = !value;
+      else instanceOptions[option] = value;
+    });
+    Object.assign(this, instanceOptions);
 
     this.resourceLoader = new ResourceLoader({
       strictSSL: this.strictSSL,

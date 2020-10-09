@@ -260,14 +260,16 @@ class Session {
       mergedCapabilities.push(merged);
     });
 
-    for (const capabilites of mergedCapabilities) {
-      const matchedCapabilities = Session.matchCapabilities(capabilites);
-      if (matchedCapabilities !== null) {
-        return matchedCapabilities;
-      }
-    }
+    let matchedCapabilities: Pluma.Capabilities | null = null;
+    mergedCapabilities.some(value => {
+      matchedCapabilities = Session.matchCapabilities(value);
+      return matchedCapabilities !== null;
+    });
 
-    throw new SessionNotCreated('Capabilities could not be matched');
+    if (!matchedCapabilities)
+      throw new SessionNotCreated('Capabilities could not be matched');
+
+    return matchedCapabilities;
   }
 
   /**
