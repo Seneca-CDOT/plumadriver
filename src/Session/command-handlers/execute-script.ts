@@ -9,6 +9,20 @@ import Pluma from '../../Types/types';
 import * as utils from '../../utils/utils';
 
 /**
+ * handles errors resulting from failing to execute synchronous scripts
+ */
+const handleSyncScriptError = ({
+  message,
+  code,
+}: NodeJS.ErrnoException): never => {
+  if (code === 'ERR_SCRIPT_EXECUTION_TIMEOUT') {
+    throw new ScriptTimeout();
+  } else {
+    throw new JavaScriptError(message);
+  }
+};
+
+/**
  * executes a user defined script within the context of the dom on a given set of user defined arguments
  */
 const executeScript: Pluma.CommandHandler = async ({
@@ -71,20 +85,6 @@ const executeScript: Pluma.CommandHandler = async ({
     ? null
     : vmReturnValue);
   return { value };
-};
-
-/**
- * handles errors resulting from failing to execute synchronous scripts
- */
-const handleSyncScriptError = ({
-  message,
-  code,
-}: NodeJS.ErrnoException): never => {
-  if (code === 'ERR_SCRIPT_EXECUTION_TIMEOUT') {
-    throw new ScriptTimeout();
-  } else {
-    throw new JavaScriptError(message);
-  }
 };
 
 export default executeScript;

@@ -7,6 +7,12 @@ import * as PlumaError from '../Error/errors';
 import isDisplayedAtom from './isdisplayed-atom.json';
 import { ELEMENT } from '../constants/constants';
 
+export const isObject = (
+  candidateValue: unknown,
+): candidateValue is Record<string, unknown> => {
+  return typeof candidateValue === 'object' && candidateValue !== null;
+};
+
 export const isBrowserOptions = (
   obj: Pluma.BrowserOptions,
 ): obj is Pluma.BrowserOptions => {
@@ -179,11 +185,6 @@ export const isBoolean = (candidateValue: unknown): candidateValue is boolean =>
 export const isNumber = (candidateValue: unknown): candidateValue is number =>
   typeof candidateValue === 'number';
 
-export const isObject = (
-  candidateValue: unknown,
-): candidateValue is Record<string, unknown> => {
-  return typeof candidateValue === 'object' && candidateValue !== null;
-};
 // Expose the version in package.json
 export const getVersion = (): string => `v${version}`;
 
