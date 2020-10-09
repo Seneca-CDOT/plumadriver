@@ -13,8 +13,6 @@ import {
   TimeoutValues,
 } from '../constants/constants';
 
-// import { isObject } from '../Browser/Browser';
-
 /**
  * Validates webdriver and jsdom capabilities before they are used to configure a given session and/or user agent
  * valid property

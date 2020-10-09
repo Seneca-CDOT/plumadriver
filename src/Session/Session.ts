@@ -261,7 +261,7 @@ class Session {
     });
 
     let matchedCapabilities: Pluma.Capabilities | null = null;
-    mergedCapabilities.some(value => {
+    mergedCapabilities.find(value => {
       matchedCapabilities = Session.matchCapabilities(value);
       return matchedCapabilities !== null;
     });
