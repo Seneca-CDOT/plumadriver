@@ -67,6 +67,15 @@ class WebElement {
   }
 
   /**
+   *returns the property attribute of the WebElement's HTML element
+   @returns {unknown}
+   */
+  getProperty(property?: string): unknown {
+    const value = this.element[property as keyof HTMLElement];
+    return typeof value !== 'undefined' ? value : null;
+  }
+
+  /**
    * Searches for the nearest ancestor element of the WebElement's HTML element by traversing the tree in reverse order.
    * Returns the element if found, otherwise returns null if the root of the tree is reached.
    * @returns {HTMLElement | null}

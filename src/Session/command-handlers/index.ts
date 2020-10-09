@@ -28,6 +28,7 @@ import { getPageSource } from './get-page-source';
 import { getActiveElement } from './get-active-element';
 import { switchToFrame } from './switch-to-frame';
 import { switchToParentFrame } from './switch-to-parent-frame';
+import { getElementProperty } from './get-element-property';
 
 export const commandHandlers = {
   [COMMANDS.DELETE_SESSION]: deleteSession,
@@ -48,6 +49,7 @@ export const commandHandlers = {
   [COMMANDS.DELETE_ALL_COOKIES]: deleteAllCookies,
   [COMMANDS.GET_ELEMENT_TAG_NAME]: getElementTagName,
   [COMMANDS.GET_ELEMENT_ATTRIBUTE]: getElementAttribute,
+  [COMMANDS.GET_ELEMENT_PROPERTY]: getElementProperty,
   [COMMANDS.EXECUTE_SCRIPT]: executeScript,
   [COMMANDS.ELEMENT_SEND_KEYS]: elementSendKeys,
   [COMMANDS.ELEMENT_CLICK]: elementClick,

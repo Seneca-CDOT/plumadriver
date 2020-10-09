@@ -51,6 +51,7 @@ export namespace Pluma {
       elementId?: string;
       attributeName?: string;
       cookieName?: string;
+      propertyName?: string;
     };
     /** the parameters passed inside the body of the http request */
     parameters: {
