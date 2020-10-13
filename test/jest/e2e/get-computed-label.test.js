@@ -1,9 +1,16 @@
 const request = require('supertest');
 const nock = require('nock');
 
+<<<<<<< HEAD
 const { default: app } = require('../../../build/app');
 const { createSession } = require('./helpers');
 const { ELEMENT } = require('../../../build/constants/constants');
+=======
+const { app } = require('../../../build/app');
+const { createSession } = require('./helpers');
+const { COMMANDS, ELEMENT } = require('../../../build/constants/constants');
+const { iterInternalSymbol } = require('jsdom/lib/jsdom/living/generated/utils');
+>>>>>>> e1823af... feat: added Get Computed Label endpoint
 
 describe('Get Computed Label', () => {
   let sessionId;
@@ -50,4 +57,8 @@ describe('Get Computed Label', () => {
 
       expect(value).toBe('Close');
     });
+<<<<<<< HEAD
 }); 
+=======
+}); 
+>>>>>>> e1823af... feat: added Get Computed Label endpoint
