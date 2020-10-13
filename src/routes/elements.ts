@@ -107,4 +107,12 @@ element.get(
   ),
 );
 
+element.get(
+  '/computedlabel',
+  sessionEndpointExceptionHandler(
+    defaultSessionEndpointLogic,
+    COMMANDS.GET_COMPUTED_LABEL,
+  ),
+);
+
 export default element;

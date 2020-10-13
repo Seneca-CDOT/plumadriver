@@ -29,6 +29,7 @@ import getActiveElement from './get-active-element';
 import switchToFrame from './switch-to-frame';
 import switchToParentFrame from './switch-to-parent-frame';
 import getElementProperty from './get-element-property';
+import getComputedLabel from './get-computed-label'
 
 export default {
   [COMMANDS.DELETE_SESSION]: deleteSession,
@@ -61,4 +62,5 @@ export default {
   [COMMANDS.SWITCH_TO_FRAME]: switchToFrame,
   [COMMANDS.SWITCH_TO_PARENT_FRAME]: switchToParentFrame,
   [COMMANDS.ELEMENT_SELECTED]: elementSelected,
+  [COMMANDS.GET_COMPUTED_LABEL]: getComputedLabel,
 };
