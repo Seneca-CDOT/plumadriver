@@ -1,11 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
-import { Pluma } from '../Types/types';
-import * as PlumaError from '../Error/errors';
 import fs from 'fs';
 import has from 'has';
-import isDisplayedAtom from './isdisplayed-atom.json';
 import { version } from 'pjson';
+import Pluma from '../Types/types';
+import * as PlumaError from '../Error/errors';
+import isDisplayedAtom from './isdisplayed-atom.json';
 import { ELEMENT } from '../constants/constants';
+
+export const isObject = (
+  candidateValue: unknown,
+): candidateValue is Record<string, unknown> => {
+  return typeof candidateValue === 'object' && candidateValue !== null;
+};
 
 export const isBrowserOptions = (
   obj: Pluma.BrowserOptions,
@@ -103,7 +109,7 @@ export const handleSeleniumIsDisplayedRequest = (
 ): void => {
   if (req.body.script === isDisplayedAtom) {
     const [
-      { ['element-6066-11e4-a52e-4f735466cecf']: elementId },
+      { 'element-6066-11e4-a52e-4f735466cecf': elementId },
     ] = req.body.args;
 
     req.url = `/session/${req.params.sessionId}/element/${elementId}/displayed`;
@@ -179,11 +185,6 @@ export const isBoolean = (candidateValue: unknown): candidateValue is boolean =>
 export const isNumber = (candidateValue: unknown): candidateValue is number =>
   typeof candidateValue === 'number';
 
-export const isObject = (
-  candidateValue: unknown,
-): candidateValue is Record<string, unknown> => {
-  return typeof candidateValue === 'object' && candidateValue !== null;
-};
 // Expose the version in package.json
 export const getVersion = (): string => `v${version}`;
 

@@ -5,13 +5,27 @@ import {
   NoSuchWindow,
   ScriptTimeout,
 } from '../../Error/errors';
-import { Pluma } from '../../Types/types';
+import Pluma from '../../Types/types';
 import * as utils from '../../utils/utils';
+
+/**
+ * handles errors resulting from failing to execute synchronous scripts
+ */
+const handleSyncScriptError = ({
+  message,
+  code,
+}: NodeJS.ErrnoException): never => {
+  if (code === 'ERR_SCRIPT_EXECUTION_TIMEOUT') {
+    throw new ScriptTimeout();
+  } else {
+    throw new JavaScriptError(message);
+  }
+};
 
 /**
  * executes a user defined script within the context of the dom on a given set of user defined arguments
  */
-export const executeScript: Pluma.CommandHandler = async ({
+const executeScript: Pluma.CommandHandler = async ({
   session,
   parameters: { script, args = [] },
 }) => {
@@ -61,7 +75,8 @@ export const executeScript: Pluma.CommandHandler = async ({
         ? session.addElementToKnownElements(value)
         : value,
     );
-  } else if (vmReturnValue instanceof HTMLElement) {
+  }
+  if (vmReturnValue instanceof HTMLElement) {
     return session.addElementToKnownElements(vmReturnValue);
   }
 
@@ -72,16 +87,4 @@ export const executeScript: Pluma.CommandHandler = async ({
   return { value };
 };
 
-/**
- * handles errors resulting from failing to execute synchronous scripts
- */
-const handleSyncScriptError = ({
-  message,
-  code,
-}: NodeJS.ErrnoException): never => {
-  if (code === 'ERR_SCRIPT_EXECUTION_TIMEOUT') {
-    throw new ScriptTimeout();
-  } else {
-    throw new JavaScriptError(message);
-  }
-};
+export default executeScript;

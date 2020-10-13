@@ -1,6 +1,6 @@
-import { Pluma } from '../../Types/types';
+import Pluma from '../../Types/types';
 
-export const getElementAttribute: Pluma.CommandHandler = async ({
+const getElementAttribute: Pluma.CommandHandler = async ({
   session,
   urlVariables,
 }) => {
@@ -8,3 +8,5 @@ export const getElementAttribute: Pluma.CommandHandler = async ({
     .getKnownElement(urlVariables.elementId)
     .getElementAttribute(urlVariables.attributeName);
 };
+
+export default getElementAttribute;

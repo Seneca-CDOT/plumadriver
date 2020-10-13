@@ -1,2 +1,2 @@
 process.env.NODE_ENV = 'production';
-require('./build');
+require('./build'); // eslint-disable-line import/no-unresolved

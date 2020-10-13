@@ -1,5 +1,7 @@
-import { Pluma } from '../../Types/types';
+import Pluma from '../../Types/types';
 
-export const deleteSession: Pluma.CommandHandler = async ({ session }) => {
+const deleteSession: Pluma.CommandHandler = async ({ session }) => {
   session.browser.close();
 };
+
+export default deleteSession;

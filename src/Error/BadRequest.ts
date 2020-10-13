@@ -1,6 +1,6 @@
-import { WebDriverError } from './WebDriverError';
+import WebDriverError from './WebDriverError';
 
-export class BadRequest extends WebDriverError {
+export default class BadRequest extends WebDriverError {
   constructor() {
     super(400);
     this.name = 'BadRequestError';

@@ -1,6 +1,6 @@
-import { WebDriverError } from './WebDriverError';
+import WebDriverError from './WebDriverError';
 
-export class MethodNotAllowed extends WebDriverError {
+export default class MethodNotAllowed extends WebDriverError {
   constructor() {
     super(405);
     this.name = 'MethodNotAllowedError';

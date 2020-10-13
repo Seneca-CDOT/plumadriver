@@ -1,5 +1,7 @@
-import { Pluma } from '../../Types/types';
+import Pluma from '../../Types/types';
 
-export const setTimeouts: Pluma.CommandHandler = async () => {
+const setTimeouts: Pluma.CommandHandler = async () => {
   return null;
 };
+
+export default setTimeouts;

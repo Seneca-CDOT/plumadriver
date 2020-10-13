@@ -1,6 +1,6 @@
-import { NotFoundError } from './NotFoundError';
+import NotFoundError from './NotFoundError';
 
-export class NoSuchCookie extends NotFoundError {
+export default class NoSuchCookie extends NotFoundError {
   constructor() {
     super();
     this.message =

@@ -1,5 +1,7 @@
-import { Pluma } from '../../Types/types';
+import Pluma from '../../Types/types';
 
-export const getAllCookies: Pluma.CommandHandler = async ({ session }) => {
+const getAllCookies: Pluma.CommandHandler = async ({ session }) => {
   return session.browser.getAllCookies();
 };
+
+export default getAllCookies;

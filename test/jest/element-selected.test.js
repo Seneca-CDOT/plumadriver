@@ -1,6 +1,6 @@
 const nock = require('nock');
 
-const { Session } = require('../../build/Session/Session');
+const { default: Session } = require('../../build/Session/Session');
 const { COMMANDS, ELEMENT } = require('../../build/constants/constants');
 
 describe('Is Element Selected', () => {

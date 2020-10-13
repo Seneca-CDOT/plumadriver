@@ -1,5 +1,7 @@
-import { Pluma } from '../../Types/types';
+import Pluma from '../../Types/types';
 
-export const getCurrentUrl: Pluma.CommandHandler = async ({ session }) => {
+const getCurrentUrl: Pluma.CommandHandler = async ({ session }) => {
   return session.browser.getUrl();
 };
+
+export default getCurrentUrl;

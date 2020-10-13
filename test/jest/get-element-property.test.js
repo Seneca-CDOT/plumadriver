@@ -1,7 +1,7 @@
 const request = require('supertest');
 const nock = require('nock');
 
-const { app } = require('../../build/app');
+const { default: app } = require('../../build/app');
 const { createSession } = require('./e2e/helpers');
 const { ELEMENT } = require('../../build/constants/constants');
 

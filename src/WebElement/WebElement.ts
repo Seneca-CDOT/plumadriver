@@ -1,6 +1,7 @@
 import { v1 as uuidv1 } from 'uuid';
 import { isFocusableAreaElement } from 'jsdom/lib/jsdom/living/helpers/focusing';
 import { implSymbol } from 'jsdom/lib/jsdom/living/generated/utils';
+import { JSDOM } from 'jsdom';
 import { ELEMENT, ElementBooleanAttributeValues } from '../constants/constants';
 import { InvalidArgument, InvalidElementState } from '../Error/errors';
 import {
@@ -10,12 +11,13 @@ import {
 } from '../utils/utils';
 
 // TODO: find a more efficient way to import this
-import { JSDOM } from 'jsdom';
-import { Pluma } from '../Types/types';
+import Pluma from '../Types/types';
+
 const { MouseEvent, getComputedStyle } = new JSDOM().window;
 
 class WebElement {
   readonly element: HTMLElement;
+
   readonly [ELEMENT]: string;
 
   constructor(element: HTMLElement) {
@@ -160,8 +162,8 @@ class WebElement {
     const isOptionElement = ({ tagName }: HTMLElement): boolean =>
       tagName.toLowerCase() === 'option';
 
-    const isInUploadState = (element: HTMLElement): boolean =>
-      isInputElement(element) && element.type === 'file';
+    const isInUploadState = (el: HTMLElement): boolean =>
+      isInputElement(el) && el.type === 'file';
 
     if (isInUploadState(element)) {
       throw new InvalidArgument();
@@ -189,8 +191,7 @@ class WebElement {
   private dispatchMouseEvents(element: HTMLElement, events: string[]): void {
     events.forEach(event => {
       // prevents call stack error in jsdom when clicking label element descendants
-      const bubbles =
-        event === 'click' && this.findAncestor('label') ? false : true;
+      const bubbles = !(event === 'click' && this.findAncestor('label'));
 
       element.dispatchEvent(
         new MouseEvent(event, {
@@ -207,7 +208,7 @@ class WebElement {
    * Clears a mutable element (https://www.w3.org/TR/webdriver/#dfn-mutable-element)
    * @returns {undefined}
    */
-  private clearContentEditableElement(element: HTMLElement): void {
+  private static clearContentEditableElement(element: HTMLElement): void {
     if (element.innerHTML === '') return;
     element.focus();
     element.innerHTML = '';
@@ -218,7 +219,7 @@ class WebElement {
    * Clears a resettable element (https://www.w3.org/TR/webdriver/#dfn-clear-a-resettable-element)
    * @returns {undefined}
    */
-  private clearResettableElement(
+  private static clearResettableElement(
     element: HTMLInputElement | HTMLTextAreaElement,
   ): void {
     let isEmpty: boolean;
@@ -244,9 +245,9 @@ class WebElement {
     const { element } = this;
 
     if (isMutableFormControlElement(element)) {
-      this.clearResettableElement(element);
+      WebElement.clearResettableElement(element);
     } else if (isMutableElement(element)) {
-      this.clearContentEditableElement(element);
+      WebElement.clearContentEditableElement(element);
     } else {
       throw new InvalidElementState();
     }
@@ -399,4 +400,4 @@ class WebElement {
   }
 }
 
-export { WebElement };
+export default WebElement;

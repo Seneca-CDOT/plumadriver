@@ -1,6 +1,6 @@
-import { BadRequest } from './BadRequest';
+import BadRequest from './BadRequest';
 
-export class InvalidArgument extends BadRequest {
+export default class InvalidArgument extends BadRequest {
   constructor(reason?: string) {
     super();
     this.message =

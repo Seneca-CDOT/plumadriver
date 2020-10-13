@@ -1,8 +1,8 @@
 import { NoSuchWindow } from '../../Error/errors';
-import { Pluma } from '../../Types/types';
-import { WebElement } from '../../WebElement/WebElement';
+import Pluma from '../../Types/types';
+import WebElement from '../../WebElement/WebElement';
 
-export const elementIsDisplayed: Pluma.CommandHandler = async ({
+const elementIsDisplayed: Pluma.CommandHandler = async ({
   session,
   urlVariables,
 }) => {
@@ -10,3 +10,5 @@ export const elementIsDisplayed: Pluma.CommandHandler = async ({
   const { element } = session.browser.getKnownElement(urlVariables.elementId);
   return { value: WebElement.isDisplayed(element) };
 };
+
+export default elementIsDisplayed;

@@ -1,7 +1,7 @@
 import { NoSuchWindow } from '../../Error/errors';
-import { Pluma } from '../../Types/types';
+import Pluma from '../../Types/types';
 
-export const deleteCookie: Pluma.CommandHandler = async ({
+const deleteCookie: Pluma.CommandHandler = async ({
   session,
   urlVariables,
 }) => {
@@ -10,3 +10,5 @@ export const deleteCookie: Pluma.CommandHandler = async ({
     new RegExp(`^${urlVariables.cookieName}$`),
   );
 };
+
+export default deleteCookie;

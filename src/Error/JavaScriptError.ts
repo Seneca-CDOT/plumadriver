@@ -1,6 +1,6 @@
-import { InternalServerError } from './InternalServerError';
+import InternalServerError from './InternalServerError';
 
-export class JavaScriptError extends InternalServerError {
+export default class JavaScriptError extends InternalServerError {
   constructor(reason?: string) {
     super();
     this.name = 'JavaScriptError';

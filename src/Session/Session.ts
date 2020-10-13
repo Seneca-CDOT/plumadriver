@@ -4,17 +4,10 @@ import { Mutex } from 'async-mutex';
 import { JSDOM } from 'jsdom';
 import has from 'has';
 
-import { WebElement } from '../WebElement/WebElement';
-import { Browser } from '../Browser/Browser';
-import { Pluma } from '../Types/types';
+import WebElement from '../WebElement/WebElement';
+import Browser from '../Browser/Browser';
+import Pluma from '../Types/types';
 import * as utils from '../utils/utils';
-
-// DOM specific
-const {
-  /** A window event, imported from jsdom */
-
-  HTMLElement,
-} = new JSDOM().window;
 
 // errors
 import {
@@ -23,8 +16,15 @@ import {
   NoSuchElement,
 } from '../Error/errors';
 
-import { CapabilityValidator } from '../CapabilityValidator/CapabilityValidator';
-import { commandHandlers } from './command-handlers';
+import CapabilityValidator from '../CapabilityValidator/CapabilityValidator';
+import commandHandlers from './command-handlers';
+
+// DOM specific
+const {
+  /** A window event, imported from jsdom */
+
+  HTMLElement,
+} = new JSDOM().window;
 
 /**
  * Represents the connection between a local end and a specific remote end. In this case, jsdom.
@@ -33,18 +33,24 @@ import { commandHandlers } from './command-handlers';
 class Session {
   /** the session id */
   readonly id: string;
+
   /** the user agent */
   browser!: Browser;
+
   /** */
   pageLoadStrategy: Pluma.PageLoadStrategy = 'normal';
+
   /** indicated whether untrusted or self-signed TLS certificates should be trusted for the duration of the webdriver session */
   acceptInsecureCerts: boolean;
+
   /** records the timeout duration values used to control the behavior of script evaluation, navigation and element retrieval */
   timeouts: Pluma.Timeouts;
+
   /**
    * a queue of [[Pluma.Request]] currently awaiting processing
    *  */
   mutex: Mutex;
+
   proxy = '';
 
   constructor(requestBody: Record<string, unknown>) {
@@ -105,7 +111,7 @@ class Session {
     return this.timeouts;
   }
 
-  /** configures session properties*/
+  /** configures session properties */
   configureSession(requestedCapabilities: Record<string, unknown>): void {
     // configure Session object capabilities
     const configuredCapabilities = this.configureCapabilities(
@@ -254,14 +260,16 @@ class Session {
       mergedCapabilities.push(merged);
     });
 
-    for (const capabilites of mergedCapabilities) {
-      const matchedCapabilities = Session.matchCapabilities(capabilites);
-      if (matchedCapabilities !== null) {
-        return matchedCapabilities;
-      }
-    }
+    let matchedCapabilities: Pluma.Capabilities | null = null;
+    mergedCapabilities.find(value => {
+      matchedCapabilities = Session.matchCapabilities(value);
+      return matchedCapabilities !== null;
+    });
 
-    throw new SessionNotCreated('Capabilities could not be matched');
+    if (!matchedCapabilities)
+      throw new SessionNotCreated('Capabilities could not be matched');
+
+    return matchedCapabilities;
   }
 
   /**
@@ -372,7 +380,7 @@ class Session {
         const evaluateResult = document.evaluate(selector, startNode, null, 7);
         const length = evaluateResult.snapshotLength;
         const xPathResult: HTMLElement[] = []; // according to W3C this should be a NodeList
-        for (let i = 0; i < length; i++) {
+        for (let i = 0; i < length; i += 1) {
           const node = evaluateResult.snapshotItem(i);
           xPathResult.push(node as HTMLElement);
         }
@@ -411,7 +419,7 @@ class Session {
         // ) throw new Error('invalid selector');
         // // TODO: add invalidSelector error class
         // else throw new UnknownError(); // TODO: add unknown error class
-        console.log(error);
+        console.error(error);
       }
     } while (endTime > new Date() && elements && elements.length < 1);
 
@@ -435,4 +443,4 @@ class Session {
   }
 }
 
-export { Session };
+export default Session;

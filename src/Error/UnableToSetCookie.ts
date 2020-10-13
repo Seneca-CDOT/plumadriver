@@ -1,6 +1,6 @@
-import { InternalServerError } from './InternalServerError';
+import InternalServerError from './InternalServerError';
 
-export class UnableToSetCookie extends InternalServerError {
+export default class UnableToSetCookie extends InternalServerError {
   constructor(reason?: string) {
     super();
     this.message =

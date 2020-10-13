@@ -1,9 +1,9 @@
 import validator from 'validator';
+import has from 'has';
 import { ElementNotInteractable, InvalidArgument } from '../../Error/errors';
 import { addFileList } from '../../jsdom_extensions/addFileList';
-import { Pluma } from '../../Types/types';
+import Pluma from '../../Types/types';
 import * as utils from '../../utils/utils';
-import has from 'has';
 
 /**
  * Accepts a string and an elementId @type {string}
@@ -11,13 +11,13 @@ import has from 'has';
  * sets a user defined value on a given HTML element
  * TODO: this method needs to be updated to incorporate the action Object
  */
-export const elementSendKeys: Pluma.CommandHandler = async ({
+const elementSendKeys: Pluma.CommandHandler = async ({
   session,
   urlVariables: { elementId },
   parameters: { text },
 }) => {
   const webElement = session.browser.getKnownElement(elementId);
-  const element: HTMLElement = webElement.element;
+  const { element } = webElement;
   let files: string[] = [];
 
   if (text === undefined) throw new InvalidArgument();
@@ -64,10 +64,11 @@ export const elementSendKeys: Pluma.CommandHandler = async ({
     element.dispatchEvent(new Event('input'));
     element.dispatchEvent(new Event('change'));
     return null;
-  } else {
-    // TODO: text needs to be encoded before it is inserted into the element
-    // innerHTML, especially important since js code can be inserted in here and executed
-    element.innerHTML += text;
-    return null;
   }
+  // TODO: text needs to be encoded before it is inserted into the element
+  // innerHTML, especially important since js code can be inserted in here and executed
+  element.innerHTML += text;
+  return null;
 };
+
+export default elementSendKeys;

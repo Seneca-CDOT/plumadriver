@@ -1,7 +1,7 @@
 import { NoSuchElement } from '../../Error/errors';
-import { Pluma } from '../../Types/types';
+import Pluma from '../../Types/types';
 
-export const findElementFromElement: Pluma.CommandHandler = async ({
+const findElementFromElement: Pluma.CommandHandler = async ({
   session,
   parameters,
   urlVariables,
@@ -13,3 +13,5 @@ export const findElementFromElement: Pluma.CommandHandler = async ({
   )[0];
   if (!element) throw new NoSuchElement();
 };
+
+export default findElementFromElement;

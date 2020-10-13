@@ -1,5 +1,5 @@
 const request = require('supertest');
-const { app } = require('../../../build/app');
+const { default: app } = require('../../../build/app');
 
 describe('Status Endpoint', () => {
   it('should respond in the proper format', async () => {

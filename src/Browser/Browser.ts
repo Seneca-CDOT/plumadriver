@@ -1,12 +1,12 @@
 import { JSDOM } from 'jsdom';
-import { BrowserConfig } from './BrowserConfig';
-import { Pluma } from '../Types/types';
+import { Cookie } from 'tough-cookie';
+import BrowserConfig from './BrowserConfig';
+import Pluma from '../Types/types';
 import { ELEMENT } from '../constants/constants';
-import { WebElement } from '../WebElement/WebElement';
+import WebElement from '../WebElement/WebElement';
 import * as Utils from '../utils/utils';
 import * as PlumaError from '../Error/errors';
-import { CookieValidator } from './CookieValidator';
-import { Cookie } from 'tough-cookie';
+import CookieValidator from './CookieValidator';
 
 /**
  * Plumadriver browser with jsdom at its core.
@@ -175,7 +175,7 @@ class Browser {
       .activeElement as HTMLElement;
   }
 
-  private createCookieJarOptions(
+  private static createCookieJarOptions(
     cookie: Pluma.Cookie,
     activeDomain: string,
   ): Pluma.Cookie {
@@ -193,7 +193,7 @@ class Browser {
   /**
    * clones a cookie removing the dot prefix in the domain field
    */
-  private cloneCookieWithoutDomainDotPrefix(
+  private static cloneCookieWithoutDomainDotPrefix(
     cookie: Pluma.Cookie,
   ): Pluma.Cookie {
     return {
@@ -205,14 +205,14 @@ class Browser {
   /*
    * returns true if the cookie domain is prefixed with a dot
    */
-  private isCookieDomainDotPrefixed(cookie: Pluma.Cookie): boolean {
+  private static isCookieDomainDotPrefixed(cookie: Pluma.Cookie): boolean {
     return !!cookie.domain && cookie.domain.charAt(0) === '.';
   }
 
   /*
    * returns true if the scheme is in an allowed format
    */
-  private isValidScheme(scheme: string): boolean {
+  private static isValidScheme(scheme: string): boolean {
     /* include 'about' (the default JSDOM scheme) to allow
      * priming cookies prior to visiting a site
      */
@@ -232,12 +232,12 @@ class Browser {
     const activeDomain: string = Utils.extractDomainFromUrl(activeUrl);
     const scheme = activeUrl.substr(0, activeUrl.indexOf(':'));
 
-    if (!this.isValidScheme(scheme)) {
+    if (!Browser.isValidScheme(scheme)) {
       throw new PlumaError.InvalidArgument(`scheme "${scheme}" is invalid.`);
     }
 
-    const shallowClonedCookie = this.isCookieDomainDotPrefixed(cookie)
-      ? this.cloneCookieWithoutDomainDotPrefix(cookie)
+    const shallowClonedCookie = Browser.isCookieDomainDotPrefixed(cookie)
+      ? Browser.cloneCookieWithoutDomainDotPrefix(cookie)
       : { ...cookie };
 
     if (!CookieValidator.isValidCookie(shallowClonedCookie)) {
@@ -248,7 +248,7 @@ class Browser {
       name: key,
       expiry: expires,
       ...remainingFields
-    } = this.createCookieJarOptions(shallowClonedCookie, activeDomain);
+    } = Browser.createCookieJarOptions(shallowClonedCookie, activeDomain);
 
     this.dom.cookieJar.store.putCookie(
       new Cookie({
@@ -362,8 +362,6 @@ class Browser {
    * @throws {NoSuchFrame}
    */
   public switchToFrame(id: unknown): void {
-    if (typeof id === 'string' && id.length != 0 && !isNaN(Number(id)))
-      id = Number(id);
     if (typeof id === 'number') {
       if (id < 0 || id > Number.MAX_SAFE_INTEGER) {
         throw new PlumaError.InvalidArgument(
@@ -415,13 +413,9 @@ class Browser {
    * @returns {WebElement}
    */
   public getKnownElement(elementId?: string): WebElement {
-    let foundElement;
-    for (const element of this.knownElements) {
-      if (element[ELEMENT] === elementId) {
-        foundElement = element;
-        break;
-      }
-    }
+    const foundElement = this.knownElements.find(
+      element => element[ELEMENT] === elementId,
+    );
     if (!foundElement) throw new PlumaError.NoSuchElement();
     if (this.isStaleElement(foundElement.element)) {
       throw new PlumaError.StaleElementReference();
@@ -443,4 +437,4 @@ class Browser {
     this.dom.window.close();
   }
 }
-export { Browser };
+export default Browser;

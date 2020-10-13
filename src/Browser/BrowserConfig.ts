@@ -1,6 +1,6 @@
 import { ResourceLoader, BaseOptions, DOMWindow } from 'jsdom';
-import { Pluma } from '../Types/types';
 import { CookieJar, MemoryCookieStore } from 'tough-cookie';
+import Pluma from '../Types/types';
 import { InvalidArgument } from '../Error/errors';
 
 import * as Utils from '../utils/utils';
@@ -8,7 +8,7 @@ import * as Utils from '../utils/utils';
 /**
  * Stores jsdom configuration based on user defined BrowserOptions object for future use
  */
-export class BrowserConfig {
+export default class BrowserConfig {
   /** defines the context under which scripts can run, if at all */
   runScripts: BaseOptions['runScripts'];
 
@@ -43,22 +43,19 @@ export class BrowserConfig {
     if (!Utils.isBrowserOptions(options))
       throw new Error('Invalid jsdom options');
 
-    for (const option in options) {
-      if (option === 'strictSSL' && typeof options[option] !== 'boolean')
+    const instanceOptions: Record<string, unknown> = {};
+    Object.entries(options).forEach(([option, value]) => {
+      if (option === 'strictSSL' && !Utils.isBoolean(value))
         throw new InvalidArgument();
-      else if (
-        option === 'rejectPublicSuffixes' &&
-        typeof options[option] !== 'boolean'
-      )
+      else if (option === 'rejectPublicSuffixes' && !Utils.isBoolean(value))
         throw new InvalidArgument();
-      else if (option === 'runScripts')
-        this[option] = options[option] ? 'dangerously' : undefined;
-      else if (option === 'strictSSL') this[option] = !options[option];
-      else if (option === 'unhandledPromptBehavior')
-        this[option] = options[option];
-      else if (option === 'rejectPublicSuffixes')
-        this[option] = options[option];
-    }
+
+      if (option === 'runScripts')
+        instanceOptions[option] = value ? 'dangerously' : undefined;
+      else if (option === 'strictSSL') instanceOptions[option] = !value;
+      else instanceOptions[option] = value;
+    });
+    Object.assign(this, instanceOptions);
 
     this.resourceLoader = new ResourceLoader({
       strictSSL: this.strictSSL,
@@ -82,18 +79,18 @@ export class BrowserConfig {
         break;
       case 'dismiss and notify':
         this.beforeParse = this.beforeParseFactory(message => {
-          console.log(message);
+          console.info(message);
           return false;
         });
         break;
       case 'accept and notify':
         this.beforeParse = this.beforeParseFactory(message => {
-          console.log(message);
+          console.info(message);
           return true;
         });
         break;
       case 'ignore':
-        this.beforeParse = window => this.injectAPIs(window);
+        this.beforeParse = window => BrowserConfig.injectAPIs(window);
         break;
       default:
         break;
@@ -109,14 +106,14 @@ export class BrowserConfig {
         window[method] = func;
       });
 
-      this.injectAPIs(window);
+      BrowserConfig.injectAPIs(window);
     };
   };
 
   /**
    * Injects missing APIs into jsdom for better compatibility.
    */
-  private injectAPIs(window: Pluma.DOMWindow): void {
+  private static injectAPIs(window: Pluma.DOMWindow): void {
     window.HTMLElement.prototype.scrollIntoView = (): void => undefined;
     window.performance.timing = {
       navigationStart: window.performance.timeOrigin,

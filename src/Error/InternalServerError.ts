@@ -1,6 +1,6 @@
-import { WebDriverError } from './WebDriverError';
+import WebDriverError from './WebDriverError';
 
-export class InternalServerError extends WebDriverError {
+export default class InternalServerError extends WebDriverError {
   constructor() {
     super(500);
     this.name = 'InternalServerError';

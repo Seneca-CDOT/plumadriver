@@ -1,6 +1,6 @@
-import { NotFoundError } from './NotFoundError';
+import NotFoundError from './NotFoundError';
 
-export class NoSuchFrame extends NotFoundError {
+export default class NoSuchFrame extends NotFoundError {
   constructor(reason?: string) {
     super();
     this.message =

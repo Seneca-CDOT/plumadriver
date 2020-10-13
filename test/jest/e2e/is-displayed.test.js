@@ -1,7 +1,7 @@
 const request = require('supertest');
 const nock = require('nock');
 
-const { app } = require('../../../build/app');
+const { default: app } = require('../../../build/app');
 const { createSession } = require('./helpers');
 const { ELEMENT } = require('../../../build/constants/constants');
 const isDisplayedAtom = require('../../../build/utils/isdisplayed-atom.json');

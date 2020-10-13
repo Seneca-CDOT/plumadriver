@@ -1,6 +1,6 @@
-import { WebDriverError } from './WebDriverError';
+import WebDriverError from './WebDriverError';
 
-export class ScriptTimeout extends WebDriverError {
+export default class ScriptTimeout extends WebDriverError {
   constructor() {
     super(408);
     this.name = 'ScriptTimeout';
