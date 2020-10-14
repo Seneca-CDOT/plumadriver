@@ -126,7 +126,7 @@ See the [W3C endpoint specification](https://www.w3.org/TR/webdriver1/#list-of-e
 
 ### Requirements:
 
-- Latest stable version of Node.jS
+- Ensure Node.js v12.19.0 is installed, or run `nvm use`.
 
 From the command line:
 
