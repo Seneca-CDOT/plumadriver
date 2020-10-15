@@ -9,4 +9,4 @@ const getComputedLabel: Pluma.CommandHandler = async ({
   return session.browser.getKnownElement(urlVariables.elementId).getLabel();
 };
 
-export default getComputedLabel
+export default getComputedLabel;

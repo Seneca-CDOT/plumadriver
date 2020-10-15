@@ -1,10 +1,9 @@
 const request = require('supertest');
 const nock = require('nock');
 
-const { app } = require('../../../build/app');
+const { default: app } = require('../../../build/app');
 const { createSession } = require('./helpers');
-const { COMMANDS, ELEMENT } = require('../../../build/constants/constants');
-const { iterInternalSymbol } = require('jsdom/lib/jsdom/living/generated/utils');
+const { ELEMENT } = require('../../../build/constants/constants');
 
 describe('Get Computed Label', () => {
   let sessionId;

@@ -29,7 +29,7 @@ import getActiveElement from './get-active-element';
 import switchToFrame from './switch-to-frame';
 import switchToParentFrame from './switch-to-parent-frame';
 import getElementProperty from './get-element-property';
-import getComputedLabel from './get-computed-label'
+import getComputedLabel from './get-computed-label';
 
 export default {
   [COMMANDS.DELETE_SESSION]: deleteSession,
