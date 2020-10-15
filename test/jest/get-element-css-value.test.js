@@ -73,9 +73,8 @@ describe('Get Active Element', () => {
     expect(await elementCssValue('#divtest', 'text-align')).toBe('center');
     expect(await elementCssValue('h1', 'color')).toBe('red');
     expect(await elementCssValue('p', 'text-indent')).toBe('30px');
-    done();
   });
-  it('checks property that does exist', async done => {
+  it('checks property that does not exist', async done => {
     expect(await elementCssValue('#divtest', 'foo')).toBe(null);
     expect(await elementCssValue('h1', 'baz')).toBe(null);
     expect(await elementCssValue('p', 'bar')).toBe(null);
