@@ -4,6 +4,7 @@ const nock = require('nock');
 const { default: app } = require('../../build/app');
 const { createSession } = require('./e2e/helpers');
 const { ELEMENT } = require('../../build/constants/constants');
+const { isDone } = require('nock');
 
 describe('Get Active Element', () => {
   let sessionId;
@@ -41,6 +42,7 @@ describe('Get Active Element', () => {
       );
 
     sessionId = await createSession(request, app);
+    
     await request(app)
       .post(`/session/${sessionId}/url`)
       .send({
@@ -69,16 +71,16 @@ describe('Get Active Element', () => {
     return elementId;
   };
 
-  it('checks property that does exist', async done => {
+  it('checks property that does exist', async()  => {
     expect(await elementCssValue('#divtest', 'text-align')).toBe('center');
     expect(await elementCssValue('h1', 'color')).toBe('red');
     expect(await elementCssValue('p', 'text-indent')).toBe('30px');
+   
   });
-  it('checks property that does not exist', async done => {
+  it('checks property that does not exist', async()  => {
     expect(await elementCssValue('#divtest', 'foo')).toBe(null);
     expect(await elementCssValue('h1', 'baz')).toBe(null);
     expect(await elementCssValue('p', 'bar')).toBe(null);
-    done();
   });
 
   
