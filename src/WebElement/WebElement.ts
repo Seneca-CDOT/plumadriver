@@ -2,6 +2,7 @@ import { v1 as uuidv1 } from 'uuid';
 import { isFocusableAreaElement } from 'jsdom/lib/jsdom/living/helpers/focusing';
 import { implSymbol } from 'jsdom/lib/jsdom/living/generated/utils';
 import { JSDOM } from 'jsdom';
+import { computeAccessibleName } from 'dom-accessibility-api';
 import { ELEMENT, ElementBooleanAttributeValues } from '../constants/constants';
 import { InvalidArgument, InvalidElementState } from '../Error/errors';
 import {
@@ -397,6 +398,15 @@ class WebElement {
     }
 
     return selected;
+  }
+
+  /**
+   * Returns the computed label name of WebElement's HTML element
+   * Uses function from https://www.npmjs.com/package/dom-accessibility-api
+   * @returns {string}
+   */
+  getLabel(): string {
+    return computeAccessibleName(this.element);
   }
 }
 
