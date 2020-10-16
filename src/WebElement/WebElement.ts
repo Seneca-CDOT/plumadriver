@@ -62,6 +62,17 @@ class WebElement {
   }
 
   /**
+   * returns the value of css property of the WebElement's HTML element
+   *  @returns {String}
+   */
+
+  getCssValue(property?: string): string {
+    const style = getComputedStyle(this.element);
+    const propertyValue = style.getPropertyValue(property);
+    return propertyValue;
+  }
+
+  /**
    * returns the type attribute of the WebElement's HTML element
    * @returns {String}
    */

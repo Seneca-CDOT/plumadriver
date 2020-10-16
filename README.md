@@ -168,6 +168,7 @@ It is important to keep in mind that jsdom is not intended to be a full renderin
 - [x] [**Execute Script:**](https://www.w3.org/TR/webdriver1/#dfn-execute-script) POST /session/{session id}/execute/sync
 - [x] [**Get Element Attribute:**](https://www.w3.org/TR/webdriver1/#dfn-get-element-attribute) POST /session/{session id}/element/{element id}/attribute/{name}
 - [x] [**Get Element Property:**](https://www.w3.org/TR/webdriver/#dfn-get-element-property) GET /session/{session id}/element/{element id}/property/{name}
+- [x] [**Get Element CSS Value**](https://www.w3.org/TR/webdriver/#dfn-get-element-css-value) GET /session/{session id}/element/{element id}/css/{property name}
 - [x] [**Element Click:**](https://www.w3.org/TR/webdriver1/#dfn-element-click) POST /session/{session id}/element/{element id}/click
 - [x] [**Element Clear:**](https://www.w3.org/TR/webdriver1/#dfn-element-clear) POST /session/{session id}/element/{element id}/clear
 - [x] [**Is Element Enabled:**](https://www.w3.org/TR/webdriver1/#dfn-is-element-enabled) GET /session/{session id}/element/{element id}/enabled

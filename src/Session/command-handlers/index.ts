@@ -30,6 +30,7 @@ import switchToFrame from './switch-to-frame';
 import switchToParentFrame from './switch-to-parent-frame';
 import getElementProperty from './get-element-property';
 import getComputedLabel from './get-computed-label';
+import getElementCssValue from './get-element-css-value';
 
 export default {
   [COMMANDS.DELETE_SESSION]: deleteSession,
@@ -50,6 +51,7 @@ export default {
   [COMMANDS.DELETE_ALL_COOKIES]: deleteAllCookies,
   [COMMANDS.GET_ELEMENT_TAG_NAME]: getElementTagName,
   [COMMANDS.GET_ELEMENT_ATTRIBUTE]: getElementAttribute,
+  [COMMANDS.GET_ELEMENT_CSS_VALUE]: getElementCssValue,
   [COMMANDS.GET_ELEMENT_PROPERTY]: getElementProperty,
   [COMMANDS.EXECUTE_SCRIPT]: executeScript,
   [COMMANDS.ELEMENT_SEND_KEYS]: elementSendKeys,
