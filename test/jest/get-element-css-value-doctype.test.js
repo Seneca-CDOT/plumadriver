@@ -6,7 +6,7 @@ const { createSession } = require('./e2e/helpers');
 const { ELEMENT } = require('../../build/constants/constants');
 
 
-describe('Get Element Css Value', () => {
+describe('Checks css values after changing doctype', () => {
   let sessionId;
 
   beforeAll(async () => {
@@ -14,28 +14,28 @@ describe('Get Element Css Value', () => {
       .get('/')
       .reply(
         200,
-        `<!DOCTYPE html>
+        `<!DOCTYPE xml>
         <html lang="en">
           <head>
             <title>Test Page</title>
             <style>
             #divtest
             {
-              text-align: center;
+              text-align: right;
             }
-            h1
+            h2
             {
               color: red
             }
             p
             {
-              text-indent: 30px;
+              text-indent: 50px;
             }
             </style>
           </head>
           <body>
           <div id="divtest" title="baz" ></div>
-          <h1> Sample Text </h1>
+          <h2> Sample Text </h2>
           <p> Sample Paragraph text </p>
           </body>
         </html>`,
@@ -72,15 +72,10 @@ describe('Get Element Css Value', () => {
   };
 
   it('checks property that does exist', async()  => {
-    expect(await elementCssValue('#divtest', 'text-align')).toBe('center');
-    expect(await elementCssValue('h1', 'color')).toBe('red');
-    expect(await elementCssValue('p', 'text-indent')).toBe('30px');
+    expect(await elementCssValue('#divtest', 'text-align')).toBe('');
+    expect(await elementCssValue('h2', 'color')).toBe('');
+    expect(await elementCssValue('p', 'text-indent')).toBe('');
    
-  });
-  it('checks property that does not exist', async()  => {
-    expect(await elementCssValue('#divtest', 'foo')).toBe(null);
-    expect(await elementCssValue('h1', 'baz')).toBe(null);
-    expect(await elementCssValue('p', 'bar')).toBe(null);
   });
 
   

@@ -5,7 +5,8 @@ const getElementCssValue: Pluma.CommandHandler = async ({
   urlVariables,
 }) => {
   if (
-    session.browser.getCurrentBrowsingContextWindow().document !== XMLDocument
+    session.browser.getCurrentBrowsingContextWindow().document.doctype.name !==
+    'xml'
   ) {
     return session.browser
       .getKnownElement(urlVariables.elementId)
