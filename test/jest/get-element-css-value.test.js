@@ -1,46 +1,43 @@
 const request = require('supertest');
 const nock = require('nock');
 
-const { app } = require('../../build/app');
+const { default: app } = require('../../build/app');
 const { createSession } = require('./e2e/helpers');
 const { ELEMENT } = require('../../build/constants/constants');
 
-describe('Get Element CSS value', () => {
+describe('Get Active Element', () => {
   let sessionId;
 
   beforeAll(async () => {
     nock(/plumadriver\.com/)
       .get('/')
       .reply(
-200,
-`<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>Test Page</title>
-  </head>
-  <body>
-  <style>
-  #divtest
-  {
-    color: red
-  }
-  h1
-  {
-    font-weight: bold;
-  }
-  p
-  {
-    text-align: left;
-  }
-
-  </style>
-  <div id="divtest" title="baz" ></div>
-  <p>
-  Testing the css of a paragraph
-  </p>
-  <h1> Sample Text </h1>
-  </body>
-</html>`,
+        200,
+        `<!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <title>Test Page</title>
+            <style>
+            #divtest
+            {
+              text-align: center;
+            }
+            h1
+            {
+              color: red
+            }
+            p
+            {
+              text-indent: 30px;
+            }
+            </style>
+          </head>
+          <body>
+          <div id="divtest" title="baz" ></div>
+          <h1> Sample Text </h1>
+          <p> Sample Paragraph text </p>
+          </body>
+        </html>`,
       );
 
     sessionId = await createSession(request, app);
@@ -72,22 +69,18 @@ describe('Get Element CSS value', () => {
     return elementId;
   };
 
-  it('checks css properties that exist', async done => {
-    expect(await elementCssValue('#divtest', 'color')).toBe('red');
-    expect(await elementCssValue('h1', 'font-weight')).toBe('bold');
-    expect(await elementCssValue('p', 'text-align')).toBe('left');
-
+  it('checks property that does exist', async done => {
+    expect(await elementCssValue('#divtest', 'text-align')).toBe('center');
+    expect(await elementCssValue('h1', 'color')).toBe('red');
+    expect(await elementCssValue('p', 'text-indent')).toBe('30px');
     done();
   });
-  it('checks css properties that does not exist', async done => {
+  it('checks property that does exist', async done => {
     expect(await elementCssValue('#divtest', 'foo')).toBe(null);
-    expect(await elementCssValue('h1', 'test')).toBe(null);
-    expect(await elementCssValue('p', 'baz')).toBe(null);
-
+    expect(await elementCssValue('h1', 'baz')).toBe(null);
+    expect(await elementCssValue('p', 'bar')).toBe(null);
     done();
   });
-
-
 
   
 });

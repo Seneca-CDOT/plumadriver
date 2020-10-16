@@ -9,11 +9,7 @@ const getElementCssValue: Pluma.CommandHandler = async ({
   ) {
     return session.browser
       .getKnownElement(urlVariables.elementId)
-      .getCssValue(
-        typeof urlVariables.propertyName === 'string'
-          ? urlVariables.propertyName
-          : undefined,
-      );
+      .getCssValue(urlVariables.propertyName);
   }
   return '';
 };
