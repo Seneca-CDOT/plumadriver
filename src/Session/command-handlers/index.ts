@@ -1,5 +1,4 @@
 import { COMMANDS } from '../../constants/constants';
-<<<<<<< HEAD
 import addCookie from './add-cookie';
 import deleteAllCookies from './delete-all-cookies';
 import deleteCookie from './delete-cookie';
@@ -31,39 +30,6 @@ import switchToFrame from './switch-to-frame';
 import switchToParentFrame from './switch-to-parent-frame';
 import getElementProperty from './get-element-property';
 import getComputedLabel from './get-computed-label';
-=======
-import { addCookie } from './add-cookie';
-import { deleteAllCookies } from './delete-all-cookies';
-import { deleteCookie } from './delete-cookie';
-import { deleteSession } from './delete-session';
-import { elementClick } from './element-click';
-import { elementSendKeys } from './element-send-keys';
-import { executeScript } from './execute-script';
-import { findElement } from './find-element';
-import { findElementFromElement } from './find-element-from-element';
-import { findElements } from './find-elements';
-import { findElementsFromElement } from './find-elements-from-element';
-import { getAllCookies } from './get-all-cookies';
-import { getCurrentUrl } from './get-current-url';
-import { getElementAttribute } from './get-element-attribute';
-import { getElementTagName } from './get-element-tag-name';
-import { getElementText } from './get-element-text';
-import { getNamedCoookie } from './get-named-cookie';
-import { getTimeouts } from './get-timeouts';
-import { getTitle } from './get-title';
-import { navigateTo } from './navigate-to';
-import { setTimeouts } from './set-timeouts';
-import { elementClear } from './element-clear';
-import { elementEnabled } from './element-enabled';
-import { elementIsDisplayed } from './element-is-displayed';
-import { elementSelected } from './element-selected';
-import { getPageSource } from './get-page-source';
-import { getActiveElement } from './get-active-element';
-import { switchToFrame } from './switch-to-frame';
-import { switchToParentFrame } from './switch-to-parent-frame';
-import { getComputedLabel } from './get-computed-label';
-import { getElementProperty } from './get-element-property';
->>>>>>> e1823af... feat: added Get Computed Label endpoint
 
 export default {
   [COMMANDS.DELETE_SESSION]: deleteSession,

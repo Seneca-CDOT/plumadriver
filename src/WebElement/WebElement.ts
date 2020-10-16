@@ -1,10 +1,7 @@
 import { v1 as uuidv1 } from 'uuid';
 import { isFocusableAreaElement } from 'jsdom/lib/jsdom/living/helpers/focusing';
 import { implSymbol } from 'jsdom/lib/jsdom/living/generated/utils';
-<<<<<<< HEAD
 import { JSDOM } from 'jsdom';
-=======
->>>>>>> e1823af... feat: added Get Computed Label endpoint
 import { computeAccessibleName } from 'dom-accessibility-api';
 import { ELEMENT, ElementBooleanAttributeValues } from '../constants/constants';
 import { InvalidArgument, InvalidElementState } from '../Error/errors';
@@ -403,14 +400,11 @@ class WebElement {
     return selected;
   }
 
-<<<<<<< HEAD
   /**
    * Returns the computed label name of WebElement's HTML element
    * Uses function from https://www.npmjs.com/package/dom-accessibility-api
    * @returns {string}
    */
-=======
->>>>>>> e1823af... feat: added Get Computed Label endpoint
   getLabel(): string {
     return computeAccessibleName(this.element);
   }
