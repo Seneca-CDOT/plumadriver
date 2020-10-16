@@ -12,6 +12,6 @@ const getElementCssValue: Pluma.CommandHandler = async ({
       .getKnownElement(urlVariables.elementId)
       .getCssValue(urlVariables.propertyName);
   }
-  return '';
+  return { value: '' };
 };
 export default getElementCssValue;
