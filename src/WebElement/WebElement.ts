@@ -418,6 +418,14 @@ class WebElement {
   getLabel(): string {
     return computeAccessibleName(this.element);
   }
+  /**
+   * Returns the computed WAI-ARIA role of the WebElement's Html Element
+   * @returns {string | null}
+   */
+
+  getRole(): string | null {
+    return this.getElementAttribute('role');
+  }
 }
 
 export default WebElement;

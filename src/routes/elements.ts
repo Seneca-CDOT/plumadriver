@@ -124,5 +124,12 @@ element.get(
     COMMANDS.GET_COMPUTED_LABEL,
   ),
 );
+element.get(
+  '/computedrole',
+  sessionEndpointExceptionHandler(
+    defaultSessionEndpointLogic,
+    COMMANDS.GET_COMPUTED_ROLE,
+  ),
+);
 
 export default element;
