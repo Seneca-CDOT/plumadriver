@@ -3,7 +3,11 @@ import { isFocusableAreaElement } from 'jsdom/lib/jsdom/living/helpers/focusing'
 import { implSymbol } from 'jsdom/lib/jsdom/living/generated/utils';
 import { JSDOM } from 'jsdom';
 import { computeAccessibleName } from 'dom-accessibility-api';
-import { ELEMENT, ElementBooleanAttributeValues } from '../constants/constants';
+import {
+  ELEMENT,
+  ElementBooleanAttributeValues,
+  roleList,
+} from '../constants/constants';
 import { InvalidArgument, InvalidElementState } from '../Error/errors';
 import {
   isInputElement,
@@ -424,7 +428,13 @@ class WebElement {
    */
 
   getRole(): string | null {
-    return this.getElementAttribute('role');
+    const role = this.getElementAttribute('role');
+    let computedRole = null;
+    const splitRole = role?.split(' ');
+    splitRole?.forEach(function(roles) {
+      computedRole = roleList.find(rolesList => roles === rolesList);
+    });
+    return computedRole;
   }
 }
 
