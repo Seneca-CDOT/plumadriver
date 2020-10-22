@@ -427,15 +427,22 @@ class WebElement {
    * Returns the computed WAI-ARIA role of the WebElement's Html Element
    * @returns {string | null}
    */
-  getRole(): string | null {
+  getRole(): unknown {
     const role = this.getElementAttribute('role');
     let computedRole = null;
     const splitRole = role?.split(' ');
-    splitRole?.forEach(function(roles) {
-      computedRole = nonAbstractWaiAriaRoles.find(
-        rolesList => roles === rolesList,
+    if (typeof splitRole === 'undefined') {
+      return null;
+    }
+    for (let i = 0; i < splitRole.length; i += 1) {
+      const foundRole = nonAbstractWaiAriaRoles.find(
+        rolesList => splitRole[i] === rolesList,
       );
-    });
+      if (foundRole != null) {
+        computedRole = foundRole;
+        break;
+      }
+    }
     return computedRole;
   }
 }

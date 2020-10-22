@@ -19,11 +19,11 @@ describe('Get Computed Role', () => {
             <title>Test Page</title>
           </head>
           <body>
-          <header id="header" role="banner">
+          <header id="header" role="foo banner">
            Foo
           </header>
-          <a href="www.example.com" role="link">  link </a>
-          <li role="menuitem">Open file…</li>
+          <a href="www.example.com" role="alert select">  link </a>
+          <li role="log alerts">Open file…</li>
           <span> baz </span>
           <p> sample text <p>
           <h1> testing 123 </h1>
@@ -61,11 +61,11 @@ describe('Get Computed Role', () => {
   };
 
   it('checks role that does exist', async() => {
-    expect(await elementRole('li')).toBe('menuitem');
+    expect(await elementRole('li')).toBe('log');
     expect(await elementRole('header')).toBe('banner');
-    expect(await elementRole('a')).toBe('link');
+    expect(await elementRole('a')).toBe('alert');
   });
-  
+
   it('checks role that does not exist', async() => {
     expect(await elementRole('p')).toBe(null);
     expect(await elementRole('h1')).toBe(null);
