@@ -65,12 +65,10 @@ describe('Get Computed Role', () => {
     expect(await elementRole('header')).toBe('banner');
     expect(await elementRole('a')).toBe('link');
   });
+  
   it('checks role that does not exist', async() => {
     expect(await elementRole('p')).toBe(null);
     expect(await elementRole('h1')).toBe(null);
     expect(await elementRole('span')).toBe(null);
   });
-
-
-  
 });

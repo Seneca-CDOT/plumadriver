@@ -40,7 +40,9 @@ export const ElementBooleanAttributeValues = StringUnion(
   'spellcheck',
   'translate',
 );
-export const roleList = [
+
+/* Wai-ARIA roles https://www.w3.org/WAI/PF/aria/roles */
+export const nonAbstractWaiAriaRoles = [
   'alert',
   'alertdialog',
   'button',

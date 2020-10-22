@@ -6,7 +6,7 @@ import { computeAccessibleName } from 'dom-accessibility-api';
 import {
   ELEMENT,
   ElementBooleanAttributeValues,
-  roleList,
+  nonAbstractWaiAriaRoles,
 } from '../constants/constants';
 import { InvalidArgument, InvalidElementState } from '../Error/errors';
 import {
@@ -422,17 +422,19 @@ class WebElement {
   getLabel(): string {
     return computeAccessibleName(this.element);
   }
+
   /**
    * Returns the computed WAI-ARIA role of the WebElement's Html Element
    * @returns {string | null}
    */
-
   getRole(): string | null {
     const role = this.getElementAttribute('role');
     let computedRole = null;
     const splitRole = role?.split(' ');
     splitRole?.forEach(function(roles) {
-      computedRole = roleList.find(rolesList => roles === rolesList);
+      computedRole = nonAbstractWaiAriaRoles.find(
+        rolesList => roles === rolesList,
+      );
     });
     return computedRole;
   }
