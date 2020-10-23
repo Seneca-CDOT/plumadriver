@@ -23,7 +23,7 @@ describe('Get Computed Role', () => {
            Foo
           </header>
           <a href="www.example.com" role="alert select">  link </a>
-          <li role="log alerts">Open file…</li>
+          <li role="log alert">Open file…</li>
           <span> baz </span>
           <p> sample text <p>
           <h1> testing 123 </h1>
