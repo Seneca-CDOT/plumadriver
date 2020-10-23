@@ -429,21 +429,12 @@ class WebElement {
    */
   getRole(): string | null {
     const roleAttribute = this.getElementAttribute('role');
-    let computedRole = null;
-    const splitRole = roleAttribute?.split(' ');
-    if (typeof splitRole === 'undefined') {
-      return null;
-    }
-    for (let i = 0; i < splitRole.length; i += 1) {
-      const foundRole = nonAbstractWaiAriaRoles.find(
-        role => splitRole[i] === role,
+    const computedRole = roleAttribute
+      ?.split(' ')
+      .find(splitRole =>
+        nonAbstractWaiAriaRoles.find(role => splitRole === role),
       );
-      if (foundRole !== undefined) {
-        computedRole = foundRole;
-        break;
-      }
-    }
-    return computedRole;
+    return computedRole || null;
   }
 }
 
