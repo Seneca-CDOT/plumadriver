@@ -6,11 +6,13 @@ import navigateSession from './navigate';
 import cookies from './cookies';
 import Pluma from '../Types/types';
 import * as Utils from '../utils/utils';
+// import updateDate from '../index';
+import { updateDate } from '../time';
 
 // pluma commands
 import { COMMANDS } from '../constants/constants';
 
-// errors
+//  errors
 import { InvalidArgument } from '../Error/errors';
 
 const {
@@ -23,6 +25,7 @@ const sessionRouter = (router as unknown) as Pluma.SessionRouter;
 sessionRouter.use(
   '/session/:sessionId',
   (req: Pluma.SessionRouteRequest, res: Response, next: NextFunction) => {
+    updateDate();
     const sessionsManager = req.app.get('sessionManager');
     const request: Pluma.Request = {
       urlVariables: req.params,
@@ -38,6 +41,7 @@ sessionRouter.use(
 
 // New session
 router.post('/session', async (req, res, next) => {
+  updateDate();
   const sessionManager = req.app.get('sessionManager');
   try {
     // not sure if this conditional is needed here, body-parser checks for this anyway
@@ -52,6 +56,7 @@ router.post('/session', async (req, res, next) => {
 });
 
 sessionRouter.delete('/session/:sessionId', async (req, res, next) => {
+  updateDate();
   const sessionManager = req.app.get('sessionManager');
   const release = await req.session.mutex.acquire();
   try {
@@ -142,6 +147,7 @@ sessionRouter.use('/session/:sessionId/cookie', cookies);
 sessionRouter.use(
   '/session/:sessionId/element/:elementId',
   (req: Pluma.SessionRouteRequest, res: Response, next: NextFunction) => {
+    updateDate();
     req.sessionRequest.urlVariables.elementId = req.params.elementId;
     next();
   },

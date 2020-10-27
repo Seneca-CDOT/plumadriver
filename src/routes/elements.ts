@@ -1,6 +1,7 @@
 import express from 'express';
 import { COMMANDS } from '../constants/constants';
 import Pluma from '../Types/types';
+import { updateDate } from '../time';
 import * as utils from '../utils/utils';
 
 const element = (express.Router() as unknown) as Pluma.SessionRouter;
@@ -49,6 +50,7 @@ element.post(
 // get element attribute name
 // this endpoint has not been tested as selenium calls execute script instead. Neded to test
 element.get('/attribute/:name', (req, _res, _next) => {
+  updateDate();
   req.sessionRequest.urlVariables.attributeName = req.params.name;
   return sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -57,6 +59,7 @@ element.get('/attribute/:name', (req, _res, _next) => {
 });
 
 element.get('/css/:propertyName', (req, res, next) => {
+  updateDate();
   req.sessionRequest.urlVariables.propertyName = req.params.propertyName;
   return sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -65,6 +68,7 @@ element.get('/css/:propertyName', (req, res, next) => {
 });
 
 element.get('/property/:propertyName', (req, res, next) => {
+  updateDate();
   req.sessionRequest.urlVariables.propertyName = req.params.propertyName;
   return sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,

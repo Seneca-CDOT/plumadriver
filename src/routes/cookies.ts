@@ -1,6 +1,7 @@
 import express, { NextFunction, Response } from 'express';
 import { COMMANDS } from '../constants/constants';
 import Pluma from '../Types/types';
+import { updateDate } from '../time';
 import * as utils from '../utils/utils';
 
 const {
@@ -36,6 +37,7 @@ cookies.delete(
 cookies.use(
   '/:name',
   (req: Pluma.SessionRouteRequest, res: Response, next: NextFunction) => {
+    updateDate();
     req.sessionRequest.urlVariables.cookieName = req.params.name;
     next();
   },
