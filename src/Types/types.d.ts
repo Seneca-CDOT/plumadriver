@@ -169,6 +169,7 @@ declare namespace Pluma {
     browserVersion: string;
     platformName: NodeJS.Platform;
     setWindowRect: boolean;
+    idleTime?: number;
     'plm:plumaOptions'?: PlumaOptions;
   }
 

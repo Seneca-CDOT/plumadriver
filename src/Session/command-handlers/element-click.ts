@@ -1,12 +1,12 @@
 import { NoSuchWindow } from '../../Error/errors';
+import { updateTimer } from '../../timer';
 import Pluma from '../../Types/types';
-import { updateDate } from '../../time';
 
 const elementClick: Pluma.CommandHandler = async ({
   session,
   urlVariables,
 }) => {
-  updateDate();
+  updateTimer();
   if (!session.browser.dom.window) throw new NoSuchWindow();
   session.browser.getKnownElement(urlVariables.elementId).click();
   return { value: null };

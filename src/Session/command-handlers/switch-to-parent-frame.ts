@@ -1,8 +1,8 @@
-import { updateDate } from '../../time';
+import { updateTimer } from '../../timer';
 import Pluma from '../../Types/types';
 
 const switchToParentFrame: Pluma.CommandHandler = async ({ session }) => {
-  updateDate();
+  updateTimer();
   session.browser.switchToParentFrame();
   return { value: null };
 };

@@ -1,8 +1,8 @@
 import Pluma from '../../Types/types';
-import { updateDate } from '../../time';
+import { updateTimer } from '../../timer';
 
 const getTitle: Pluma.CommandHandler = async ({ session }) => {
-  updateDate();
+  updateTimer();
   return session.browser.getTitle();
 };
 

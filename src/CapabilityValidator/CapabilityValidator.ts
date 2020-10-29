@@ -60,6 +60,9 @@ class CapabilityValidator {
           isObject(capability) &&
           Object.entries(capability).every(e => this.validateTimeouts(...e));
         break;
+      case 'idleTime':
+        this.valid = isNumber(capability);
+        break;
       case 'plm:plumaOptions':
         this.valid =
           isObject(capability) &&

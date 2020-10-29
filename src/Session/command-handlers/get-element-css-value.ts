@@ -1,11 +1,11 @@
-import { updateDate } from '../../time';
+import { updateTimer } from '../../timer';
 import Pluma from '../../Types/types';
 
 const getElementCssValue: Pluma.CommandHandler = async ({
   session,
   urlVariables,
 }) => {
-  updateDate();
+  updateTimer();
   if (
     session.browser.getCurrentBrowsingContextWindow().document.doctype.name !==
     'xml'

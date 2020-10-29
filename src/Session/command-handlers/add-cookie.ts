@@ -1,8 +1,8 @@
 import Pluma from '../../Types/types';
-import { updateDate } from '../../time';
+import { updateTimer } from '../../timer';
 
 const addCookie: Pluma.CommandHandler = async ({ session, parameters }) => {
-  updateDate();
+  updateTimer();
   return session.browser.addCookie(parameters.cookie as Pluma.Cookie);
 };
 

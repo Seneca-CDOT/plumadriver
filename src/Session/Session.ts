@@ -8,6 +8,7 @@ import WebElement from '../WebElement/WebElement';
 import Browser from '../Browser/Browser';
 import Pluma from '../Types/types';
 import * as utils from '../utils/utils';
+import { updateIdleThreshold } from '../timer';
 
 // errors
 import {
@@ -34,6 +35,9 @@ class Session {
   /** the session id */
   readonly id: string;
 
+  /** the time set where plumadriver will automatically close when there's no activity */
+  idleTime: number;
+
   /** the user agent */
   browser!: Browser;
 
@@ -55,6 +59,7 @@ class Session {
 
   constructor(requestBody: Record<string, unknown>) {
     this.id = uuidv1();
+    this.idleTime = 120;
     this.pageLoadStrategy = 'normal';
     this.acceptInsecureCerts = true;
     this.timeouts = {
@@ -167,6 +172,11 @@ class Session {
     }
     capabilities.timeouts = this.timeouts;
 
+    if (has(capabilities, 'idleTime') && capabilities.idleTime) {
+      updateIdleThreshold(capabilities.idleTime);
+      this.idleTime = capabilities.idleTime;
+    }
+
     return capabilities;
   }
 
@@ -187,6 +197,7 @@ class Session {
       'pageLoadStrategy',
       'proxy',
       'timeouts',
+      'idleTime',
       'unhandledPromptBehavior',
       'plm:plumaOptions',
     ];

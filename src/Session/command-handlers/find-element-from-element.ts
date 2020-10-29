@@ -1,5 +1,5 @@
 import { NoSuchElement } from '../../Error/errors';
-import { updateDate } from '../../time';
+import { updateTimer } from '../../timer';
 import Pluma from '../../Types/types';
 
 const findElementFromElement: Pluma.CommandHandler = async ({
@@ -7,7 +7,7 @@ const findElementFromElement: Pluma.CommandHandler = async ({
   parameters,
   urlVariables,
 }) => {
-  updateDate();
+  updateTimer();
   const element = session.elementRetrieval(
     session.browser.getKnownElement(urlVariables.elementId).element,
     parameters.using,

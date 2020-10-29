@@ -2,7 +2,7 @@ import validator from 'validator';
 import has from 'has';
 import { ElementNotInteractable, InvalidArgument } from '../../Error/errors';
 import { addFileList } from '../../jsdom_extensions/addFileList';
-import { updateDate } from '../../time';
+import { updateTimer } from '../../timer';
 import Pluma from '../../Types/types';
 import * as utils from '../../utils/utils';
 
@@ -20,7 +20,7 @@ const elementSendKeys: Pluma.CommandHandler = async ({
   const webElement = session.browser.getKnownElement(elementId);
   const { element } = webElement;
   let files: string[] = [];
-  updateDate();
+  updateTimer();
 
   if (text === undefined) throw new InvalidArgument();
 

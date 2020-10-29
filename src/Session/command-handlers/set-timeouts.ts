@@ -1,8 +1,8 @@
-import { updateDate } from '../../time';
+import { updateTimer } from '../../timer';
 import Pluma from '../../Types/types';
 
 const setTimeouts: Pluma.CommandHandler = async () => {
-  updateDate();
+  updateTimer();
   return null;
 };
 

@@ -5,7 +5,7 @@ import {
   NoSuchWindow,
   ScriptTimeout,
 } from '../../Error/errors';
-import { updateDate } from '../../time';
+import { updateTimer } from '../../timer';
 import Pluma from '../../Types/types';
 import * as utils from '../../utils/utils';
 
@@ -30,7 +30,7 @@ const executeScript: Pluma.CommandHandler = async ({
   session,
   parameters: { script, args = [] },
 }) => {
-  updateDate();
+  updateTimer();
   if (!session.browser.dom.window) throw new NoSuchWindow();
 
   const argumentList = args.map(arg => {
