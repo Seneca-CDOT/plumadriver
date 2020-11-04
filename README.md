@@ -180,3 +180,4 @@ It is important to keep in mind that jsdom is not intended to be a full renderin
 - [x] [**Switch To Parent Frame:**](https://www.w3.org/TR/webdriver1/#dfn-switch-to-parent-frame) POST /session/{session id}/frame/parent
 - [x] [**Is Element Selected:**](https://www.w3.org/TR/webdriver/#dfn-is-element-selected) GET /session/{session id}/element/{element id}/selected
 - [x] [**Get Computed Label:**](https://www.w3.org/TR/webdriver/#dfn-get-computed-label) GET /session/{session id}/element/{element id}/computedlabel
+- [x] [**Get Computed Role:**](https://www.w3.org/TR/webdriver/#dfn-get-computed-role) GET /session/{session id}/element/{element id}/computedrole

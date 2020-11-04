@@ -125,4 +125,12 @@ element.get(
   ),
 );
 
+element.get(
+  '/computedrole',
+  sessionEndpointExceptionHandler(
+    defaultSessionEndpointLogic,
+    COMMANDS.GET_COMPUTED_ROLE,
+  ),
+);
+
 export default element;

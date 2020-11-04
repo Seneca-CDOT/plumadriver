@@ -3,7 +3,11 @@ import { isFocusableAreaElement } from 'jsdom/lib/jsdom/living/helpers/focusing'
 import { implSymbol } from 'jsdom/lib/jsdom/living/generated/utils';
 import { JSDOM } from 'jsdom';
 import { computeAccessibleName } from 'dom-accessibility-api';
-import { ELEMENT, ElementBooleanAttributeValues } from '../constants/constants';
+import {
+  ELEMENT,
+  ElementBooleanAttributeValues,
+  nonAbstractWaiAriaRoles,
+} from '../constants/constants';
 import { InvalidArgument, InvalidElementState } from '../Error/errors';
 import {
   isInputElement,
@@ -417,6 +421,20 @@ class WebElement {
    */
   getLabel(): string {
     return computeAccessibleName(this.element);
+  }
+
+  /**
+   * Returns the computed WAI-ARIA role of the WebElement's Html Element
+   * @returns {string | null}
+   */
+  getRole(): string | null {
+    const roleAttribute = this.getElementAttribute('role');
+    const computedRole = roleAttribute
+      ?.split(' ')
+      .find(splitRole =>
+        nonAbstractWaiAriaRoles.find(role => splitRole === role),
+      );
+    return computedRole || null;
   }
 }
 
