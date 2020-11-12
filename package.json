@@ -4,6 +4,7 @@
   "description": "",
   "main": "./build/index.js",
   "dependencies": {
+    "@types/supertest": "^2.0.10",
     "async-mutex": "^0.1.4",
     "body-parser": "^1.19.0",
     "dom-accessibility-api": "^0.5.4",

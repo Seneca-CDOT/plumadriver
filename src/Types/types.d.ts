@@ -1,6 +1,14 @@
 import { BaseOptions, DOMWindow as JSDOMDOMWindow } from 'jsdom';
 import { Store } from 'tough-cookie';
 import {
+  Express,
+  NextFunction,
+  Router,
+  Request as ExpressRequest,
+  Response as ExpressResponse,
+  Application,
+} from 'express';
+import {
   ElementBooleanAttributeValues,
   unhandledPromptBehaviorValues,
   PageLoadStrategyValues,
@@ -40,6 +48,57 @@ declare namespace Pluma {
     expiry?: number;
     creation?: Date;
     path?: string;
+  }
+  interface CustomRouter
+    extends Omit<Router, 'get' | 'post' | 'use' | 'delete'> {
+    get(
+      path: string,
+      customCallback: (
+        req: Pluma.RequestSession,
+        res: ExpressResponse,
+        next: NextFunction,
+      ) => unknown,
+    ): void;
+    post(
+      path: string,
+      customCallback: (
+        req: Pluma.RequestSession,
+        res: ExpressResponse,
+        next: NextFunction,
+      ) => unknown,
+      secondCallback?: (
+        req: Pluma.RequestSession,
+        res: ExpressResponse,
+        next: NextFunction,
+      ) => unknown,
+    ): void;
+    use(
+      path: string,
+      customCallback:
+        | ((
+            req: Pluma.RequestSession,
+            res: ExpressResponse,
+            next: NextFunction,
+          ) => unknown)
+        | Router
+        | Application
+        | CustomRouter,
+      router?: Router,
+    ): void;
+    delete(
+      path: string,
+      customCallback: (
+        req: Pluma.RequestSession,
+        res: ExpressResponse,
+        next: NextFunction,
+      ) => unknown,
+    ): void;
+  }
+
+  interface RequestSession extends ExpressRequest {
+    sessionId: string;
+    session: Session;
+    sessionRequest: Pluma.Request;
   }
 
   /**
@@ -165,6 +224,7 @@ declare global {
     /**
      * Additional properties of the request object
      */
+
     interface Request {
       sessionId?: string;
       session?: Session;

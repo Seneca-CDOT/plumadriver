@@ -1,43 +1,45 @@
 import express from 'express';
 import { COMMANDS } from '../constants/constants';
+import Pluma from '../Types/types';
 import * as utils from '../utils/utils';
 
 const element = express.Router();
+const elementSession = (element as unknown) as Pluma.CustomRouter;
 
 const {
   sessionEndpointExceptionHandler,
   defaultSessionEndpointLogic,
 } = utils.endpoint;
 
-element.get(
+elementSession.get(
   '/text',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
     COMMANDS.GET_ELEMENT_TEXT,
   ),
 );
-element.post(
+elementSession.post(
   '/element',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
     COMMANDS.FIND_ELEMENT_FROM_ELEMENT,
   ),
 );
-element.post(
+elementSession.post(
   '/elements',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
     COMMANDS.FIND_ELEMENTS_FROM_ELEMENT,
   ),
 );
-element.get(
+elementSession.get(
   '/name',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
     COMMANDS.GET_ELEMENT_TAG_NAME,
   ),
 );
-element.post(
+elementSession.post(
   '/value',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -57,7 +59,7 @@ element.get('/attribute/:name', (req, _res, _next) => {
   );
 });
 
-element.get('/css/:propertyName', (req, res, next) => {
+elementSession.get('/css/:propertyName', (req, res, next) => {
   if (req.sessionRequest) {
     req.sessionRequest.urlVariables.propertyName = req.params.propertyName;
   }
@@ -67,17 +69,15 @@ element.get('/css/:propertyName', (req, res, next) => {
   )(req, res, next);
 });
 
-element.get('/property/:propertyName', (req, res, next) => {
-  if (req.sessionRequest) {
-    req.sessionRequest.urlVariables.propertyName = req.params.propertyName;
-  }
+elementSession.get('/property/:propertyName', (req, res, next) => {
+  req.sessionRequest.urlVariables.propertyName = req.params.propertyName;
   return sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
     COMMANDS.GET_ELEMENT_PROPERTY,
   )(req, res, next);
 });
 
-element.post(
+elementSession.post(
   '/click',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -85,7 +85,7 @@ element.post(
   ),
 );
 
-element.post(
+elementSession.post(
   '/clear',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -93,7 +93,7 @@ element.post(
   ),
 );
 
-element.get(
+elementSession.get(
   '/enabled',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -101,7 +101,7 @@ element.get(
   ),
 );
 
-element.get(
+elementSession.get(
   '/displayed',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -109,7 +109,7 @@ element.get(
   ),
 );
 
-element.get(
+elementSession.get(
   '/selected',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -117,7 +117,7 @@ element.get(
   ),
 );
 
-element.get(
+elementSession.get(
   '/computedlabel',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -125,7 +125,7 @@ element.get(
   ),
 );
 
-element.get(
+elementSession.get(
   '/computedrole',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
