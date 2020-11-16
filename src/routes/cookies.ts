@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { NextFunction, Response } from 'express';
 import { COMMANDS } from '../constants/constants';
 import Pluma from '../Types/types';
 import * as utils from '../utils/utils';
@@ -8,17 +8,16 @@ const {
   sessionEndpointExceptionHandler,
 } = utils.endpoint;
 
-const cookies = express.Router();
-const routerSession = (cookies as unknown) as Pluma.CustomRouter;
+const cookies = (express.Router() as unknown) as Pluma.SessionRouter;
 
-routerSession.post(
+cookies.post(
   '/',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
     COMMANDS.ADD_COOKIE,
   ),
 );
-routerSession.get(
+cookies.get(
   '/',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -26,7 +25,7 @@ routerSession.get(
   ),
 );
 
-routerSession.delete(
+cookies.delete(
   '/',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -34,21 +33,22 @@ routerSession.delete(
   ),
 );
 
-cookies.use('/:name', (req, res, next) => {
-  if (req.sessionRequest) {
+cookies.use(
+  '/:name',
+  (req: Pluma.SessionRouteRequest, res: Response, next: NextFunction) => {
     req.sessionRequest.urlVariables.cookieName = req.params.name;
-  }
-  next();
-});
+    next();
+  },
+);
 
-routerSession.get(
+cookies.get(
   '/:name',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
     COMMANDS.GET_NAMED_COOKIE,
   ),
 );
-routerSession.delete(
+cookies.delete(
   '/:name',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,

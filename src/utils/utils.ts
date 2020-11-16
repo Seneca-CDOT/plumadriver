@@ -68,12 +68,12 @@ export const fileSystem = {
 export const endpoint = {
   sessionEndpointExceptionHandler: (
     endpointLogic: (
-      req: Pluma.RequestSession,
+      req: Pluma.SessionRouteRequest,
       res: Response,
     ) => Promise<unknown>,
     plumaCommand: string,
   ) => async (
-    req: Pluma.RequestSession,
+    req: Pluma.SessionRouteRequest,
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
@@ -90,7 +90,7 @@ export const endpoint = {
   },
 
   async defaultSessionEndpointLogic(
-    req: Pluma.RequestSession,
+    req: Pluma.SessionRouteRequest,
     res: Response,
   ): Promise<void> {
     const result =
@@ -106,7 +106,7 @@ export const endpoint = {
  * This detects that request and forwards it to the appropriate W3C recommended endpoint.
  */
 export const handleSeleniumIsDisplayedRequest = (
-  req: Pluma.RequestSession,
+  req: Pluma.SessionRouteRequest,
   _res: Response,
   next: NextFunction,
 ): void => {

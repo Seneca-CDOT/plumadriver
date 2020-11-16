@@ -1,7 +1,6 @@
 import { BaseOptions, DOMWindow as JSDOMDOMWindow } from 'jsdom';
 import { Store } from 'tough-cookie';
 import {
-  Express,
   NextFunction,
   Router,
   Request as ExpressRequest,
@@ -49,12 +48,18 @@ declare namespace Pluma {
     creation?: Date;
     path?: string;
   }
-  interface CustomRouter
+
+  interface SessionRouter
     extends Omit<Router, 'get' | 'post' | 'use' | 'delete'> {
+    defaultCallback: (
+      req: Pluma.SessionRouteRequest,
+      res: ExpressResponse,
+      next: NextFunction,
+    ) => unknown;
     get(
       path: string,
       customCallback: (
-        req: Pluma.RequestSession,
+        req: Pluma.SessionRouteRequest,
         res: ExpressResponse,
         next: NextFunction,
       ) => unknown,
@@ -62,12 +67,12 @@ declare namespace Pluma {
     post(
       path: string,
       customCallback: (
-        req: Pluma.RequestSession,
+        req: Pluma.SessionRouteRequest,
         res: ExpressResponse,
         next: NextFunction,
       ) => unknown,
       secondCallback?: (
-        req: Pluma.RequestSession,
+        req: Pluma.SessionRouteRequest,
         res: ExpressResponse,
         next: NextFunction,
       ) => unknown,
@@ -76,26 +81,26 @@ declare namespace Pluma {
       path: string,
       customCallback:
         | ((
-            req: Pluma.RequestSession,
+            req: Pluma.SessionRouteRequest,
             res: ExpressResponse,
             next: NextFunction,
           ) => unknown)
         | Router
         | Application
-        | CustomRouter,
-      router?: Router,
+        | SessionRouter,
+      router?: Router | SessionRouter,
     ): void;
     delete(
       path: string,
       customCallback: (
-        req: Pluma.RequestSession,
+        req: Pluma.SessionRouteRequest,
         res: ExpressResponse,
         next: NextFunction,
       ) => unknown,
     ): void;
   }
 
-  interface RequestSession extends ExpressRequest {
+  interface SessionRouteRequest extends ExpressRequest {
     sessionId: string;
     session: Session;
     sessionRequest: Pluma.Request;
@@ -220,18 +225,6 @@ declare namespace Pluma {
 }
 
 declare global {
-  namespace Express {
-    /**
-     * Additional properties of the request object
-     */
-
-    interface Request {
-      sessionId?: string;
-      session?: Session;
-      sessionRequest?: Pluma.Request;
-    }
-  }
-
   interface MouseEventInit {
     which?: number;
   }

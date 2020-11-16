@@ -18,11 +18,11 @@ const {
   defaultSessionEndpointLogic,
 } = Utils.endpoint;
 const router = express.Router();
-const routerSession = (router as unknown) as Pluma.CustomRouter;
+const sessionRouter = (router as unknown) as Pluma.SessionRouter;
 
-routerSession.use(
+sessionRouter.use(
   '/session/:sessionId',
-  (req: Pluma.RequestSession, res: Response, next: NextFunction) => {
+  (req: Pluma.SessionRouteRequest, res: Response, next: NextFunction) => {
     const sessionsManager = req.app.get('sessionManager');
     const request: Pluma.Request = {
       urlVariables: req.params,
@@ -51,13 +51,11 @@ router.post('/session', async (req, res, next) => {
   }
 });
 
-routerSession.delete('/session/:sessionId', async (req, res, next) => {
+sessionRouter.delete('/session/:sessionId', async (req, res, next) => {
   const sessionManager = req.app.get('sessionManager');
   const release = await req.session?.mutex.acquire();
   try {
-    if (req.sessionRequest) {
-      req.sessionRequest.command = COMMANDS.DELETE_SESSION;
-    }
+    req.sessionRequest.command = COMMANDS.DELETE_SESSION;
     await sessionManager.deleteSession(req.session, req.sessionRequest);
     res.send(null);
   } catch (error) {
@@ -67,7 +65,7 @@ routerSession.delete('/session/:sessionId', async (req, res, next) => {
   }
 });
 
-routerSession.get(
+sessionRouter.get(
   '/session/:sessionId/title',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -75,7 +73,7 @@ routerSession.get(
   ),
 );
 
-routerSession.post(
+sessionRouter.post(
   '/session/:sessionId/execute/sync',
   Utils.handleSeleniumIsDisplayedRequest,
   sessionEndpointExceptionHandler(
@@ -84,7 +82,7 @@ routerSession.post(
   ),
 );
 
-routerSession.post(
+sessionRouter.post(
   '/session/:sessionId/element',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -92,7 +90,7 @@ routerSession.post(
   ),
 );
 
-routerSession.post(
+sessionRouter.post(
   '/session/:sessionId/elements',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -100,7 +98,7 @@ routerSession.post(
   ),
 );
 
-routerSession.get(
+sessionRouter.get(
   '/session/:sessionId/element/active',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -108,7 +106,7 @@ routerSession.get(
   ),
 );
 
-routerSession.get(
+sessionRouter.get(
   '/session/:sessionId/source',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -116,7 +114,7 @@ routerSession.get(
   ),
 );
 
-routerSession.post(
+sessionRouter.post(
   '/session/:sessionId/frame',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -124,7 +122,7 @@ routerSession.post(
   ),
 );
 
-routerSession.post(
+sessionRouter.post(
   '/session/:sessionId/frame/parent',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -133,23 +131,23 @@ routerSession.post(
 );
 
 // timeout routes
-routerSession.use('/session/:sessionId/timeouts', timeouts);
+sessionRouter.use('/session/:sessionId/timeouts', timeouts);
 
 // navigation routes
-routerSession.use('/session/:sessionId/url', navigateSession);
+sessionRouter.use('/session/:sessionId/url', navigateSession);
 
 // cookies routes
-routerSession.use('/session/:sessionId/cookie', cookies);
+sessionRouter.use('/session/:sessionId/cookie', cookies);
 
-routerSession.use(
+sessionRouter.use(
   '/session/:sessionId/element/:elementId',
-  (req: Pluma.RequestSession, res: Response, next: NextFunction) => {
+  (req: Pluma.SessionRouteRequest, res: Response, next: NextFunction) => {
     req.sessionRequest.urlVariables.elementId = req.params.elementId;
     next();
   },
   element,
 );
-routerSession.get('/shutdown', (req, res) => {
+sessionRouter.get('/shutdown', (req, res) => {
   res.json({ value: null });
   process.exit(0);
 });

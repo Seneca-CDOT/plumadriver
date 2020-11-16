@@ -3,43 +3,42 @@ import { COMMANDS } from '../constants/constants';
 import Pluma from '../Types/types';
 import * as utils from '../utils/utils';
 
-const element = express.Router();
-const elementSession = (element as unknown) as Pluma.CustomRouter;
+const element = (express.Router() as unknown) as Pluma.SessionRouter;
 
 const {
   sessionEndpointExceptionHandler,
   defaultSessionEndpointLogic,
 } = utils.endpoint;
 
-elementSession.get(
+element.get(
   '/text',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
     COMMANDS.GET_ELEMENT_TEXT,
   ),
 );
-elementSession.post(
+element.post(
   '/element',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
     COMMANDS.FIND_ELEMENT_FROM_ELEMENT,
   ),
 );
-elementSession.post(
+element.post(
   '/elements',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
     COMMANDS.FIND_ELEMENTS_FROM_ELEMENT,
   ),
 );
-elementSession.get(
+element.get(
   '/name',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
     COMMANDS.GET_ELEMENT_TAG_NAME,
   ),
 );
-elementSession.post(
+element.post(
   '/value',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -50,26 +49,22 @@ elementSession.post(
 // get element attribute name
 // this endpoint has not been tested as selenium calls execute script instead. Neded to test
 element.get('/attribute/:name', (req, _res, _next) => {
-  if (req.sessionRequest) {
-    req.sessionRequest.urlVariables.attributeName = req.params.name;
-  }
+  req.sessionRequest.urlVariables.attributeName = req.params.name;
   return sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
     COMMANDS.GET_ELEMENT_ATTRIBUTE,
   );
 });
 
-elementSession.get('/css/:propertyName', (req, res, next) => {
-  if (req.sessionRequest) {
-    req.sessionRequest.urlVariables.propertyName = req.params.propertyName;
-  }
+element.get('/css/:propertyName', (req, res, next) => {
+  req.sessionRequest.urlVariables.propertyName = req.params.propertyName;
   return sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
     COMMANDS.GET_ELEMENT_CSS_VALUE,
   )(req, res, next);
 });
 
-elementSession.get('/property/:propertyName', (req, res, next) => {
+element.get('/property/:propertyName', (req, res, next) => {
   req.sessionRequest.urlVariables.propertyName = req.params.propertyName;
   return sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -77,7 +72,7 @@ elementSession.get('/property/:propertyName', (req, res, next) => {
   )(req, res, next);
 });
 
-elementSession.post(
+element.post(
   '/click',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -85,7 +80,7 @@ elementSession.post(
   ),
 );
 
-elementSession.post(
+element.post(
   '/clear',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -93,7 +88,7 @@ elementSession.post(
   ),
 );
 
-elementSession.get(
+element.get(
   '/enabled',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -101,7 +96,7 @@ elementSession.get(
   ),
 );
 
-elementSession.get(
+element.get(
   '/displayed',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -109,7 +104,7 @@ elementSession.get(
   ),
 );
 
-elementSession.get(
+element.get(
   '/selected',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -117,7 +112,7 @@ elementSession.get(
   ),
 );
 
-elementSession.get(
+element.get(
   '/computedlabel',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -125,7 +120,7 @@ elementSession.get(
   ),
 );
 
-elementSession.get(
+element.get(
   '/computedrole',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,

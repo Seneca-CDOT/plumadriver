@@ -8,7 +8,7 @@ const {
   defaultSessionEndpointLogic,
 } = utils.endpoint;
 
-const navigate = (express.Router() as unknown) as Pluma.CustomRouter;
+const navigate = (express.Router() as unknown) as Pluma.SessionRouter;
 
 navigate.post(
   '/',
