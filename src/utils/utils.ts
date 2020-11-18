@@ -20,7 +20,8 @@ export const isBrowserOptions = (
     obj.runScripts === undefined ||
     obj.strictSSL === undefined ||
     obj.unhandledPromptBehavior === undefined ||
-    obj.rejectPublicSuffixes === undefined
+    obj.rejectPublicSuffixes === undefined ||
+    obj.idleTime === undefined
   )
     return false;
   return true;

@@ -55,7 +55,7 @@ class SessionManager {
             session.browser.browserConfig.unhandledPromptBehavior,
           proxy: session.proxy ? session.proxy : {},
           timeouts: session.timeouts,
-          idleTime: session.idleTime,
+          idleTime: session.browser.browserConfig.idleTime,
         },
       },
     };

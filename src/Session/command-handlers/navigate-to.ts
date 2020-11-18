@@ -2,7 +2,6 @@ import validator from 'validator';
 import { InvalidArgument } from '../../Error/errors';
 import Pluma from '../../Types/types';
 import { fileSystem } from '../../utils/utils';
-import { updateTimer } from '../../timer';
 
 /**
  * navigates to a specified url
@@ -11,7 +10,6 @@ import { updateTimer } from '../../timer';
 const navigateTo: Pluma.CommandHandler = async ({ session, parameters }) => {
   const { url = '' } = parameters;
   let pathType: string;
-  updateTimer();
 
   try {
     if (validator.isURL(url)) pathType = 'url';

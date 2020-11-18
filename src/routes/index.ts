@@ -1,12 +1,12 @@
 // routers
-import express, { NextFunction, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import element from './elements';
 import timeouts from './timeouts';
 import navigateSession from './navigate';
 import cookies from './cookies';
 import Pluma from '../Types/types';
 import * as Utils from '../utils/utils';
-import { updateTimer } from '../timer';
+import { getTimeoutThreshold } from '../timer';
 
 // pluma commands
 import { COMMANDS } from '../constants/constants';
@@ -18,13 +18,32 @@ const {
   sessionEndpointExceptionHandler,
   defaultSessionEndpointLogic,
 } = Utils.endpoint;
+
+function exit() {
+  process.exit(0);
+}
+
+let idleTimeout = setTimeout(exit, 120000);
+
+function clearIdleTimeout(req: Request, res: Response, next: NextFunction) {
+  clearTimeout(idleTimeout);
+  next();
+}
+
+function setIdleTimeout(req: Request, res: Response, next: NextFunction) {
+  const idleTime = getTimeoutThreshold();
+  idleTimeout = setTimeout(exit, idleTime);
+  next();
+}
+
 const router = express.Router();
 const sessionRouter = (router as unknown) as Pluma.SessionRouter;
+
+router.use(clearIdleTimeout);
 
 sessionRouter.use(
   '/session/:sessionId',
   (req: Pluma.SessionRouteRequest, res: Response, next: NextFunction) => {
-    updateTimer();
     const sessionsManager = req.app.get('sessionManager');
     const request: Pluma.Request = {
       urlVariables: req.params,
@@ -40,7 +59,6 @@ sessionRouter.use(
 
 // New session
 router.post('/session', async (req, res, next) => {
-  updateTimer();
   const sessionManager = req.app.get('sessionManager');
   try {
     // not sure if this conditional is needed here, body-parser checks for this anyway
@@ -48,14 +66,17 @@ router.post('/session', async (req, res, next) => {
       throw new InvalidArgument();
     }
     const newSession = sessionManager.createSession(req.body);
+    const idleTime = getTimeoutThreshold();
+    idleTimeout = setTimeout(exit, idleTime);
     res.json(newSession);
   } catch (error) {
     next(error);
   }
 });
 
+router.use(setIdleTimeout);
+
 sessionRouter.delete('/session/:sessionId', async (req, res, next) => {
-  updateTimer();
   const sessionManager = req.app.get('sessionManager');
   const release = await req.session.mutex.acquire();
   try {
@@ -146,7 +167,6 @@ sessionRouter.use('/session/:sessionId/cookie', cookies);
 sessionRouter.use(
   '/session/:sessionId/element/:elementId',
   (req: Pluma.SessionRouteRequest, res: Response, next: NextFunction) => {
-    updateTimer();
     req.sessionRequest.urlVariables.elementId = req.params.elementId;
     next();
   },

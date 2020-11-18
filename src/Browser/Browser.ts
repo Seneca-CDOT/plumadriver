@@ -33,6 +33,7 @@ class Browser {
       strictSSL: true,
       unhandledPromptBehavior: 'dismiss and notify',
       rejectPublicSuffixes: false,
+      idleTime: 120,
       ...capabilities,
     };
 
