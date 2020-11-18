@@ -56,35 +56,16 @@ declare namespace Pluma {
       res: ExpressResponse,
       next: NextFunction,
     ) => unknown;
-    get(
-      path: string,
-      customCallback: (
-        req: Pluma.SessionRouteRequest,
-        res: ExpressResponse,
-        next: NextFunction,
-      ) => unknown,
-    ): void;
+    get(path: string, customCallback: SessionRouter['defaultCallback']): void;
     post(
       path: string,
-      customCallback: (
-        req: Pluma.SessionRouteRequest,
-        res: ExpressResponse,
-        next: NextFunction,
-      ) => unknown,
-      secondCallback?: (
-        req: Pluma.SessionRouteRequest,
-        res: ExpressResponse,
-        next: NextFunction,
-      ) => unknown,
+      customCallback: SessionRouter['defaultCallback'],
+      secondCallback?: SessionRouter['defaultCallback'],
     ): void;
     use(
       path: string,
       customCallback:
-        | ((
-            req: Pluma.SessionRouteRequest,
-            res: ExpressResponse,
-            next: NextFunction,
-          ) => unknown)
+        | SessionRouter['defaultCallback']
         | Router
         | Application
         | SessionRouter,
@@ -92,11 +73,7 @@ declare namespace Pluma {
     ): void;
     delete(
       path: string,
-      customCallback: (
-        req: Pluma.SessionRouteRequest,
-        res: ExpressResponse,
-        next: NextFunction,
-      ) => unknown,
+      customCallback: SessionRouter['defaultCallback'],
     ): void;
   }
 
