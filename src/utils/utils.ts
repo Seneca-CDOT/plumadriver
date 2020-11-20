@@ -78,10 +78,10 @@ export const endpoint = {
     next: NextFunction,
   ): Promise<void> => {
     req.sessionRequest.command = plumaCommand;
-    const release = await req.session?.mutex.acquire();
+    const release = await req.session.mutex.acquire();
     endpointLogic(req, res)
       .catch((e: Pluma.Request) => {
-        e.command = req.sessionRequest?.command || ' ';
+        e.command = req.sessionRequest.command || ' ';
         next(e);
       })
       .finally(() => {
@@ -94,7 +94,7 @@ export const endpoint = {
     res: Response,
   ): Promise<void> {
     const result =
-      req.sessionRequest && (await req.session?.process(req.sessionRequest));
+      req.sessionRequest && (await req.session.process(req.sessionRequest));
     res.json(
       isObject(result) && has(result, 'value') ? result : { value: result },
     );

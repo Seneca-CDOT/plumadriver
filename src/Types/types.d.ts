@@ -48,31 +48,35 @@ declare namespace Pluma {
     creation?: Date;
     path?: string;
   }
-  interface Callback {
+  interface CustomCallback {
     defaultCallback: (
       req: Pluma.SessionRouteRequest,
       res: ExpressResponse,
       next: NextFunction,
     ) => unknown;
   }
+
   interface SessionRouter
     extends Omit<Router, 'get' | 'post' | 'use' | 'delete'> {
-    get(path: string, customCallback: Callback['defaultCallback']): void;
+    get(path: string, customCallback: CustomCallback['defaultCallback']): void;
     post(
       path: string,
-      customCallback: Callback['defaultCallback'],
-      secondCallback?: Callback['defaultCallback'],
+      customCallback: CustomCallback['defaultCallback'],
+      secondCallback?: CustomCallback['defaultCallback'],
     ): void;
     use(
       path: string,
       customCallback:
-        | Callback['defaultCallback']
+        | CustomCallback['defaultCallback']
         | Router
         | Application
         | SessionRouter,
       router?: Router | SessionRouter,
     ): void;
-    delete(path: string, customCallback: Callback['defaultCallback']): void;
+    delete(
+      path: string,
+      customCallback: CustomCallback['defaultCallback'],
+    ): void;
   }
 
   interface SessionRouteRequest extends ExpressRequest {
