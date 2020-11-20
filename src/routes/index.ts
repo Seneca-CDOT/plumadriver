@@ -6,7 +6,7 @@ import navigateSession from './navigate';
 import cookies from './cookies';
 import Pluma from '../Types/types';
 import * as Utils from '../utils/utils';
-import { getTimeoutThreshold } from '../timer';
+import { getTimeoutThreshold, getTimeoutStatus } from '../timer';
 
 // pluma commands
 import { COMMANDS } from '../constants/constants';
@@ -23,7 +23,7 @@ function exit() {
   process.exit(0);
 }
 
-let idleTimeout = setTimeout(exit, 120000);
+let idleTimeout: NodeJS.Timeout;
 
 function clearIdleTimeout(req: Request, res: Response, next: NextFunction) {
   clearTimeout(idleTimeout);
@@ -31,8 +31,10 @@ function clearIdleTimeout(req: Request, res: Response, next: NextFunction) {
 }
 
 function setIdleTimeout(req: Request, res: Response, next: NextFunction) {
-  const idleTime = getTimeoutThreshold();
-  idleTimeout = setTimeout(exit, idleTime);
+  if (getTimeoutStatus()) {
+    const idleTime = getTimeoutThreshold();
+    idleTimeout = setTimeout(exit, idleTime);
+  }
   next();
 }
 
@@ -66,8 +68,10 @@ router.post('/session', async (req, res, next) => {
       throw new InvalidArgument();
     }
     const newSession = sessionManager.createSession(req.body);
-    const idleTime = getTimeoutThreshold();
-    idleTimeout = setTimeout(exit, idleTime);
+    if (getTimeoutStatus()) {
+      const idleTime = getTimeoutThreshold();
+      idleTimeout = setTimeout(exit, idleTime);
+    }
     res.json(newSession);
   } catch (error) {
     next(error);

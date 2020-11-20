@@ -33,7 +33,8 @@ declare namespace Pluma {
     strictSSL: boolean;
     unhandledPromptBehavior: unhandledPromptBehavior;
     rejectPublicSuffixes: boolean;
-    idleTime: number;
+    idleTimer: boolean;
+    maxIdleTime: number;
   }
 
   /**
@@ -157,7 +158,8 @@ declare namespace Pluma {
     unhandledPromptBehavior?: unhandledPromptBehavior;
     rejectPublicSuffixes?: boolean;
     strictSSL?: boolean;
-    idleTime?: number;
+    idleTimer?: boolean;
+    maxIdleTime?: number;
   }
 
   interface Capabilities {
@@ -171,7 +173,6 @@ declare namespace Pluma {
     browserVersion: string;
     platformName: NodeJS.Platform;
     setWindowRect: boolean;
-    idleTime?: number;
     'plm:plumaOptions'?: PlumaOptions;
   }
 

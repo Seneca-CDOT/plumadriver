@@ -3,13 +3,21 @@ exports.createSession = async (request, app) => {
     desiredCapabilities: {
       browserName: 'pluma',
       unhandledPromptBehavior: 'ignore',
-      'plm:plumaOptions': { runScripts: true },
+      'plm:plumaOptions': {
+        runScripts: true,
+        idleTimer: true,
+        maxIdleTime: 10
+      },
     },
     capabilities: {
       firstMatch: [
         {
           browserName: 'pluma',
-          'plm:plumaOptions': { runScripts: true },
+          'plm:plumaOptions': {
+            runScripts: true,
+            idleTimer: true,
+            maxIdleTime: 10
+          },
           unhandledPromptBehavior: 'ignore',
         },
       ],

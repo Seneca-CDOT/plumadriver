@@ -21,7 +21,8 @@ export const isBrowserOptions = (
     obj.strictSSL === undefined ||
     obj.unhandledPromptBehavior === undefined ||
     obj.rejectPublicSuffixes === undefined ||
-    obj.idleTime === undefined
+    obj.idleTimer === undefined ||
+    obj.maxIdleTime === undefined
   )
     return false;
   return true;
