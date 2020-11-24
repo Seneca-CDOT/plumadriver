@@ -61,7 +61,7 @@ sessionRouter.delete('/session/:sessionId', async (req, res, next) => {
   } catch (error) {
     next(error);
   } finally {
-    release?.();
+    release();
   }
 });
 
