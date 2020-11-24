@@ -53,7 +53,7 @@ router.post('/session', async (req, res, next) => {
 
 sessionRouter.delete('/session/:sessionId', async (req, res, next) => {
   const sessionManager = req.app.get('sessionManager');
-  const release = await req.session?.mutex.acquire();
+  const release = await req.session.mutex.acquire();
   try {
     req.sessionRequest.command = COMMANDS.DELETE_SESSION;
     await sessionManager.deleteSession(req.session, req.sessionRequest);
