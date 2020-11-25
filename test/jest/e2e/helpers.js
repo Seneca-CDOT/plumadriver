@@ -6,7 +6,7 @@ exports.createSession = async (request, app) => {
       'plm:plumaOptions': {
         runScripts: true,
         idleTimer: true,
-        maxIdleTime: 10
+        maxIdleTime: 4
       },
     },
     capabilities: {
@@ -16,7 +16,7 @@ exports.createSession = async (request, app) => {
           'plm:plumaOptions': {
             runScripts: true,
             idleTimer: true,
-            maxIdleTime: 10
+            maxIdleTime: 4
           },
           unhandledPromptBehavior: 'ignore',
         },
