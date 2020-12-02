@@ -93,8 +93,7 @@ export const endpoint = {
     req: Pluma.SessionRouteRequest,
     res: Response,
   ): Promise<void> {
-    const result =
-      req.sessionRequest && (await req.session.process(req.sessionRequest));
+    const result = await req.session.process(req.sessionRequest);
     res.json(
       isObject(result) && has(result, 'value') ? result : { value: result },
     );
