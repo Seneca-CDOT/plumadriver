@@ -85,7 +85,7 @@ export const endpoint = {
         next(e);
       })
       .finally(() => {
-        release?.();
+        release();
       });
   },
 
