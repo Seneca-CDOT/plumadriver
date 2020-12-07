@@ -1,8 +1,8 @@
 // routers
-import express from 'express';
+import express, { NextFunction, Response } from 'express';
 import element from './elements';
 import timeouts from './timeouts';
-import navigate from './navigate';
+import navigateSession from './navigate';
 import cookies from './cookies';
 import Pluma from '../Types/types';
 import * as Utils from '../utils/utils';
@@ -17,21 +17,24 @@ const {
   sessionEndpointExceptionHandler,
   defaultSessionEndpointLogic,
 } = Utils.endpoint;
-
 const router = express.Router();
+const sessionRouter = (router as unknown) as Pluma.SessionRouter;
 
-router.use('/session/:sessionId', (req, res, next) => {
-  const sessionsManager = req.app.get('sessionManager');
-  const request: Pluma.Request = {
-    urlVariables: req.params,
-    parameters: req.body,
-    command: '',
-  };
-  req.sessionId = req.params.sessionId;
-  req.session = sessionsManager.findSession(req.sessionId);
-  req.sessionRequest = request;
-  next();
-});
+sessionRouter.use(
+  '/session/:sessionId',
+  (req: Pluma.SessionRouteRequest, res: Response, next: NextFunction) => {
+    const sessionsManager = req.app.get('sessionManager');
+    const request: Pluma.Request = {
+      urlVariables: req.params,
+      parameters: req.body,
+      command: '',
+    };
+    req.sessionId = req.params.sessionId;
+    req.session = sessionsManager.findSession(req.sessionId);
+    req.sessionRequest = request;
+    next();
+  },
+);
 
 // New session
 router.post('/session', async (req, res, next) => {
@@ -48,23 +51,21 @@ router.post('/session', async (req, res, next) => {
   }
 });
 
-router.delete('/session/:sessionId', async (req, res, next) => {
+sessionRouter.delete('/session/:sessionId', async (req, res, next) => {
   const sessionManager = req.app.get('sessionManager');
-  const release = await req.session?.mutex.acquire();
+  const release = await req.session.mutex.acquire();
   try {
-    if (req.sessionRequest) {
-      req.sessionRequest.command = COMMANDS.DELETE_SESSION;
-    }
+    req.sessionRequest.command = COMMANDS.DELETE_SESSION;
     await sessionManager.deleteSession(req.session, req.sessionRequest);
     res.send(null);
   } catch (error) {
     next(error);
   } finally {
-    release?.();
+    release();
   }
 });
 
-router.get(
+sessionRouter.get(
   '/session/:sessionId/title',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -72,7 +73,7 @@ router.get(
   ),
 );
 
-router.post(
+sessionRouter.post(
   '/session/:sessionId/execute/sync',
   Utils.handleSeleniumIsDisplayedRequest,
   sessionEndpointExceptionHandler(
@@ -81,7 +82,7 @@ router.post(
   ),
 );
 
-router.post(
+sessionRouter.post(
   '/session/:sessionId/element',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -89,7 +90,7 @@ router.post(
   ),
 );
 
-router.post(
+sessionRouter.post(
   '/session/:sessionId/elements',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -97,7 +98,7 @@ router.post(
   ),
 );
 
-router.get(
+sessionRouter.get(
   '/session/:sessionId/element/active',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -105,7 +106,7 @@ router.get(
   ),
 );
 
-router.get(
+sessionRouter.get(
   '/session/:sessionId/source',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -113,7 +114,7 @@ router.get(
   ),
 );
 
-router.post(
+sessionRouter.post(
   '/session/:sessionId/frame',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -121,7 +122,7 @@ router.post(
   ),
 );
 
-router.post(
+sessionRouter.post(
   '/session/:sessionId/frame/parent',
   sessionEndpointExceptionHandler(
     defaultSessionEndpointLogic,
@@ -130,26 +131,23 @@ router.post(
 );
 
 // timeout routes
-router.use('/session/:sessionId/timeouts', timeouts);
+sessionRouter.use('/session/:sessionId/timeouts', timeouts);
 
 // navigation routes
-router.use('/session/:sessionId/url', navigate);
+sessionRouter.use('/session/:sessionId/url', navigateSession);
 
 // cookies routes
-router.use('/session/:sessionId/cookie', cookies);
+sessionRouter.use('/session/:sessionId/cookie', cookies);
 
-router.use(
+sessionRouter.use(
   '/session/:sessionId/element/:elementId',
-  (req, res, next) => {
-    if (req.sessionRequest) {
-      req.sessionRequest.urlVariables.elementId = req.params.elementId;
-    }
+  (req: Pluma.SessionRouteRequest, res: Response, next: NextFunction) => {
+    req.sessionRequest.urlVariables.elementId = req.params.elementId;
     next();
   },
   element,
 );
-
-router.get('/shutdown', (req, res) => {
+sessionRouter.get('/shutdown', (req, res) => {
   res.json({ value: null });
   process.exit(0);
 });

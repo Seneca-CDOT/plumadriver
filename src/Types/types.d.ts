@@ -1,6 +1,13 @@
 import { BaseOptions, DOMWindow as JSDOMDOMWindow } from 'jsdom';
 import { Store } from 'tough-cookie';
 import {
+  NextFunction,
+  Router,
+  Request as ExpressRequest,
+  Response as ExpressResponse,
+  Application,
+} from 'express';
+import {
   ElementBooleanAttributeValues,
   unhandledPromptBehaviorValues,
   PageLoadStrategyValues,
@@ -40,6 +47,40 @@ declare namespace Pluma {
     expiry?: number;
     creation?: Date;
     path?: string;
+  }
+
+  interface CustomRequestCallback {
+    (
+      req: Pluma.SessionRouteRequest,
+      res: ExpressResponse,
+      next: NextFunction,
+    ): unknown;
+  }
+
+  interface SessionRouter
+    extends Omit<Router, 'get' | 'post' | 'use' | 'delete'> {
+    get(path: string, customCallback: CustomRequestCallback): void;
+    post(
+      path: string,
+      customCallback: CustomRequestCallback,
+      secondCallback?: CustomRequestCallback,
+    ): void;
+    use(
+      path: string,
+      customCallback:
+        | CustomRequestCallback
+        | Router
+        | Application
+        | SessionRouter,
+      router?: Router | SessionRouter,
+    ): void;
+    delete(path: string, customCallback: CustomRequestCallback): void;
+  }
+
+  interface SessionRouteRequest extends ExpressRequest {
+    sessionId: string;
+    session: Session;
+    sessionRequest: Pluma.Request;
   }
 
   /**
@@ -161,17 +202,6 @@ declare namespace Pluma {
 }
 
 declare global {
-  namespace Express {
-    /**
-     * Additional properties of the request object
-     */
-    interface Request {
-      sessionId?: string;
-      session?: Session;
-      sessionRequest?: Pluma.Request;
-    }
-  }
-
   interface MouseEventInit {
     which?: number;
   }

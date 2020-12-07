@@ -1,5 +1,6 @@
 import express from 'express';
 import { COMMANDS } from '../constants/constants';
+import Pluma from '../Types/types';
 import * as utils from '../utils/utils';
 
 const {
@@ -7,7 +8,7 @@ const {
   defaultSessionEndpointLogic,
 } = utils.endpoint;
 
-const navigate = express.Router();
+const navigate = (express.Router() as unknown) as Pluma.SessionRouter;
 
 navigate.post(
   '/',

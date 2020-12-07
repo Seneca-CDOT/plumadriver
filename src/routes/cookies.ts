@@ -1,5 +1,6 @@
-import express from 'express';
+import express, { NextFunction, Response } from 'express';
 import { COMMANDS } from '../constants/constants';
+import Pluma from '../Types/types';
 import * as utils from '../utils/utils';
 
 const {
@@ -7,7 +8,7 @@ const {
   sessionEndpointExceptionHandler,
 } = utils.endpoint;
 
-const cookies = express.Router();
+const cookies = (express.Router() as unknown) as Pluma.SessionRouter;
 
 cookies.post(
   '/',
@@ -16,7 +17,6 @@ cookies.post(
     COMMANDS.ADD_COOKIE,
   ),
 );
-
 cookies.get(
   '/',
   sessionEndpointExceptionHandler(
@@ -33,12 +33,13 @@ cookies.delete(
   ),
 );
 
-cookies.use('/:name', (req, res, next) => {
-  if (req.sessionRequest) {
+cookies.use(
+  '/:name',
+  (req: Pluma.SessionRouteRequest, res: Response, next: NextFunction) => {
     req.sessionRequest.urlVariables.cookieName = req.params.name;
-  }
-  next();
-});
+    next();
+  },
+);
 
 cookies.get(
   '/:name',
@@ -47,7 +48,6 @@ cookies.get(
     COMMANDS.GET_NAMED_COOKIE,
   ),
 );
-
 cookies.delete(
   '/:name',
   sessionEndpointExceptionHandler(

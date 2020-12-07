@@ -67,31 +67,33 @@ export const fileSystem = {
 
 export const endpoint = {
   sessionEndpointExceptionHandler: (
-    endpointLogic: (req: Request, res: Response) => Promise<unknown>,
+    endpointLogic: (
+      req: Pluma.SessionRouteRequest,
+      res: Response,
+    ) => Promise<unknown>,
     plumaCommand: string,
   ) => async (
-    req: Request,
+    req: Pluma.SessionRouteRequest,
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
-    if (req.sessionRequest) req.sessionRequest.command = plumaCommand;
-    const release = await req.session?.mutex.acquire();
+    req.sessionRequest.command = plumaCommand;
+    const release = await req.session.mutex.acquire();
     endpointLogic(req, res)
       .catch((e: Pluma.Request) => {
-        e.command = req.sessionRequest?.command || ' ';
+        e.command = req.sessionRequest.command || ' ';
         next(e);
       })
       .finally(() => {
-        release?.();
+        release();
       });
   },
 
   async defaultSessionEndpointLogic(
-    req: Request,
+    req: Pluma.SessionRouteRequest,
     res: Response,
   ): Promise<void> {
-    const result =
-      req.sessionRequest && (await req.session?.process(req.sessionRequest));
+    const result = await req.session.process(req.sessionRequest);
     res.json(
       isObject(result) && has(result, 'value') ? result : { value: result },
     );
@@ -103,7 +105,7 @@ export const endpoint = {
  * This detects that request and forwards it to the appropriate W3C recommended endpoint.
  */
 export const handleSeleniumIsDisplayedRequest = (
-  req: Request,
+  req: Pluma.SessionRouteRequest,
   _res: Response,
   next: NextFunction,
 ): void => {
