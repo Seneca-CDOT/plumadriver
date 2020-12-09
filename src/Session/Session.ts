@@ -8,6 +8,7 @@ import WebElement from '../WebElement/WebElement';
 import Browser from '../Browser/Browser';
 import Pluma from '../Types/types';
 import * as utils from '../utils/utils';
+import { updateTimeoutThreshold, updateTimeoutStatus } from '../timer';
 
 // errors
 import {
@@ -133,6 +134,12 @@ class Session {
     if (configuredCapabilities.unhandledPromptBehavior) {
       browserConfig.unhandledPromptBehavior =
         configuredCapabilities.unhandledPromptBehavior;
+    }
+    if (browserConfig.idleTimer !== undefined) {
+      updateTimeoutStatus(browserConfig.idleTimer);
+    }
+    if (browserConfig.maxIdleTime && browserConfig.idleTimer) {
+      updateTimeoutThreshold(browserConfig.maxIdleTime);
     }
 
     this.browser = new Browser(browserConfig);

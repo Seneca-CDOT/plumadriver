@@ -50,6 +50,8 @@ class SessionManager {
           pageLoadStrategy: session.pageLoadStrategy,
           'plm:plumaOptions': {
             runScripts: session.browser.browserConfig.runScripts,
+            idleTimer: session.browser.browserConfig.idleTimer,
+            maxIdleTime: session.browser.browserConfig.maxIdleTime,
           },
           unhandledPromptBehavior:
             session.browser.browserConfig.unhandledPromptBehavior,

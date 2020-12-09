@@ -1,11 +1,12 @@
 // routers
-import express, { NextFunction, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import element from './elements';
 import timeouts from './timeouts';
 import navigateSession from './navigate';
 import cookies from './cookies';
 import Pluma from '../Types/types';
 import * as Utils from '../utils/utils';
+import { getTimeoutThreshold, getTimeoutStatus } from '../timer';
 
 // pluma commands
 import { COMMANDS } from '../constants/constants';
@@ -17,8 +18,30 @@ const {
   sessionEndpointExceptionHandler,
   defaultSessionEndpointLogic,
 } = Utils.endpoint;
+
+function exit() {
+  process.exit(0);
+}
+
+let idleTimeout: NodeJS.Timeout;
+
+function clearIdleTimeout(req: Request, res: Response, next: NextFunction) {
+  clearTimeout(idleTimeout);
+  next();
+}
+
+function setIdleTimeout(req: Request, res: Response, next: NextFunction) {
+  if (getTimeoutStatus()) {
+    const idleTime = getTimeoutThreshold();
+    idleTimeout = setTimeout(exit, idleTime);
+  }
+  next();
+}
+
 const router = express.Router();
 const sessionRouter = (router as unknown) as Pluma.SessionRouter;
+
+router.use(clearIdleTimeout);
 
 sessionRouter.use(
   '/session/:sessionId',
@@ -45,11 +68,17 @@ router.post('/session', async (req, res, next) => {
       throw new InvalidArgument();
     }
     const newSession = sessionManager.createSession(req.body);
+    if (getTimeoutStatus()) {
+      const idleTime = getTimeoutThreshold();
+      idleTimeout = setTimeout(exit, idleTime);
+    }
     res.json(newSession);
   } catch (error) {
     next(error);
   }
 });
+
+router.use(setIdleTimeout);
 
 sessionRouter.delete('/session/:sessionId', async (req, res, next) => {
   const sessionManager = req.app.get('sessionManager');

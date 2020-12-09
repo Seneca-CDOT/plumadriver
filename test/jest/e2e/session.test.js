@@ -25,7 +25,11 @@ describe('Session', () => {
             pageLoad: 200,
             script: 300,
           },
-          'plm:plumaOptions': { runScripts: true },
+          'plm:plumaOptions': {
+            runScripts: true,
+            idleTimer: true,
+            maxIdleTime: 60
+          },
         },
       },
     };
@@ -45,7 +49,11 @@ describe('Session', () => {
             script: 300,
           },
           proxy: {},
-          'plm:plumaOptions': { runScripts: 'dangerously' },
+          'plm:plumaOptions': {
+            runScripts: 'dangerously',
+            idleTimer: true,
+            maxIdleTime: 60
+          },
           setWindowRect: expect.any(Boolean),
         },
         sessionId: expect.any(String),

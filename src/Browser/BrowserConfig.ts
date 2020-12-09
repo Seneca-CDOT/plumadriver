@@ -15,6 +15,12 @@ export default class BrowserConfig {
   /** defines whether self-signed or insecure SSL certificates should be trusted */
   strictSSL = true;
 
+  /** defines whether plumadriver will use an idleTimer or not (Set to false by default) */
+  idleTimer = false;
+
+  /** the time set where plumadriver will automatically close when there's no activity (time in seconds) */
+  maxIdleTime = 120;
+
   /** defines the type of behavior when a user prompt is encountered see [W3C unhandledPromptBehavior](https://w3c.github.io/webdriver/#dfn-unhandled-prompt-behavior) */
   readonly unhandledPromptBehavior: Pluma.unhandledPromptBehavior = 'dismiss';
 
@@ -54,6 +60,12 @@ export default class BrowserConfig {
         instanceOptions[option] = value ? 'dangerously' : undefined;
       else if (option === 'strictSSL') instanceOptions[option] = !value;
       else instanceOptions[option] = value;
+
+      if (option === 'idleTimer' && !Utils.isBoolean(value))
+        throw new InvalidArgument();
+
+      if (option === 'maxIdleTime' && !Utils.isNumber(value))
+        throw new InvalidArgument();
     });
     Object.assign(this, instanceOptions);
 

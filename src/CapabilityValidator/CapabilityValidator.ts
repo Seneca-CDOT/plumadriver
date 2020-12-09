@@ -217,6 +217,10 @@ class CapabilityValidator {
         return resources === 'usable';
       },
       rejectPublicSuffixes: isBoolean,
+
+      idleTimer: isBoolean,
+
+      maxIdleTime: isNumber,
     };
 
     Object.keys(options).forEach(key => {

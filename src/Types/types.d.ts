@@ -33,6 +33,8 @@ declare namespace Pluma {
     strictSSL: boolean;
     unhandledPromptBehavior: unhandledPromptBehavior;
     rejectPublicSuffixes: boolean;
+    idleTimer: boolean;
+    maxIdleTime: number;
   }
 
   /**
@@ -156,6 +158,8 @@ declare namespace Pluma {
     unhandledPromptBehavior?: unhandledPromptBehavior;
     rejectPublicSuffixes?: boolean;
     strictSSL?: boolean;
+    idleTimer?: boolean;
+    maxIdleTime?: number;
   }
 
   interface Capabilities {
