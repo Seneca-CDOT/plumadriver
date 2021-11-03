@@ -17,7 +17,7 @@
     "pjson": "^1.0.9",
     "tough-cookie": "^4.0.0",
     "uuid": "^3.4.0",
-    "validator": "^10.11.0",
+    "validator": "^13.7.0",
     "vm2": "^3.9.4",
     "wait-for-expect": "^3.0.2",
     "winston": "^3.2.1"
