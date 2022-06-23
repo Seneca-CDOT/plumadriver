@@ -11,7 +11,7 @@
     "express": "^4.17.1",
     "express-winston": "^4.0.5",
     "has": "^1.0.3",
-    "jsdom": "^16.2.1",
+    "jsdom": "^16.5.0",
     "mime-types": "^2.1.26",
     "minimist": "^1.2.6",
     "pjson": "^1.0.9",
